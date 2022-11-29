@@ -9,7 +9,7 @@ import {MaterialFormBuilderService} from '../../material-form-builder/material-f
 import {DateFormField} from '../../material-form-builder/form-components/date/date-form-field';
 import {UtilService} from '../../../core/service/util.service';
 import {TextIcon} from '../text-icon';
-import {FormControlStatus, FormGroup, Validators} from '@angular/forms';
+import {FormControlStatus, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
 import * as moment from 'moment/moment';
 import {Moment} from 'moment/moment';
@@ -46,9 +46,10 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     @Input() opschortDatumTijd: string;
     @Input() verlengReden: string;
     @Input() verlengDuur: string;
-    @Input() actieOpschorten;
-    @Input() actieHervatten;
-    @Input() actieVerlengen;
+    @Input() actieOpschorten: boolean;
+    @Input() actieHervatten: boolean;
+    @Input() actieVerlengen: boolean;
+    @Input() verlengingstermijn: number;
     @Output() doOpschorting: EventEmitter<any> = new EventEmitter<any>();
     @Output() doVerlenging: EventEmitter<any> = new EventEmitter<any>();
 
@@ -134,11 +135,11 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
         }
     }
 
-    private maakDuurField(label: string): InputFormField {
+    private maakDuurField(label: string, validators: ValidatorFn[]): InputFormField {
         this.duurField = new InputFormFieldBuilder()
         .id('duurDagen')
         .label(label)
-        .validators(Validators.required, Validators.min(1))
+        .validators(...validators)
         .build();
         return this.duurField;
     }
@@ -168,7 +169,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     opschorten() {
         const heeftEinddatumGepland: boolean = this.einddatumGeplandField.formControl.value;
         const dialogData = new DialogData([
-                this.maakDuurField('opschortduur'),
+                this.maakDuurField('opschortduur', [Validators.required, Validators.min(1)]),
                 heeftEinddatumGepland ? this.einddatumGeplandField : this.maakHiddenField(this.einddatumGeplandField),
                 this.uiterlijkeEinddatumAfdoeningField,
                 this.maakRedenField(this.opschortReden)
@@ -228,14 +229,14 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     verlengen() {
         const heeftEinddatumGepland: boolean = this.einddatumGeplandField.formControl.value;
         const dialogData = new DialogData([
-                this.maakDuurField('verlengduur'),
+                this.maakDuurField('verlengduur', [Validators.required, Validators.min(1), Validators.max(this.verlengingstermijn)]),
                 heeftEinddatumGepland ? this.einddatumGeplandField : this.maakHiddenField(this.einddatumGeplandField),
                 this.uiterlijkeEinddatumAfdoeningField,
                 this.maakRedenField(this.verlengReden),
                 this.maakTakenField('taken.verlengen')
             ],
             (results: any[]) => this.saveVerlenging(results),
-            this.translate.instant(this.verlengDuur ? 'msg.zaak.verlengen.meer' : 'msg.zaak.verlengen', {eerdereDuur: this.verlengDuur}));
+            this.translate.instant('msg.zaak.verlengen'));
         dialogData.confirmButtonActionKey = 'actie.zaak.verlengen';
 
         const vorigeEinddatumGepland: Moment = heeftEinddatumGepland ? moment(this.einddatumGeplandField.formControl.value) : null;

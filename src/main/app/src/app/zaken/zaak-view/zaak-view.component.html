@@ -145,10 +145,13 @@
                                                           [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
+                                                          [verlengingstermijn]="zaak.zaaktype.verlengingstermijn"
                                                           [readonly]="!zaak.rechten.wijzigen"
-                                                          [actieOpschorten]="zaak.zaaktype.opschortingMogelijk && zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.behandelen"
+                                                          [actieOpschorten]="zaak.zaaktype.opschortingMogelijk && zaak.isOpen && !zaak.isHeropend
+                                                                             && !zaak.isOpgeschort && zaak.rechten.behandelen"
                                                           [actieHervatten]="zaak.isOpgeschort && zaak.rechten.behandelen"
-                                                          [actieVerlengen]="zaak.zaaktype.verlengingMogelijk && zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.behandelen"
+                                                          [actieVerlengen]="zaak.zaaktype.verlengingMogelijk && !zaak.duurVerlenging && zaak.isOpen
+                                                                            && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.wijzigenDoorlooptijd"
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
