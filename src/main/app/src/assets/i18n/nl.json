@@ -574,7 +574,6 @@
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
   "msg.zaak.verlengen": "Geef aan wat de duur van de verlenging is.",
-  "msg.zaak.verlengen.meer": "Geef aan wat de extra duur van de verlenging is (eerdere verlengingen {{eerdereDuur}}).",
   "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
   "msg.zaakafhandelparameters.waarschuwing": "Wijzigingen in de zaakafhandelparameters kunnen effect hebben op bestaande zaken. Indien bestaande zaken niet mogen worden gewijzigd dan moet je een nieuwe versie van het zaaktype publiceren.",
   "msg.zoekopdracht.opgeslagen": "De zoekopdracht is opgeslagen",

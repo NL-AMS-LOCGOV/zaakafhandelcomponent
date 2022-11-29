@@ -574,7 +574,6 @@
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
   "msg.zaak.vrijgegeven": "The case has been released",
   "msg.zaak.verlengen": "Enter the extension duration.",
-  "msg.zaak.verlengen.meer": "Enter the extra extension duur (previous extensions {{eerdereDuur}}).",
   "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved",
   "msg.zaakafhandelparameters.waarschuwing": "Changes in de case handling parameters can affect existing cases. If existing cases should not be modified, you should publish a new version of the casetype.",
   "msg.zoekopdracht.opgeslagen": "The search query has been saved",

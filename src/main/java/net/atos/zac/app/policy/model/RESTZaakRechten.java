@@ -18,4 +18,6 @@ public class RESTZaakRechten {
     public boolean afbreken;
 
     public boolean heropenen;
+
+    public boolean wijzigenDoorlooptijd;
 }
