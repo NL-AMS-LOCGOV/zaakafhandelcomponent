@@ -126,9 +126,11 @@ public class SignaleringenJob {
     }
 
     private String getZaakSignaleringTarget(final ZaakZoekObject zaak, final SignaleringSubjectField field) {
-        if (signaleringenService.readInstellingenUser(SignaleringType.Type.ZAAK_VERLOPEND, zaak.getBehandelaarGebruikersnaam()).isMail() &&
-                signaleringenService.findSignaleringVerzonden(
-                        getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(), field)) == null) {
+        if (signaleringenService.readInstellingenUser(SignaleringType.Type.ZAAK_VERLOPEND,
+                                                      zaak.getBehandelaarGebruikersnaam()).isMail() &&
+                !signaleringenService.findSignaleringVerzonden(
+                        getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
+                                                              field)).isPresent()) {
             return zaak.getBehandelaarGebruikersnaam();
         }
         return null;
@@ -234,9 +236,10 @@ public class SignaleringenJob {
     }
 
     private String getTaakSignaleringTarget(final Task taak) {
-        if (signaleringenService.readInstellingenUser(SignaleringType.Type.TAAK_VERLOPEN, taak.getAssignee()).isMail() &&
-                signaleringenService.findSignaleringVerzonden(
-                        getTaakSignaleringVerzondenParameters(taak.getAssignee(), taak.getId())) == null) {
+        if (signaleringenService.readInstellingenUser(SignaleringType.Type.TAAK_VERLOPEN, taak.getAssignee())
+                .isMail() &&
+                !signaleringenService.findSignaleringVerzonden(
+                        getTaakSignaleringVerzondenParameters(taak.getAssignee(), taak.getId())).isPresent()) {
             return taak.getAssignee();
         }
         return null;

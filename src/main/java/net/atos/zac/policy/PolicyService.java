@@ -67,7 +67,8 @@ public class PolicyService {
     private CaseVariablesService caseVariablesService;
 
     public OverigeRechten readOverigeRechten() {
-        return evaluationClient.readOverigeRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+        return evaluationClient.readOverigeRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get())))
+                .getResult();
     }
 
     public ZaakRechten readZaakRechten(final Zaak zaak) {
@@ -78,22 +79,26 @@ public class PolicyService {
         final ZaakData zaakData = new ZaakData();
         zaakData.open = zaak.isOpen();
         zaakData.zaaktype = zaaktype.getOmschrijving();
-        return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+        return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData)))
+                .getResult();
     }
 
     public ZaakRechten readZaakRechten(final ZaakZoekObject zaakZoekObject) {
         final ZaakData zaakData = new ZaakData();
         zaakData.open = !zaakZoekObject.isAfgehandeld();
         zaakData.zaaktype = zaakZoekObject.getZaaktypeOmschrijving();
-        return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+        return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData)))
+                .getResult();
     }
 
     public DocumentRechten readDocumentRechten(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return readDocumentRechten(enkelvoudigInformatieobject, null);
     }
 
-    public DocumentRechten readDocumentRechten(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject, final Zaak zaak) {
-        return readDocumentRechten(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), zaak);
+    public DocumentRechten readDocumentRechten(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
+            final Zaak zaak) {
+        return readDocumentRechten(enkelvoudigInformatieobject,
+                                   lockService.findLock(enkelvoudigInformatieobject.getUUID()).orElse(null), zaak);
     }
 
     public DocumentRechten readDocumentRechten(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
@@ -136,11 +141,13 @@ public class PolicyService {
     public TaakRechten readTaakRechten(final TaakZoekObject taakZoekObject) {
         final TaakData taakData = new TaakData();
         taakData.zaaktype = taakZoekObject.getZaaktypeOmschrijving();
-        return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
+        return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData)))
+                .getResult();
     }
 
     public WerklijstRechten readWerklijstRechten() {
-        return evaluationClient.readWerklijstRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+        return evaluationClient.readWerklijstRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get())))
+                .getResult();
     }
 
     /**
@@ -159,7 +166,8 @@ public class PolicyService {
         if (zaaktypenAllowed.contains(ALLE_ZAAKTYPEN)) {
             return alleZaaktypen;
         } else {
-            return alleZaaktypen.stream().filter(zaaktype -> zaaktypenAllowed.contains(zaaktype.getOmschrijving())).toList();
+            return alleZaaktypen.stream().filter(zaaktype -> zaaktypenAllowed.contains(zaaktype.getOmschrijving()))
+                    .toList();
         }
     }
 

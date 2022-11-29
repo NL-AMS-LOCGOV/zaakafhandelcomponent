@@ -8,6 +8,7 @@ package net.atos.zac.documenten;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -50,7 +51,8 @@ public class InboxDocumentenService {
     private DRCClientService drcClientService;
 
     public InboxDocument create(final UUID enkelvoudiginformatieobejctUUID) {
-        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudiginformatieobejctUUID);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(
+                enkelvoudiginformatieobejctUUID);
         final InboxDocument inboxDocument = new InboxDocument();
         inboxDocument.setEnkelvoudiginformatieobjectID(informatieobject.getIdentificatie());
         inboxDocument.setEnkelvoudiginformatieobjectUUID(enkelvoudiginformatieobejctUUID);
@@ -61,17 +63,24 @@ public class InboxDocumentenService {
         return inboxDocument;
     }
 
-    public InboxDocument find(final long id) {
-        return entityManager.find(InboxDocument.class, id);
+    public Optional<InboxDocument> find(final long id) {
+        final var inboxDocument = entityManager.find(InboxDocument.class, id);
+        return inboxDocument != null ? Optional.of(inboxDocument) : Optional.empty();
     }
 
-    public InboxDocument find(final UUID enkelvoudiginformatieobjectUUID) {
+    public Optional<InboxDocument> find(final UUID enkelvoudiginformatieobjectUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InboxDocument> query = builder.createQuery(InboxDocument.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
-        query.select(root).where(builder.equal(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_UUID), enkelvoudiginformatieobjectUUID));
+        query.select(root).where(builder.equal(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_UUID),
+                                               enkelvoudiginformatieobjectUUID));
         final List<InboxDocument> resultList = entityManager.createQuery(query).getResultList();
-        return resultList.isEmpty() ? null : resultList.get(0);
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
+    }
+
+    public InboxDocument read(final UUID enkelvoudiginformatieobjectUUID) {
+        return find(enkelvoudiginformatieobjectUUID).orElseThrow(() -> new RuntimeException(
+                "InboxDocument with uuid '%s' not found.".formatted(enkelvoudiginformatieobjectUUID)));
     }
 
     public int count(final InboxDocumentListParameters listParameters) {
@@ -88,19 +97,15 @@ public class InboxDocumentenService {
     }
 
     public void delete(final Long id) {
-        final InboxDocument inboxDocument = find(id);
-        if (inboxDocument != null) {
-            entityManager.remove(inboxDocument);
-        }
+        find(id).ifPresent(entityManager::remove);
     }
 
     public void delete(final UUID zaakinformatieobjectUUID) {
-        final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(zaakinformatieobjectUUID);
-        final UUID enkelvoudiginformatieobjectUUID = URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject());
-        final InboxDocument inboxDocument = find(enkelvoudiginformatieobjectUUID);
-        if (inboxDocument != null) {
-            entityManager.remove(inboxDocument);
-        }
+        final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(
+                zaakinformatieobjectUUID);
+        final UUID enkelvoudiginformatieobjectUUID = URIUtil.parseUUIDFromResourceURI(
+                zaakInformatieobject.getInformatieobject());
+        find(enkelvoudiginformatieobjectUUID).ifPresent(entityManager::remove);
     }
 
     public List<InboxDocument> list(final InboxDocumentListParameters listParameters) {
@@ -127,7 +132,8 @@ public class InboxDocumentenService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final List<Predicate> predicates = new ArrayList<>();
         if (StringUtils.isNotBlank(listParameters.getIdentificatie())) {
-            predicates.add(builder.like(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_ID), LIKE.formatted(listParameters.getIdentificatie())));
+            predicates.add(builder.like(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_ID),
+                                        LIKE.formatted(listParameters.getIdentificatie())));
         }
         if (StringUtils.isNotBlank(listParameters.getTitel())) {
             String titel = LIKE.formatted(listParameters.getTitel().toLowerCase().replace(" ", "%"));
@@ -137,7 +143,8 @@ public class InboxDocumentenService {
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 
-    private void addCreatiedatumPredicates(final DatumRange creatiedatum, final List<Predicate> predicates, final Root<InboxDocument> root,
+    private void addCreatiedatumPredicates(final DatumRange creatiedatum, final List<Predicate> predicates,
+            final Root<InboxDocument> root,
             final CriteriaBuilder builder) {
         if (creatiedatum != null) {
             if (creatiedatum.van() != null) {
@@ -146,7 +153,8 @@ public class InboxDocumentenService {
             }
             if (creatiedatum.tot() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get(InboxDocument.CREATIEDATUM),
-                                                         DateTimeUtil.convertToDateTime(creatiedatum.tot()).plusDays(1).minusSeconds(1)));
+                                                         DateTimeUtil.convertToDateTime(creatiedatum.tot()).plusDays(1)
+                                                                 .minusSeconds(1)));
             }
         }
     }

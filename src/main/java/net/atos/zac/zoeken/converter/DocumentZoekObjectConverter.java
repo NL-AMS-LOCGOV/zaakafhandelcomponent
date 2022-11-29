@@ -99,7 +99,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         }
         documentZoekObject.setIndicatie(DocumentIndicatie.VERGRENDELD, informatieobject.getLocked());
         if (informatieobject.getLocked()) {
-            final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.findLock(
+            final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.readLock(
                     informatieobject.getUUID());
             documentZoekObject.setVergrendeldDoorGebruikersnaam(lock.getUserId());
             documentZoekObject.setVergrendeldDoorNaam(identityService.readUser(lock.getUserId()).getFullName());

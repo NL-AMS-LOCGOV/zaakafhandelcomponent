@@ -6,6 +6,7 @@
 package net.atos.zac.app.inboxdocumenten;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -73,13 +74,15 @@ public class InboxDocumentenRESTService {
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
         PolicyService.assertPolicy(policyService.readWerklijstRechten().getDocumentenInbox());
-        final InboxDocument inboxDocument = inboxDocumentenService.find(id);
-        if (inboxDocument == null) {
+        final Optional<InboxDocument> inboxDocument = inboxDocumentenService.find(id);
+        if (inboxDocument.isEmpty()) {
             return; // reeds verwijderd
         }
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
-                drcClientService.readEnkelvoudigInformatieobject(inboxDocument.getEnkelvoudiginformatieobjectUUID());
-        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
+                drcClientService.readEnkelvoudigInformatieobject(
+                        inboxDocument.get().getEnkelvoudiginformatieobjectUUID());
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(
+                enkelvoudigInformatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
             LOG.warning(
@@ -87,7 +90,8 @@ public class InboxDocumentenRESTService {
                             "Het inbox-document is verwijderd maar het informatieobject is niet verwijderd. Reden: informatieobject '%s' is gekoppeld aan zaak '%s'.",
                             enkelvoudigInformatieobject.getIdentificatie(), zaakUuid));
         } else {
-            drcClientService.deleteEnkelvoudigInformatieobject(inboxDocument.getEnkelvoudiginformatieobjectUUID());
+            drcClientService.deleteEnkelvoudigInformatieobject(
+                    inboxDocument.get().getEnkelvoudiginformatieobjectUUID());
         }
         inboxDocumentenService.delete(id);
     }

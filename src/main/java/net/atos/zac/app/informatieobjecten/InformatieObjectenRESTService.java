@@ -206,7 +206,8 @@ public class InformatieObjectenRESTService {
             return informatieobjectConverter.convertUUIDsToREST(zoekParameters.informatieobjectUUIDs, zaak);
         } else if (zaak != null) {
             assertPolicy(policyService.readZaakRechten(zaak).getLezen());
-            List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
+            List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(
+                    zaak);
             if (zoekParameters.gekoppeldeZaakDocumenten) {
                 enkelvoudigInformatieobjectenVoorZaak = new ArrayList<>(enkelvoudigInformatieobjectenVoorZaak);
                 enkelvoudigInformatieobjectenVoorZaak.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
@@ -271,7 +272,7 @@ public class InformatieObjectenRESTService {
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
         } else if (documentVerplaatsGegevens.vanuitInboxDocumenten()) {
-            final InboxDocument inboxDocument = inboxDocumentenService.find(enkelvoudigInformatieobjectUUID);
+            final InboxDocument inboxDocument = inboxDocumentenService.read(enkelvoudigInformatieobjectUUID);
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             inboxDocumentenService.delete(inboxDocument.getId());
         } else {
@@ -425,11 +426,9 @@ public class InformatieObjectenRESTService {
         try {
             final EnkelvoudigInformatieObjectLock lock;
             if (enkelvoudigInformatieobject.getLocked()) {
-                lock = enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
-                if (lock == null) {
-                    throw new FoutmeldingException(
-                            "Document kan niet worden aangepast omdat het is gelocked met onbekende lock.");
-                }
+                lock = enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID())
+                        .orElseThrow(() -> new FoutmeldingException(
+                                "Document kan niet worden aangepast omdat het is gelocked met onbekende lock."));
             } else {
                 lock = enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
                                                                          loggedInUserId);

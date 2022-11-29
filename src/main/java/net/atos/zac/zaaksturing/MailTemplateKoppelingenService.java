@@ -7,6 +7,8 @@ package net.atos.zac.zaaksturing;
 
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 
+import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,21 +23,18 @@ public class MailTemplateKoppelingenService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public MailtemplateKoppeling find(final long id) {
-        return entityManager.find(MailtemplateKoppeling.class, id);
+    public Optional<MailtemplateKoppeling> find(final long id) {
+        final var mailtemplateKoppeling = entityManager.find(MailtemplateKoppeling.class, id);
+        return mailtemplateKoppeling != null ? Optional.of(mailtemplateKoppeling) : Optional.empty();
     }
 
     public void delete(final Long id) {
-        final MailtemplateKoppeling mailtemplateKoppeling = find(id);
-        if (mailtemplateKoppeling != null) {
-            entityManager.remove(mailtemplateKoppeling);
-        }
+        find(id).ifPresent(entityManager::remove);
     }
 
     public MailtemplateKoppeling storeMailtemplate(final MailtemplateKoppeling mailtemplateKoppeling) {
         valideerObject(mailtemplateKoppeling);
-        final MailtemplateKoppeling existing = find(mailtemplateKoppeling.getId());
-        if (existing != null) {
+        if (find(mailtemplateKoppeling.getId()).isPresent()) {
             return entityManager.merge(mailtemplateKoppeling);
         } else {
             entityManager.persist(mailtemplateKoppeling);

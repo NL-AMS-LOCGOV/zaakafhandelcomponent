@@ -43,7 +43,7 @@ public class ConfiguratieRESTService {
     @GET
     @Path("talen/default")
     public RESTTaal readDefaultTaal() {
-        return taalConverter.convert(configuratieService.findDefaultTaal());
+        return configuratieService.findDefaultTaal().map(taalConverter::convert).orElse(null);
     }
 
     @GET

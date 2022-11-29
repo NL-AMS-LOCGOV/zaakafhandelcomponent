@@ -89,7 +89,7 @@ public class SignaleringenRestService {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.ZAAK);
-        return signaleringenService.findSignaleringen(parameters).stream()
+        return signaleringenService.listSignaleringen(parameters).stream()
                 .map(signalering -> zrcClientService.readZaak(UUID.fromString(signalering.getSubject())))
                 .map(restZaakOverzichtConverter::convert)
                 .toList();
@@ -101,7 +101,7 @@ public class SignaleringenRestService {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.TAAK);
-        return signaleringenService.findSignaleringen(parameters).stream()
+        return signaleringenService.listSignaleringen(parameters).stream()
                 .map(signalering -> taskService.readTask(signalering.getSubject()))
                 .map(task -> restTaakConverter.convert(task, true))
                 .toList();
@@ -113,8 +113,9 @@ public class SignaleringenRestService {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.INFORMATIEOBJECT);
-        return signaleringenService.findSignaleringen(parameters).stream()
-                .map(signalering -> drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(signalering.getSubject())))
+        return signaleringenService.listSignaleringen(parameters).stream()
+                .map(signalering -> drcClientService.readEnkelvoudigInformatieobject(
+                        UUID.fromString(signalering.getSubject())))
                 .map(restInformatieobjectConverter::convertToREST)
                 .toList();
     }
@@ -124,7 +125,7 @@ public class SignaleringenRestService {
     public List<RESTSignaleringInstellingen> listUserSignaleringInstellingen() {
         final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get());
         return restSignaleringInstellingenConverter.convert(
-                signaleringenService.listInstellingen(parameters));
+                signaleringenService.listInstellingenInclusiefMogelijke(parameters));
     }
 
     @PUT
@@ -140,7 +141,7 @@ public class SignaleringenRestService {
         final Group group = identityService.readGroup(groupId);
         final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(group);
         return restSignaleringInstellingenConverter.convert(
-                signaleringenService.listInstellingen(parameters));
+                signaleringenService.listInstellingenInclusiefMogelijke(parameters));
     }
 
     @PUT
@@ -156,7 +157,7 @@ public class SignaleringenRestService {
     public List<SignaleringType.Type> listDashboardSignaleringTypen() {
         final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get())
                 .dashboard();
-        return signaleringenService.findInstellingen(parameters).stream()
+        return signaleringenService.listInstellingen(parameters).stream()
                 .map(instellingen -> instellingen.getType().getType())
                 .toList();
     }

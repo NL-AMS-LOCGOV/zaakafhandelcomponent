@@ -6,6 +6,7 @@
 package net.atos.zac.zaaksturing;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -38,16 +39,22 @@ public class ReferentieTabelService {
         if (referentieTabel != null) {
             return referentieTabel;
         } else {
-            throw new RuntimeException(String.format("%s with id=%d not found", ReferentieTabel.class.getSimpleName(), id));
+            throw new RuntimeException("%s with id=%d not found".formatted(ReferentieTabel.class.getSimpleName(), id));
         }
     }
 
-    public ReferentieTabel findReferentieTabel(final String code) {
+    public ReferentieTabel readReferentieTabel(final String code) {
+        return findReferentieTabel(code)
+                .orElseThrow(() -> new RuntimeException(
+                        "%s with code='%s' not found".formatted(ReferentieTabel.class.getSimpleName(), code)));
+    }
+
+    public Optional<ReferentieTabel> findReferentieTabel(final String code) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ReferentieTabel> query = builder.createQuery(ReferentieTabel.class);
         final Root<ReferentieTabel> root = query.from(ReferentieTabel.class);
         query.select(root).where(builder.equal(root.get("code"), code));
         final List<ReferentieTabel> resultList = entityManager.createQuery(query).getResultList();
-        return resultList.isEmpty() ? null : resultList.get(0);
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
     }
 }
