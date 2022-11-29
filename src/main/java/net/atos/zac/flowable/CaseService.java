@@ -23,6 +23,7 @@ import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LI
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -172,10 +173,8 @@ public class CaseService {
      * @param zaakUUID UUID of the zaak for which the caxse should be terminated.
      */
     public void terminateCase(final UUID zaakUUID) {
-        final CaseInstance caseInstance = findOpenCase(zaakUUID);
-        if (caseInstance != null) {
-            cmmnRuntimeService.terminateCaseInstance(caseInstance.getId());
-        }
+        findOpenCase(zaakUUID)
+                .ifPresent(caseInstance -> cmmnRuntimeService.terminateCaseInstance(caseInstance.getId()));
     }
 
     public boolean isOpenCase(final UUID zaakUUID) {
@@ -190,15 +189,17 @@ public class CaseService {
                 .count() > 0;
     }
 
-    CaseInstance findOpenCase(final UUID zaakUUID) {
-        return cmmnRuntimeService.createCaseInstanceQuery()
+    Optional<CaseInstance> findOpenCase(final UUID zaakUUID) {
+        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
+        return caseInstance != null ? Optional.of(caseInstance) : Optional.empty();
     }
 
-    HistoricCaseInstance findClosedCase(final UUID zaakUUID) {
-        return cmmnHistoryService.createHistoricCaseInstanceQuery()
+    Optional<HistoricCaseInstance> findClosedCase(final UUID zaakUUID) {
+        final HistoricCaseInstance historicCaseInstance = cmmnHistoryService.createHistoricCaseInstanceQuery()
                 .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
+        return historicCaseInstance != null ? Optional.of(historicCaseInstance) : Optional.empty();
     }
 }

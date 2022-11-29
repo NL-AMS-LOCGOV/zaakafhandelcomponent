@@ -27,8 +27,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnTaskService;
-import org.flowable.cmmn.api.history.HistoricCaseInstance;
-import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.HumanTask;
 import org.flowable.identitylink.api.IdentityLinkInfo;
@@ -94,12 +92,9 @@ public class TaskService {
     }
 
     public List<Task> listOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
-        if (caseInstance != null) {
-            return listOpenTasksForCase(caseInstance.getId());
-        } else {
-            return Collections.emptyList();
-        }
+        return caseService.findOpenCase(zaakUUID)
+                .map(caseInstance -> listOpenTasksForCase(caseInstance.getId()))
+                .orElse(Collections.emptyList());
     }
 
     public List<HumanTask> listHumanTasks(final String caseDefinitionKey) {
@@ -112,34 +107,28 @@ public class TaskService {
     }
 
     public long countOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
-        if (caseInstance != null) {
-            return cmmnTaskService.createTaskQuery()
-                    .caseInstanceId(caseInstance.getId())
-                    .includeIdentityLinks()
-                    .count();
-        } else {
-            return 0;
-        }
+        return caseService.findOpenCase(zaakUUID)
+                .map(caseInstance -> cmmnTaskService.createTaskQuery()
+                        .caseInstanceId(caseInstance.getId())
+                        .includeIdentityLinks()
+                        .count())
+                .orElse(0L);
     }
 
     private List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
         final List<TaskInfo> tasks = new ArrayList<>();
-        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
-        if (caseInstance != null) {
-            tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
-            tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
-        }
+        caseService.findOpenCase(zaakUUID)
+                .ifPresent(caseInstance -> {
+                    tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
+                    tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
+                });
         return tasks;
     }
 
     private List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
-        final HistoricCaseInstance historicCaseInstance = caseService.findClosedCase(zaakUUID);
-        if (historicCaseInstance != null) {
-            return listClosedTasksForCase(historicCaseInstance.getId());
-        } else {
-            return Collections.emptyList();
-        }
+        return caseService.findClosedCase(zaakUUID)
+                .map(historicCaseInstance -> listClosedTasksForCase(historicCaseInstance.getId()))
+                .orElse(Collections.emptyList());
     }
 
     private List<Task> listOpenTasksForCase(final String caseInstanceId) {
@@ -183,8 +172,9 @@ public class TaskService {
         cmmnTaskService.saveTask(task);
         if (!StringUtils.equals(originalTask.getDescription(), task.getDescription())) {
             final TaskDescriptionChangedData descriptionChangedData =
-                    new TaskDescriptionChangedData(originalTask.getDescription() != null ? originalTask.getDescription() : "",
-                                                   task.getDescription() != null ? task.getDescription() : "");
+                    new TaskDescriptionChangedData(
+                            originalTask.getDescription() != null ? originalTask.getDescription() : "",
+                            task.getDescription() != null ? task.getDescription() : "");
             cmmnHistoryService.createHistoricTaskLogEntryBuilder(originalTask)
                     .type(USER_TASK_DESCRIPTION_CHANGED)
                     .data(FIELD_VISIBILITY_STRATEGY.toJson(descriptionChangedData))
@@ -226,7 +216,8 @@ public class TaskService {
         task.getIdentityLinks().stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                 .map(IdentityLinkInfo::getGroupId)
-                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(task.getId(), currentGroupId, IdentityLinkType.CANDIDATE));
+                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(task.getId(), currentGroupId,
+                                                                                   IdentityLinkType.CANDIDATE));
 
         cmmnTaskService.addGroupIdentityLink(task.getId(), groupId, IdentityLinkType.CANDIDATE);
 

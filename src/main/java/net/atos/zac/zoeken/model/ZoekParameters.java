@@ -5,6 +5,7 @@
 
 package net.atos.zac.zoeken.model;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ZoekParameters {
 
     private EnumMap<DatumVeld, DatumRange> datums = new EnumMap<>(DatumVeld.class);
 
-    private final EnumMap<FilterVeld, List<String>> filters = new EnumMap<>(FilterVeld.class);
+    private final EnumMap<FilterVeld, FilterParameters> filters = new EnumMap<>(FilterVeld.class);
 
     private final HashMap<String, String> filterQueries = new HashMap<>();
 
@@ -34,6 +35,7 @@ public class ZoekParameters {
 
     public ZoekParameters(final ZoekObjectType type) {
         this.type = type;
+        this.getBeschikbareFilters().forEach(filterVeld -> this.addFilter(filterVeld, new FilterParameters(new ArrayList<>(), false)));
     }
 
     public int getRows() {
@@ -77,32 +79,17 @@ public class ZoekParameters {
     }
 
 
-    public Set<FilterVeld> getBeschikbareFilters() {
-        if (type == null) {
-            return FilterVeld.getFacetten();
-        }
-        return switch (type) {
-            case ZAAK -> FilterVeld.getZaakFacetten();
-            case TAAK -> FilterVeld.getTaakFacetten();
-            case DOCUMENT -> FilterVeld.getDocumentFacetten();
-        };
-    }
-
-    public EnumMap<FilterVeld, List<String>> getFilters() {
+    public EnumMap<FilterVeld, FilterParameters> getFilters() {
         return filters;
     }
 
-    public void setFilters(final EnumMap<FilterVeld, List<String>> filters) {
-        this.filters.clear();
-        this.filters.putAll(filters);
-    }
-
-    public void addFilter(FilterVeld veld, List<String> waarde) {
-        this.filters.put(veld, waarde);
-    }
 
     public void addFilter(FilterVeld veld, String waarde) {
-        this.filters.put(veld, List.of(waarde));
+        this.filters.put(veld, new FilterParameters(List.of(waarde), false));
+    }
+
+    public void addFilter(FilterVeld veld, FilterParameters filterParameters) {
+        this.filters.put(veld, filterParameters);
     }
 
     public void addFilterQuery(final String veld, final String waarde) {
@@ -127,5 +114,16 @@ public class ZoekParameters {
 
     public boolean isGlobaalZoeken() {
         return this.type == null;
+    }
+
+    private Set<FilterVeld> getBeschikbareFilters() {
+        if (type == null) {
+            return FilterVeld.getFacetten();
+        }
+        return switch (type) {
+            case ZAAK -> FilterVeld.getZaakFacetten();
+            case TAAK -> FilterVeld.getTaakFacetten();
+            case DOCUMENT -> FilterVeld.getDocumentFacetten();
+        };
     }
 }

@@ -277,7 +277,8 @@ public class DataConverter {
         if (task.getAssignee() != null) {
             taakData.behandelaar = identityService.readUser(task.getAssignee()).getFullName();
         }
-        taakData.data = taskVariablesService.findTaakdata(taskId);
+        taskVariablesService.findTaakdata(taskId)
+                .ifPresent(taakdata -> taakData.data = taakdata);
         return taakData;
     }
 }

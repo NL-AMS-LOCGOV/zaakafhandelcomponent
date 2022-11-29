@@ -9,6 +9,7 @@ import {FilterVeld} from './filter-veld';
 import {SorteerVeld} from './sorteer-veld';
 import {ZoekObjectType} from './zoek-object-type';
 import {DatumRange} from './datum-range';
+import {FilterParameters} from './filter-parameters';
 import {ZoekFilters} from '../../gebruikersvoorkeuren/zoekopdracht/zoekopdracht.component';
 
 export class ZoekParameters implements ZoekFilters {
@@ -19,7 +20,7 @@ export class ZoekParameters implements ZoekFilters {
     alleenAfgeslotenZaken: boolean = false;
     alleenMijnTaken: boolean = false;
     zoeken: Partial<Record<ZoekVeld, string>> = {};
-    filters: Partial<Record<FilterVeld, string[]>> = {};
+    filters: Partial<Record<FilterVeld, FilterParameters>> = {};
     datums: Partial<Record<DatumVeld, DatumRange>> = {};
     sorteerVeld: SorteerVeld;
     sorteerRichting: 'desc' | 'asc' | '';

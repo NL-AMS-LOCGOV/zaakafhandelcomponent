@@ -38,10 +38,10 @@ public class RESTZoekResultaatConverter {
                 new RESTZoekResultaat<>(zoekResultaat.getItems().stream().map(this::convert).toList(), zoekResultaat.getCount());
         restZoekResultaat.filters.putAll(zoekResultaat.getFilters());
 
-        //indien geen resultaten, de huidige filters laten staan
+        // indien geen resultaten, de huidige filters laten staan
         zoekParameters.filters.forEach((filterVeld, filters) -> {
             final List<FilterResultaat> filterResultaten = restZoekResultaat.filters.getOrDefault(filterVeld, new ArrayList<>());
-            filters.forEach(filter -> {
+            filters.waarden().forEach(filter -> {
                 if (filterResultaten.stream().noneMatch(filterResultaat -> filterResultaat.naam().equals(filter))) {
                     filterResultaten.add(new FilterResultaat(filter, 0));
                 }

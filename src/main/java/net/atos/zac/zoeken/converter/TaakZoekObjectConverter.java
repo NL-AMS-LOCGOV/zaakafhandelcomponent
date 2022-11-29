@@ -1,12 +1,10 @@
 package net.atos.zac.zoeken.converter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections4.MapUtils;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
@@ -85,15 +83,17 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
         taakZoekObject.setZaakToelichting(zaak.getToelichting());
 
-        final Map<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
-        if (MapUtils.isNotEmpty(taakdata)) {
-            taakZoekObject.setTaakData(taakdata.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
-        }
+        taskVariablesService.findTaakdata(taskInfo.getId())
+                .map(taakdata -> taakdata.entrySet().stream()
+                        .map(es -> "%s|%s".formatted(es.getKey(), es.getValue()))
+                        .toList())
+                .ifPresent(taakZoekObject::setTaakData);
 
-        final Map<String, String> taakinformatie = taskVariablesService.findTaakinformatie(taskInfo.getId());
-        if (MapUtils.isNotEmpty(taakinformatie)) {
-            taakZoekObject.setTaakInformatie(taakinformatie.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
-        }
+        taskVariablesService.findTaakinformatie(taskInfo.getId())
+                .map(taakinformatie -> taakinformatie.entrySet().stream()
+                        .map(es -> "%s|%s".formatted(es.getKey(), es.getValue()))
+                        .toList())
+                .ifPresent(taakZoekObject::setTaakInformatie);
 
         return taakZoekObject;
     }

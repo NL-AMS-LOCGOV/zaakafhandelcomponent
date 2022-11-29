@@ -5,10 +5,10 @@
 
 package net.atos.zac.app.zoeken.model;
 
-import java.util.List;
 import java.util.Map;
 
 import net.atos.zac.zoeken.model.DatumVeld;
+import net.atos.zac.zoeken.model.FilterParameters;
 import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.SorteerVeld;
 import net.atos.zac.zoeken.model.ZoekVeld;
@@ -20,7 +20,7 @@ public class RESTZoekParameters {
 
     public Map<ZoekVeld, String> zoeken;
 
-    public Map<FilterVeld, List<String>> filters;
+    public Map<FilterVeld, FilterParameters> filters;
 
     public Map<DatumVeld, RESTDatumRange> datums;
 
