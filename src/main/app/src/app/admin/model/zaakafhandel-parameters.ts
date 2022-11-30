@@ -10,6 +10,7 @@ import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
 import {Resultaattype} from '../../zaken/model/resultaattype';
 import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
+import {MailtemplateKoppeling} from './mailtemplate-koppeling';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
@@ -22,6 +23,7 @@ export class ZaakafhandelParameters {
     zaakNietOntvankelijkResultaattype: Resultaattype;
     humanTaskParameters: HumanTaskParameter[];
     userEventListenerParameters: UserEventListenerParameter[];
+    mailtemplateKoppelingen: MailtemplateKoppeling[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];
     intakeMail: ZaakStatusmailOptie;
     afrondenMail: ZaakStatusmailOptie;

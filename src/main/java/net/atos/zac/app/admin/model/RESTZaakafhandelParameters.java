@@ -44,6 +44,8 @@ public class RESTZaakafhandelParameters {
 
     public List<RESTUserEventListenerParameter> userEventListenerParameters = new ArrayList<>();
 
+    public List<RESTMailtemplateKoppeling> mailtemplateKoppelingen = new ArrayList<>();
+
     public List<RESTZaakbeeindigParameter> zaakbeeindigParameters = new ArrayList<>();
 
     public RESTZaakafhandelParameters() {

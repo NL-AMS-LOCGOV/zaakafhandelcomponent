@@ -7,8 +7,6 @@ package net.atos.zac.zaaksturing.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,8 +32,9 @@ public class MailtemplateKoppeling {
     private Long id;
 
     @NotNull
-    @Column(name = "uuid_zaaktype", nullable = false)
-    private UUID zaaktypeUUID;
+    @ManyToOne
+    @JoinColumn(name = "id_zaakafhandelparameters", referencedColumnName = "id_zaakafhandelparameters")
+    private ZaakafhandelParameters zaakafhandelParameters;
 
     @NotNull
     @ManyToOne
@@ -50,19 +49,19 @@ public class MailtemplateKoppeling {
         this.id = id;
     }
 
-    public UUID getZaaktypeUUID() {
-        return zaaktypeUUID;
-    }
-
-    public void setZaaktypeUUID(final UUID zaaktypeUUID) {
-        this.zaaktypeUUID = zaaktypeUUID;
-    }
-
     public MailTemplate getMailTemplate() {
         return mailTemplate;
     }
 
     public void setMailTemplate(final MailTemplate mailTemplate) {
         this.mailTemplate = mailTemplate;
+    }
+
+    public ZaakafhandelParameters getZaakafhandelParameters() {
+        return zaakafhandelParameters;
+    }
+
+    public void setZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
+        this.zaakafhandelParameters = zaakafhandelParameters;
     }
 }

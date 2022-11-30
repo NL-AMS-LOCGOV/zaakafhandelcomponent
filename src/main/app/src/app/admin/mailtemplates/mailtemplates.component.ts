@@ -14,6 +14,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '../../core/service/util.service';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
+import {MailtemplateKoppelingService} from '../mailtemplate-koppeling.service';
+import {MailtemplateKoppeling} from '../model/mailtemplate-koppeling';
+import {forkJoin} from 'rxjs';
 
 @Component({
     templateUrl: './mailtemplates.component.html',
@@ -27,12 +30,14 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     isLoadingResults: boolean = false;
     columns: string[] = ['mailTemplateNaam', 'mail', 'defaultMailtemplate', 'id'];
     dataSource: MatTableDataSource<Mailtemplate> = new MatTableDataSource<Mailtemplate>();
+    mailKoppelingen: MailtemplateKoppeling[];
 
     constructor(private identityService: IdentityService,
-                private service: MailtemplateBeheerService,
+                private mailtemplateBeheerService: MailtemplateBeheerService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
-                public utilService: UtilService) {
+                public utilService: UtilService,
+                private mailtemplateKoppelingService: MailtemplateKoppelingService) {
         super(utilService);
     }
 
@@ -43,17 +48,31 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
 
     laadMailtemplates(): void {
         this.isLoadingResults = true;
-        this.service.listMailtemplates().subscribe(mailtemplates => {
+        forkJoin([
+            this.mailtemplateBeheerService.listMailtemplates(),
+            this.mailtemplateKoppelingService.listMailtemplateKoppelingen()
+        ]).subscribe(([mailtemplates, koppelingen]) => {
             this.dataSource.data = mailtemplates;
+            this.mailKoppelingen = koppelingen;
             this.isLoadingResults = false;
         });
+    }
+
+    isDisabled(mailtemplate: Mailtemplate): boolean {
+        return this.getMailtemplateKoppeling(mailtemplate) != null;
+    }
+
+    getDisabledTitle(mailtemplate: Mailtemplate): string {
+        return this.translate.instant('msg.mailtemplate.verwijderen.disabled',
+            {zaaktype: this.getMailtemplateKoppeling(mailtemplate)
+                    .zaakafhandelParameters.zaaktype.omschrijving});
     }
 
     verwijderMailtemplate(mailtemplate: Mailtemplate): void {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.mailtemplate.verwijderen.bevestigen'),
-                this.service.deleteMailtemplate(mailtemplate.id)
+                this.mailtemplateBeheerService.deleteMailtemplate(mailtemplate.id)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -61,5 +80,9 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
                 this.laadMailtemplates();
             }
         });
+    }
+
+    private getMailtemplateKoppeling(mailtemplate: Mailtemplate) {
+        return this.mailKoppelingen.find(koppeling => koppeling.mailtemplate.id === mailtemplate.id);
     }
 }

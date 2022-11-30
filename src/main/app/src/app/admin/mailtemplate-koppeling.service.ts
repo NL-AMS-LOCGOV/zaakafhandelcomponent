@@ -8,44 +8,38 @@ import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {Mailtemplate} from './model/mailtemplate';
+import {MailtemplateKoppeling} from './model/mailtemplate-koppeling';
 
 @Injectable({
     providedIn: 'root'
 })
-export class MailtemplateBeheerService {
+export class MailtemplateKoppelingService {
 
-    private basepath: string = '/rest/beheer/mailtemplates';
+    private basepath: string = '/rest/beheer/mailtemplatekoppeling';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    readMailtemplate(id: string): Observable<Mailtemplate> {
-        return this.http.get<Mailtemplate[]>(`${this.basepath}/${id}`).pipe(
+    readMailtemplateKoppeling(id: string): Observable<MailtemplateKoppeling> {
+        return this.http.get<MailtemplateKoppeling[]>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    listMailtemplates(): Observable<Mailtemplate[]> {
-        return this.http.get<Mailtemplate[]>(`${this.basepath}`).pipe(
+    listMailtemplateKoppelingen(): Observable<MailtemplateKoppeling[]> {
+        return this.http.get<MailtemplateKoppeling[]>(`${this.basepath}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    listKoppelbareMailtemplates(): Observable<Mailtemplate[]> {
-        return this.http.get<Mailtemplate[]>(`${this.basepath}/koppelbaar`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
-    deleteMailtemplate(id: number): Observable<void> {
+    deleteMailtemplateKoppeling(id: number): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    persistMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
-        return this.http.put<Mailtemplate>(`${this.basepath}`, mailtemplate).pipe(
+    storeMailtemplateKoppeling(mailtemplateKoppeling: MailtemplateKoppeling): Observable<MailtemplateKoppeling> {
+        return this.http.put<MailtemplateKoppeling>(`${this.basepath}`, mailtemplateKoppeling).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

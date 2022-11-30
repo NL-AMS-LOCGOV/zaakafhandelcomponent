@@ -37,6 +37,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
@@ -84,6 +85,7 @@ public class ZaakafhandelParameterBeheerService {
         valideerObject(zaakafhandelParameters);
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.getUserEventListenerParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getMailtemplateKoppelingen().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.setCreatiedatum(ZonedDateTime.now());
         entityManager.persist(zaakafhandelParameters);
         return zaakafhandelParameters;
@@ -153,6 +155,8 @@ public class ZaakafhandelParameterBeheerService {
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapZaakbeeindigGegevens(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters, zaaktype);
+            mapMailtemplateKoppelingen(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
+
             createZaakafhandelParameters(nieuweZaakafhandelParameters);
         }
     }
@@ -237,6 +241,18 @@ public class ZaakafhandelParameterBeheerService {
             }
         });
         nieuweZaakafhandelParameters.setZaakbeeindigParameters(zaakbeeindigParametersCollection);
+    }
+
+    private void mapMailtemplateKoppelingen(final ZaakafhandelParameters vorigeZaakafhandelparameters,
+            final ZaakafhandelParameters nieuweZaakafhandelParameters) {
+        final HashSet<MailtemplateKoppeling> mailtemplateKoppelingen = new HashSet<>();
+        vorigeZaakafhandelparameters.getMailtemplateKoppelingen().forEach(mailtemplateKoppeling -> {
+            final MailtemplateKoppeling nieuweMailtemplateKoppeling = new MailtemplateKoppeling();
+            nieuweMailtemplateKoppeling.setMailTemplate(mailtemplateKoppeling.getMailTemplate());
+            nieuweMailtemplateKoppeling.setZaakafhandelParameters(nieuweZaakafhandelParameters);
+            mailtemplateKoppelingen.add(nieuweMailtemplateKoppeling);
+        });
+        nieuweZaakafhandelParameters.setMailtemplateKoppelingen(mailtemplateKoppelingen);
     }
 
     private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen, final UUID vorigResultaattypeUUID) {

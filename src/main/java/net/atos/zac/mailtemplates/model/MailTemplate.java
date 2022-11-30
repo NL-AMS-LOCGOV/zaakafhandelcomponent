@@ -29,6 +29,11 @@ public class MailTemplate {
      */
     public static final String MAIL = "mail";
 
+    /**
+     * Naam van property: {@link MailTemplate#defaultMailtemplate}
+     */
+    public static final String DEFAULT_MAILTEMPLATE = "defaultMailtemplate";
+
     @Id
     @GeneratedValue(generator = "sq_mail_template", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_mail_template")

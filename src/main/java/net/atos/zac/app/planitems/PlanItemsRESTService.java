@@ -47,6 +47,7 @@ import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.IndexeerService;
 
@@ -126,9 +127,10 @@ public class PlanItemsRESTService {
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final HumanTaskParameters humanTaskParameters =
-                zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()))
-                        .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
+        final ZaakafhandelParameters zaakafhandelParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameters
+                .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
@@ -136,9 +138,12 @@ public class PlanItemsRESTService {
             if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
                 bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
             }
+            final Mail mail = Mail.valueOf(humanTaskData.taakStuurGegevens.mail);
 
-            final MailTemplate mailTemplate =
-                    mailTemplateService.readMailtemplate(Mail.valueOf(humanTaskData.taakStuurGegevens.mail));
+            final MailTemplate mailTemplate = zaakafhandelParameters.getMailtemplateKoppelingen().stream()
+                    .map(MailtemplateKoppeling::getMailTemplate)
+                    .filter(template -> template.getMail().equals(mail))
+                    .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
 
             humanTaskData.taakdata.put(TAAKDATA_BODY,
                                        mailService.sendMail(

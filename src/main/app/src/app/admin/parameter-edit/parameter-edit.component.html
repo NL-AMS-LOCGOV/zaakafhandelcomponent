@@ -204,6 +204,40 @@
                 </ng-template>
             </mat-step>
 
+            <mat-step [stepControl]="mailtemplateKoppelingenFormGroup">
+                <ng-template matStepLabel>{{"gegevens.mailtemplate.koppelingen" | translate}}</ng-template>
+                <ng-template matStepContent>
+                    <form [formGroup]="mailtemplateKoppelingenFormGroup" fxLayout="column">
+                        <mat-accordion>
+                            <mat-expansion-panel [formGroupName]="mailtemplate" fxLayout="column"
+                                                 *ngFor="let mailtemplate of mailtemplateKoppelingen">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{'mail.' + mailtemplate | translate}}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div fxLayout="row wrap">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                                        <mat-label>{{'title.mailtemplate' | translate}}</mat-label>
+                                        <mat-select placeholder="{{'mailtemplates.-kies-' | translate}}"
+                                                    [formControl]="getMailtemplateKoppelingControl(mailtemplate, 'mailtemplate')" [compareWith]="compareObject">
+                                            <mat-option *ngFor="let template of getBeschikbareMailtemplates(mailtemplate)"
+                                                        [value]="template.id">{{ template.mailTemplateNaam }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                        <div class="button-group" fxLayout="row wrap">
+                            <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                            <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
+                                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                        </div>
+                    </form>
+                </ng-template>
+            </mat-step>
+
             <mat-step [stepControl]="zaakbeeindigFormGroup">
                 <ng-template matStepLabel>{{"gegevens.beeindiging" | translate}}</ng-template>
                 <ng-template matStepContent>
