@@ -76,7 +76,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .label(this.fields.NAAM)
         .validators(Validators.required)
         .build();
-        this.mailFormField = new SelectFormFieldBuilder(mail ? mail.label : mail)
+        this.mailFormField = new SelectFormFieldBuilder(mail ? mail.label : null)
         .id(this.fields.MAIL)
         .label(this.fields.MAIL)
         .readonly(mail != null)
@@ -87,7 +87,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         this.onderwerpFormField = new HtmlEditorFormFieldBuilder(this.template.onderwerp)
         .id(this.fields.ONDERWERP)
         .label(this.fields.ONDERWERP)
-        .variabelen(this.template.variabelen? this.template.variabelen :
+        .variabelen(this.template.variabelen ? this.template.variabelen :
             MailtemplateVariabeleUtil.getDefaultVariabelen())
         .emptyToolbar()
         .validators(Validators.required)
@@ -96,7 +96,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         this.bodyFormField = new HtmlEditorFormFieldBuilder(this.template.body)
         .id(this.fields.BODY)
         .label(this.fields.BODY)
-        .variabelen(this.template.variabelen? this.template.variabelen :
+        .variabelen(this.template.variabelen ? this.template.variabelen :
             MailtemplateVariabeleUtil.getDefaultVariabelen())
         .validators(Validators.required)
         .maxlength(1000)
@@ -111,6 +111,9 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         this.template.defaultMailtemplate = this.defaultMailtemplateFormField.formControl.value ?
             this.defaultMailtemplateFormField.formControl.value : false;
         this.template.mailTemplateNaam = this.naamFormField.formControl.value;
+        if (!this.template.mail) {
+            this.template.mail = this.mailFormField.formControl.value.value;
+        }
         this.template.mail = this.template.mail ? this.template.mail : this.mailFormField.formControl.value.value;
         this.template.onderwerp = this.onderwerpFormField.formControl.value;
         this.template.body = this.bodyFormField.formControl.value;
