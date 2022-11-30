@@ -28,7 +28,8 @@ const routes: Routes = [
             {path: 'referentietabellen/:id', component: ReferentieTabelComponent, resolve: {tabel: ReferentieTabelResolver}},
             {path: 'check', component: InrichtingscheckComponent},
             {path: 'mailtemplates', component: MailtemplatesComponent},
-            {path: 'mailtemplates/:id', component: MailtemplateComponent, resolve: {template: MailtemplateResolver}}
+            {path: 'mailtemplate/:id', component: MailtemplateComponent, resolve: {template: MailtemplateResolver}},
+            {path: 'mailtemplate', component: MailtemplateComponent}
         ]
     }
 ];

@@ -37,7 +37,7 @@ public class MailTemplateService {
         find(id).ifPresent(mailTemplate -> entityManager.remove(mailTemplate));
     }
 
-    public MailTemplate persistMailtemplate(final MailTemplate mailTemplate) {
+    public MailTemplate storeMailtemplate(final MailTemplate mailTemplate) {
         valideerObject(mailTemplate);
         if (find(mailTemplate.getId()).isPresent()) {
             return entityManager.merge(mailTemplate);

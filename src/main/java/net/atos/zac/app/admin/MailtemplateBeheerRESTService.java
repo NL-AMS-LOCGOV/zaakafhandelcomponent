@@ -5,11 +5,9 @@
 
 package net.atos.zac.app.admin;
 
-import net.atos.zac.app.admin.converter.RESTMailtemplateConverter;
-import net.atos.zac.app.admin.model.RESTMailtemplate;
-import net.atos.zac.mailtemplates.MailTemplateService;
-import net.atos.zac.mailtemplates.model.MailTemplate;
-import net.atos.zac.policy.PolicyService;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,9 +20,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import java.util.List;
-
-import static net.atos.zac.policy.PolicyService.assertPolicy;
+import net.atos.zac.app.admin.converter.RESTMailtemplateConverter;
+import net.atos.zac.app.admin.model.RESTMailtemplate;
+import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.MailTemplate;
+import net.atos.zac.policy.PolicyService;
 
 @Singleton
 @Path("beheer/mailtemplates")
@@ -65,11 +65,10 @@ public class MailtemplateBeheerRESTService {
     }
 
     @PUT
-    @Path("{id}")
-    public RESTMailtemplate persistMailtemplate(@PathParam("id") final long id,
-            final RESTMailtemplate mailtemplate) {
+    @Path("")
+    public RESTMailtemplate persistMailtemplate(final RESTMailtemplate mailtemplate) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restMailtemplateConverter.convert(
-                mailTemplateService.persistMailtemplate(restMailtemplateConverter.convert(mailtemplate)));
+                mailTemplateService.storeMailtemplate(restMailtemplateConverter.convert(mailtemplate)));
     }
 }

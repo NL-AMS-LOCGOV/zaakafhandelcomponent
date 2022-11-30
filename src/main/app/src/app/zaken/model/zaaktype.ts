@@ -20,5 +20,6 @@ export class Zaaktype {
     vertrouwelijkheidaanduiding: Vertrouwelijkheidaanduiding;
     opschortingMogelijk: boolean;
     verlengingMogelijk: boolean;
+    verlengingstermijn: number;
     zaakafhandelparameters: ZaakafhandelParameters;
 }

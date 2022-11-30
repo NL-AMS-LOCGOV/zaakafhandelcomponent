@@ -39,5 +39,7 @@ public class RESTZaaktype {
 
     public boolean verlengingMogelijk;
 
+    public Integer verlengingstermijn;
+
     public RESTZaakafhandelParameters zaakafhandelparameters;
 }
