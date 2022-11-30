@@ -39,7 +39,7 @@ export class MailtemplateBeheerService {
     }
 
     persistMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
-        return this.http.put<Mailtemplate>(`${this.basepath}/${mailtemplate.id}`, mailtemplate).pipe(
+        return this.http.put<Mailtemplate>(`${this.basepath}`, mailtemplate).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
