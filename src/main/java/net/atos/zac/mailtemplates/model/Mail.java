@@ -6,7 +6,9 @@
 package net.atos.zac.mailtemplates.model;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public enum Mail {
 
@@ -31,5 +33,12 @@ public enum Mail {
 
     public Set<MailTemplateVariabelen> getVariabelen() {
         return variabelen;
+    }
+
+    public static class MailUtil {
+        public static List<Mail> getKoppelbareMails() {
+            return Stream.of(ZAAK_ONTVANKELIJK, ZAAK_NIET_ONTVANKELIJK, ZAAK_AFGEHANDELD, PROCES_AANVULLENDE_INFORMATIE,
+                             PROCES_ADVIES, PROCES_ONTVANGSTBEVESTIGING).toList();
+        }
     }
 }
