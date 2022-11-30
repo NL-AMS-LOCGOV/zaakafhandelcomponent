@@ -29,18 +29,18 @@ public class MailTemplateService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public Optional<MailTemplate> find(final long id) {
+    public Optional<MailTemplate> findMailtemplate(final long id) {
         final var mailTemplate = entityManager.find(MailTemplate.class, id);
         return mailTemplate != null ? Optional.of(mailTemplate) : Optional.empty();
     }
 
     public void delete(final Long id) {
-        find(id).ifPresent(mailTemplate -> entityManager.remove(mailTemplate));
+        findMailtemplate(id).ifPresent(mailTemplate -> entityManager.remove(mailTemplate));
     }
 
     public MailTemplate storeMailtemplate(final MailTemplate mailTemplate) {
         valideerObject(mailTemplate);
-        if (mailTemplate.getId() != null && find(mailTemplate.getId()).isPresent()) {
+        if (mailTemplate.getId() != null && findMailtemplate(mailTemplate.getId()).isPresent()) {
             return entityManager.merge(mailTemplate);
         } else {
             entityManager.persist(mailTemplate);
@@ -92,7 +92,7 @@ public class MailTemplateService {
                 net.atos.zac.mailtemplates.model.MailTemplate.class);
         final Root<net.atos.zac.mailtemplates.model.MailTemplate> root = query.from(
                 net.atos.zac.mailtemplates.model.MailTemplate.class);
-        query.where(root.get(MailTemplate.MAIL).in(Mail.MailUtil.getKoppelbareMails()));
+        query.where(root.get(MailTemplate.MAIL).in(Mail.getKoppelbareMails()));
 
         return entityManager.createQuery(query).getResultList();
     }

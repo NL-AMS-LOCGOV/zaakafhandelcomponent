@@ -35,10 +35,8 @@ public enum Mail {
         return variabelen;
     }
 
-    public static class MailUtil {
-        public static List<Mail> getKoppelbareMails() {
-            return Stream.of(ZAAK_ONTVANKELIJK, ZAAK_NIET_ONTVANKELIJK, ZAAK_AFGEHANDELD, PROCES_AANVULLENDE_INFORMATIE,
-                             PROCES_ADVIES, PROCES_ONTVANGSTBEVESTIGING).toList();
-        }
+    public static List<Mail> getKoppelbareMails() {
+        return Stream.of(ZAAK_ONTVANKELIJK, ZAAK_NIET_ONTVANKELIJK, ZAAK_AFGEHANDELD, PROCES_AANVULLENDE_INFORMATIE,
+                         PROCES_ADVIES, PROCES_ONTVANGSTBEVESTIGING).toList();
     }
 }

@@ -52,7 +52,7 @@ public class MailtemplateBeheerRESTService {
     public List<RESTMailtemplate> listMailtemplates() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         final List<MailTemplate> mailTemplates = mailTemplateService.listMailtemplates();
-        return mailTemplates.stream().map(mailtemplate -> restMailtemplateConverter.convert(mailtemplate)).toList();
+        return mailTemplates.stream().map(restMailtemplateConverter::convert).toList();
     }
 
     @GET
@@ -60,7 +60,7 @@ public class MailtemplateBeheerRESTService {
     public List<RESTMailtemplate> listkoppelbareMailtemplates() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         final List<MailTemplate> mailTemplates = mailTemplateService.listKoppelbareMailtemplates();
-        return mailTemplates.stream().map(mailtemplate -> restMailtemplateConverter.convert(mailtemplate)).toList();
+        return mailTemplates.stream().map(restMailtemplateConverter::convert).toList();
     }
 
     @DELETE

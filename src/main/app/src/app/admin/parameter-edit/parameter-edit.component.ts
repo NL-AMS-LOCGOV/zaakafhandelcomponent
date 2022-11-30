@@ -33,7 +33,7 @@ import {FormulierDefinitie} from '../model/formulier-definitie';
 import {HumanTaskReferentieTabel} from '../model/human-task-referentie-tabel';
 import {FormulierVeldDefinitie} from '../model/formulier-veld-definitie';
 import { MailtemplateKoppeling } from '../model/mailtemplate-koppeling';
-import {MailtemplateKoppelingEnum, MailtemplateKoppelingEnumUtil} from '../model/mailtemplate-koppeling-enum';
+import {MailtemplateKoppelingMail, MailtemplateKoppelingMailUtil} from '../model/mailtemplate-koppeling-mail';
 import {Mailtemplate} from '../model/mailtemplate';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 
@@ -51,8 +51,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     userEventListenerParameters: UserEventListenerParameter[] = [];
     zaakbeeindigParameters: ZaakbeeindigParameter[] = [];
     selection = new SelectionModel<ZaakbeeindigParameter>(true);
-    mailtemplateKoppelingen: MailtemplateKoppelingEnum[] =
-        MailtemplateKoppelingEnumUtil.getBeschikbareMailtemplateKoppelingen();
+    mailtemplateKoppelingen: MailtemplateKoppelingMail[] =
+        MailtemplateKoppelingMailUtil.getBeschikbareMailtemplateKoppelingen();
 
     algemeenFormGroup: FormGroup;
     humanTasksFormGroup: FormGroup;
@@ -144,7 +144,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         return formGroup.get(field) as FormControl;
     }
 
-    getMailtemplateKoppelingControl(koppeling: MailtemplateKoppelingEnum, field: string): FormControl {
+    getMailtemplateKoppelingControl(koppeling: MailtemplateKoppelingMail, field: string): FormControl {
         const formGroup = this.mailtemplateKoppelingenFormGroup.get(koppeling) as FormGroup;
         return formGroup.get(field) as FormControl;
     }
@@ -372,7 +372,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
     }
 
-    getBeschikbareMailtemplates(mailtemplate: MailtemplateKoppelingEnum): any {
+    getBeschikbareMailtemplates(mailtemplate: MailtemplateKoppelingMail): any {
         return this.mailtemplates.filter(template => template.mail === mailtemplate);
     }
 }

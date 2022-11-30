@@ -34,11 +34,12 @@ public class RESTMailtemplateKoppelingConverter {
         return mailtemplateKoppeling;
     }
 
-    public List<RESTMailtemplateKoppeling> convert(final Set<MailtemplateKoppeling> mailtemplateKoppelingList) {
-        return mailtemplateKoppelingList.stream().map(this::convert).toList();
+    public List<RESTMailtemplateKoppeling> convert(final Set<MailtemplateKoppeling> mailtemplateKoppelingen) {
+        return mailtemplateKoppelingen.stream().map(this::convert).toList();
     }
 
-    public List<MailtemplateKoppeling> convertRESTmailtemplateKoppelingen(final List<RESTMailtemplateKoppeling> restMailtemplateKoppelingList) {
-        return restMailtemplateKoppelingList.stream().map(this::convert).toList();
+    public List<MailtemplateKoppeling> convertRESTmailtemplateKoppelingen(
+            final List<RESTMailtemplateKoppeling> restMailtemplateKoppelingen) {
+        return restMailtemplateKoppelingen.stream().map(this::convert).toList();
     }
 }

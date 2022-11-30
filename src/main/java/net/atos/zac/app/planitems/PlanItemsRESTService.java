@@ -12,7 +12,6 @@ import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -140,13 +139,11 @@ public class PlanItemsRESTService {
                 bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
             }
             final Mail mail = Mail.valueOf(humanTaskData.taakStuurGegevens.mail);
-            final Optional<MailtemplateKoppeling> mailtemplateKoppeling =
-                    zaakafhandelParameters.getMailtemplateKoppelingen().stream()
-                            .filter(koppeling -> koppeling.getMailTemplate().getMail().equals(mail))
-                            .findFirst();
 
-            final MailTemplate mailTemplate = mailtemplateKoppeling.isPresent() ?
-                    mailtemplateKoppeling.get().getMailTemplate() : mailTemplateService.readMailtemplate(mail);
+            final MailTemplate mailTemplate = zaakafhandelParameters.getMailtemplateKoppelingen().stream()
+                    .map(MailtemplateKoppeling::getMailTemplate)
+                    .filter(template -> template.getMail().equals(mail))
+                    .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
 
             humanTaskData.taakdata.put(TAAKDATA_BODY,
                                        mailService.sendMail(

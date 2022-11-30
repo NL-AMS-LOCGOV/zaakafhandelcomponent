@@ -33,7 +33,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     mailKoppelingen: MailtemplateKoppeling[];
 
     constructor(private identityService: IdentityService,
-                private service: MailtemplateBeheerService,
+                private mailtemplateBeheerService: MailtemplateBeheerService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
                 public utilService: UtilService,
@@ -49,7 +49,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     laadMailtemplates(): void {
         this.isLoadingResults = true;
         forkJoin([
-            this.service.listMailtemplates(),
+            this.mailtemplateBeheerService.listMailtemplates(),
             this.mailtemplateKoppelingService.listMailtemplateKoppelingen()
         ]).subscribe(([mailtemplates, koppelingen]) => {
             this.dataSource.data = mailtemplates;
@@ -72,7 +72,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.mailtemplate.verwijderen.bevestigen'),
-                this.service.deleteMailtemplate(mailtemplate.id)
+                this.mailtemplateBeheerService.deleteMailtemplate(mailtemplate.id)
             )
         }).afterClosed().subscribe(result => {
             if (result) {

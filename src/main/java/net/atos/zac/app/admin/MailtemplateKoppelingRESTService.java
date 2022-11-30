@@ -75,7 +75,7 @@ public class MailtemplateKoppelingRESTService {
 
     @PUT
     @Path("")
-    public RESTMailtemplateKoppeling persistMailtemplateKoppeling(
+    public RESTMailtemplateKoppeling storeMailtemplateKoppeling(
             final RESTMailtemplateKoppeling mailtemplateKoppeling) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restMailtemplateKoppelingConverter.convert(
