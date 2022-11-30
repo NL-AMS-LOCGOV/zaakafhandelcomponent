@@ -3,8 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field appearance="fill" class="full-width">
-
+<mat-form-field appearance="fill" class="full-width" [class]="data.styleClass">
     <button *ngFor="let icon of data.icons"
             mat-icon-button type="button" matSuffix
             title="{{icon.title | translate}}"

@@ -104,6 +104,7 @@ export class ZaakCreateComponent implements OnInit {
         this.medewerkerGroepFormField = this.getMedewerkerGroupFormField();
 
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
+                                                         .styleClass('form-field-not-disabled-view')
                                                          .icon(this.initiatorToevoegenIcon)
                                                          .label('initiator')
                                                          .build();
@@ -128,6 +129,7 @@ export class ZaakCreateComponent implements OnInit {
                                                           .build();
 
         this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie')
+                                                       .styleClass('form-field-not-disabled-view')
                                                        .icon(this.locatieToevoegenIcon)
                                                        .label('locatie')
                                                        .build();
