@@ -8,6 +8,7 @@ package net.atos.zac.app.ontkoppeldedocumenten;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -90,17 +91,19 @@ public class OntkoppeldeDocumentenRESTService {
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
         assertPolicy(policyService.readWerklijstRechten().getDocumentenOntkoppeldVerwijderen());
-        final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
-        if (ontkoppeldDocument == null) {
+        final Optional<OntkoppeldDocument> ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
+        if (ontkoppeldDocument.isEmpty()) {
             return; // al verwijderd
         }
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
-        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
+                drcClientService.readEnkelvoudigInformatieobject(ontkoppeldDocument.get().getDocumentUUID());
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(
+                enkelvoudigInformatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
             throw new IllegalStateException(String.format("Informatieobject is gekoppeld aan zaak '%s'", zaakUuid));
         }
-        drcClientService.deleteEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
-        ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
+        drcClientService.deleteEnkelvoudigInformatieobject(ontkoppeldDocument.get().getDocumentUUID());
+        ontkoppeldeDocumentenService.delete(ontkoppeldDocument.get().getId());
     }
 }

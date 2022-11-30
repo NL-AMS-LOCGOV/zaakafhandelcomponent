@@ -33,7 +33,7 @@ public class RESTHumanTaskReferentieTabelConverter {
     public RESTHumanTaskReferentieTabel convertDefault(final FormulierVeldDefinitie veldDefinitie) {
         final RESTHumanTaskReferentieTabel referentieTabel = new RESTHumanTaskReferentieTabel(veldDefinitie);
         referentieTabel.tabel = restReferentieTabelConverter.convert(
-                referentieTabelService.findReferentieTabel(veldDefinitie.getDefaultTabel().name()), false);
+                referentieTabelService.readReferentieTabel(veldDefinitie.getDefaultTabel().name()), false);
         return referentieTabel;
     }
 

@@ -36,8 +36,4 @@ public class ZaakafhandelParameterService {
 
     @CacheRemove(cacheName = ZAC_ZAAKAFHANDELPARAMETERS_MANAGED)
     public void cacheRemoveZaakafhandelParameters(final UUID zaaktypeUUID) {}
-
-    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
-        return beheerService.findZaaktypeUUIDByProductaanvraagType(productaanvraagType);
-    }
 }

@@ -1,6 +1,7 @@
 package net.atos.zac.enkelvoudiginformatieobject;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,25 +30,34 @@ public class EnkelvoudigInformatieObjectLockService {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieobjectLock = new EnkelvoudigInformatieObjectLock();
         enkelvoudigInformatieobjectLock.setEnkelvoudiginformatieobjectUUID(enkelvoudiginformatieobejctUUID);
         enkelvoudigInformatieobjectLock.setUserId(idUser);
-        enkelvoudigInformatieobjectLock.setLock(drcClientService.lockEnkelvoudigInformatieobject(enkelvoudiginformatieobejctUUID));
+        enkelvoudigInformatieobjectLock.setLock(
+                drcClientService.lockEnkelvoudigInformatieobject(enkelvoudiginformatieobejctUUID));
         entityManager.persist(enkelvoudigInformatieobjectLock);
         return enkelvoudigInformatieobjectLock;
     }
 
-    public EnkelvoudigInformatieObjectLock findLock(final UUID enkelvoudiginformatieobjectUUID) {
+    public Optional<EnkelvoudigInformatieObjectLock> findLock(final UUID enkelvoudiginformatieobjectUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<EnkelvoudigInformatieObjectLock> query = builder.createQuery(EnkelvoudigInformatieObjectLock.class);
+        final CriteriaQuery<EnkelvoudigInformatieObjectLock> query = builder.createQuery(
+                EnkelvoudigInformatieObjectLock.class);
         final Root<EnkelvoudigInformatieObjectLock> root = query.from(EnkelvoudigInformatieObjectLock.class);
-        query.select(root).where(builder.equal(root.get("enkelvoudiginformatieobjectUUID"), enkelvoudiginformatieobjectUUID));
+        query.select(root)
+                .where(builder.equal(root.get("enkelvoudiginformatieobjectUUID"), enkelvoudiginformatieobjectUUID));
         final List<EnkelvoudigInformatieObjectLock> resultList = entityManager.createQuery(query).getResultList();
-        return resultList.isEmpty() ? null : resultList.get(0);
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
+    }
+
+    public EnkelvoudigInformatieObjectLock readLock(final UUID enkelvoudiginformatieobjectUUID) {
+        return findLock(enkelvoudiginformatieobjectUUID).orElseThrow(() -> new RuntimeException(
+                "Lock for EnkelvoudigInformatieObject with uuid '%s' not found".formatted(
+                        enkelvoudiginformatieobjectUUID)));
     }
 
     public void deleteLock(final UUID enkelvoudigInformatieObjectUUID) {
-        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock = findLock(enkelvoudigInformatieObjectUUID);
-        if (enkelvoudigInformatieObjectLock != null) {
-            drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID, enkelvoudigInformatieObjectLock.getLock());
-            entityManager.remove(enkelvoudigInformatieObjectLock);
-        }
+        findLock(enkelvoudigInformatieObjectUUID)
+                .ifPresent(lock -> {
+                    drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID, lock.getLock());
+                    entityManager.remove(lock);
+                });
     }
 }

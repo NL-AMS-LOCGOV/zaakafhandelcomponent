@@ -57,8 +57,9 @@ public class GebruikersvoorkeurenService {
         return zoekopdracht;
     }
 
-    public Zoekopdracht findZoekopdracht(final long id) {
-        return entityManager.find(Zoekopdracht.class, id);
+    public Optional<Zoekopdracht> findZoekopdracht(final long id) {
+        final var zoekopdracht = entityManager.find(Zoekopdracht.class, id);
+        return zoekopdracht != null ? Optional.of(zoekopdracht) : Optional.empty();
     }
 
     public List<Zoekopdracht> listZoekopdrachten(final ZoekopdrachtListParameters listParameters) {
@@ -92,10 +93,7 @@ public class GebruikersvoorkeurenService {
     }
 
     public void deleteZoekopdracht(final Long id) {
-        final Zoekopdracht zoekOpdracht = findZoekopdracht(id);
-        if (zoekOpdracht != null) {
-            entityManager.remove(zoekOpdracht);
-        }
+        findZoekopdracht(id).ifPresent(entityManager::remove);
     }
 
     public void setActief(final Zoekopdracht zoekopdracht) {

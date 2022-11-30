@@ -8,6 +8,7 @@ package net.atos.zac.mailtemplates;
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -27,37 +28,38 @@ public class MailTemplateService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public MailTemplate find(final long id) {
-        return entityManager.find(MailTemplate.class, id);
+    public Optional<MailTemplate> find(final long id) {
+        final var mailTemplate = entityManager.find(MailTemplate.class, id);
+        return mailTemplate != null ? Optional.of(mailTemplate) : Optional.empty();
     }
 
     public void delete(final Long id) {
-        final MailTemplate mailTemplate = find(id);
-        if (mailTemplate != null) {
-            entityManager.remove(mailTemplate);
-        }
+        find(id).ifPresent(mailTemplate -> entityManager.remove(mailTemplate));
     }
 
     public MailTemplate storeMailtemplate(final MailTemplate mailTemplate) {
         valideerObject(mailTemplate);
-        if (mailTemplate.getId() != null) {
-            final MailTemplate existing = find(mailTemplate.getId());
-            if (existing != null) {
-                return entityManager.merge(mailTemplate);
-            }
+        if (find(mailTemplate.getId()).isPresent()) {
+            return entityManager.merge(mailTemplate);
+        } else {
+            entityManager.persist(mailTemplate);
+            return mailTemplate;
         }
-
-        entityManager.persist(mailTemplate);
-        return mailTemplate;
     }
 
-    public MailTemplate findMailtemplate(final Mail mail) {
+    public Optional<MailTemplate> findMailtemplate(final Mail mail) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<MailTemplate> query = builder.createQuery(MailTemplate.class);
         final Root<MailTemplate> root = query.from(MailTemplate.class);
         query.select(root).where(builder.equal(root.get(MailTemplate.MAIL), mail));
         final List<MailTemplate> resultList = entityManager.createQuery(query).getResultList();
-        return resultList.isEmpty() ? null : resultList.get(0);
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
+    }
+
+    public MailTemplate readMailtemplate(final Mail mail) {
+        return findMailtemplate(mail)
+                .orElseThrow(() -> new RuntimeException(
+                        "%s for '%s' not found".formatted(MailTemplate.class.getSimpleName(), mail)));
     }
 
     public MailTemplate readMailtemplate(final long id) {
@@ -65,7 +67,7 @@ public class MailTemplateService {
         if (mailTemplate != null) {
             return mailTemplate;
         } else {
-            throw new RuntimeException(String.format("%s with id=%d not found", MailTemplate.class.getSimpleName(), id));
+            throw new RuntimeException("%s with id=%d not found".formatted(MailTemplate.class.getSimpleName(), id));
         }
     }
 

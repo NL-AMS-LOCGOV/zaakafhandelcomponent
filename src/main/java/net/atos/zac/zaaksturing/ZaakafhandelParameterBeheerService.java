@@ -16,6 +16,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -95,9 +96,7 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.merge(zaakafhandelParameters);
     }
 
-
-
-    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
+    public Optional<UUID> findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UUID> query = builder.createQuery(UUID.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
@@ -105,12 +104,13 @@ public class ZaakafhandelParameterBeheerService {
         query.orderBy(builder.desc(root.get(CREATIEDATUM)));
         final List<UUID> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
-            if(resultList.size() > 1){
-                LOG.warning(String.format("Er zijn meerdere zaaktypes gevonden voor productaanvraag type: '%s'", productaanvraagType));
+            if (resultList.size() > 1) {
+                LOG.warning(String.format("Er zijn meerdere zaaktypes gevonden voor productaanvraag type: '%s'",
+                                          productaanvraagType));
             }
-            return resultList.get(0);
+            return Optional.of(resultList.get(0));
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<ZaakbeeindigReden> listZaakbeeindigRedenen() {

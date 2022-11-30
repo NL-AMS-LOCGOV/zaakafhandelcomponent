@@ -104,7 +104,7 @@ public class WebdavStore implements IWebdavStore {
                 final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
                 if (enkelvoudigInformatieobject.getLocked()) {
                     enkelvoudigInformatieObjectLock =
-                            enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
+                            enkelvoudigInformatieObjectLockService.readLock(enkelvoudigInformatieobject.getUUID());
                 } else {
                     tempLock = true;
                     enkelvoudigInformatieObjectLock =
