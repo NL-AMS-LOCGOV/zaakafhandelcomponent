@@ -1,5 +1,6 @@
 package net.atos.zac.app.mailtemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -11,10 +12,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.admin.converter.RESTMailtemplateConverter;
 import net.atos.zac.app.admin.model.RESTMailtemplate;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
+import net.atos.zac.util.UriUtil;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @Singleton
 @Path("mailtemplates")
@@ -28,13 +36,28 @@ public class MailtemplateRESTService {
     @Inject
     private RESTMailtemplateConverter restMailtemplateConverter;
 
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
     @GET
     @Path("{mailtemplateEnum}/{zaakUUID}")
     public RESTMailtemplate findMailtemplate(@PathParam("mailtemplateEnum") final Mail mail,
             @PathParam("zaakUUID") final UUID zaakUUID) {
-        // TODO Controleren adhv het zaakUUID of er een ander mailtemplate dan de default is ingesteld op het zaaktype.
-        return mailTemplateService.findMailtemplate(mail)
-                .map(restMailtemplateConverter::convert)
-                .orElse(null);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final ZaakafhandelParameters zaakafhandelParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
+        final Optional<MailtemplateKoppeling> mailtemplateKoppeling =
+                zaakafhandelParameters.getMailtemplateKoppelingen().stream()
+                        .filter(koppeling -> koppeling.getMailTemplate().getMail().equals(mail)).findFirst();
+
+        if (mailtemplateKoppeling.isPresent()) {
+            return restMailtemplateConverter.convert(mailtemplateKoppeling.get().getMailTemplate());
+        } else {
+            final MailTemplate mailTemplate = mailTemplateService.readMailtemplate(mail);
+            return mailTemplate != null ? restMailtemplateConverter.convert(mailTemplate) : null;
+        }
     }
 }

@@ -55,8 +55,9 @@
                                 </a>
                                 <button mat-flat-button
                                         *ngIf="!row.defaultMailtemplate"
+                                        [disabled]="isDisabled(row)"
                                         id="verwijderen"
-                                        title="{{ 'actie.verwijderen' | translate}}"
+                                        [title]="isDisabled(row) ? getDisabledTitle(row) : 'actie.verwijderen' | translate"
                                         (click)="verwijderMailtemplate(row)">
                                     <mat-icon>delete</mat-icon>
                                 </button>

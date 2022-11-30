@@ -29,6 +29,9 @@ public class RESTZaakafhandelParametersConverter {
     private RESTZaakbeeindigParameterConverter zaakbeeindigParameterConverter;
 
     @Inject
+    private RESTMailtemplateKoppelingConverter mailtemplateKoppelingConverter;
+
+    @Inject
     private RESTUserEventListenerParametersConverter userEventListenerParametersConverter;
 
     @Inject
@@ -75,6 +78,9 @@ public class RESTZaakafhandelParametersConverter {
         }
         restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
 
+        restZaakafhandelParameters.mailtemplateKoppelingen =
+                mailtemplateKoppelingConverter.convert(zaakafhandelParameters.getMailtemplateKoppelingen());
+
         return restZaakafhandelParameters;
     }
 
@@ -95,11 +101,17 @@ public class RESTZaakafhandelParametersConverter {
             zaakafhandelParameters.setEinddatumGeplandWaarschuwing(restZaakafhandelParameters.einddatumGeplandWaarschuwing);
         }
         zaakafhandelParameters.setHumanTaskParametersCollection(
-                humanTaskParametersConverter.convertRESTHumanTaskParameters(restZaakafhandelParameters.humanTaskParameters));
+                humanTaskParametersConverter.convertRESTHumanTaskParameters(
+                        restZaakafhandelParameters.humanTaskParameters));
         zaakafhandelParameters.setUserEventListenerParametersCollection(
-                userEventListenerParametersConverter.convertRESTUserEventListenerParameters(restZaakafhandelParameters.userEventListenerParameters));
+                userEventListenerParametersConverter.convertRESTUserEventListenerParameters(
+                        restZaakafhandelParameters.userEventListenerParameters));
         zaakafhandelParameters.setZaakbeeindigParameters(
-                zaakbeeindigParameterConverter.convertRESTZaakbeeindigParameters(restZaakafhandelParameters.zaakbeeindigParameters));
+                zaakbeeindigParameterConverter.convertRESTZaakbeeindigParameters(
+                        restZaakafhandelParameters.zaakbeeindigParameters));
+        zaakafhandelParameters.setMailtemplateKoppelingen(
+                mailtemplateKoppelingConverter.convertRESTmailtemplateKoppelingen(
+                        restZaakafhandelParameters.mailtemplateKoppelingen));
         return zaakafhandelParameters;
     }
 }
