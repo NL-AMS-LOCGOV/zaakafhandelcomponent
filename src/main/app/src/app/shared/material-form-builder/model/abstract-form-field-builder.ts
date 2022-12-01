@@ -20,6 +20,11 @@ export abstract class AbstractFormFieldBuilder {
         return this;
     }
 
+    styleClass(styleClass: string): this {
+        this.formField.styleClass = styleClass;
+        return this;
+    }
+
     label(label: string): this {
         this.formField.label = label;
         return this;

@@ -290,6 +290,27 @@ mat-form-field {
   }
 }
 
+.form-field-not-disabled-view {
+  &.mat-form-field-appearance-fill.mat-form-field-disabled {
+
+    & .mat-form-field-flex {
+      background-color: rgba(0, 0, 0, .04);
+    }
+
+    & .mat-input-element {
+      color: rgba(0, 0, 0, .87);
+    }
+
+    & .mat-form-field-label {
+      color: rgba(0, 0, 0, .6);
+    }
+
+    & .mat-form-field-underline::before {
+      background-color: rgba(0, 0, 0, .42);
+    }
+  }
+}
+
 .cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;
