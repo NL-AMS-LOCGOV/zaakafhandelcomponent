@@ -5,8 +5,10 @@
 
 package net.atos.zac.mailtemplates.model;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 public enum MailTemplateVariabelen {
@@ -14,6 +16,7 @@ public enum MailTemplateVariabelen {
     ZAAKNUMMER(false),
     ZAAKTYPE(false),
     ZAAKSTATUS(false),
+    DOCUMENTTITEL(false),
     REGISTRATIEDATUM(false),
     STARTDATUM(false),
     STREEFDATUM(true),
@@ -27,7 +30,11 @@ public enum MailTemplateVariabelen {
     TOEGEWEZENGROEPTAAK(false),
     TOEGEWEZENGEBRUIKERTAAK(true),
     ZAAKURL(false),
-    TAAKURL(false);
+    ZAAKLINK(false),
+    TAAKURL(false),
+    TAAKLINK(false),
+    DOCUMENTURL(false),
+    DOCUMENTLINK(false);
 
     private final boolean resolveVariabeleAlsLegeString;
 
@@ -39,30 +46,77 @@ public enum MailTemplateVariabelen {
         return resolveVariabeleAlsLegeString;
     }
 
-    private static final Set<MailTemplateVariabelen> DEFAULT =
-            EnumSet.of(ZAAKNUMMER, ZAAKTYPE, ZAAKSTATUS, REGISTRATIEDATUM, STARTDATUM, STREEFDATUM, FATALEDATUM,
-                       OMSCHRIJVINGZAAK, TOELICHTINGZAAK);
+    // Sets of variables for mail templates for specific subject types
+    private static final Set<MailTemplateVariabelen> ZAAK_VARIABELEN =
+            toSet(ZAAKNUMMER, ZAAKTYPE, ZAAKSTATUS,
+                  REGISTRATIEDATUM, STARTDATUM, STREEFDATUM, FATALEDATUM,
+                  OMSCHRIJVINGZAAK, TOELICHTINGZAAK);
 
-    public static final Set<MailTemplateVariabelen> ZAAKSTATUSMAIL_VARIABELEN =
-            addToDefault(EnumSet.of(INITIATOR, ADRESINITIATOR));
+    private static final Set<MailTemplateVariabelen> TAAK_VARIABELEN =
+            toSet();
 
-    public static final Set<MailTemplateVariabelen> PROCESMAIL_VARIABELEN =
-            addToDefault(EnumSet.of(INITIATOR, ADRESINITIATOR));
+    private static final Set<MailTemplateVariabelen> DOCUMENT_VARIABELEN =
+            toSet(DOCUMENTTITEL);
 
-    public static final Set<MailTemplateVariabelen> ZAAKSIGNALERINGMAIL_VARIABELEN =
-            addToDefault(EnumSet.of(ZAAKURL, TOEGEWEZENGROEPZAAK, TOEGEWEZENGEBRUIKERZAAK));
+    // Set of variables for templates for mail that will be sent to a klant or bedrijf
+    private static final Set<MailTemplateVariabelen> ZAAK_INITIATOR_VARIABELEN =
+            toSet(INITIATOR, ADRESINITIATOR);
 
-    public static final Set<MailTemplateVariabelen> TAAKSIGNALERINGMAIL_VARIABELEN =
-            addToDefault(EnumSet.of(TAAKURL, TOEGEWEZENGROEPTAAK, TOEGEWEZENGEBRUIKERTAAK));
+    // Sets of variables for templates for mail that will be sent to a gebruiker
+    private static final Set<MailTemplateVariabelen> ZAAK_BEHANDELAAR_VARIABELEN =
+            toSet(ZAAKURL, ZAAKLINK,
+                  TOEGEWEZENGROEPZAAK, TOEGEWEZENGEBRUIKERZAAK);
 
-    private static Set<MailTemplateVariabelen> addToDefault(final Set<MailTemplateVariabelen> extraVariabelen) {
-        final Set<MailTemplateVariabelen> returnSet = new HashSet<>();
-        returnSet.addAll(DEFAULT);
-        returnSet.addAll(extraVariabelen);
-        return returnSet;
+    private static final Set<MailTemplateVariabelen> TAAK_BEHANDELAAR_VARIABELEN =
+            toSet(TAAKURL, TAAKLINK,
+                  TOEGEWEZENGROEPTAAK, TOEGEWEZENGEBRUIKERTAAK);
+
+    private static final Set<MailTemplateVariabelen> DOCUMENT_BEHANDELAAR_VARIABELEN =
+            toSet(DOCUMENTURL, DOCUMENTLINK);
+
+    // Sets of variables for mail templates for specific uses cases
+    public static final Set<MailTemplateVariabelen> ZAAK_VOORTGANG_VARIABELEN =
+            add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
+
+    public static final Set<MailTemplateVariabelen> PROCES_VARIABELEN =
+            add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
+
+    public static final Set<MailTemplateVariabelen> ZAAK_SIGNALERING_VARIABELEN =
+            add(ZAAK_VARIABELEN, ZAAK_BEHANDELAAR_VARIABELEN);
+
+    public static final Set<MailTemplateVariabelen> TAAK_SIGNALERING_VARIABELEN =
+            add(add(ZAAK_SIGNALERING_VARIABELEN, TAAK_VARIABELEN), TAAK_BEHANDELAAR_VARIABELEN);
+
+    public static final Set<MailTemplateVariabelen> DOCUMENT_SIGNALERING_VARIABELEN =
+            add(add(ZAAK_SIGNALERING_VARIABELEN, DOCUMENT_VARIABELEN), DOCUMENT_BEHANDELAAR_VARIABELEN);
+
+    private static Set<MailTemplateVariabelen> toSet(
+            final MailTemplateVariabelen... values) {
+        return Collections.unmodifiableSet(toEnumSet(Arrays.asList(values)));
+    }
+
+    private static Set<MailTemplateVariabelen> add(
+            final Set<MailTemplateVariabelen> set,
+            final MailTemplateVariabelen... values) {
+        return add(set, toEnumSet(Arrays.asList(values)));
+    }
+
+    private static Set<MailTemplateVariabelen> add(
+            final Set<MailTemplateVariabelen> set,
+            final Set<MailTemplateVariabelen> values) {
+        final EnumSet<MailTemplateVariabelen> copy = toEnumSet(set);
+        copy.addAll(values);
+        return Collections.unmodifiableSet(copy);
+    }
+
+    private static EnumSet<MailTemplateVariabelen> toEnumSet(
+            final Collection<MailTemplateVariabelen> values) {
+        return values.isEmpty()
+                ? EnumSet.noneOf(MailTemplateVariabelen.class)
+                : EnumSet.copyOf(values);
     }
 
     public String getVariabele() {
-        return String.format("{%s}", this);
+        return "{%s}".formatted(this);
     }
 }
