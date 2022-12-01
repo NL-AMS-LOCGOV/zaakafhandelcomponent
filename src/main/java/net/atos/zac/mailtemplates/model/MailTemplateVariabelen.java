@@ -13,28 +13,28 @@ import java.util.Set;
 
 public enum MailTemplateVariabelen {
 
-    ZAAKNUMMER(false),
-    ZAAKTYPE(false),
-    ZAAKSTATUS(false),
-    DOCUMENTTITEL(false),
-    REGISTRATIEDATUM(false),
-    STARTDATUM(false),
-    STREEFDATUM(true),
-    FATALEDATUM(false),
-    OMSCHRIJVINGZAAK(false),
-    TOELICHTINGZAAK(true),
-    INITIATOR(true),
-    ADRESINITIATOR(true),
-    TOEGEWEZENGROEPZAAK(false),
-    TOEGEWEZENGEBRUIKERZAAK(true),
-    TOEGEWEZENGROEPTAAK(false),
-    TOEGEWEZENGEBRUIKERTAAK(true),
-    ZAAKURL(false),
-    ZAAKLINK(false),
-    TAAKURL(false),
-    TAAKLINK(false),
-    DOCUMENTURL(false),
-    DOCUMENTLINK(false);
+    DOCUMENT_TITEL(false),
+    DOCUMENT_LINK(false),
+    DOCUMENT_URL(false),
+    TAAK_BEHANDELAAR_GROEP(false),
+    TAAK_BEHANDELAAR_MEDEWERKER(true),
+    TAAK_LINK(false),
+    TAAK_URL(false),
+    ZAAK_BEHANDELAAR_GROEP(false),
+    ZAAK_BEHANDELAAR_MEDEWERKER(true),
+    ZAAK_FATALEDATUM(false),
+    ZAAK_INITIATOR(true),
+    ZAAK_INITIATOR_ADRES(true),
+    ZAAK_LINK(false),
+    ZAAK_NUMMER(false),
+    ZAAK_OMSCHRIJVING(false),
+    ZAAK_REGISTRATIEDATUM(false),
+    ZAAK_STARTDATUM(false),
+    ZAAK_STATUS(false),
+    ZAAK_STREEFDATUM(true),
+    ZAAK_TOELICHTING(true),
+    ZAAK_TYPE(false),
+    ZAAK_URL(false);
 
     private final boolean resolveVariabeleAlsLegeString;
 
@@ -48,31 +48,31 @@ public enum MailTemplateVariabelen {
 
     // Sets of variables for mail templates for specific subject types
     private static final Set<MailTemplateVariabelen> ZAAK_VARIABELEN =
-            toSet(ZAAKNUMMER, ZAAKTYPE, ZAAKSTATUS,
-                  REGISTRATIEDATUM, STARTDATUM, STREEFDATUM, FATALEDATUM,
-                  OMSCHRIJVINGZAAK, TOELICHTINGZAAK);
+            toSet(ZAAK_NUMMER, ZAAK_TYPE, ZAAK_STATUS,
+                  ZAAK_REGISTRATIEDATUM, ZAAK_STARTDATUM, ZAAK_STREEFDATUM, ZAAK_FATALEDATUM,
+                  ZAAK_OMSCHRIJVING, ZAAK_TOELICHTING);
 
     private static final Set<MailTemplateVariabelen> TAAK_VARIABELEN =
             toSet();
 
     private static final Set<MailTemplateVariabelen> DOCUMENT_VARIABELEN =
-            toSet(DOCUMENTTITEL);
+            toSet(DOCUMENT_TITEL);
 
     // Set of variables for templates for mail that will be sent to a klant or bedrijf
     private static final Set<MailTemplateVariabelen> ZAAK_INITIATOR_VARIABELEN =
-            toSet(INITIATOR, ADRESINITIATOR);
+            toSet(ZAAK_INITIATOR, ZAAK_INITIATOR_ADRES);
 
     // Sets of variables for templates for mail that will be sent to a gebruiker
     private static final Set<MailTemplateVariabelen> ZAAK_BEHANDELAAR_VARIABELEN =
-            toSet(ZAAKURL, ZAAKLINK,
-                  TOEGEWEZENGROEPZAAK, TOEGEWEZENGEBRUIKERZAAK);
+            toSet(ZAAK_URL, ZAAK_LINK,
+                  ZAAK_BEHANDELAAR_GROEP, ZAAK_BEHANDELAAR_MEDEWERKER);
 
     private static final Set<MailTemplateVariabelen> TAAK_BEHANDELAAR_VARIABELEN =
-            toSet(TAAKURL, TAAKLINK,
-                  TOEGEWEZENGROEPTAAK, TOEGEWEZENGEBRUIKERTAAK);
+            toSet(TAAK_URL, TAAK_LINK,
+                  TAAK_BEHANDELAAR_GROEP, TAAK_BEHANDELAAR_MEDEWERKER);
 
     private static final Set<MailTemplateVariabelen> DOCUMENT_BEHANDELAAR_VARIABELEN =
-            toSet(DOCUMENTURL, DOCUMENTLINK);
+            toSet(DOCUMENT_URL, DOCUMENT_LINK);
 
     // Sets of variables for mail templates for specific uses cases
     public static final Set<MailTemplateVariabelen> ZAAK_VOORTGANG_VARIABELEN =

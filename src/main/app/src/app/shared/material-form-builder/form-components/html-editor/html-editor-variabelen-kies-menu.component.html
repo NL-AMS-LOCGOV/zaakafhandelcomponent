@@ -1,9 +1,12 @@
 <button class="menu-item" type="button" mat-button [matMenuTriggerFor]="beschikbare_variabelen">
-    <mat-icon class="menu-icon">add_circle_outline</mat-icon> {{'variabelen' | translate}}
+    <mat-icon class="menu-icon">add_circle_outline</mat-icon>
+    {{'variabelen' | translate}}
 </button>
 
 <mat-menu #beschikbare_variabelen="matMenu">
     <tr *ngFor="let variabele of variabelen">
-        <button mat-menu-item type="button" (click)="plakExpressie(variabele)">{{variabele}}</button>
+        <button mat-menu-item type="button" (click)="plakExpressie(variabele)">
+            {{variabele + ': ' + ('mailtemplate.variabele.' + variabele | translate)}}
+        </button>
     </tr>
 </mat-menu>

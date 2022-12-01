@@ -1,27 +1,27 @@
 package net.atos.zac.mailtemplates;
 
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ADRESINITIATOR;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENTLINK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENTTITEL;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENTURL;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.FATALEDATUM;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.INITIATOR;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.OMSCHRIJVINGZAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.REGISTRATIEDATUM;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.STARTDATUM;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.STREEFDATUM;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAKLINK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAKURL;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGEBRUIKERZAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGROEPTAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGROEPZAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOELICHTINGZAAK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKLINK;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKNUMMER;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKSTATUS;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKTYPE;
-import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKURL;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_LINK;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_TITEL;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_URL;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_GROEP;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_MEDEWERKER;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_LINK;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_URL;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_BEHANDELAAR_GROEP;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_BEHANDELAAR_MEDEWERKER;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_FATALEDATUM;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_INITIATOR;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_INITIATOR_ADRES;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_LINK;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_NUMMER;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_OMSCHRIJVING;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_REGISTRATIEDATUM;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_STARTDATUM;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_STATUS;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_STREEFDATUM;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_TOELICHTING;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_TYPE;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_URL;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Optional;
@@ -89,21 +89,21 @@ public class MailTemplateHelper {
     public String resolveVariabelen(final String tekst, final Zaak zaak) {
         String resolvedTekst = tekst;
         if (zaak != null) {
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAKNUMMER, zaak.getIdentificatie());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_NUMMER, zaak.getIdentificatie());
 
             final MailLink link = getLink(zaak);
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAKURL, link.url);
-            resolvedTekst = replaceVariabeleHtml(resolvedTekst, ZAAKLINK, link.toHtml());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_URL, link.url);
+            resolvedTekst = replaceVariabeleHtml(resolvedTekst, ZAAK_LINK, link.toHtml());
 
-            resolvedTekst = replaceVariabele(resolvedTekst, OMSCHRIJVINGZAAK, zaak.getOmschrijving());
-            resolvedTekst = replaceVariabele(resolvedTekst, TOELICHTINGZAAK, zaak.getToelichting());
-            resolvedTekst = replaceVariabele(resolvedTekst, REGISTRATIEDATUM, zaak.getRegistratiedatum());
-            resolvedTekst = replaceVariabele(resolvedTekst, STARTDATUM, zaak.getStartdatum());
-            resolvedTekst = replaceVariabele(resolvedTekst, STREEFDATUM, zaak.getEinddatumGepland());
-            resolvedTekst = replaceVariabele(resolvedTekst, FATALEDATUM, zaak.getUiterlijkeEinddatumAfdoening());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_OMSCHRIJVING, zaak.getOmschrijving());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_TOELICHTING, zaak.getToelichting());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_REGISTRATIEDATUM, zaak.getRegistratiedatum());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STARTDATUM, zaak.getStartdatum());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STREEFDATUM, zaak.getEinddatumGepland());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_FATALEDATUM, zaak.getUiterlijkeEinddatumAfdoening());
 
-            if (resolvedTekst.contains(ZAAKSTATUS.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, ZAAKSTATUS,
+            if (resolvedTekst.contains(ZAAK_STATUS.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STATUS,
                                                  Optional.of(zaak.getStatus())
                                                          .map(zrcClientService::readStatus)
                                                          .map(Status::getStatustype)
@@ -112,27 +112,27 @@ public class MailTemplateHelper {
                 );
             }
 
-            if (resolvedTekst.contains(ZAAKTYPE.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, ZAAKTYPE,
+            if (resolvedTekst.contains(ZAAK_TYPE.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_TYPE,
                                                  Optional.of(zaak.getZaaktype())
                                                          .map(ztcClientService::readZaaktype)
                                                          .map(Zaaktype::getOmschrijving));
             }
 
-            if (resolvedTekst.contains(INITIATOR.getVariabele()) || resolvedTekst.contains(
-                    ADRESINITIATOR.getVariabele())) {
+            if (resolvedTekst.contains(ZAAK_INITIATOR.getVariabele()) ||
+                    resolvedTekst.contains(ZAAK_INITIATOR_ADRES.getVariabele())) {
                 resolvedTekst = replaceInitiatorVariabelen(resolvedTekst,
                                                            zgwApiService.findInitiatorForZaak(zaak));
             }
 
-            if (resolvedTekst.contains(TOEGEWEZENGROEPZAAK.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGROEPZAAK,
+            if (resolvedTekst.contains(ZAAK_BEHANDELAAR_GROEP.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_BEHANDELAAR_GROEP,
                                                  zgwApiService.findGroepForZaak(zaak)
                                                          .map(RolOrganisatorischeEenheid::getNaam));
             }
 
-            if (resolvedTekst.contains(TOEGEWEZENGEBRUIKERZAAK.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERZAAK,
+            if (resolvedTekst.contains(ZAAK_BEHANDELAAR_MEDEWERKER.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_BEHANDELAAR_MEDEWERKER,
                                                  zgwApiService.findBehandelaarForZaak(zaak)
                                                          .map(RolMedewerker::getNaam));
             }
@@ -144,11 +144,11 @@ public class MailTemplateHelper {
         String resolvedTekst = tekst;
         if (taskInfo != null) {
             final MailLink link = getLink(taskInfo);
-            resolvedTekst = replaceVariabele(resolvedTekst, TAAKURL, link.url);
-            resolvedTekst = replaceVariabeleHtml(resolvedTekst, TAAKLINK, link.toHtml());
+            resolvedTekst = replaceVariabele(resolvedTekst, TAAK_URL, link.url);
+            resolvedTekst = replaceVariabeleHtml(resolvedTekst, TAAK_LINK, link.toHtml());
 
-            if (resolvedTekst.contains(TOEGEWEZENGROEPTAAK.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGROEPTAAK,
+            if (resolvedTekst.contains(TAAK_BEHANDELAAR_GROEP.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, TAAK_BEHANDELAAR_GROEP,
                                                  taskInfo.getIdentityLinks().stream()
                                                          .filter(identityLinkInfo ->
                                                                          IdentityLinkType.CANDIDATE.equals(
@@ -159,8 +159,8 @@ public class MailTemplateHelper {
                                                          .map(Group::getName));
             }
 
-            if (resolvedTekst.contains(TOEGEWEZENGEBRUIKERTAAK.getVariabele())) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK,
+            if (resolvedTekst.contains(TAAK_BEHANDELAAR_MEDEWERKER.getVariabele())) {
+                resolvedTekst = replaceVariabele(resolvedTekst, TAAK_BEHANDELAAR_MEDEWERKER,
                                                  Optional.of(taskInfo.getAssignee())
                                                          .map(identityService::readUser)
                                                          .map(User::getFullName));
@@ -172,11 +172,11 @@ public class MailTemplateHelper {
     public String resolveVariabelen(final String tekst, final EnkelvoudigInformatieobject document) {
         String resolvedTekst = tekst;
         if (document != null) {
-            resolvedTekst = replaceVariabele(resolvedTekst, DOCUMENTTITEL, document.getTitel());
+            resolvedTekst = replaceVariabele(resolvedTekst, DOCUMENT_TITEL, document.getTitel());
 
             final MailLink link = getLink(document);
-            resolvedTekst = replaceVariabele(resolvedTekst, DOCUMENTURL, link.url);
-            resolvedTekst = replaceVariabeleHtml(resolvedTekst, DOCUMENTLINK, link.toHtml());
+            resolvedTekst = replaceVariabele(resolvedTekst, DOCUMENT_URL, link.url);
+            resolvedTekst = replaceVariabeleHtml(resolvedTekst, DOCUMENT_LINK, link.toHtml());
         }
         return resolvedTekst;
     }
@@ -282,9 +282,9 @@ public class MailTemplateHelper {
     private static String replaceInitiatorVariabelen(final String resolvedTekst, final String naam,
             final String adres) {
         return replaceVariabele(replaceVariabele(resolvedTekst,
-                                                 INITIATOR,
+                                                 ZAAK_INITIATOR,
                                                  naam),
-                                ADRESINITIATOR,
+                                ZAAK_INITIATOR_ADRES,
                                 adres);
     }
 
