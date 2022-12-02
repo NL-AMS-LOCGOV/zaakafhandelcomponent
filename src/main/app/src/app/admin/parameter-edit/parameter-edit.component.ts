@@ -32,6 +32,10 @@ import {ReferentieTabelService} from '../referentie-tabel.service';
 import {FormulierDefinitie} from '../model/formulier-definitie';
 import {HumanTaskReferentieTabel} from '../model/human-task-referentie-tabel';
 import {FormulierVeldDefinitie} from '../model/formulier-veld-definitie';
+import { MailtemplateKoppeling } from '../model/mailtemplate-koppeling';
+import {MailtemplateKoppelingMail, MailtemplateKoppelingMailUtil} from '../model/mailtemplate-koppeling-mail';
+import {Mailtemplate} from '../model/mailtemplate';
+import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -47,10 +51,13 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     userEventListenerParameters: UserEventListenerParameter[] = [];
     zaakbeeindigParameters: ZaakbeeindigParameter[] = [];
     selection = new SelectionModel<ZaakbeeindigParameter>(true);
+    mailtemplateKoppelingen: MailtemplateKoppelingMail[] =
+        MailtemplateKoppelingMailUtil.getBeschikbareMailtemplateKoppelingen();
 
     algemeenFormGroup: FormGroup;
     humanTasksFormGroup: FormGroup;
     userEventListenersFormGroup: FormGroup;
+    mailtemplateKoppelingenFormGroup: FormGroup;
     zaakbeeindigFormGroup: FormGroup;
 
     mailOpties: { label: string, value: string }[];
@@ -62,10 +69,12 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     referentieTabellen: ReferentieTabel[];
     formulierDefinities: FormulierDefinitie[];
     zaakbeeindigRedenen: ZaakbeeindigReden[];
+    mailtemplates: Mailtemplate[];
     loading: boolean;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
-                private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService) {
+                private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService,
+                private mailtemplateBeheerService: MailtemplateBeheerService) {
         super(utilService);
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
@@ -80,14 +89,16 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 referentieTabelService.listReferentieTabellen(),
                 identityService.listGroups(),
                 identityService.listUsers(),
-                this.adminService.listZaakbeeindigRedenen()
-            ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen, groepen, medewerkers, zaakbeeindigRedenen]) => {
+                this.adminService.listZaakbeeindigRedenen(),
+                mailtemplateBeheerService.listKoppelbareMailtemplates()
+            ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen, groepen, medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
                 this.caseDefinitions = caseDefinitions;
                 this.formulierDefinities = formulierDefinities;
                 this.referentieTabellen = referentieTabellen;
                 this.groepen = groepen;
                 this.medewerkers = medewerkers;
                 this.zaakbeeindigRedenen = zaakbeeindigRedenen;
+                this.mailtemplates = mailtemplates;
                 this.createForm();
             });
         });
@@ -133,6 +144,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         return formGroup.get(field) as FormControl;
     }
 
+    getMailtemplateKoppelingControl(koppeling: MailtemplateKoppelingMail, field: string): FormControl {
+        const formGroup = this.mailtemplateKoppelingenFormGroup.get(koppeling) as FormGroup;
+        return formGroup.get(field) as FormControl;
+    }
+
     createForm() {
         this.algemeenFormGroup = this.formBuilder.group({
             caseDefinition: [this.parameters.caseDefinition, [Validators.required]],
@@ -146,6 +162,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         });
         this.createHumanTasksForm();
         this.createUserEventListenerForm();
+        this.createMailtemplateKoppelingenForm();
         this.createZaakbeeindigForm();
     }
 
@@ -189,6 +206,18 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 toelichting: [parameter.toelichting]
             });
             this.userEventListenersFormGroup.addControl(parameter.id, formGroup);
+        });
+    }
+
+    private createMailtemplateKoppelingenForm() {
+        this.mailtemplateKoppelingenFormGroup = this.formBuilder.group({});
+        this.mailtemplateKoppelingen.forEach(beschikbareKoppeling => {
+            const mailtemplate: Mailtemplate = this.parameters.mailtemplateKoppelingen.find(mailtemplateKoppeling =>
+                mailtemplateKoppeling.mailtemplate.mail === beschikbareKoppeling)?.mailtemplate;
+            const formGroup = this.formBuilder.group({
+                mailtemplate: mailtemplate?.id
+            });
+            this.mailtemplateKoppelingenFormGroup.addControl(beschikbareKoppeling, formGroup);
         });
     }
 
@@ -286,6 +315,18 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         });
         this.parameters.userEventListenerParameters = this.userEventListenerParameters;
 
+        const parameterMailtemplateKoppelingen: MailtemplateKoppeling[] = [];
+        this.mailtemplateKoppelingen.forEach(koppeling => {
+            const mailtemplateKoppeling: MailtemplateKoppeling = new MailtemplateKoppeling();
+            mailtemplateKoppeling.mailtemplate = this.mailtemplates.find(mailtemplate =>
+                mailtemplate.id === this.mailtemplateKoppelingenFormGroup.get(koppeling).get('mailtemplate').value);
+
+            if (mailtemplateKoppeling.mailtemplate) {
+                parameterMailtemplateKoppelingen.push(mailtemplateKoppeling);
+            }
+        });
+        this.parameters.mailtemplateKoppelingen = parameterMailtemplateKoppelingen;
+
         this.parameters.zaakbeeindigParameters = [];
         this.selection.selected.forEach(param => {
             if (this.isZaaknietontvankelijkParameter(param)) {
@@ -329,5 +370,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     getVeldDefinities(formulierDefinitieId: string): FormulierVeldDefinitie[] {
         return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
+    }
+
+    getBeschikbareMailtemplates(mailtemplate: MailtemplateKoppelingMail): any {
+        return this.mailtemplates.filter(template => template.mail === mailtemplate);
     }
 }

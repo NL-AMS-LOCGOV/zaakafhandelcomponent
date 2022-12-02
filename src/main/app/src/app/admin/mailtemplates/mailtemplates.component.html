@@ -40,6 +40,7 @@
                         <ng-container matColumnDef="id" stickyEnd>
                             <th mat-header-cell *matHeaderCellDef>
                                 <button mat-icon-button
+                                        [routerLink]="['/admin/mailtemplate']"
                                         id="toevoegen"
                                         title="{{ 'actie.toevoegen' | translate}}">
                                     <mat-icon>add_circle</mat-icon>
@@ -47,15 +48,16 @@
                             </th>
                             <td mat-cell *matCellDef="let row">
                                 <a mat-flat-button
-                                   [routerLink]="['/admin/mailtemplates/', row.id]"
+                                   [routerLink]="['/admin/mailtemplate/', row.id]"
                                    id="edit"
                                    title="{{ 'actie.bewerken' | translate}}">
                                     <mat-icon>visibility</mat-icon>
                                 </a>
                                 <button mat-flat-button
-                                        *ngIf="row.parent"
+                                        *ngIf="!row.defaultMailtemplate"
+                                        [disabled]="isDisabled(row)"
                                         id="verwijderen"
-                                        title="{{ 'actie.verwijderen' | translate}}"
+                                        [title]="isDisabled(row) ? getDisabledTitle(row) : 'actie.verwijderen' | translate"
                                         (click)="verwijderMailtemplate(row)">
                                     <mat-icon>delete</mat-icon>
                                 </button>

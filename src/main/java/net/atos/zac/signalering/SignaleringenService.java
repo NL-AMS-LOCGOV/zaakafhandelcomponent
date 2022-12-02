@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -150,7 +151,7 @@ public class SignaleringenService {
 
     public void deleteSignaleringen(final SignaleringZoekParameters parameters) {
         final Map<String, Signalering> removed = new HashMap<>();
-        findSignaleringen(parameters)
+        listSignaleringen(parameters)
                 .forEach(signalering -> {
                     removed.put(signalering.getTarget() + ';' + signalering.getType().getType(), signalering);
                     entityManager.remove(signalering);
@@ -159,7 +160,7 @@ public class SignaleringenService {
                 .forEach(signalering -> eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering)));
     }
 
-    public List<Signalering> findSignaleringen(final SignaleringZoekParameters parameters) {
+    public List<Signalering> listSignaleringen(final SignaleringZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Signalering> query = builder.createQuery(Signalering.class);
         final Root<Signalering> root = query.from(Signalering.class);
@@ -247,7 +248,7 @@ public class SignaleringenService {
             }
         }
 
-        return mailTemplateService.findMailtemplate(mail);
+        return mailTemplateService.readMailtemplate(mail);
     }
 
     public void sendSignalering(final Signalering signalering) {
@@ -278,7 +279,7 @@ public class SignaleringenService {
     }
 
     public SignaleringInstellingen readInstellingen(final Signalering signalering) {
-        final List<SignaleringInstellingen> instellingen = findInstellingen(
+        final List<SignaleringInstellingen> instellingen = listInstellingen(
                 new SignaleringInstellingenZoekParameters(signalering));
         if (instellingen.size() == 1) {
             return instellingen.get(0);
@@ -286,7 +287,7 @@ public class SignaleringenService {
         return new SignaleringInstellingen(signalering.getType(), signalering.getTargettype(), signalering.getTarget());
     }
 
-    public List<SignaleringInstellingen> findInstellingen(final SignaleringInstellingenZoekParameters parameters) {
+    public List<SignaleringInstellingen> listInstellingen(final SignaleringInstellingenZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<SignaleringInstellingen> query = builder.createQuery(SignaleringInstellingen.class);
         final Root<SignaleringInstellingen> root = query.from(SignaleringInstellingen.class);
@@ -322,8 +323,9 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public List<SignaleringInstellingen> listInstellingen(final SignaleringInstellingenZoekParameters parameters) {
-        final Map<SignaleringType.Type, SignaleringInstellingen> map = findInstellingen(parameters).stream()
+    public List<SignaleringInstellingen> listInstellingenInclusiefMogelijke(
+            final SignaleringInstellingenZoekParameters parameters) {
+        final Map<SignaleringType.Type, SignaleringInstellingen> map = listInstellingen(parameters).stream()
                 .collect(Collectors.toMap(instellingen -> instellingen.getType().getType(), Function.identity()));
         Arrays.stream(SignaleringType.Type.values())
                 .filter(type -> type.isTarget(parameters.getOwnertype()))
@@ -347,13 +349,11 @@ public class SignaleringenService {
     }
 
     public void deleteSignaleringVerzonden(final SignaleringVerzondenZoekParameters verzonden) {
-        final SignaleringVerzonden signaleringVerzonden = findSignaleringVerzonden(verzonden);
-        if (signaleringVerzonden != null) {
-            entityManager.remove(signaleringVerzonden);
-        }
+        findSignaleringVerzonden(verzonden).ifPresent(entityManager::remove);
     }
 
-    public SignaleringVerzonden findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {
+    public Optional<SignaleringVerzonden> findSignaleringVerzonden(
+            final SignaleringVerzondenZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<SignaleringVerzonden> query = builder.createQuery(SignaleringVerzonden.class);
         final Root<SignaleringVerzonden> root = query.from(SignaleringVerzonden.class);
@@ -361,7 +361,7 @@ public class SignaleringenService {
                         query.select(root)
                                 .where(getSignaleringVerzondenWhere(parameters, builder, root)))
                 .getResultList();
-        return result.isEmpty() ? null : result.get(0);
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
 
     private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters,

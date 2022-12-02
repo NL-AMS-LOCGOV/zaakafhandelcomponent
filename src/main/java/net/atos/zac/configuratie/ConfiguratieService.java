@@ -8,6 +8,7 @@ package net.atos.zac.configuratie;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -53,22 +54,18 @@ public class ConfiguratieService {
         return emQuery.getResultList();
     }
 
-    public Taal readTaal(final long id) {
-        return entityManager.find(Taal.class, id);
-    }
-
-    public Taal findDefaultTaal() {
+    public Optional<Taal> findDefaultTaal() {
         return findTaal(TAAL_NEDERLANDS);
     }
 
-    public Taal findTaal(final String code) {
+    public Optional<Taal> findTaal(final String code) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Taal> query = builder.createQuery(Taal.class);
         final Root<Taal> root = query.from(Taal.class);
         query.where(builder.equal(root.get("code"), code));
         final TypedQuery<Taal> emQuery = entityManager.createQuery(query);
         final List<Taal> talen = emQuery.getResultList();
-        return talen.isEmpty() ? null : talen.get(0);
+        return talen.isEmpty() ? Optional.empty() : Optional.of(talen.get(0));
     }
 
     public long readMaxFileSizeMB() {

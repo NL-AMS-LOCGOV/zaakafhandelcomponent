@@ -101,6 +101,10 @@ public class ZaakafhandelParameters {
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<ZaakbeeindigParameter> zaakbeeindigParameters;
 
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
+    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<MailtemplateKoppeling> mailtemplateKoppelingen;
+
     public Long getId() {
         return id;
     }
@@ -178,6 +182,19 @@ public class ZaakafhandelParameters {
         humanTaskParametersCollection.forEach(this::addHumanTaskParameters);
     }
 
+    public Set<MailtemplateKoppeling> getMailtemplateKoppelingen() {
+        return mailtemplateKoppelingen != null ? mailtemplateKoppelingen : Collections.emptySet();
+    }
+
+    public void setMailtemplateKoppelingen(final Collection<MailtemplateKoppeling> mailtemplateKoppelingen) {
+        if (this.mailtemplateKoppelingen == null) {
+            this.mailtemplateKoppelingen = new HashSet<>();
+        } else {
+            this.mailtemplateKoppelingen.clear();
+        }
+        mailtemplateKoppelingen.forEach(this::addMailtemplateKoppeling);
+    }
+
     public Set<ZaakbeeindigParameter> getZaakbeeindigParameters() {
         return zaakbeeindigParameters != null ? zaakbeeindigParameters : Collections.emptySet();
     }
@@ -202,6 +219,11 @@ public class ZaakafhandelParameters {
             this.userEventListenerParametersCollection.clear();
         }
         userEventListenerParametersCollection.forEach(this::addUserEventListenerParameters);
+    }
+
+    private void addMailtemplateKoppeling(final MailtemplateKoppeling mailtemplateKoppeling) {
+        mailtemplateKoppeling.setZaakafhandelParameters(this);
+        mailtemplateKoppelingen.add(mailtemplateKoppeling);
     }
 
     private void addHumanTaskParameters(final HumanTaskParameters humanTaskParameters) {

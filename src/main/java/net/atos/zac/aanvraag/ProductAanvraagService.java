@@ -5,19 +5,6 @@
 
 package net.atos.zac.aanvraag;
 
-import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
-import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
-import static net.atos.zac.util.UriUtil.uuidFromURI;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
@@ -26,16 +13,7 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Medewerker;
-import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
-import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
-import net.atos.client.zgw.zrc.model.RolVestiging;
-import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.client.zgw.zrc.model.Zaakobject;
+import net.atos.client.zgw.zrc.model.*;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -43,8 +21,22 @@ import net.atos.zac.flowable.CaseService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
+import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
+import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 @ApplicationScoped
 public class ProductAanvraagService {
@@ -91,15 +83,18 @@ public class ProductAanvraagService {
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
+    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+
+    @Inject
     private CaseService caseService;
 
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
 
-        final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(
+        final Optional<UUID> zaaktypeUUID = zaakafhandelParameterBeheerService.findZaaktypeUUIDByProductaanvraagType(
                 productAanvraag.getType());
-        if (zaaktypeUUID == null) {
+        if (zaaktypeUUID.isEmpty()) {
             LOG.warning(String.format(
                     "Er is geen zaaktype gevonden voor productaanvraag type: '%s'. Er wordt geen zaak aangemaakt.",
                     productAanvraag.getType()));
@@ -107,7 +102,7 @@ public class ProductAanvraagService {
         }
 
         var zaak = new Zaak();
-        final var zaaktype = ztcClientService.readZaaktype(zaaktypeUUID);
+        final var zaaktype = ztcClientService.readZaaktype(zaaktypeUUID.get());
         zaak.setZaaktype(zaaktype.getUrl());
         zaak.setOmschrijving((String) productAanvraag.getData()
                 .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
@@ -126,7 +121,7 @@ public class ProductAanvraagService {
         zaak = zgwApiService.createZaak(zaak);
 
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
-                zaaktypeUUID);
+                zaaktypeUUID.get());
         toekennenZaak(zaak, zaakafhandelParameters);
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());

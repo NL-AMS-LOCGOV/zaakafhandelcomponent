@@ -59,10 +59,12 @@ public class ReferentieTabelBeheerService {
 
     public ReferentieTabel updateReferentieTabel(final ReferentieTabel referentieTabel) {
         valideerObject(referentieTabel);
-        final ReferentieTabel existing = referentieTabelService.findReferentieTabel(referentieTabel.getCode());
-        if (existing != null && !existing.getId().equals(referentieTabel.getId())) {
-            throw new FoutmeldingException(String.format(UNIQUE_CONSTRAINT, referentieTabel.getCode()));
-        }
+        referentieTabelService.findReferentieTabel(referentieTabel.getCode())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(referentieTabel.getId())) {
+                        throw new FoutmeldingException(String.format(UNIQUE_CONSTRAINT, referentieTabel.getCode()));
+                    }
+                });
         return entityManager.merge(referentieTabel);
     }
 

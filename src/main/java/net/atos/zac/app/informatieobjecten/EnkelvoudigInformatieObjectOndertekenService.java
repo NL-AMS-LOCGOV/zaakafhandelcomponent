@@ -37,7 +37,7 @@ public class EnkelvoudigInformatieObjectOndertekenService {
     private DRCClientService drcClientService;
 
     public void ondertekenEnkelvoudigInformatieObject(final UUID enkelvoudigInformatieObjectUUID) {
-        boolean tempLock = false;
+        EnkelvoudigInformatieObjectLock tempLock = null;
         try {
             final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock =
                     new EnkelvoudigInformatieobjectWithInhoudAndLock();
@@ -45,21 +45,18 @@ public class EnkelvoudigInformatieObjectOndertekenService {
             enkelvoudigInformatieobjectWithInhoudAndLock.setOndertekening(ondertekening);
             enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(InformatieobjectStatus.DEFINITIEF);
 
-            EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
-                    enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObjectUUID);
-            if (enkelvoudigInformatieObjectLock == null) {
-                tempLock = true;
-                enkelvoudigInformatieObjectLock =
-                        enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieObjectUUID,
-                                                                          loggedInUserInstance.get().getId());
-            }
+            final var enkelvoudigInformatieObjectLock =
+                    enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObjectUUID)
+                            .orElse(tempLock = enkelvoudigInformatieObjectLockService.createLock(
+                                    enkelvoudigInformatieObjectUUID,
+                                    loggedInUserInstance.get().getId()));
 
             enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
             drcClientService.updateEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID,
                                                                "Door ondertekenen",
                                                                enkelvoudigInformatieobjectWithInhoudAndLock);
         } finally {
-            if (tempLock) {
+            if (tempLock != null) {
                 enkelvoudigInformatieObjectLockService.deleteLock(enkelvoudigInformatieObjectUUID);
             }
         }

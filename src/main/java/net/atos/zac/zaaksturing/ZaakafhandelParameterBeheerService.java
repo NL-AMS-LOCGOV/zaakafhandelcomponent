@@ -16,6 +16,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
@@ -83,6 +85,7 @@ public class ZaakafhandelParameterBeheerService {
         valideerObject(zaakafhandelParameters);
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.getUserEventListenerParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getMailtemplateKoppelingen().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.setCreatiedatum(ZonedDateTime.now());
         entityManager.persist(zaakafhandelParameters);
         return zaakafhandelParameters;
@@ -95,9 +98,7 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.merge(zaakafhandelParameters);
     }
 
-
-
-    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
+    public Optional<UUID> findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UUID> query = builder.createQuery(UUID.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
@@ -105,12 +106,13 @@ public class ZaakafhandelParameterBeheerService {
         query.orderBy(builder.desc(root.get(CREATIEDATUM)));
         final List<UUID> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
-            if(resultList.size() > 1){
-                LOG.warning(String.format("Er zijn meerdere zaaktypes gevonden voor productaanvraag type: '%s'", productaanvraagType));
+            if (resultList.size() > 1) {
+                LOG.warning(String.format("Er zijn meerdere zaaktypes gevonden voor productaanvraag type: '%s'",
+                                          productaanvraagType));
             }
-            return resultList.get(0);
+            return Optional.of(resultList.get(0));
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<ZaakbeeindigReden> listZaakbeeindigRedenen() {
@@ -153,6 +155,8 @@ public class ZaakafhandelParameterBeheerService {
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapZaakbeeindigGegevens(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters, zaaktype);
+            mapMailtemplateKoppelingen(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
+
             createZaakafhandelParameters(nieuweZaakafhandelParameters);
         }
     }
@@ -237,6 +241,18 @@ public class ZaakafhandelParameterBeheerService {
             }
         });
         nieuweZaakafhandelParameters.setZaakbeeindigParameters(zaakbeeindigParametersCollection);
+    }
+
+    private void mapMailtemplateKoppelingen(final ZaakafhandelParameters vorigeZaakafhandelparameters,
+            final ZaakafhandelParameters nieuweZaakafhandelParameters) {
+        final HashSet<MailtemplateKoppeling> mailtemplateKoppelingen = new HashSet<>();
+        vorigeZaakafhandelparameters.getMailtemplateKoppelingen().forEach(mailtemplateKoppeling -> {
+            final MailtemplateKoppeling nieuweMailtemplateKoppeling = new MailtemplateKoppeling();
+            nieuweMailtemplateKoppeling.setMailTemplate(mailtemplateKoppeling.getMailTemplate());
+            nieuweMailtemplateKoppeling.setZaakafhandelParameters(nieuweZaakafhandelParameters);
+            mailtemplateKoppelingen.add(nieuweMailtemplateKoppeling);
+        });
+        nieuweZaakafhandelParameters.setMailtemplateKoppelingen(mailtemplateKoppelingen);
     }
 
     private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen, final UUID vorigResultaattypeUUID) {

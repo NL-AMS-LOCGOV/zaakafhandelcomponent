@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -52,7 +53,8 @@ public class OntkoppeldeDocumentenService {
     private Instance<LoggedInUser> loggedInUserInstance;
 
 
-    public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject, final Zaak zaak, final String reden) {
+    public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject, final Zaak zaak,
+            final String reden) {
         final OntkoppeldDocument ontkoppeldDocument = new OntkoppeldDocument();
         ontkoppeldDocument.setDocumentID(informatieobject.getIdentificatie());
         ontkoppeldDocument.setDocumentUUID(UriUtil.uuidFromURI(informatieobject.getUrl()));
@@ -69,7 +71,8 @@ public class OntkoppeldeDocumentenService {
     }
 
     public OntkoppeldeDocumentenResultaat getResultaat(final OntkoppeldDocumentListParameters listParameters) {
-        return new OntkoppeldeDocumentenResultaat(list(listParameters), count(listParameters), getOntkoppeldDoor(listParameters));
+        return new OntkoppeldeDocumentenResultaat(list(listParameters), count(listParameters),
+                                                  getOntkoppeldDoor(listParameters));
     }
 
     public OntkoppeldDocument read(final UUID enkelvoudiginformatieobjectUUID) {
@@ -80,8 +83,9 @@ public class OntkoppeldeDocumentenService {
         return entityManager.createQuery(query).getSingleResult();
     }
 
-    public OntkoppeldDocument find(final long id) {
-        return entityManager.find(OntkoppeldDocument.class, id);
+    public Optional<OntkoppeldDocument> find(final long id) {
+        final var ontkoppeldDocument = entityManager.find(OntkoppeldDocument.class, id);
+        return ontkoppeldDocument != null ? Optional.of(ontkoppeldDocument) : Optional.empty();
     }
 
     private int count(final OntkoppeldDocumentListParameters listParameters) {
@@ -127,10 +131,7 @@ public class OntkoppeldeDocumentenService {
     }
 
     public void delete(final Long id) {
-        final OntkoppeldDocument ontkoppeldDocument = find(id);
-        if (ontkoppeldDocument != null) {
-            entityManager.remove(ontkoppeldDocument);
-        }
+        find(id).ifPresent(ontkoppeldDocument -> entityManager.remove(ontkoppeldDocument));
     }
 
     public void delete(final UUID uuid) {
@@ -140,11 +141,13 @@ public class OntkoppeldeDocumentenService {
         }
     }
 
-    private Predicate getWhere(final OntkoppeldDocumentListParameters listParameters, final Root<OntkoppeldDocument> root) {
+    private Predicate getWhere(final OntkoppeldDocumentListParameters listParameters,
+            final Root<OntkoppeldDocument> root) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final List<Predicate> predicates = new ArrayList<>();
         if (StringUtils.isNotBlank(listParameters.getZaakID())) {
-            predicates.add(builder.like(root.get(OntkoppeldDocument.ZAAK_ID), LIKE.formatted(listParameters.getZaakID())));
+            predicates.add(
+                    builder.like(root.get(OntkoppeldDocument.ZAAK_ID), LIKE.formatted(listParameters.getZaakID())));
         }
         if (StringUtils.isNotBlank(listParameters.getTitel())) {
             String titel = LIKE.formatted(listParameters.getTitel().toLowerCase().replace(" ", "%"));
@@ -156,16 +159,20 @@ public class OntkoppeldeDocumentenService {
         }
 
         if (StringUtils.isNotBlank(listParameters.getOntkoppeldDoor())) {
-            predicates.add(builder.equal(root.get(OntkoppeldDocument.ONTKOPPELD_DOOR), listParameters.getOntkoppeldDoor()));
+            predicates.add(
+                    builder.equal(root.get(OntkoppeldDocument.ONTKOPPELD_DOOR), listParameters.getOntkoppeldDoor()));
         }
-        addDatumRangePredicates(listParameters.getCreatiedatum(), OntkoppeldDocument.CREATIEDATUM, predicates, root, builder);
-        addDatumRangePredicates(listParameters.getOntkoppeldOp(), OntkoppeldDocument.ONTKOPPELD_OP, predicates, root, builder);
+        addDatumRangePredicates(listParameters.getCreatiedatum(), OntkoppeldDocument.CREATIEDATUM, predicates, root,
+                                builder);
+        addDatumRangePredicates(listParameters.getOntkoppeldOp(), OntkoppeldDocument.ONTKOPPELD_OP, predicates, root,
+                                builder);
 
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 
 
-    private void addDatumRangePredicates(final DatumRange datumRange, final String veld, final List<Predicate> predicates,
+    private void addDatumRangePredicates(final DatumRange datumRange, final String veld,
+            final List<Predicate> predicates,
             final Root<OntkoppeldDocument> root, final CriteriaBuilder builder) {
         if (datumRange != null) {
             if (datumRange.van() != null) {
@@ -174,7 +181,8 @@ public class OntkoppeldeDocumentenService {
             }
             if (datumRange.tot() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
-                                                         DateTimeUtil.convertToDateTime(datumRange.tot()).plusDays(1).minusSeconds(1)));
+                                                         DateTimeUtil.convertToDateTime(datumRange.tot()).plusDays(1)
+                                                                 .minusSeconds(1)));
             }
         }
     }

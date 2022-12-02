@@ -10,4 +10,5 @@ export class ZaakRechten {
     behandelen: boolean = false;
     afbreken: boolean = false;
     heropenen: boolean = false;
+    wijzigenDoorlooptijd: boolean = false;
 }
