@@ -3,33 +3,31 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list class="list" *ngIf="document != undefined || lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="document?.indicatieVergrendeld || infoObject?.gelockedDoor" color="accent" selected
-              [matTooltip]="('indicatie.VERGRENDELD' | translate) + ': ' + (document != undefined ? document.vergrendeldDoor : infoObject.gelockedDoor.naam)">
+<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
+    <mat-chip *ngIf="indicaties['VERGRENDELD'].visible" color="accent" selected
+              [matTooltip]="getTooltipFor('VERGRENDELD')">
         V
     </mat-chip>
-    <mat-chip *ngIf="document?.indicatieGebruiksrecht || infoObject?.indicatieGebruiksrecht" color="accent" selected
-              [matTooltip]="('indicatie.GEBRUIKSRECHTEN' | translate)">
+    <mat-chip *ngIf="indicaties['GEBRUIKSRECHTEN'].visible" color="accent" selected
+              [matTooltip]="getTooltipFor('GEBRUIKSRECHTEN')">
         G
     </mat-chip>
-    <mat-chip *ngIf="document?.indicatieOndertekend || infoObject?.ondertekening"
-              [matTooltip]="('indicatie.ONDERTEKEND' | translate) + ': ' +
-                  (document != undefined ? document.ondertekeningSoort : infoObject.ondertekening.soort) + ' - ' +
-                  ((document != undefined ? document.ondertekeningDatum : infoObject.ondertekening.datum) | datum)">
+    <mat-chip *ngIf="indicaties['ONDERTEKEND'].visible"
+              [matTooltip]="getTooltipFor('ONDERTEKEND')">
         O
     </mat-chip>
 </mat-chip-list>
 
-<mat-chip-list class="view" *ngIf="!lijst && !document" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
-              [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">
+<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
+    <mat-chip *ngIf="indicaties['VERGRENDELD'].visible" color="accent" selected
+              [matTooltip]="'msg.document.vergrendeld' | translate: indicaties['VERGRENDELD'].args">
         {{'indicatie.VERGRENDELD' | translate}}
     </mat-chip>
-    <mat-chip *ngIf="infoObject.indicatieGebruiksrecht" color="accent" selected>
+    <mat-chip *ngIf="indicaties['GEBRUIKSRECHTEN'].visible" color="accent" selected>
         {{'indicatie.GEBRUIKSRECHTEN' | translate}}
     </mat-chip>
-    <mat-chip *ngIf="infoObject.ondertekening"
-              [matTooltip]="infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">
+    <mat-chip *ngIf="indicaties['ONDERTEKEND'].visible"
+              [matTooltip]="indicaties['ONDERTEKEND'].tooltipSuffix">
         {{'indicatie.ONDERTEKEND' | translate}}
     </mat-chip>
 </mat-chip-list>
