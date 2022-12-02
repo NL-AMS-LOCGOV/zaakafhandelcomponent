@@ -1,5 +1,5 @@
 UPDATE ${schema}.mail_template
-SET onderwerp=REPLACE(onderwerp, '{REGISTRATIEDATUM}', '{ZAAKZAAKREGISTRATIEDATUM}');
+SET onderwerp=REPLACE(onderwerp, '{REGISTRATIEDATUM}', '{ZAAKREGISTRATIEDATUM}');
 UPDATE ${schema}.mail_template
 SET body=REPLACE(body, '{REGISTRATIEDATUM}', '{ZAAKREGISTRATIEDATUM}');
 
