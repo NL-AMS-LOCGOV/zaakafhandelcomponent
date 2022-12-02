@@ -4,30 +4,23 @@
   -->
 
 <mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="indicaties['VERGRENDELD'].visible" color="accent" selected
-              [matTooltip]="getTooltipFor('VERGRENDELD')">
-        V
-    </mat-chip>
-    <mat-chip *ngIf="indicaties['GEBRUIKSRECHTEN'].visible" color="accent" selected
-              [matTooltip]="getTooltipFor('GEBRUIKSRECHTEN')">
-        G
-    </mat-chip>
-    <mat-chip *ngIf="indicaties['ONDERTEKEND'].visible"
-              [matTooltip]="getTooltipFor('ONDERTEKEND')">
-        O
-    </mat-chip>
+    <ng-container *ngFor="let indicatie of indicaties">
+        <mat-chip *ngIf="indicatie.visible"
+                  [color]="indicatie.primary ? 'accent' : null"
+                  [selected]="indicatie.primary ? true : null"
+                  [matTooltip]="indicatie.tooltip().list">
+            {{indicatie.content().list}}
+        </mat-chip>
+    </ng-container>
 </mat-chip-list>
 
 <mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="indicaties['VERGRENDELD'].visible" color="accent" selected
-              [matTooltip]="'msg.document.vergrendeld' | translate: indicaties['VERGRENDELD'].args">
-        {{'indicatie.VERGRENDELD' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="indicaties['GEBRUIKSRECHTEN'].visible" color="accent" selected>
-        {{'indicatie.GEBRUIKSRECHTEN' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="indicaties['ONDERTEKEND'].visible"
-              [matTooltip]="indicaties['ONDERTEKEND'].tooltipSuffix">
-        {{'indicatie.ONDERTEKEND' | translate}}
-    </mat-chip>
+    <ng-container *ngFor="let indicatie of indicaties">
+        <mat-chip *ngIf="indicatie.visible"
+                  [color]="indicatie.primary ? 'accent' : null"
+                  [selected]="indicatie.primary"
+                  [matTooltip]="indicatie.tooltip().view">
+            {{indicatie.content().view}}
+        </mat-chip>
+    </ng-container>
 </mat-chip-list>
