@@ -39,6 +39,7 @@ import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
@@ -150,8 +151,7 @@ public class PlanItemsRESTService {
                                                new Ontvanger(humanTaskData.taakdata.get(TAAKDATA_EMAILADRES)),
                                                mailTemplate.getOnderwerp(),
                                                humanTaskData.taakdata.get(TAAKDATA_BODY),
-                                               bijlagen, true, zaak,
-                                               null));
+                                               bijlagen, true, Bronnen.fromZaak(zaak)));
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
