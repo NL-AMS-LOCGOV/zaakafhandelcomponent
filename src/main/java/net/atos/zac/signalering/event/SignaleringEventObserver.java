@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -23,6 +24,7 @@ import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -85,21 +87,26 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         return addTarget(signalering, rol);
     }
 
-    private Signalering getSignaleringVoorMedewerker(final SignaleringEvent<?> event, final Zaak subject, final RolMedewerker rol) {
+    private Signalering getSignaleringVoorMedewerker(final SignaleringEvent<?> event, final Zaak subject,
+            final RolMedewerker rol) {
         return getSignaleringVoorRol(event, subject, rol);
     }
 
-    private Signalering getSignaleringVoorGroup(final SignaleringEvent<?> event, final Zaak subject, final RolOrganisatorischeEenheid rol) {
+    private Signalering getSignaleringVoorGroup(final SignaleringEvent<?> event, final Zaak subject,
+            final RolOrganisatorischeEenheid rol) {
         if (getRolBehandelaarMedewerker(subject).isEmpty()) {
             return getSignaleringVoorRol(event, subject, rol);
         }
         return null;
     }
 
-    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final Zaak subject) {
+    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final Zaak subject,
+            final ZaakInformatieobject detail) {
         final Optional<Rol<?>> behandelaar = getRolBehandelaarMedewerker(subject);
         if (behandelaar.isPresent()) {
-            return getSignaleringVoorRol(event, subject, behandelaar.get());
+            final Signalering signalering = getSignaleringVoorRol(event, subject, behandelaar.get());
+            signalering.setDetail(detail);
+            return signalering;
         }
         return null;
     }
@@ -116,11 +123,14 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     private Signalering buildSignalering(final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
             case ZAAK_DOCUMENT_TOEGEVOEGD -> {
-                final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId());
-                return getSignaleringVoorBehandelaar(event, subject);
+                final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId().getResource());
+                final ZaakInformatieobject detail =
+                        zrcClientService.readZaakinformatieobject(
+                                URIUtil.parseUUIDFromResourceURI((URI) event.getObjectId().getDetail()));
+                return getSignaleringVoorBehandelaar(event, subject, detail);
             }
             case ZAAK_OP_NAAM -> {
-                final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
+                final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId().getResource());
                 if (AardVanRol.fromValue(rol.getOmschrijvingGeneriek()) == AardVanRol.BEHANDELAAR) {
                     final Zaak subject = zrcClientService.readZaak(rol.getZaak());
                     switch (rol.getBetrokkeneType()) {
@@ -135,7 +145,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 }
             }
             case TAAK_OP_NAAM -> {
-                final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId());
+                final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId().getResource());
                 return getSignaleringVoorBehandelaar(event, subject);
             }
             case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {
@@ -159,7 +169,8 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     }
 
     private Optional<Rol<?>> getRol(final Zaak zaak, final Roltype roltype, final BetrokkeneType betrokkeneType) {
-        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult();
+        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType))
+                .getSingleResult();
     }
 
     private Signalering addTarget(final Signalering signalering, final Rol<?> rol) {

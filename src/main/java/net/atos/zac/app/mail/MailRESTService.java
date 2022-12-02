@@ -27,6 +27,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.ValidationUtil;
@@ -62,7 +63,7 @@ public class MailRESTService {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak, null);
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, Bronnen.fromZaak(zaak));
     }
 
     @POST
@@ -76,7 +77,7 @@ public class MailRESTService {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak, null);
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, Bronnen.fromZaak(zaak));
 
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;

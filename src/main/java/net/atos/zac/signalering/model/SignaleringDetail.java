@@ -5,7 +5,7 @@
 
 package net.atos.zac.signalering.model;
 
-public enum SignaleringSubjectField {
-    DUE,
-    FATAL;
+public enum SignaleringDetail {
+    STREEFDATUM,
+    FATALE_DATUM;
 }

@@ -5,7 +5,7 @@
 
 package net.atos.zac.signalering.model;
 
-import static net.atos.zac.signalering.model.SignaleringSubject.INFORMATIEOBJECT;
+import static net.atos.zac.signalering.model.SignaleringSubject.DOCUMENT;
 import static net.atos.zac.signalering.model.SignaleringSubject.TAAK;
 import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
 import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
@@ -108,6 +108,6 @@ public class SignaleringZoekParameters {
 
     public SignaleringZoekParameters subjectInformatieobject(final UUID informatieobjectId) {
         this.subject = informatieobjectId.toString();
-        return subjecttype(INFORMATIEOBJECT);
+        return subjecttype(DOCUMENT);
     }
 }

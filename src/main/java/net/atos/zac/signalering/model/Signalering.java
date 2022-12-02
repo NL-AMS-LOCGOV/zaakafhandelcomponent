@@ -5,7 +5,7 @@
 
 package net.atos.zac.signalering.model;
 
-import static net.atos.zac.signalering.model.SignaleringSubject.INFORMATIEOBJECT;
+import static net.atos.zac.signalering.model.SignaleringSubject.DOCUMENT;
 import static net.atos.zac.signalering.model.SignaleringSubject.TAAK;
 import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
 import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
@@ -129,7 +129,7 @@ public class Signalering {
     }
 
     public void setSubject(final EnkelvoudigInformatieobject subject) {
-        validSubjecttype(INFORMATIEOBJECT);
+        validSubjecttype(DOCUMENT);
         this.subject = URIUtil.parseUUIDFromResourceURI(subject.getUrl()).toString();
     }
 
@@ -142,6 +142,10 @@ public class Signalering {
 
     public String getDetail() {
         return detail;
+    }
+
+    public void setDetail(final SignaleringDetail detail) {
+        this.detail = detail.name();
     }
 
     public void setDetail(final ZaakInformatieobject detail) {

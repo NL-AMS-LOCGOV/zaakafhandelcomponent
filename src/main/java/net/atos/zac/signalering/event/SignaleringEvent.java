@@ -11,7 +11,7 @@ import net.atos.zac.event.Opcode;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.model.SignaleringType;
 
-public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID> {
+public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, SignaleringEventId<ID>> {
 
     private static final long serialVersionUID = 184493471780916087L;
 
@@ -33,7 +33,8 @@ public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID
      * @param objectId   the identification of the object the operation was done on
      * @param actor      the user that initiated the operation directly or indirectly
      */
-    public SignaleringEvent(final SignaleringType.Type objectType, final ID objectId, final User actor) {
+    public SignaleringEvent(final SignaleringType.Type objectType, final SignaleringEventId<ID> objectId,
+            final User actor) {
         super(Opcode.UPDATED, objectId);
         this.objectType = objectType;
         this.actor = actor == null ? null : actor.getId();
