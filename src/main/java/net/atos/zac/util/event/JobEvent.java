@@ -5,9 +5,10 @@
 
 package net.atos.zac.util.event;
 
-public class JobEvent {
+import net.atos.zac.event.AbstractEvent;
+import net.atos.zac.event.Opcode;
 
-    private JobId jobId;
+public class JobEvent extends AbstractEvent<String, JobId> {
 
     /**
      * Constructor for the sake of JAXB
@@ -22,10 +23,10 @@ public class JobEvent {
      * @param jobId indicates the job that must be started
      */
     public JobEvent(final JobId jobId) {
-        this.jobId = jobId;
+        super(Opcode.CREATED, jobId);
     }
 
-    public JobId getJobId() {
-        return jobId;
+    public String getObjectType() {
+        return "cron job";
     }
 }
