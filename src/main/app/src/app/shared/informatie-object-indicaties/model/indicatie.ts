@@ -12,7 +12,6 @@ export interface ListViewContent {
 
 export interface IndicatieDefinitie {
     type: string;
-    visible: boolean;
     primary?: boolean;
     tooltipOverride?: ListViewContent;
     tooltipSuffix?: ListViewContent;
@@ -24,10 +23,6 @@ export class Indicatie {
     private readonly INDICATIE_PREFIX: string = 'indicatie';
 
     constructor(private translateService: TranslateService, private definitie: IndicatieDefinitie) {}
-
-    public get visible(): boolean {
-        return this.definitie.visible;
-    }
 
     public get primary(): boolean {
         return this.definitie.primary;

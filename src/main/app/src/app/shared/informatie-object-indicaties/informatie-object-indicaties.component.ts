@@ -23,7 +23,7 @@ export enum InformatieObjectIndicatieType {
 })
 export class InformatieObjectIndicatiesComponent implements OnInit {
 
-    indicaties: Indicatie[];
+    indicaties: Indicatie[] = [];
 
     @Input() infoObject: EnkelvoudigInformatieobject;
     @Input() document: DocumentZoekObject;
@@ -34,47 +34,49 @@ export class InformatieObjectIndicatiesComponent implements OnInit {
 
     ngOnInit() {
         if (this.infoObject) {
-            this.indicaties = [
-                new Indicatie(this.translateService, {
+            if (this.infoObject.gelockedDoor) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.VERGRENDELD,
-                    visible: !!this.infoObject.gelockedDoor,
                     primary: true,
                     tooltipOverride: {view: this.translateService.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})},
                     tooltipSuffix: {list: this.infoObject.gelockedDoor.naam}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.infoObject.indicatieGebruiksrecht) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.GEBRUIKSRECHTEN,
-                    visible: this.infoObject.indicatieGebruiksrecht,
                     primary: true
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.infoObject.ondertekening) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.ONDERTEKEND,
-                    visible: !!this.infoObject.ondertekening,
                     tooltipOverride: {view: this.infoObject.ondertekening.soort + '-' + this.datumPipe.transform(this.infoObject.ondertekening.datum)},
                     tooltipSuffix: {list: this.infoObject.ondertekening.soort + ' - ' + this.datumPipe.transform(this.infoObject.ondertekening.datum)}
-                })
-            ];
+                }));
+            }
         } else if (this.document) {
-            this.indicaties = [
-                new Indicatie(this.translateService, {
+            if (this.document.indicatieVergrendeld) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.VERGRENDELD,
-                    visible: this.document.indicatieVergrendeld,
                     primary: true,
                     tooltipOverride: {view: this.translateService.instant('msg.document.vergrendeld', {gebruiker: this.document.vergrendeldDoor})},
                     tooltipSuffix: {list: this.document.vergrendeldDoor}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.document.indicatieGebruiksrecht) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.GEBRUIKSRECHTEN,
-                    visible: this.document.indicatieGebruiksrecht,
                     primary: true
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.document.indicatieOndertekend) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: InformatieObjectIndicatieType.ONDERTEKEND,
-                    visible: this.document.indicatieOndertekend,
                     tooltipOverride: {view: this.document.ondertekeningSoort + '-' + this.datumPipe.transform(this.document.ondertekeningDatum)},
                     tooltipSuffix: {list: this.document.ondertekeningSoort + ' - ' + this.datumPipe.transform(this.document.ondertekeningDatum)}
-                })
-            ];
+                }));
+            }
         } else {
             throw Error('infoObject or document must be set');
         }

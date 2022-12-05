@@ -26,7 +26,7 @@ export enum ZaakIndicatieType {
 })
 export class ZaakIndicatiesComponent implements OnInit {
 
-    indicaties: Indicatie[];
+    indicaties: Indicatie[] = [];
 
     @Input() zaakZoekObject: ZaakZoekObject;
     @Input() zaak: Zaak;
@@ -35,65 +35,71 @@ export class ZaakIndicatiesComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.zaakZoekObject) {
-            this.indicaties = [
-                new Indicatie(this.translateService, {
+            if (this.zaakZoekObject.indicatieOpschorting) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.OPSCHORTING,
-                    visible: this.zaakZoekObject.indicatieOpschorting,
                     primary: true,
                     tooltipSuffix: {list: this.zaakZoekObject.redenOpschorting}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaakZoekObject.indicatieHeropend) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.HEROPEND,
-                    visible: this.zaakZoekObject.indicatieHeropend,
                     primary: true,
                     tooltipSuffix: {list: this.zaakZoekObject.statusToelichting}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaakZoekObject.indicatieHoofdzaak) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.HOOFDZAAK,
-                    visible: this.zaakZoekObject.indicatieHoofdzaak,
                     contentOverride: {list: 'HZ'}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaakZoekObject.indicatieDeelzaak) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.DEELZAAK,
-                    visible: this.zaakZoekObject.indicatieDeelzaak,
                     contentOverride: {list: 'DZ'}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaakZoekObject.indicatieVerlenging) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.VERLENGD,
-                    visible: this.zaakZoekObject.indicatieVerlenging,
                     tooltipSuffix: {list: this.zaakZoekObject.redenVerlenging}
-                })
-            ]
+                }));
+            }
         } else if (this.zaak) {
-            this.indicaties = [
-                new Indicatie(this.translateService, {
+            if (this.zaak.isOpgeschort) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.OPSCHORTING,
-                    visible: this.zaak.isOpgeschort,
                     primary: true
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaak.isHeropend) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.HEROPEND,
-                    visible: this.zaak.isHeropend,
                     primary: true
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaak.isHoofdzaak) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.HOOFDZAAK,
-                    visible: this.zaak.isHoofdzaak,
                     tooltipOverride: {view: this.translateService.instant(this.getDeelZaakToelichting(), this.getDeelZaakArgs())},
                     contentOverride: {list: 'HZ'}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaak.isDeelzaak) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.DEELZAAK,
-                    visible: this.zaak.isDeelzaak,
                     tooltipOverride: {view: this.translateService.instant('msg.zaak.relatie', {'identificatie': this.getHoofdzaakID()})},
                     contentOverride: {list: 'DZ'}
-                }),
-                new Indicatie(this.translateService, {
+                }));
+            }
+            if (this.zaak.isVerlengd) {
+                this.indicaties.push(new Indicatie(this.translateService, {
                     type: ZaakIndicatieType.VERLENGD,
-                    visible: this.zaak.isVerlengd,
                     tooltipSuffix: {list: this.zaakZoekObject.redenVerlenging}
-                })
-            ]
+                }));
+            }
         } else {
             throw Error('zaakZoekObject or zaak must be set');
         }

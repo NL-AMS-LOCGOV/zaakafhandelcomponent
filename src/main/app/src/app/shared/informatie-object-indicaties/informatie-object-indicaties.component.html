@@ -4,12 +4,10 @@
   -->
 
 <mat-chip-list [ngClass]="{'list': lijst, 'view': !lijst}" selectable="false" fxLayout="row">
-    <ng-container *ngFor="let indicatie of indicaties">
-        <mat-chip *ngIf="indicatie.visible"
-                  [color]="indicatie.primary ? 'accent' : null"
-                  [selected]="indicatie.primary ? true : null"
-                  [matTooltip]="lijst ? indicatie.tooltip.list : indicatie.tooltip.view">
-            {{lijst ? indicatie.content.list : indicatie.content.view}}
-        </mat-chip>
-    </ng-container>
+    <mat-chip *ngFor="let indicatie of indicaties"
+              [color]="indicatie.primary ? 'accent' : null"
+              [selected]="indicatie.primary ? true : null"
+              [matTooltip]="lijst ? indicatie.tooltip.list : indicatie.tooltip.view">
+        {{lijst ? indicatie.content.list : indicatie.content.view}}
+    </mat-chip>
 </mat-chip-list>
