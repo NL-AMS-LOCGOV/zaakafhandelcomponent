@@ -48,4 +48,9 @@ public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, Si
     public String getActor() {
         return actor;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", super.toString(), getActor());
+    }
 }
