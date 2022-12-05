@@ -3,47 +3,13 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list class="list" *ngIf="zaakZoekObject" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="zaakZoekObject.indicatieOpschorting" color="accent" selected
-              [matTooltip]="('indicatie.OPSCHORTING' | translate) +': '+ zaakZoekObject.redenOpschorting">
-        O
-    </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieHeropend" color="accent" selected
-              [matTooltip]="('indicatie.HEROPEND' | translate) +': '+ zaakZoekObject.statusToelichting">
-        H
-    </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieHoofdzaak"
-              [matTooltip]="'indicatie.HOOFDZAAK' | translate">
-        HZ
-    </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieDeelzaak"
-              [matTooltip]="'indicatie.DEELZAAK' | translate">
-        DZ
-    </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieVerlenging"
-              [matTooltip]="('indicatie.VERLENGD' | translate) +': '+ zaakZoekObject.redenVerlenging">
-        V
-    </mat-chip>
-</mat-chip-list>
-
-<mat-chip-list class="view" *ngIf="zaak" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="zaak.isOpgeschort" color="accent" selected
-              [matTooltip]="zaak.redenOpschorting">
-        {{'indicatie.OPSCHORTING' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="zaak.isHeropend" color="accent" selected
-              [matTooltip]="zaak.status.toelichting">
-        {{'indicatie.HEROPEND' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="zaak.isHoofdzaak"
-              [matTooltip]="getDeelZaakToelichting() | translate: getDeelZaakArgs()">
-        {{'indicatie.HOOFDZAAK' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="zaak.isDeelzaak"
-              [matTooltip]="'msg.zaak.relatie' | translate: {'identificatie': getHoofdzaakID()}">
-        {{'indicatie.DEELZAAK' | translate}}
-    </mat-chip>
-    <mat-chip *ngIf="zaak.isVerlengd"
-              [matTooltip]="zaak.redenVerlenging">
-        {{'indicatie.VERLENGD' | translate}}</mat-chip>
+<mat-chip-list [ngClass]="{'list': zaakZoekObject, 'view': zaak}" selectable="false" fxLayout="row">
+    <ng-container *ngFor="let indicatie of indicaties">
+        <mat-chip *ngIf="indicatie.visible"
+                  [color]="indicatie.primary ? 'accent' : null"
+                  [selected]="indicatie.primary ? true : null"
+                  [matTooltip]="zaakZoekObject ? indicatie.tooltip.list : indicatie.tooltip.view">
+            {{zaakZoekObject ? indicatie.content.list : indicatie.content.view}}
+        </mat-chip>
+    </ng-container>
 </mat-chip-list>

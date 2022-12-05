@@ -3,24 +3,13 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
+<mat-chip-list [ngClass]="{'list': lijst, 'view': !lijst}" selectable="false" fxLayout="row">
     <ng-container *ngFor="let indicatie of indicaties">
         <mat-chip *ngIf="indicatie.visible"
                   [color]="indicatie.primary ? 'accent' : null"
                   [selected]="indicatie.primary ? true : null"
-                  [matTooltip]="indicatie.tooltip().list">
-            {{indicatie.content().list}}
-        </mat-chip>
-    </ng-container>
-</mat-chip-list>
-
-<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
-    <ng-container *ngFor="let indicatie of indicaties">
-        <mat-chip *ngIf="indicatie.visible"
-                  [color]="indicatie.primary ? 'accent' : null"
-                  [selected]="indicatie.primary"
-                  [matTooltip]="indicatie.tooltip().view">
-            {{indicatie.content().view}}
+                  [matTooltip]="lijst ? indicatie.tooltip.list : indicatie.tooltip.view">
+            {{lijst ? indicatie.content.list : indicatie.content.view}}
         </mat-chip>
     </ng-container>
 </mat-chip-list>
