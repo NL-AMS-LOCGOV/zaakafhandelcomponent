@@ -8,6 +8,7 @@ package net.atos.client.zgw.ztc;
 import static java.lang.String.format;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -235,7 +236,9 @@ public class ZTCClientService implements Caching {
      */
     @CacheResult(cacheName = ZTC_BESLUITTYPE)
     public List<Besluittype> readBesluittypen(final URI zaaktypeURI) {
-        return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults();
+        return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
+                .filter(besluittype -> besluittype.getBeginGeldigheid().isBefore(LocalDate.now()) && besluittype.getEindeGeldigheid().isAfter(LocalDate.now()))
+                .toList();
     }
 
     /**
