@@ -34,8 +34,8 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
-        LOG.fine(() -> String.format("Scherm event ontvangen: %s", event.toString()));
         try {
+            LOG.fine(() -> String.format("Scherm event ontvangen: %s", event.toString()));
             event.delay();
             sendToWebsocketSubscribers(event);
         } catch (final Throwable ex) {
