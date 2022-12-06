@@ -14,7 +14,6 @@ import org.flowable.cmmn.engine.interceptor.CreateHumanTaskAfterContext;
 import org.flowable.cmmn.engine.interceptor.CreateHumanTaskBeforeContext;
 
 import net.atos.zac.flowable.FlowableHelper;
-import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.event.SignaleringEvent;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -64,17 +63,15 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
                 .setDueDate((Date) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_DUE_DATE));
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_ZAAK_UUID);
         final ScreenEvent screenEvent = ScreenEventType.ZAAK_TAKEN.updated(zaakUUID);
-        // Wait some time before sending the event to make sure that the task is created.
+        // Wait some time before handling the event to make sure that the task has been created.
         screenEvent.setDelay(SECONDS_TO_DELAY);
         FlowableHelper.getInstance().getEventingService().send(screenEvent);
 
         if (context.getTaskEntity().getAssignee() != null) {
-            // On creation of a human task it's owner is assumed to be the actor who created it.
-            final String owner = context.getHumanTask().getOwner();
-            final User user = owner != null ? FlowableHelper.getInstance().getIdentityService().readUser(owner) : null;
+            // On creation of a human task the event observer will assume its owner is the actor who created it.
             final SignaleringEvent<?> signaleringEvent =
-                    SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), user);
-            // Wait some time before sending the event to make sure that the task is created.
+                    SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), null);
+            // Wait some time before handling the event to make sure that the task has been created.
             signaleringEvent.setDelay(SECONDS_TO_DELAY);
             FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
         }
