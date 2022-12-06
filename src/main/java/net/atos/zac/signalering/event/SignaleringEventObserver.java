@@ -65,8 +65,6 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         try {
             event.delay();
             final Signalering signalering = buildSignalering(event);
-            // TODO put level back on fine #1289
-            LOG.info(() -> String.format("Signalering event fixed: %s", event.toString()));
             if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
                 final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
                 if (subscriptions.isDashboard()) {
@@ -129,7 +127,12 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         if (event.getActor() == null) {
             final String owner = subject.getOwner();
             final User actor = owner != null ? identityService.readUser(owner) : null;
-            return SignaleringEventUtil.event(event.getObjectType(), subject, actor);
+            final SignaleringEvent<?> fixed = SignaleringEventUtil.event(event.getObjectType(), subject, actor);
+            if (actor != null) {
+                // TODO put level back on fine #1289
+                LOG.info(() -> String.format("Signalering event fixed: %s", fixed.toString()));
+            }
+            return fixed;
         }
         return event;
     }
