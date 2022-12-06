@@ -388,7 +388,7 @@ public class SignaleringenService {
             }
         }
         if (parameters.getDetail() != null) {
-            where.add(builder.equal(root.get("detail"), parameters.getDetail()));
+            where.add(builder.equal(root.get("detail"), parameters.getDetail().toString()));
         }
         return builder.and(where.toArray(new Predicate[0]));
     }
