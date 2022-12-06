@@ -7,6 +7,9 @@ package net.atos.zac.event;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
+import javax.json.bind.annotation.JsonbTransient;
 
 public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
@@ -15,6 +18,9 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
     private Opcode opcode;
 
     private ID objectId;
+
+    @JsonbTransient
+    private int delay;
 
     /**
      * Constructor for the sake of JAXB
@@ -41,6 +47,22 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     public ID getObjectId() {
         return objectId;
+    }
+
+    public boolean delay() {
+        if (0 < delay) {
+            try {
+                TimeUnit.SECONDS.sleep(delay);
+            } catch (InterruptedException e) {
+                // Ignore exception
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void setDelay(final int seconds) {
+        this.delay = seconds;
     }
 
     @Override

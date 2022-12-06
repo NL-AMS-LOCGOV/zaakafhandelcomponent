@@ -60,8 +60,10 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
+        // TODO put level back on fine #1289
         LOG.info(() -> String.format("Signalering event ontvangen: %s", event.toString()));
         try {
+            event.delay();
             final Signalering signalering = buildSignalering(event);
             if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
                 final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
