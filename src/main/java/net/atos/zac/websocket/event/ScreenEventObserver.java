@@ -6,7 +6,6 @@
 package net.atos.zac.websocket.event;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,22 +30,13 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-    // This must be lower then the DEFAULT_SUSPENSION_TIMEOUT defined in websockets.service.ts
-    private static final int SECONDS_TO_DELAY = 3;
-
     @Inject
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
         LOG.fine(() -> String.format("Scherm event ontvangen: %s", event.toString()));
         try {
-            if (event.isDelay()) {
-                try {
-                    TimeUnit.SECONDS.sleep(SECONDS_TO_DELAY);
-                } catch (InterruptedException e) {
-                    // Ignore exception
-                }
-            }
+            event.delay();
             sendToWebsocketSubscribers(event);
         } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);
