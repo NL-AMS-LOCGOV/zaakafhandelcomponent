@@ -237,7 +237,7 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_BESLUITTYPE)
     public List<Besluittype> readBesluittypen(final URI zaaktypeURI) {
         return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
-                .filter(besluittype -> besluittype.getBeginGeldigheid().isBefore(LocalDate.now()) && besluittype.getEindeGeldigheid().isAfter(LocalDate.now()))
+                .filter(besluittype -> dateNowIsBetweenInclusive(besluittype.getBeginGeldigheid(), besluittype.getEindeGeldigheid()))
                 .toList();
     }
 
@@ -392,5 +392,13 @@ public class ZTCClientService implements Caching {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken());
+    }
+
+    private boolean dateNowIsBetweenInclusive(LocalDate begin, LocalDate end) {
+        final LocalDate now = LocalDate.now();
+        if (begin == null || end == null) {
+            return false;
+        }
+        return (begin.isBefore(now) || begin.isEqual(now)) && (end.isAfter(now) || end.isEqual(now));
     }
 }
