@@ -164,10 +164,10 @@ public class IndexeerService {
                     case ADD, UPDATE -> addOrUpdateList.add(converter.convert(zoekIndexEntity.getObjectId()));
                     case REMOVE -> removeList.add(zoekIndexEntity.getObjectId());
                 }
-            } catch (RuntimeException e) {
-                LOG.warning("[%s] Skipped %s: %s".formatted(type.toString(), zoekIndexEntity.getObjectId(),
-                                                            e.getMessage()));
-                entityManager.remove(zoekIndexEntity);
+            } catch (final RuntimeException e) {
+                LOG.severe("[%s] Exception on object with id: %s".formatted(type.toString(),
+                                                                            zoekIndexEntity.getObjectId()));
+                throw e;
             }
         });
         commitToSolrIndex(addOrUpdateList);

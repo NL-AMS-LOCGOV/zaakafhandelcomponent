@@ -65,4 +65,6 @@ public class RESTDocumentZoekObject extends AbstractRESTZoekObject {
 
     public RESTDocumentRechten rechten;
 
+    public boolean indicatieGebruiksrecht;
+
 }
