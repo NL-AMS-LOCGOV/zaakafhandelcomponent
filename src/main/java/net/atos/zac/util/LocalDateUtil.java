@@ -14,9 +14,6 @@ public final class LocalDateUtil {
 
     public static boolean dateNowIsBetweenInclusive(LocalDate begin, LocalDate end) {
         final LocalDate now = LocalDate.now();
-        if (begin == null || end == null) {
-            return false;
-        }
-        return (begin.isBefore(now) || begin.isEqual(now)) && (end.isAfter(now) || end.isEqual(now));
+        return (begin == null || begin.isBefore(now) || begin.isEqual(now)) && (end == null || end.isAfter(now) || end.isEqual(now));
     }
 }
