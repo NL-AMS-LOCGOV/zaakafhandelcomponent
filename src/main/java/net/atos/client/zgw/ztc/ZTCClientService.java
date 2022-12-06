@@ -8,7 +8,6 @@ package net.atos.client.zgw.ztc;
 import static java.lang.String.format;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -236,9 +235,7 @@ public class ZTCClientService implements Caching {
      */
     @CacheResult(cacheName = ZTC_BESLUITTYPE)
     public List<Besluittype> readBesluittypen(final URI zaaktypeURI) {
-        return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
-                .filter(besluittype -> dateNowIsBetweenInclusive(besluittype.getBeginGeldigheid(), besluittype.getEindeGeldigheid()))
-                .toList();
+        return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults();
     }
 
     /**
@@ -392,13 +389,5 @@ public class ZTCClientService implements Caching {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken());
-    }
-
-    private boolean dateNowIsBetweenInclusive(LocalDate begin, LocalDate end) {
-        final LocalDate now = LocalDate.now();
-        if (begin == null || end == null) {
-            return false;
-        }
-        return (begin.isBefore(now) || begin.isEqual(now)) && (end.isAfter(now) || end.isEqual(now));
     }
 }

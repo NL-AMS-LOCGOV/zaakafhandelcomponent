@@ -18,6 +18,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
+import net.atos.zac.util.LocalDateUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -88,7 +89,9 @@ public class HealthCheckService {
     }
 
     private void controleerZaaktypeBesluittypeInrichting(final ZaaktypeInrichtingscheck zaaktypeInrichtingscheck) {
-        final List<Besluittype> besluittypes = ztcClientService.readBesluittypen(zaaktypeInrichtingscheck.getZaaktype().getUrl());
+        final List<Besluittype> besluittypes = ztcClientService.readBesluittypen(zaaktypeInrichtingscheck.getZaaktype().getUrl()).stream()
+                .filter(besluittype -> LocalDateUtil.dateNowIsBetweenInclusive(besluittype.getBeginGeldigheid(), besluittype.getEindeGeldigheid()))
+                .toList();
         if (CollectionUtils.isNotEmpty(besluittypes)) {
             zaaktypeInrichtingscheck.setBesluittypeAanwezig(true);
         }
