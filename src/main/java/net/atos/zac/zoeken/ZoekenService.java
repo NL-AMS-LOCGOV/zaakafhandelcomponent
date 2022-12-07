@@ -53,6 +53,10 @@ public class ZoekenService {
 
     private static final String ZAAKTYPE_OMSCHRIJVING_VELD = "zaaktypeOmschrijving";
 
+    private static final char SOLR_ESCAPE = '\\';
+
+    private static final char SOLR_QUOTE = '\"';
+
     @Inject
     private PolicyService policyService;
 
@@ -189,9 +193,35 @@ public class ZoekenService {
         }
     }
 
-    private static String quoted(final String waarde) {return "\"" + encoded(waarde) + "\"";}
+    /**
+     * Produces a quoted Solr string, with properly encoded contents, from a raw Java string.
+     *
+     * @param waarde the raw unencoded string
+     * @return the encoded and quoted Solr string
+     */
+    private static String quoted(final String waarde) {
+        return SOLR_QUOTE + encoded(waarde) + SOLR_QUOTE;
+    }
 
-    private static String encoded(final String waarde) {return escape(escape(waarde, "\\"), "\"");}
+    /**
+     * Produces an encoded Solr string from a raw Java string.
+     *
+     * @param waarde the raw unencoded string
+     * @return the encoded Solr string
+     */
+    private static String encoded(final String waarde) {
+        return escape(escape(waarde, SOLR_ESCAPE), SOLR_QUOTE);
+    }
 
-    private static String escape(final String waarde, final String c) {return waarde.replace(c, "\\" + c);}
+    /**
+     * Replaces all occurrences of a given character with the correct Solr escape sequence.
+     * N.B. Always start by escaping the escape character itself, only then escape any other characters.
+     *
+     * @param waarde the string that may contain the raw unescaped characters
+     * @param c      the character that will be escaped
+     * @return the string with the Solr escaped characters
+     */
+    private static String escape(final String waarde, final char c) {
+        return waarde.replace(String.valueOf(c), String.valueOf(SOLR_ESCAPE) + c);
+    }
 }
