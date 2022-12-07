@@ -33,20 +33,22 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.signalering.model.Signalering;
+import net.atos.zac.signalering.model.SignaleringDetail;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
-import net.atos.zac.signalering.model.SignaleringSubject;
-import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzonden;
@@ -79,6 +81,9 @@ public class SignaleringenService {
 
     @Inject
     private TaskService taskService;
+
+    @Inject
+    private DRCClientService drcClientService;
 
     private SignaleringType signaleringTypeInstance(final SignaleringType.Type signaleringsType) {
         return entityManager.find(SignaleringType.class, signaleringsType.toString());
@@ -115,18 +120,16 @@ public class SignaleringenService {
      * Factory method for constructing SignaleringVerzonden instances.
      *
      * @param signalering the signalering that has been sent
-     * @param field       the field the signalering has been sent for
      * @return the constructed instance (all members have been set)
      */
-    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering,
-            final SignaleringSubjectField field) {
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering) {
         final SignaleringVerzonden instance = new SignaleringVerzonden();
         instance.setTijdstip(ZonedDateTime.now());
         instance.setType(signaleringTypeInstance(signalering.getType().getType()));
         instance.setTargettype(signalering.getTargettype());
         instance.setTarget(signalering.getTarget());
         instance.setSubject(signalering.getSubject());
-        instance.setSubjectfield(field);
+        instance.setDetail(signalering.getDetail());
         return instance;
     }
 
@@ -210,49 +213,52 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering, final SignaleringSubjectField field) {
+    public void sendSignalering(final Signalering signalering) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
             final Ontvanger to = signaleringenMailHelper.formatTo(mail);
-            final MailTemplate mailTemplate = getMailtemplate(signalering.getType().getType(), field);
-            final Zaak zaak = signalering.getSubjecttype() == SignaleringSubject.ZAAK ?
-                    zrcClientService.readZaak(UUID.fromString(signalering.getSubject())) : null;
-            final TaskInfo taskInfo = signalering.getSubjecttype() == SignaleringSubject.TAAK ?
-                    taskService.readTask(signalering.getSubject()) : null;
-
-            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(),
-                                 StringUtils.EMPTY, false, zaak, taskInfo);
-        }
-    }
-
-    private MailTemplate getMailtemplate(final SignaleringType.Type type, final SignaleringSubjectField field) {
-        Mail mail = null;
-        switch (type) {
-            case TAAK_OP_NAAM -> mail = Mail.SIGNALERING_TAAK_OP_NAAM;
-            case TAAK_VERLOPEN -> mail = Mail.SIGNALERING_TAAK_VERLOPEN;
-            case ZAAK_DOCUMENT_TOEGEVOEGD -> mail = Mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD;
-            case ZAAK_OP_NAAM -> mail = Mail.SIGNALERING_ZAAK_OP_NAAM;
-            case ZAAK_VERLOPEND -> {
-                switch (field) {
-                    case DUE -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM;
-                    case FATAL -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_FATALE_DATUM;
+            final MailTemplate mailTemplate = getMailtemplate(signalering);
+            final Bronnen.Builder bronnenBuilder = new Bronnen.Builder();
+            switch (signalering.getSubjecttype()) {
+                case ZAAK -> {
+                    bronnenBuilder.add(getZaak(signalering.getSubject()));
+                    if (signalering.getType().getType() == SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD) {
+                        bronnenBuilder.add(getDocument(signalering.getDetail()));
+                    }
                 }
+                case TAAK -> bronnenBuilder.add(getTaak(signalering.getSubject()));
+                case DOCUMENT -> bronnenBuilder.add(getDocument(signalering.getSubject()));
             }
-            default -> {
-                final MailTemplate mailTemplate = new MailTemplate();
-                final String defaultMail = String.format("Signalering: %s ", type.getNaam());
-                mailTemplate.setOnderwerp(defaultMail);
-                mailTemplate.setBody(defaultMail);
-                return mailTemplate;
-            }
+            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(),
+                                 StringUtils.EMPTY, false, bronnenBuilder.build());
         }
-
-        return mailTemplateService.readMailtemplate(mail);
     }
 
-    public void sendSignalering(final Signalering signalering) {
-        sendSignalering(signalering, null);
+    private Zaak getZaak(final String zaakUUID) {
+        return zrcClientService.readZaak(UUID.fromString(zaakUUID));
+    }
+
+    private TaskInfo getTaak(final String taakID) {
+        return taskService.readTask(taakID);
+    }
+
+    private EnkelvoudigInformatieobject getDocument(final String documentUUID) {
+        return drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(documentUUID));
+    }
+
+    private MailTemplate getMailtemplate(final Signalering signalering) {
+        return mailTemplateService.readMailtemplate(
+                switch (signalering.getType().getType()) {
+                    case TAAK_OP_NAAM -> Mail.SIGNALERING_TAAK_OP_NAAM;
+                    case TAAK_VERLOPEN -> Mail.SIGNALERING_TAAK_VERLOPEN;
+                    case ZAAK_DOCUMENT_TOEGEVOEGD -> Mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD;
+                    case ZAAK_OP_NAAM -> Mail.SIGNALERING_ZAAK_OP_NAAM;
+                    case ZAAK_VERLOPEND -> switch (SignaleringDetail.valueOf(signalering.getDetail())) {
+                        case STREEFDATUM -> Mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM;
+                        case FATALE_DATUM -> Mail.SIGNALERING_ZAAK_VERLOPEND_FATALE_DATUM;
+                    };
+                });
     }
 
     public SignaleringInstellingen createUpdateOrDeleteInstellingen(final SignaleringInstellingen instellingen) {
@@ -341,9 +347,8 @@ public class SignaleringenService {
         return SignaleringType.Type.values().length;
     }
 
-    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering,
-            final SignaleringSubjectField field) {
-        final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering, field);
+    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering) {
+        final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering);
         valideerObject(signaleringVerzonden);
         return entityManager.merge(signaleringVerzonden);
     }
@@ -382,8 +387,8 @@ public class SignaleringenService {
                 where.add(builder.equal(root.get("subject"), parameters.getSubject()));
             }
         }
-        if (parameters.getSubjectfield() != null) {
-            where.add(builder.equal(root.get("subjectfield"), parameters.getSubjectfield()));
+        if (parameters.getDetail() != null) {
+            where.add(builder.equal(root.get("detail"), parameters.getDetail().toString()));
         }
         return builder.and(where.toArray(new Predicate[0]));
     }

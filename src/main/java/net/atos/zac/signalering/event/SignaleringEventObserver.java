@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -23,12 +24,14 @@ import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
@@ -58,8 +61,9 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
-        LOG.fine(() -> String.format("Signalering event ontvangen: %s", event.toString()));
         try {
+            LOG.fine(() -> String.format("Signalering event ontvangen: %s", event.toString()));
+            event.delay();
             final Signalering signalering = buildSignalering(event);
             if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
                 final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
@@ -85,21 +89,26 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         return addTarget(signalering, rol);
     }
 
-    private Signalering getSignaleringVoorMedewerker(final SignaleringEvent<?> event, final Zaak subject, final RolMedewerker rol) {
+    private Signalering getSignaleringVoorMedewerker(final SignaleringEvent<?> event, final Zaak subject,
+            final RolMedewerker rol) {
         return getSignaleringVoorRol(event, subject, rol);
     }
 
-    private Signalering getSignaleringVoorGroup(final SignaleringEvent<?> event, final Zaak subject, final RolOrganisatorischeEenheid rol) {
+    private Signalering getSignaleringVoorGroup(final SignaleringEvent<?> event, final Zaak subject,
+            final RolOrganisatorischeEenheid rol) {
         if (getRolBehandelaarMedewerker(subject).isEmpty()) {
             return getSignaleringVoorRol(event, subject, rol);
         }
         return null;
     }
 
-    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final Zaak subject) {
+    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final Zaak subject,
+            final ZaakInformatieobject detail) {
         final Optional<Rol<?>> behandelaar = getRolBehandelaarMedewerker(subject);
         if (behandelaar.isPresent()) {
-            return getSignaleringVoorRol(event, subject, behandelaar.get());
+            final Signalering signalering = getSignaleringVoorRol(event, subject, behandelaar.get());
+            signalering.setDetail(detail);
+            return signalering;
         }
         return null;
     }
@@ -113,14 +122,31 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         return null;
     }
 
+    // On creation of a human task it's owner is assumed to be the actor who created it.
+    private SignaleringEvent<?> fixActor(final SignaleringEvent<?> event, final TaskInfo subject) {
+        if (event.getActor() == null) {
+            final String owner = subject.getOwner();
+            final User actor = owner != null ? identityService.readUser(owner) : null;
+            final SignaleringEvent<?> fixed = SignaleringEventUtil.event(event.getObjectType(), subject, actor);
+            if (actor != null) {
+                LOG.fine(() -> String.format("Signalering event fixed: %s", fixed.toString()));
+            }
+            return fixed;
+        }
+        return event;
+    }
+
     private Signalering buildSignalering(final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
             case ZAAK_DOCUMENT_TOEGEVOEGD -> {
-                final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId());
-                return getSignaleringVoorBehandelaar(event, subject);
+                final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId().getResource());
+                final ZaakInformatieobject detail =
+                        zrcClientService.readZaakinformatieobject(
+                                URIUtil.parseUUIDFromResourceURI((URI) event.getObjectId().getDetail()));
+                return getSignaleringVoorBehandelaar(event, subject, detail);
             }
             case ZAAK_OP_NAAM -> {
-                final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
+                final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId().getResource());
                 if (AardVanRol.fromValue(rol.getOmschrijvingGeneriek()) == AardVanRol.BEHANDELAAR) {
                     final Zaak subject = zrcClientService.readZaak(rol.getZaak());
                     switch (rol.getBetrokkeneType()) {
@@ -135,8 +161,8 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 }
             }
             case TAAK_OP_NAAM -> {
-                final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId());
-                return getSignaleringVoorBehandelaar(event, subject);
+                final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId().getResource());
+                return getSignaleringVoorBehandelaar(fixActor(event, subject), subject);
             }
             case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {
                 // These are NOT event driven and should not show up here
@@ -159,7 +185,8 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     }
 
     private Optional<Rol<?>> getRol(final Zaak zaak, final Roltype roltype, final BetrokkeneType betrokkeneType) {
-        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult();
+        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType))
+                .getSingleResult();
     }
 
     private Signalering addTarget(final Signalering signalering, final Rol<?> rol) {

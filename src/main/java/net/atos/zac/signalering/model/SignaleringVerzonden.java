@@ -97,8 +97,12 @@ public class SignaleringVerzonden {
         this.subject = subject;
     }
 
-    public void setSubjectfield(final SignaleringSubjectField subjectfield) {
-        this.detail = subjectfield.name();
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(final String detail) {
+        this.detail = detail;
     }
 
     public ZonedDateTime getTijdstip() {

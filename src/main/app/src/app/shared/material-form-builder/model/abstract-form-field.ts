@@ -9,9 +9,10 @@ import {FormFieldHint} from './form-field-hint';
 
 export abstract class AbstractFormField {
 
-    static formControlOptions: FormControlOptions = { nonNullable: true };
+    static formControlOptions: FormControlOptions = {nonNullable: true};
 
     id: string;
+    styleClass: string;
     label: string;
     required: boolean;
     readonly: boolean;
@@ -38,7 +39,7 @@ export abstract class AbstractFormField {
 
     abstract initControl(value?: any);
 
-    static formControlInstance(value:any):FormControl{
+    static formControlInstance(value: any): FormControl {
         return new FormControl(value, this.formControlOptions);
     }
 
