@@ -4,6 +4,7 @@
   -->
 <div fxLayout="row wrap" class="zaak-wrapper">
     <div [fxFlex]="100/3">
+        <zac-zaak-indicaties fxLayoutAlign="end" [zaakZoekObject]="zaak"></zac-zaak-indicaties>
         <zac-static-text [label]="'Zaak' | translate"
                          class="type-label"
                          [icon]="viewIcon"
