@@ -96,6 +96,9 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s %s", getClass().getSimpleName(), getOpcode(), getObjectType(), getObjectId());
+        final String className = 0 < delay
+                ? getClass().getSimpleName() + String.format("+%ds", delay)
+                : getClass().getSimpleName();
+        return String.format("%s %s %s %s", className, getOpcode(), getObjectType(), getObjectId());
     }
 }

@@ -31,6 +31,7 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
@@ -60,9 +61,8 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
-        // TODO put level back on fine #1289
-        LOG.info(() -> String.format("Signalering event ontvangen: %s", event.toString()));
         try {
+            LOG.fine(() -> String.format("Signalering event ontvangen: %s", event.toString()));
             event.delay();
             final Signalering signalering = buildSignalering(event);
             if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
@@ -122,6 +122,20 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         return null;
     }
 
+    // On creation of a human task it's owner is assumed to be the actor who created it.
+    private SignaleringEvent<?> fixActor(final SignaleringEvent<?> event, final TaskInfo subject) {
+        if (event.getActor() == null) {
+            final String owner = subject.getOwner();
+            final User actor = owner != null ? identityService.readUser(owner) : null;
+            final SignaleringEvent<?> fixed = SignaleringEventUtil.event(event.getObjectType(), subject, actor);
+            if (actor != null) {
+                LOG.fine(() -> String.format("Signalering event fixed: %s", fixed.toString()));
+            }
+            return fixed;
+        }
+        return event;
+    }
+
     private Signalering buildSignalering(final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
             case ZAAK_DOCUMENT_TOEGEVOEGD -> {
@@ -148,7 +162,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
             }
             case TAAK_OP_NAAM -> {
                 final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId().getResource());
-                return getSignaleringVoorBehandelaar(event, subject);
+                return getSignaleringVoorBehandelaar(fixActor(event, subject), subject);
             }
             case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {
                 // These are NOT event driven and should not show up here
