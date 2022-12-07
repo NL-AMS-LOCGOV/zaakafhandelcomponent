@@ -58,27 +58,33 @@ export class Advies extends AbstractTaakFormulier {
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ParagraphFormFieldBuilder().text('msg.advies.behandelen').build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
-                                                                            .label(fields.VRAAG)
-                                                                            .build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
-                                              .label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                              .readonly(true)
-                                              .build()],
-            [new RadioFormFieldBuilder(this.getDataElement(fields.ADVIES)).id(fields.ADVIES)
-                                                                          .label(fields.ADVIES)
-                                                                          .options(this.tabellen['ADVIES'])
-                                                                          .validators(Validators.required)
-                                                                          .readonly(this.readonly)
-                                                                          .build()],
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
-                                           .label(fields.TOELICHTING)
-                                           .validators(Validators.required)
-                                           .readonly(this.readonly)
-                                           .maxlength(1000)
-                                           .build()]
+            [new ParagraphFormFieldBuilder()
+            .text('msg.advies.behandelen')
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG))
+            .id(fields.VRAAG)
+            .label(fields.VRAAG)
+            .build()],
+            [new DocumentenLijstFieldBuilder()
+            .id(fields.RELEVANTE_DOCUMENTEN)
+            .label(fields.RELEVANTE_DOCUMENTEN)
+            .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+            .readonly(true)
+            .build()],
+            [new RadioFormFieldBuilder(this.getDataElement(fields.ADVIES))
+            .id(fields.ADVIES)
+            .label(fields.ADVIES)
+            .options(this.tabellen['ADVIES'])
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
+            .id(fields.TOELICHTING)
+            .label(fields.TOELICHTING)
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .maxlength(1000)
+            .build()]
         );
     }
 
