@@ -698,7 +698,7 @@ public class ZakenRESTService {
 
     @GET
     @Path("besluit/zaakUuid/{zaakUuid}")
-    public RESTBesluit findBesluitByZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
+    public List<RESTBesluit> findBesluitByZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
         return brcClientService.findBesluit(zrcClientService.readZaak(zaakUuid))
                 .map(besluitConverter::convertToRESTBesluit)
                 .orElse(null);
@@ -712,8 +712,7 @@ public class ZakenRESTService {
         final Status zaakStatus = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
         final Statustype zaakStatustype = zaakStatus != null ? ztcClientService.readStatustype(
                 zaakStatus.getStatustype()) : null;
-        assertPolicy(zaak.isOpen() && !brcClientService.findBesluit(zaak).isPresent() &&
-                             isNotEmpty(zaaktype.getBesluittypen()) &&
+        assertPolicy(zaak.isOpen() && isNotEmpty(zaaktype.getBesluittypen()) &&
                              policyService.readZaakRechten(zaak, zaaktype).getBehandelen() &&
                              !isIntake(zaakStatustype));
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);

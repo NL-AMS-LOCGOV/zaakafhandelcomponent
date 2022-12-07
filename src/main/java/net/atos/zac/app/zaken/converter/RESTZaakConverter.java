@@ -116,7 +116,7 @@ public class RESTZaakConverter {
 
         brcClientService.findBesluit(zaak)
                 .map(besluitConverter::convertToRESTBesluit)
-                .ifPresent(besluit -> restZaak.besluit = besluit);
+                .ifPresent(besluiten -> restZaak.besluiten = besluiten);
         restZaak.identificatie = zaak.getIdentificatie();
         restZaak.uuid = zaak.getUuid();
         restZaak.bronorganisatie = zaak.getBronorganisatie();

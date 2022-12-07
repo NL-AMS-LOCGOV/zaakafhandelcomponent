@@ -39,7 +39,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     loading: boolean;
     toelichtingFormField: AbstractFormField;
     resultaatFormField: SelectFormField | ReadonlyFormField;
-    besluitFormField: ReadonlyFormField;
+    besluitenFormField: ReadonlyFormField[];
     sendMailFormField: AbstractFormField;
     ontvangerFormField: AbstractFormField;
     private ngDestroy = new Subject<void>();
@@ -60,14 +60,16 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
             this.mailtemplate = mailtemplate;
         });
 
-        if (this.data.zaak.besluit) {
+        if (this.data.zaak.besluiten) {
             this.resultaatFormField = new ReadonlyFormFieldBuilder(this.data.zaak.resultaat.resultaattype.naam).id('resultaattype')
-                                                                    .label('resultaat')
-                                                                    .build();
+                                                                                                               .label('resultaat')
+                                                                                                               .build();
 
-            this.besluitFormField = new ReadonlyFormFieldBuilder(this.data.zaak.besluit.besluittype.naam).id('besluit')
-                                                                  .label('besluit')
-                                                                  .build();
+            this.besluitenFormField = [];
+            this.data.zaak.besluiten.forEach(besluit =>
+                this.besluitenFormField.push(new ReadonlyFormFieldBuilder(besluit.besluittype.naam).id('besluit')
+                                                                                                   .label(besluit.identificatie)
+                                                                                                   .build()));
         } else {
             this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
                                                                   .label('resultaat')
@@ -90,7 +92,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                                                              .build();
         this.sendMailFormField.formControl.disable();
 
-        if (!this.data.zaak.besluit) {
+        if (!this.data.zaak.besluiten) {
             this.resultaatFormField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
                 this.besluitVastleggen = (value as Resultaattype).besluitVerplicht;
 

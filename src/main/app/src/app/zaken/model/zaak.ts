@@ -24,7 +24,7 @@ export class Zaak {
     zaaktype: Zaaktype;
     status: ZaakStatus;
     resultaat: ZaakResultaat;
-    besluit: Besluit;
+    besluiten: Besluit[];
     bronorganisatie: string;
     verantwoordelijkeOrganisatie: string;
     registratiedatum: string;
