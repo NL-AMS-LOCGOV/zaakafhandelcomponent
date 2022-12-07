@@ -795,7 +795,7 @@ public class ZakenRESTService {
     public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
         final List<Besluittype> besluittypen = ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()).stream()
-                .filter(besluittype -> LocalDateUtil.dateNowIsBetweenInclusive(besluittype.getBeginGeldigheid(), besluittype.getEindeGeldigheid()))
+                .filter(LocalDateUtil::dateNowIsBetween)
                 .toList();
         return besluittypeConverter.convertToRESTBesluittypes(besluittypen);
     }

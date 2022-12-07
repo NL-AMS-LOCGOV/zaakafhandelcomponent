@@ -1,26 +1,20 @@
 package net.atos.zac.healthcheck;
 
-import java.net.URI;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections4.CollectionUtils;
-
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Afleidingswijze;
-import net.atos.client.zgw.ztc.model.Besluittype;
-import net.atos.client.zgw.ztc.model.Informatieobjecttype;
-import net.atos.client.zgw.ztc.model.Resultaattype;
-import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.client.zgw.ztc.model.Statustype;
-import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.client.zgw.ztc.model.*;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
 import net.atos.zac.util.LocalDateUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+
+import org.apache.commons.collections4.CollectionUtils;
+
+import javax.inject.Inject;
+
+import java.net.URI;
+import java.util.List;
 
 public class HealthCheckService {
 
@@ -90,7 +84,7 @@ public class HealthCheckService {
 
     private void controleerZaaktypeBesluittypeInrichting(final ZaaktypeInrichtingscheck zaaktypeInrichtingscheck) {
         final List<Besluittype> besluittypes = ztcClientService.readBesluittypen(zaaktypeInrichtingscheck.getZaaktype().getUrl()).stream()
-                .filter(besluittype -> LocalDateUtil.dateNowIsBetweenInclusive(besluittype.getBeginGeldigheid(), besluittype.getEindeGeldigheid()))
+                .filter(LocalDateUtil::dateNowIsBetween)
                 .toList();
         if (CollectionUtils.isNotEmpty(besluittypes)) {
             zaaktypeInrichtingscheck.setBesluittypeAanwezig(true);
