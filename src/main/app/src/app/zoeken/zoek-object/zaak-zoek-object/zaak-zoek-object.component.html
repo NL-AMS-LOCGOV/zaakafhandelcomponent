@@ -4,12 +4,12 @@
   -->
 <div fxLayout="row wrap" class="zaak-wrapper">
     <div [fxFlex]="100/3">
-        <zac-zaak-indicaties fxLayoutAlign="end" [zaakZoekObject]="zaak"></zac-zaak-indicaties>
-        <zac-static-text [label]="'Zaak' | translate"
-                         class="type-label"
-                         [icon]="viewIcon"
-                         (iconClicked)="open(zaak)"
-                         [value]="zaak.identificatie"></zac-static-text>
+        <zac-zoekobject-static-header [label]="'Zaak' | translate"
+                                      class="type-label"
+                                      [icon]="viewIcon"
+                                      (iconClicked)="open(zaak)"
+                                      [value]="zaak.identificatie"
+                                      [zaakZoekObject]="zaak"></zac-zoekobject-static-header>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"

@@ -1,0 +1,26 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="static-text">
+    <div fxLayout="row" fxLayoutAlign="space-between flex-end">
+        <label class="static-text-label">{{label}}</label>
+        <zac-zaak-indicaties *ngIf="zaakZoekObject"
+                             [zaakZoekObject]="zaakZoekObject"></zac-zaak-indicaties>
+        <zac-informatie-object-indicaties *ngIf="documentZoekObject"
+                                          [document]="documentZoekObject" lijst="true"></zac-informatie-object-indicaties>
+    </div>
+    <div class="static-text-content">
+        <span *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></span>
+        <read-more *ngIf="maxLength" [maxLength]="maxLength" text="{{value | empty}}"></read-more>
+        <ng-container *ngIf="!maxLength">{{value | empty}}</ng-container>
+        <mat-icon class="label-icon"
+                  [ngClass]="icon.styleClass"
+                  *ngIf="hasIcon"
+                  (click)="iconClicked.emit()"
+                  title="{{ icon.title | translate}}">
+            {{icon.icon}}
+        </mat-icon>
+    </div>
+</div>

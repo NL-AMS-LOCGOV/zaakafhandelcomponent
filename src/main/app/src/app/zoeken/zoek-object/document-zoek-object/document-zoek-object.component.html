@@ -5,12 +5,12 @@
 
 <div fxLayout="row wrap" class="document-wrapper">
     <div [fxFlex]="100/3">
-        <zac-informatie-object-indicaties fxLayoutAlign="end" [document]="document" lijst="true"></zac-informatie-object-indicaties>
-        <zac-static-text [label]="'Document' | translate"
-                         [icon]="viewIcon"
-                         class="type-label"
-                         (iconClicked)="open(document)"
-                         [value]="document.titel"></zac-static-text>
+        <zac-zoekobject-static-header [label]="'Document' | translate"
+                                      [icon]="viewIcon"
+                                      class="type-label"
+                                      (iconClicked)="open(document)"
+                                      [value]="document.titel"
+                                      [documentZoekObject]="document"></zac-zoekobject-static-header>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="document.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"

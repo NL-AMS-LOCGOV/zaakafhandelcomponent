@@ -50,6 +50,7 @@ import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filt
 import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
 import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
 import {InformatieObjectIndicatiesComponent} from './informatie-object-indicaties/informatie-object-indicaties.component';
+import {ZoekobjectStaticHeaderComponent} from './zoekobject-static-header/zoekobject-static-header.component';
 
 @NgModule({
     declarations: [
@@ -83,7 +84,8 @@ import {InformatieObjectIndicatiesComponent} from './informatie-object-indicatie
         NotificationDialogComponent,
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
-        ZaakIndicatiesComponent
+        ZaakIndicatiesComponent,
+        ZoekobjectStaticHeaderComponent
     ],
     imports: [
         FormsModule,
@@ -134,7 +136,8 @@ import {InformatieObjectIndicatiesComponent} from './informatie-object-indicatie
         DagenPipe,
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
-        ZaakIndicatiesComponent
+        ZaakIndicatiesComponent,
+        ZoekobjectStaticHeaderComponent
     ],
     providers: [
         Title,
