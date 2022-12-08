@@ -13,8 +13,8 @@ import {IndicatiesComponent} from '../indicaties.component';
 
 export enum InformatieobjectIndicatie {
     VERGRENDELD = 'VERGRENDELD',
+    ONDERTEKEND = 'ONDERTEKEND',
     GEBRUIKSRECHT = 'GEBRUIKSRECHT',
-    ONDERTEKEND = 'ONDERTEKEND'
 }
 
 @Component({
