@@ -102,17 +102,12 @@ public final class SolrSchemaUpdateHelper {
                 ));
     }
 
-    public static SchemaRequest.AddCopyField addCopyField(final String source, final String dest) {
+    public static SchemaRequest.AddCopyField addCopyField(final String source, final String... dest) {
         return new SchemaRequest.AddCopyField(source, List.of(dest));
     }
 
-    public static SchemaRequest.AddCopyField addCopyField(final String source, final String dest1, final String dest2) {
-        return new SchemaRequest.AddCopyField(source, List.of(dest1, dest2));
-    }
-
-    public static SchemaRequest.AddCopyField addCopyField(final String source, final String dest1, final String dest2
-            , final String dest3) {
-        return new SchemaRequest.AddCopyField(source, List.of(dest1, dest2, dest3));
+    public static SchemaRequest.DeleteCopyField deleteCopyField(final String source, final String... dest) {
+        return new SchemaRequest.DeleteCopyField(source, List.of(dest));
     }
 
     public static SchemaRequest.AddDynamicField addDynamicField(final String name, final FieldType type,

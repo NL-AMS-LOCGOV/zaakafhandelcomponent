@@ -34,7 +34,7 @@ public enum SorteerVeld {
     TAAK_GROEP("taak_groepNaam"),
     TAAK_CREATIEDATUM("taak_creatiedatum"),
     TAAK_TOEKENNINGSDATUM("taak_toekenningsdatum"),
-    TAAK_FATALEDATUM("taak_streefdatum"), // TODO #1438, Solr veld renamen
+    TAAK_FATALEDATUM("taak_fataledatum"),
 
     INFORMATIEOBJECT_TITEL("informatieobject_titel_sort"),
     INFORMATIEOBJECT_ZAAK_IDENTIFICATIE("informatieobject_zaakIdentificatie"),
