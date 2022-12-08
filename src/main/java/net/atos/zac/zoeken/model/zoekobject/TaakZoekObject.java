@@ -54,7 +54,7 @@ public class TaakZoekObject implements ZoekObject {
     @Field("taak_toekenningsdatum")
     private Date toekenningsdatum;
 
-    @Field("taak_streefdatum") // TODO #1438, Solr veld renamen
+    @Field("taak_fataledatum")
     private Date fataledatum;
 
     @Field("taak_groepId")

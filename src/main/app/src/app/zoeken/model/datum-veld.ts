@@ -4,8 +4,7 @@
  */
 
 export enum DatumVeld {
-    STARTDATUM = 'STARTDATUM', // TODO #1438, unused Solr veld opruimen?
-    STREEFDATUM = 'STREEFDATUM', // TODO #1438, unused Solr veld opruimen?
+    STARTDATUM = 'STARTDATUM',
 
     ZAAK_STARTDATUM = 'ZAAK_STARTDATUM',
     ZAAK_EINDDATUM = 'ZAAK_EINDDATUM',
