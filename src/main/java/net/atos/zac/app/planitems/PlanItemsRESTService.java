@@ -132,7 +132,7 @@ public class PlanItemsRESTService {
                 zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameters
                 .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
-        final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
+        final Date fataledatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
             String bijlagen = null;
@@ -154,7 +154,7 @@ public class PlanItemsRESTService {
                                                bijlagen, true, Bronnen.fromZaak(zaak)));
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
-                                   humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
+                                   humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, fataledatum,
                                    humanTaskData.taakdata, zaakUUID);
         indexeerService.addZaak(zaakUUID, false);
     }

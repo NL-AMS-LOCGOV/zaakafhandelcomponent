@@ -11,7 +11,7 @@ public enum TaakSortering {
     ID,
     TAAKNAAM,
     CREATIEDATUM,
-    STREEFDATUM,
+    FATALEDATUM,
     BEHANDELAAR;
 
     public static TaakSortering fromValue(final String value) {
@@ -21,6 +21,7 @@ public enum TaakSortering {
         return Arrays.stream(values())
                 .filter(taakSortering -> taakSortering.name().equalsIgnoreCase(value))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Onbekende TaakSortering met waarde: '%s'", value)));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Onbekende TaakSortering met waarde: '%s'", value)));
     }
 }

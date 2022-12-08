@@ -258,7 +258,7 @@ public class TaskService {
                 case ID -> taskQuery.orderByTaskId();
                 case TAAKNAAM -> taskQuery.orderByTaskName();
                 case CREATIEDATUM -> taskQuery.orderByTaskCreateTime();
-                case STREEFDATUM -> taskQuery.orderByTaskDueDate();
+                case FATALEDATUM -> taskQuery.orderByTaskDueDate();
                 case BEHANDELAAR -> taskQuery.orderByTaskAssignee();
             };
             return direction.equals(SorteerRichting.ASCENDING) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();

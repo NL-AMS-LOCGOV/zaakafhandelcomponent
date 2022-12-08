@@ -53,7 +53,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         taakZoekObject.setType(ZoekObjectType.TAAK);
         taakZoekObject.setCreatiedatum(taskInfo.getCreateTime());
         taakZoekObject.setToekenningsdatum(taskInfo.getClaimTime());
-        taakZoekObject.setStreefdatum(taskInfo.getDueDate());
+        taakZoekObject.setFataledatum(taskInfo.getDueDate());
         taakZoekObject.setToelichting(taskInfo.getDescription());
 
         if (taskInfo.getAssignee() != null) {
