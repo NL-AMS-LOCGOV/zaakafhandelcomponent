@@ -6,6 +6,7 @@
 import {ZoekObject} from '../zoek-object';
 import {ZaakRechten} from '../../../policy/model/zaak-rechten';
 import {ZoekObjectType} from '../zoek-object-type';
+import {ZaakIndicatie} from '../../../shared/indicaties/zaak-indicaties/zaak-indicaties.component';
 
 export class ZaakZoekObject implements ZoekObject {
     id: string;
@@ -42,4 +43,5 @@ export class ZaakZoekObject implements ZoekObject {
     indicatieHeropend: boolean;
     statusToelichting: string;
     rechten: ZaakRechten;
+    indicaties: ZaakIndicatie[];
 }

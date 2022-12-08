@@ -80,6 +80,7 @@ import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/fo
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -88,6 +89,7 @@ import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-opt
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly skeletonLayout = SkeletonLayout;
+    readonly indicatiesLayout = IndicatiesLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;

@@ -7,10 +7,12 @@ package net.atos.zac.app.informatieobjecten.model;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.EnumSet;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.policy.model.RESTDocumentRechten;
+import net.atos.zac.zoeken.model.DocumentIndicatie;
 
 /**
  *
@@ -60,6 +62,20 @@ public class RESTEnkelvoudigInformatieobject {
     public RESTOndertekening ondertekening;
 
     public boolean indicatieGebruiksrecht;
+
+    public EnumSet<DocumentIndicatie> getIndicaties() {
+        final EnumSet<DocumentIndicatie> indicaties = EnumSet.noneOf(DocumentIndicatie.class);
+        if (gelockedDoor != null) {
+            indicaties.add(DocumentIndicatie.VERGRENDELD);
+        }
+        if (ondertekening != null) {
+            indicaties.add(DocumentIndicatie.ONDERTEKEND);
+        }
+        if (indicatieGebruiksrecht) {
+            indicaties.add(DocumentIndicatie.GEBRUIKSRECHT);
+        }
+        return indicaties;
+    }
 
     public RESTUser gelockedDoor;
 

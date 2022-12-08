@@ -6,6 +6,7 @@
 import {ZoekObject} from '../zoek-object';
 import {DocumentRechten} from '../../../policy/model/document-rechten';
 import {ZoekObjectType} from '../zoek-object-type';
+import {InformatieobjectIndicatie} from '../../../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 export class DocumentZoekObject implements ZoekObject {
     id: string;
@@ -33,11 +34,11 @@ export class DocumentZoekObject implements ZoekObject {
     bestandsnaam: string;
     bestandsomvang: number;
     documentType: string;
-
     indicatieOndertekend: boolean;
     inhoudUrl: string;
     indicatieVergrendeld: boolean;
     indicatieGebruiksrecht: boolean;
     vergrendeldDoor: string;
+    indicaties: InformatieobjectIndicatie[];
     rechten: DocumentRechten;
 }
