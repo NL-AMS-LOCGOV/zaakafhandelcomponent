@@ -37,13 +37,14 @@ import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Observable} from 'rxjs';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
 export class InformatieObjectViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
-
+    readonly indicatiesLayout = IndicatiesLayout;
     infoObject: EnkelvoudigInformatieobject;
     laatsteVersieInfoObject: EnkelvoudigInformatieobject;
     zaakInformatieObjecten: ZaakInformatieobject[];
@@ -214,7 +215,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         if (obj.length > 0) {
             return obj[0];
         } else {
-            return {type: 'unknown', icon: 'fa-file-circle-question'};
+            return {type: 'unknown', icon: 'fa-file-circle-question', color: ''};
         }
     }
 

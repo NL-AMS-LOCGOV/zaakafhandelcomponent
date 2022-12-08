@@ -48,9 +48,8 @@ import {DateRangeFilterComponent} from './table-zoek-filters/date-range-filter/d
 import {FacetFilterComponent} from './table-zoek-filters/facet-filter/facet-filter.component';
 import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filter.component';
 import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
-import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
-import {InformatieObjectIndicatiesComponent} from './informatie-object-indicaties/informatie-object-indicaties.component';
-import {ZoekobjectStaticHeaderComponent} from './zoekobject-static-header/zoekobject-static-header.component';
+import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
+import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -85,7 +84,6 @@ import {ZoekobjectStaticHeaderComponent} from './zoekobject-static-header/zoekob
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
-        ZoekobjectStaticHeaderComponent
     ],
     imports: [
         FormsModule,
@@ -137,7 +135,6 @@ import {ZoekobjectStaticHeaderComponent} from './zoekobject-static-header/zoekob
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
-        ZoekobjectStaticHeaderComponent
     ],
     providers: [
         Title,

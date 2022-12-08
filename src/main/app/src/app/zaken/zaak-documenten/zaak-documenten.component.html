@@ -61,7 +61,7 @@
                     <ng-container matColumnDef="indicaties">
                         <th mat-header-cell *matHeaderCellDef>{{'indicaties' | translate}}</th>
                         <td mat-cell *matCellDef="let row">
-                            <zac-informatie-object-indicaties [infoObject]="row" lijst="true"></zac-informatie-object-indicaties>
+                            <zac-informatie-object-indicaties [document]="row" [layout]="indicatiesLayout.WERKLIJST"></zac-informatie-object-indicaties>
                         </td>
                     </ng-container>
 

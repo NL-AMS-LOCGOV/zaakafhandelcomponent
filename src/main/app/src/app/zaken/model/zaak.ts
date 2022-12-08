@@ -15,6 +15,7 @@ import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {Besluit} from './besluit';
+import {ZaakIndicatie} from '../../shared/indicaties/zaak-indicaties/zaak-indicaties.component';
 
 export class Zaak {
     uuid: string;
@@ -57,5 +58,6 @@ export class Zaak {
     isBesluittypeAanwezig: boolean;
     isInIntakeFase: boolean;
     rechten: ZaakRechten;
+    indicaties: ZaakIndicatie[];
     zaakdata: {};
 }

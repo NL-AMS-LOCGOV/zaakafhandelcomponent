@@ -7,7 +7,9 @@ package net.atos.zac.zoeken.model.zoekobject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -420,6 +422,14 @@ public class ZaakZoekObject implements ZoekObject {
 
     public boolean isIndicatie(final ZaakIndicatie indicatie) {
         return this.indicaties != null && this.indicaties.contains(indicatie.name());
+    }
+
+    public EnumSet<ZaakIndicatie> getZaakIndicaties() {
+        if (this.indicaties == null) {
+            return EnumSet.noneOf(ZaakIndicatie.class);
+        }
+        return this.indicaties.stream().map(ZaakIndicatie::valueOf)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(ZaakIndicatie.class)));
     }
 
     public void setIndicatie(final ZaakIndicatie indicatie, final boolean value) {
