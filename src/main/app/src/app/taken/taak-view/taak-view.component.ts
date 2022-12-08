@@ -57,7 +57,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
 
     editFormFields: Map<string, any> = new Map<string, any>();
-    streefdatumIcon: TextIcon;
+    fataledatumIcon: TextIcon;
 
     formulier: AbstractTaakFormulier;
     formConfig: FormConfig;
@@ -144,8 +144,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                .maxlength(1000)
                                                                .build());
 
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
-            'msg.datum.overschreden', 'warning');
+        this.fataledatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'errorTaakVerlopen_icon',
+            'msg.datum.overschreden', 'error');
     }
 
     private setupMenu(): void {

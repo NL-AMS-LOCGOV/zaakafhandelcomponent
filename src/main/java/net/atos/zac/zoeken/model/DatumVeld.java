@@ -6,8 +6,8 @@
 package net.atos.zac.zoeken.model;
 
 public enum DatumVeld {
-    STARTDATUM("startdatum"),
-    STREEFDATUM("streefdatum"),
+    STARTDATUM("startdatum"), // TODO #1438, unused Solr veld opruimen?
+    STREEFDATUM("streefdatum"), // TODO #1438, unused Solr veld opruimen?
 
     ZAAK_STARTDATUM("zaak_startdatum"),
     ZAAK_EINDDATUM("zaak_einddatum"),
@@ -19,7 +19,7 @@ public enum DatumVeld {
 
     TAAK_CREATIEDATUM("taak_creatiedatum"),
     TAAK_TOEKENNINGSDATUM("taak_toekenningsdatum"),
-    TAAK_STREEFDATUM("taak_streefdatum"),
+    TAAK_FATALEDATUM("taak_streefdatum"), // TODO #1438, Solr veld renamen
 
     INFORMATIEOBJECT_CREATIEDATUM("informatieobject_creatiedatum"),
     INFORMATIEOBJECT_REGISTRATIEDATUM("informatieobject_registratiedatum"),

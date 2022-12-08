@@ -174,7 +174,8 @@ public class SignaleringenJob {
      * Make sure already sent E-Mail warnings will get send again (in cases where the einddatum gepland has changed)
      */
     private void zaakEinddatumGeplandOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
-        zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.STREEFDATUM, zaaktype, venster))
+        zoekenService.zoek(
+                        getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_STREEFDATUM, zaaktype, venster))
                 .getItems().stream()
                 .map(zaakZoekObject -> (ZaakZoekObject) zaakZoekObject)
                 .map(zaakZoekObject -> getZaakSignaleringVerzondenParameters(
@@ -240,10 +241,10 @@ public class SignaleringenJob {
     private void taakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
         LOG.info("Taak signaleringen verzenden: gestart...");
-        info.streefdatumVerzonden += taakDueVerzenden();
+        info.fataledatumVerzonden += taakDueVerzenden();
         taakDueOnterechtVerzondenVerwijderen();
-        LOG.info(String.format("Taak signaleringen verzenden: gestopt (%d streefdatum waarschuwingen)",
-                               info.streefdatumVerzonden));
+        LOG.info(String.format("Taak signaleringen verzenden: gestopt (%d fatale datum waarschuwingen)",
+                               info.fataledatumVerzonden));
     }
 
     /**

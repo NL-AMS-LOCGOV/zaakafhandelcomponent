@@ -22,7 +22,7 @@ export class TaakZoekObject implements ZoekObject {
     zaakToelichting: string;
     creatiedatum: string;
     toekenningsdatum: string;
-    streefdatum: string;
+    fataledatum: string;
     groepID: string;
     groepNaam: string;
     behandelaarNaam: string;

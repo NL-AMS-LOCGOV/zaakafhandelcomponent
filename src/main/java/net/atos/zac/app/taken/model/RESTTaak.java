@@ -32,7 +32,7 @@ public class RESTTaak {
     // Datum waarop de taak is toegekend aan een behandelaar
     public ZonedDateTime toekenningsdatumTijd;
 
-    public LocalDate streefdatum;
+    public LocalDate fataledatum;
 
     public RESTUser behandelaar;
 

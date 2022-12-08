@@ -37,7 +37,7 @@ public class RESTTaakZoekObject extends AbstractRESTZoekObject {
 
     public LocalDate toekenningsdatum;
 
-    public LocalDate streefdatum;
+    public LocalDate fataledatum;
 
     public String groepID;
 

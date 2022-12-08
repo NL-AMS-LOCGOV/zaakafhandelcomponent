@@ -88,7 +88,7 @@ public class RESTTaakConverter {
             restTaak.toelichting = taskInfo.getDescription();
             restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());
             restTaak.toekenningsdatumTijd = convertToZonedDateTime(taskInfo.getClaimTime());
-            restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
+            restTaak.fataledatum = convertToLocalDate(taskInfo.getDueDate());
             restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
             restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
             restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
