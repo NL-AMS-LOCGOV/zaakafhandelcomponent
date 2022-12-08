@@ -50,11 +50,6 @@ public class SignaleringVerzonden {
     @Column(name = "subject", nullable = false)
     private String subject;
 
-    @NotNull
-    @Column(name = "subjectfield_enum", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SignaleringDetail subjectfield;
-
     @Column(name = "detail")
     private String detail;
 
