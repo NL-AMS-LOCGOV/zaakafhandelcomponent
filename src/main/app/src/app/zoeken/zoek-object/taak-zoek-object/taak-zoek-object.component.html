@@ -3,13 +3,9 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout="row wrap" class="taak-wrapper">
+<div fxLayout="row wrap" class="zoek-object-wrapper">
     <div [fxFlex]="100/3">
-        <zac-static-text [label]="'Taak' | translate"
-                         [icon]="viewIcon"
-                         class="type-label"
-                         (iconClicked)="open(taak)"
-                         [value]="taak.naam"></zac-static-text>
+        <zac-zoek-object-link [zoekObject]="taak" [sideNav]="sideNav"></zac-zoek-object-link>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="taak.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"

@@ -1,0 +1,18 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="link" fxLayout="row wrap" fxLayoutAlign="space-between center">
+    <div fxLayout="column">
+        <label>{{zoekObject.type.toLowerCase() | translate}}</label>
+        <a [target]="_newtab ? '_blank' : ''" (click)="_newtab || sideNav.close()"
+           [routerLink]="getLink()" title="{{ 'actie.'+zoekObject.type.toLowerCase()+'.bekijken' | translate }}">
+            {{getName()}}
+            <mat-icon>{{_newtab ? 'open_in_new' : 'visibility'}}</mat-icon>
+        </a>
+    </div>
+    <zac-zaak-indicaties *ngIf="zoekObject.type=='ZAAK'" [layout]="indicatiesLayout.ZOEKEN" [zaakZoekObject]="zoekObject"></zac-zaak-indicaties>
+    <zac-informatie-object-indicaties *ngIf="zoekObject.type=='DOCUMENT'" [layout]="indicatiesLayout.ZOEKEN"
+                                      [documentZoekObject]="zoekObject"></zac-informatie-object-indicaties>
+</div>
