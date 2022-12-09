@@ -16,5 +16,6 @@ export class EnkelvoudigInformatieObjectVersieGegevens {
     taal: Taal;
     bestandsnaam: string;
     verzenddatum: string;
+    ontvangstdatum: string;
     toelichting: string;
 }
