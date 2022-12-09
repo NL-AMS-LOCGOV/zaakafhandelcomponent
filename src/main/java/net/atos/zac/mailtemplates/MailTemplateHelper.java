@@ -89,7 +89,7 @@ public class MailTemplateHelper {
     @Inject
     private CaseVariablesService caseVariablesService;
 
-    public static String dePTag(final String onderwerp) {
+    public static String stripParagraphTags(final String onderwerp) {
         // Can't parse HTML with a regular expression, but in this case there will only be bare P-tags.
         return PTAGS.matcher(onderwerp).replaceAll(StringUtils.EMPTY);
     }

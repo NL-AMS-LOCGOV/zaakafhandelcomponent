@@ -30,7 +30,7 @@ public class RESTMailtemplateConverter {
         mailTemplate.setId(restMailtemplate.id);
         mailTemplate.setMail(Mail.valueOf(restMailtemplate.mail));
         mailTemplate.setMailTemplateNaam(restMailtemplate.mailTemplateNaam);
-        mailTemplate.setOnderwerp(MailTemplateHelper.dePTag(restMailtemplate.onderwerp));
+        mailTemplate.setOnderwerp(MailTemplateHelper.stripParagraphTags(restMailtemplate.onderwerp));
         mailTemplate.setBody(restMailtemplate.body);
         mailTemplate.setDefaultMailtemplate(restMailtemplate.defaultMailtemplate);
         return mailTemplate;

@@ -22,7 +22,7 @@ public class MailGegevens {
     public MailGegevens(final Ontvanger ontvanger, final String onderwerp, final String body, final String bijlagen,
             final boolean createDocumentFromMail) {
         this.ontvanger = ontvanger;
-        this.onderwerp = MailTemplateHelper.dePTag(onderwerp);
+        this.onderwerp = MailTemplateHelper.stripParagraphTags(onderwerp);
         this.body = body;
         this.bijlagen = bijlagen != null ? bijlagen.split(";") : new String[0];
         this.createDocumentFromMail = createDocumentFromMail;
