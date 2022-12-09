@@ -41,7 +41,7 @@ class SolrSchemaV2 implements SolrSchemaUpdate {
 
     private List<SchemaRequest.Update> updateGenericSchema() {
         return List.of(
-                deleteCopyField("zaak_streefdatum", "streefdatum"),
+                deleteCopyField("zaak_einddatumGepland", "streefdatum"),
                 deleteCopyField("taak_streefdatum", "streefdatum"),
                 deleteField("streefdatum")
         );
