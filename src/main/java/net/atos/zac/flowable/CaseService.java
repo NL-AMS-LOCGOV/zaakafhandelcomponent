@@ -18,6 +18,7 @@ import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIEN
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ZAAK_UUID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.HUMAN_TASK;
+import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.PROCESS_TASK;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
 import java.util.Date;
@@ -83,6 +84,14 @@ public class CaseService {
                 .list();
     }
 
+    public List<PlanItemInstance> listProcessTaskPlanItems(final UUID zaakUUID) {
+        return cmmnRuntimeService.createPlanItemInstanceQuery()
+                .caseVariableValueEquals(VAR_ZAAK_UUID, zaakUUID)
+                .planItemInstanceStateEnabled()
+                .planItemDefinitionType(PROCESS_TASK)
+                .list();
+    }
+
     public List<PlanItemInstance> listUserEventListenerPlanItems(final UUID zaakUUID) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .caseVariableValueEquals(VAR_ZAAK_UUID, zaakUUID)
@@ -113,11 +122,10 @@ public class CaseService {
         }
     }
 
-    public void startHumanTask(final PlanItemInstance planItemInstance, final String groupId, final String assignee,
-            final Date dueDate,
-            final Map<String, String> taakdata, final UUID zaakUUID) {
+    public void startHumanTask(final String planItemInstanceId, final String groupId, final String assignee,
+            final Date dueDate, final Map<String, String> taakdata, final UUID zaakUUID) {
 
-        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
+        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
                 .transientVariable(VAR_TRANSIENT_OWNER, loggedInUserInstance.get().getId())
                 .transientVariable(VAR_TRANSIENT_CANDIDATE_GROUP, groupId)
                 .transientVariable(VAR_TRANSIENT_ASSIGNEE, assignee)
@@ -129,6 +137,12 @@ public class CaseService {
 
     public void startUserEventListener(final String planItemInstanceId) {
         cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
+    }
+
+    public void startProcessTask(final String planItemInstanceId, final Map<String, Object> processData) {
+        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
+                .variables(processData)
+                .start();
     }
 
     public PlanItemInstance readOpenPlanItem(final String planItemInstanceId) {

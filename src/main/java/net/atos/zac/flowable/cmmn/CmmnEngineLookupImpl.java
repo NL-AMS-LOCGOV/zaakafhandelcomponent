@@ -16,6 +16,14 @@ import org.flowable.cdi.spi.CmmnEngineLookup;
 import org.flowable.cmmn.api.runtime.CaseInstanceState;
 import org.flowable.cmmn.engine.CmmnEngine;
 import org.flowable.cmmn.engine.CmmnEngineConfiguration;
+import org.flowable.cmmn.engine.configurator.impl.process.DefaultProcessInstanceService;
+import org.flowable.common.engine.api.scope.ScopeTypes;
+import org.flowable.common.engine.impl.interceptor.EngineConfigurationConstants;
+import org.flowable.engine.FlowableEngineAgenda;
+import org.flowable.engine.impl.agenda.AgendaSessionFactory;
+import org.flowable.engine.impl.agenda.DefaultFlowableEngineAgendaFactory;
+
+import net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl;
 
 public class CmmnEngineLookupImpl implements CmmnEngineLookup {
 
@@ -37,12 +45,24 @@ public class CmmnEngineLookupImpl implements CmmnEngineLookup {
         cmmnEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);
         cmmnEngineConfiguration.setEnableHistoricTaskLogging(true);
         CaseInstanceState.END_STATES.forEach(
-                endState -> cmmnEngineConfiguration.addCaseInstanceLifeCycleListener(new EndCaseLifecycleListener(CaseInstanceState.ACTIVE, endState)));
+                endState -> cmmnEngineConfiguration.addCaseInstanceLifeCycleListener(
+                        new EndCaseLifecycleListener(CaseInstanceState.ACTIVE, endState)));
         cmmnEngineConfiguration.setCreateHumanTaskInterceptor(new CreateHumanTaskInterceptor());
         cmmnEngineConfiguration.setIdentityLinkInterceptor(new CompleteTaskInterceptor(cmmnEngineConfiguration));
         cmmnEngineConfiguration.setDisableIdmEngine(true);
+        cmmnEngineConfiguration.setProcessInstanceService(
+                new DefaultProcessInstanceService(ProcessEngineLookupImpl.getProcessEngineConfiguration()));
+        cmmnEngineConfiguration.addEngineConfiguration(EngineConfigurationConstants.KEY_PROCESS_ENGINE_CONFIG,
+                                                       ScopeTypes.CMMN,
+                                                       ProcessEngineLookupImpl.getProcessEngineConfiguration());
 
-        return cmmnEngineConfiguration.buildCmmnEngine();
+        final var cmmnEngine = cmmnEngineConfiguration.buildCmmnEngine();
+
+        cmmnEngineConfiguration.getSessionFactories().put(
+                FlowableEngineAgenda.class,
+                new AgendaSessionFactory(new DefaultFlowableEngineAgendaFactory()));
+
+        return cmmnEngine;
     }
 
     @Override

@@ -59,7 +59,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -310,16 +313,32 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return new ButtonMenuItem(humanTaskPlanItem.naam, () => {
             if (!this.actiefPlanItem || this.actiefPlanItem.id !== humanTaskPlanItem.id) {
                 this.action = null;
-                this.planItemsService.readHumanTaskPlanItem(humanTaskPlanItem.id).subscribe(data => {
-                    this.actiefPlanItem = data;
-                    this.actionsSidenav.open();
+                this.planItemsService.readHumanTaskPlanItem(humanTaskPlanItem.id).subscribe(planItem => {
+                    this.actiefPlanItem = planItem;
                     this.action = SideNavAction.TAAK_STARTEN;
+                    this.actionsSidenav.open();
                 });
             } else {
                 this.action = SideNavAction.TAAK_STARTEN;
                 this.actionsSidenav.open();
             }
         }, 'assignment');
+    }
+
+    private createProcessTaskPlanItemMenuItem(processTaskPlanItem: PlanItem): MenuItem {
+        return new ButtonMenuItem(processTaskPlanItem.naam, () => {
+            if (!this.actiefPlanItem || this.actiefPlanItem.id !== processTaskPlanItem.id) {
+                this.action = null;
+                this.planItemsService.readProcessTaskPlanItem(processTaskPlanItem.id).subscribe(planItem => {
+                    this.actiefPlanItem = planItem;
+                    this.action = SideNavAction.PROCESS_STARTEN;
+                    this.actionsSidenav.open();
+                });
+            } else {
+                this.action = SideNavAction.PROCESS_STARTEN;
+                this.actionsSidenav.open();
+            }
+        }, 'receipt_long');
     }
 
     private getuserEventListenerPlanItemMenuItemIcon(userEventListenerActie: UserEventListenerActie): string {
@@ -381,8 +400,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         forkJoin([
             this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
-            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid)
-        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems]) => {
+            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
+            this.planItemsService.listProcessTaskPlanItems(this.zaak.uuid)
+        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, processTaskPlanItems]) => {
             if (this.zaak.rechten.behandelen && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
                     userEventListenerPlanItems.map(
@@ -407,6 +427,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.menu = this.menu.concat(
                     humanTaskPlanItems.map(
                         humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
+            }
+            if (this.zaak.rechten.behandelen && processTaskPlanItems.length > 0) {
+                this.menu.push(new HeaderMenuItem('actie.process.starten'));
+                this.menu = this.menu.concat(
+                    processTaskPlanItems.map(
+                        processTaskPlanItem => this.createProcessTaskPlanItemMenuItem(processTaskPlanItem)));
             }
         });
     }
@@ -846,6 +872,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     taakGestart(): void {
+        this.actiefPlanItem = null;
+        this.sluitSidenav();
+        this.updateZaak();
+    }
+
+    processGestart(): void {
         this.actiefPlanItem = null;
         this.sluitSidenav();
         this.updateZaak();

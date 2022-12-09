@@ -11,6 +11,7 @@ import {catchError} from 'rxjs/operators';
 import {PlanItem} from './model/plan-item';
 import {UserEventListenerData} from './model/user-event-listener-data';
 import {HumanTaskData} from './model/human-task-data';
+import {ProcessTaskData} from './model/process-task-data';
 
 @Injectable({
     providedIn: 'root'
@@ -28,8 +29,20 @@ export class PlanItemsService {
         );
     }
 
+    readProcessTaskPlanItem(planItemId: string): Observable<PlanItem> {
+        return this.http.get<PlanItem>(`${this.basepath}/processTaskPlanItem/${planItemId}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     listHumanTaskPlanItems(zaakUuid: string): Observable<PlanItem[]> {
         return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${zaakUuid}/humanTaskPlanItems`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listProcessTaskPlanItems(zaakUuid: string): Observable<PlanItem[]> {
+        return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${zaakUuid}/processTaskPlanItems`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -42,6 +55,12 @@ export class PlanItemsService {
 
     doHumanTaskPlanItem(humanTaskData: HumanTaskData): Observable<void> {
         return this.http.post<void>(`${this.basepath}/doHumanTaskPlanItem`, humanTaskData).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    doProcessTaskPlanItem(processTaskData: ProcessTaskData): Observable<void> {
+        return this.http.post<void>(`${this.basepath}/doProcessTaskPlanItem`, processTaskData).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

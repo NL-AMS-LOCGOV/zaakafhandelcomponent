@@ -12,6 +12,7 @@ import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -35,6 +36,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
+import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -99,7 +101,15 @@ public class PlanItemsRESTService {
     public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> humanTaskPlanItems = caseService.listHumanTaskPlanItems(zaakUUID);
         return planItemConverter.convertPlanItems(humanTaskPlanItems, zaakUUID).stream()
-                .filter(restPlanItem -> restPlanItem.actief).toList();
+                .filter(restPlanItem -> restPlanItem.actief)
+                .toList();
+    }
+
+    @GET
+    @Path("zaak/{uuid}/processTaskPlanItems")
+    public List<RESTPlanItem> listProcessTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
+        final var processTaskPlanItems = caseService.listProcessTaskPlanItems(zaakUUID);
+        return planItemConverter.convertPlanItems(processTaskPlanItems, zaakUUID);
     }
 
     @GET
@@ -113,12 +123,22 @@ public class PlanItemsRESTService {
     @Path("humanTaskPlanItem/{id}")
     public RESTPlanItem readHumanTaskPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance humanTaskPlanItem = caseService.readOpenPlanItem(planItemId);
+        final UUID zaakUUID = caseVariablesService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(humanTaskPlanItem.getCaseInstanceId());
-        final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
-        final HumanTaskParameters humanTaskParameters =
-                zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID)
-                        .findHumanTaskParameter(humanTaskPlanItem.getPlanItemDefinitionId());
-        return planItemConverter.convertHumanTask(humanTaskPlanItem, zaakUuidForCase, humanTaskParameters);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
+                zaaktypeUUID);
+        return planItemConverter.convertPlanItem(humanTaskPlanItem, zaakUUID, zaakafhandelParameters);
+    }
+
+    @GET
+    @Path("processTaskPlanItem/{id}")
+    public RESTPlanItem readProcessTaskPlanItem(@PathParam("id") final String planItemId) {
+        final PlanItemInstance processTaskPlanItem = caseService.readOpenPlanItem(planItemId);
+        final UUID zaakUUID = caseVariablesService.readZaakUUID(processTaskPlanItem.getCaseInstanceId());
+        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(processTaskPlanItem.getCaseInstanceId());
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
+                zaaktypeUUID);
+        return planItemConverter.convertPlanItem(processTaskPlanItem, zaakUUID, zaakafhandelParameters);
     }
 
     @POST
@@ -130,10 +150,11 @@ public class PlanItemsRESTService {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
         final ZaakafhandelParameters zaakafhandelParameters =
                 zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameters
+        final Optional<HumanTaskParameters> humanTaskParameters = zaakafhandelParameters
                 .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
-        final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
-                DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
+        final Date streefdatum =
+                humanTaskParameters.isPresent() && humanTaskParameters.get().getDoorlooptijd() != null ?
+                        DateUtils.addDays(new Date(), humanTaskParameters.get().getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
             String bijlagen = null;
             if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
@@ -153,10 +174,16 @@ public class PlanItemsRESTService {
                                                humanTaskData.taakdata.get(TAAKDATA_BODY),
                                                bijlagen, true, Bronnen.fromZaak(zaak)));
         }
-        caseService.startHumanTask(planItem, humanTaskData.groep.id,
+        caseService.startHumanTask(humanTaskData.planItemInstanceId, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
                                    humanTaskData.taakdata, zaakUUID);
         indexeerService.addZaak(zaakUUID, false);
+    }
+
+    @POST
+    @Path("doProcessTaskPlanItem")
+    public void doProcessTaskplanItem(final RESTProcessTaskData processTaskData) {
+        caseService.startProcessTask(processTaskData.planItemInstanceId, processTaskData.data);
     }
 
     @POST

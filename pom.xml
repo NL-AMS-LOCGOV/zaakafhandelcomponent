@@ -134,6 +134,11 @@
             <version>${flowable.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-cmmn-engine-configurator</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>2.0.3</version>

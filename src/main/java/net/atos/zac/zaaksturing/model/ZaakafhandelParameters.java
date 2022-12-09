@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -308,11 +309,10 @@ public class ZaakafhandelParameters {
                                       planitemDefinitionID)));
     }
 
-    public HumanTaskParameters findHumanTaskParameter(final String planitemDefinitionID) {
+    public Optional<HumanTaskParameters> findHumanTaskParameter(final String planitemDefinitionID) {
         return getHumanTaskParametersCollection().stream()
                 .filter(humanTaskParameter -> humanTaskParameter.getPlanItemDefinitionID().equals(planitemDefinitionID))
-                .findAny().orElse(null);
+                .findAny();
     }
-
 }
 

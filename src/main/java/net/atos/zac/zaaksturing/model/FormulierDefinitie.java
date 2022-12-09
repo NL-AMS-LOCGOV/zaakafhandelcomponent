@@ -15,7 +15,8 @@ public enum FormulierDefinitie {
     ADVIES(FormulierVeldDefinitie.ADVIES),
     EXTERN_ADVIES_VASTLEGGEN,
     EXTERN_ADVIES_MAIL,
-    GOEDKEUREN;
+    GOEDKEUREN,
+    VERZENDEN_BESLUIT;
 
     private final Set<FormulierVeldDefinitie> veldDefinities;
 
