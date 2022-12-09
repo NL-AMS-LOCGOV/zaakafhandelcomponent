@@ -30,7 +30,7 @@ export class TaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> 
 
     protected onLoad(afterLoad: () => void): void {
         const zoekParameters: ZoekParameters = TakenMijnDatasource.mijnLopendeTaken(new ZoekParameters());
-        zoekParameters.sorteerVeld = SorteerVeld.TAAK_STREEFDATUM;
+        zoekParameters.sorteerVeld = SorteerVeld.TAAK_FATALEDATUM;
         zoekParameters.sorteerRichting = 'asc';
         this.zoekenService.list(zoekParameters).subscribe(zoekResultaat => {
             this.dataSource.data = zoekResultaat.resultaten;

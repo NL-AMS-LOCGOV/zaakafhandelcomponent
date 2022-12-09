@@ -6,8 +6,10 @@
 package net.atos.zac.app.zoeken.model;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 
 import net.atos.zac.app.policy.model.RESTDocumentRechten;
+import net.atos.zac.zoeken.model.DocumentIndicatie;
 
 public class RESTDocumentZoekObject extends AbstractRESTZoekObject {
 
@@ -63,6 +65,10 @@ public class RESTDocumentZoekObject extends AbstractRESTZoekObject {
 
     public String vergrendeldDoor;
 
+    public EnumSet<DocumentIndicatie> indicaties;
+
     public RESTDocumentRechten rechten;
+
+    public boolean indicatieGebruiksrecht;
 
 }

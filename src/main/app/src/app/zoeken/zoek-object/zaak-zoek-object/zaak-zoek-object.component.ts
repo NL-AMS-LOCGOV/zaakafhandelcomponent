@@ -16,7 +16,6 @@ import {ZoekObjectComponent} from '../zoek-object/zoek-object-component';
     templateUrl: './zaak-zoek-object.component.html'
 })
 export class ZaakZoekObjectComponent extends ZoekObjectComponent {
-
     @Input() zaak: ZaakZoekObject;
     @Input() sideNav: MatSidenav;
 

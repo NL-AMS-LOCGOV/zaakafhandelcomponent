@@ -16,7 +16,7 @@ import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {MailService} from '../../mail/mail.service';
-import {MailObject} from '../../mail/model/mailobject';
+import {MailGegevens} from '../../mail/model/mail-gegevens';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ZakenService} from '../zaken.service';
 import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
@@ -119,12 +119,12 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         this.loading = true;
 
         if (this.sendMailFormField.formControl.value && this.mailtemplate) {
-            const mailObject: MailObject = new MailObject();
-            mailObject.createDocumentFromMail = true;
-            mailObject.onderwerp = this.mailtemplate.onderwerp;
-            mailObject.body = this.mailtemplate.body;
-            mailObject.ontvanger = this.ontvangerFormField.formControl.value;
-            this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
+            const mailGegevens: MailGegevens = new MailGegevens();
+            mailGegevens.createDocumentFromMail = true;
+            mailGegevens.onderwerp = this.mailtemplate.onderwerp;
+            mailGegevens.body = this.mailtemplate.body;
+            mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
+            this.mailService.sendMail(this.data.zaak.uuid, mailGegevens).subscribe(() => {});
         }
 
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.data.planItem.id, this.data.zaak.uuid);

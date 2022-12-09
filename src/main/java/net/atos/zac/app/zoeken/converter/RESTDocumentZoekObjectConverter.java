@@ -54,7 +54,9 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.inhoudUrl = documentZoekObject.getInhoudUrl();
         restDocumentZoekObject.indicatieVergrendeld = documentZoekObject.isIndicatie(DocumentIndicatie.VERGRENDELD);
         restDocumentZoekObject.vergrendeldDoor = documentZoekObject.getVergrendeldDoorNaam();
+        restDocumentZoekObject.indicaties = documentZoekObject.getDocumentIndicaties();
         restDocumentZoekObject.rechten = restRechtenConverter.convert(policyService.readDocumentRechten(documentZoekObject));
+        restDocumentZoekObject.indicatieGebruiksrecht = documentZoekObject.isIndicatie(DocumentIndicatie.GEBRUIKSRECHT);
         return restDocumentZoekObject;
     }
 }

@@ -28,7 +28,6 @@ import {ZaakOntkoppelenDialogComponent} from './zaak-ontkoppelen/zaak-ontkoppele
 import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 import {BAGModule} from '../bag/bag.module';
 import {ZaakAfhandelenDialogComponent} from './zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
 import {BesluitCreateComponent} from './besluit-create/besluit-create.component';
 import {BesluitViewComponent} from './besluit-view/besluit-view.component';
 import {BesluitEditComponent} from './besluit-edit/besluit-edit.component';
@@ -52,7 +51,6 @@ import {ZaakdataComponent} from './zaakdata/zaakdata.component';
         ZaakKoppelenDialogComponent,
         ZaakOntkoppelenDialogComponent,
         ZakenVrijgevenDialogComponent,
-        ZaakIndicatiesComponent,
         NotitiesComponent,
         LocatieZoekComponent,
         ZaakDocumentenComponent,
@@ -60,8 +58,7 @@ import {ZaakdataComponent} from './zaakdata/zaakdata.component';
     ],
     exports: [
         ZaakVerkortComponent,
-        ZaakDocumentenComponent,
-        ZaakIndicatiesComponent
+        ZaakDocumentenComponent
     ],
     imports: [
         SharedModule,

@@ -22,7 +22,7 @@
                     <mat-card-title>
                         {{'informatieobject' | translate}}
                     </mat-card-title>
-                    <zac-informatie-object-indicaties [infoObject]="infoObject"></zac-informatie-object-indicaties>
+                    <zac-informatie-object-indicaties [layout]="indicatiesLayout.VIEW" [document]="infoObject"></zac-informatie-object-indicaties>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
@@ -37,8 +37,10 @@
                                     <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
                                                      [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'bestandsnaam' | translate"
-                                                     [value]="infoObject.bestandsnaam"
-                                                     [fileIcon]="getFileIcon(infoObject.bestandsnaam)"></zac-static-text>
+                                                     [value]="infoObject.bestandsnaam">
+                                        <span position="content-before"
+                                              class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"></span>
+                                    </zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

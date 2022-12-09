@@ -1,9 +1,9 @@
 package net.atos.zac.app.mail.model;
 
 /**
- * REST weergave van een mail
+ * REST gegevens voor het verzenden van mail
  */
-public class RESTMailObject {
+public class RESTMailGegevens {
 
     public String ontvanger;
 

@@ -63,7 +63,7 @@ public class SignaleringType implements Comparable<SignaleringType> {
         ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet.", USER, GROUP),
         ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum." + SEPARATOR + "Uw zaak nadert de fatale datum.", USER),
         TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet.", USER),
-        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.", USER) {
+        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de fatale datum bereikt.", USER) {
             @Override
             public boolean isDashboard() {
                 // This one has no dashboard card

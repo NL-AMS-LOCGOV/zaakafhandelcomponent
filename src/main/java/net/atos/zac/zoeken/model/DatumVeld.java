@@ -7,7 +7,6 @@ package net.atos.zac.zoeken.model;
 
 public enum DatumVeld {
     STARTDATUM("startdatum"),
-    STREEFDATUM("streefdatum"),
 
     ZAAK_STARTDATUM("zaak_startdatum"),
     ZAAK_EINDDATUM("zaak_einddatum"),
@@ -19,7 +18,7 @@ public enum DatumVeld {
 
     TAAK_CREATIEDATUM("taak_creatiedatum"),
     TAAK_TOEKENNINGSDATUM("taak_toekenningsdatum"),
-    TAAK_STREEFDATUM("taak_streefdatum"),
+    TAAK_FATALEDATUM("taak_fataledatum"),
 
     INFORMATIEOBJECT_CREATIEDATUM("informatieobject_creatiedatum"),
     INFORMATIEOBJECT_REGISTRATIEDATUM("informatieobject_registratiedatum"),

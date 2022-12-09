@@ -54,8 +54,8 @@ public class TaakZoekObject implements ZoekObject {
     @Field("taak_toekenningsdatum")
     private Date toekenningsdatum;
 
-    @Field("taak_streefdatum")
-    private Date streefdatum;
+    @Field("taak_fataledatum")
+    private Date fataledatum;
 
     @Field("taak_groepId")
     private String groepID;
@@ -185,12 +185,12 @@ public class TaakZoekObject implements ZoekObject {
         this.toekenningsdatum = toekenningsdatum;
     }
 
-    public Date getStreefdatum() {
-        return streefdatum;
+    public Date getFataledatum() {
+        return fataledatum;
     }
 
-    public void setStreefdatum(final Date streefdatum) {
-        this.streefdatum = streefdatum;
+    public void setFataledatum(final Date fataledatum) {
+        this.fataledatum = fataledatum;
     }
 
     public String getGroepID() {

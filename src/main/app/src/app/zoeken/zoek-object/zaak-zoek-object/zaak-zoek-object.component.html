@@ -8,7 +8,10 @@
                          class="type-label"
                          [icon]="viewIcon"
                          (iconClicked)="open(zaak)"
-                         [value]="zaak.identificatie"></zac-static-text>
+                         [value]="zaak.identificatie">
+            <zac-zaak-indicaties position="label" [layout]="indicatiesLayout.ZOEKEN" fxLayoutAlign="end" fxFlex="100"
+                                 [zaakZoekObject]="zaak"></zac-zaak-indicaties>
+        </zac-static-text>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"

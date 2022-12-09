@@ -57,6 +57,7 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.indicatieHoofdzaak = zoekItem.isIndicatie(ZaakIndicatie.HOOFDZAAK);
         restZoekItem.indicatieHeropend = zoekItem.isIndicatie(ZaakIndicatie.HEROPEND);
         restZoekItem.statusToelichting = zoekItem.getStatusToelichting();
+        restZoekItem.indicaties = zoekItem.getZaakIndicaties();
         restZoekItem.rechten = restRechtenConverter.convert(policyService.readZaakRechten(zoekItem));
         return restZoekItem;
     }

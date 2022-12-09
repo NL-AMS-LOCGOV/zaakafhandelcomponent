@@ -48,8 +48,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     readonly zoekenColumn = ZoekenColumn;
     sorteerVeld = SorteerVeld;
 
-    streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
-        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+    fataledatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog, private zoekenService: ZoekenService,
@@ -170,8 +170,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             [ZoekenColumn.ZAAK_TOELICHTING, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.ZAAKTYPE_OMSCHRIJVING, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.CREATIEDATUM, ColumnPickerValue.VISIBLE],
-            [ZoekenColumn.STREEFDATUM, ColumnPickerValue.VISIBLE],
-            [ZoekenColumn.DAGEN_TOT_STREEFDATUM, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.FATALEDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.DAGEN_TOT_FATALEDATUM, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.GROEP, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.BEHANDELAAR, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],

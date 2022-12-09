@@ -15,7 +15,7 @@ import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {MailService} from '../../mail/mail.service';
-import {MailObject} from '../../mail/model/mailobject';
+import {MailGegevens} from '../../mail/model/mail-gegevens';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {of, Subject} from 'rxjs';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
@@ -120,7 +120,7 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
                         body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
                                    .replace('{zaaknr}', this.data.zaak.identificatie);
 
-                        const mailObject: MailObject = new MailObject();
+                        const mailObject: MailGegevens = new MailGegevens();
                         mailObject.createDocumentFromMail = true;
                         mailObject.onderwerp = onderwerp;
                         mailObject.body = body;

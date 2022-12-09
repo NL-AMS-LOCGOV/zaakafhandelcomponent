@@ -39,7 +39,7 @@ public class RESTTaakHistorieConverter {
 
     private static final String AANGEMAAKT_DOOR_ATTRIBUUT_LABEL = "aangemaaktDoor";
 
-    private static final String STREEFDATUM_ATTRIBUUT_LABEL = "streefdatum";
+    private static final String FATALEDATUM_ATTRIBUUT_LABEL = "fataledatum";
 
     @Inject
     private IdentityService identityService;
@@ -147,7 +147,7 @@ public class RESTTaakHistorieConverter {
 
     private RESTTaakHistorieRegel convertDuedateChanged(final String data) {
         final DuedateChangedData duedateChangedData = JSONB.fromJson(data, DuedateChangedData.class);
-        return new RESTTaakHistorieRegel(STREEFDATUM_ATTRIBUUT_LABEL,
+        return new RESTTaakHistorieRegel(FATALEDATUM_ATTRIBUUT_LABEL,
                                          convertToLocalDate(duedateChangedData.previousDueDate),
                                          convertToLocalDate(duedateChangedData.newDueDate));
     }

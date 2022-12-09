@@ -8,4 +8,5 @@ import {EnkelvoudigInformatieobject} from './enkelvoudig-informatieobject';
 export class GekoppeldeZaakEnkelvoudigInformatieobject extends EnkelvoudigInformatieobject {
     relatieType?: string;
     zaakIdentificatie?: string;
+    zaakUUID?: string;
 }

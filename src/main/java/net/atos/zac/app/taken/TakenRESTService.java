@@ -248,7 +248,7 @@ public class TakenRESTService {
         Task task = taskService.readOpenTask(restTaak.id);
         assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigen());
         task.setDescription(restTaak.toelichting);
-        task.setDueDate(convertToDate(restTaak.streefdatum));
+        task.setDueDate(convertToDate(restTaak.fataledatum));
         task = taskService.updateTask(task);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));

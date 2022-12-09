@@ -77,6 +77,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Besluittype;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -132,6 +133,7 @@ import net.atos.zac.policy.PolicyService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
+import net.atos.zac.util.LocalDateUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -522,20 +524,20 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
 
-        zgwApiService.findBehandelaarForZaak(zaak)
-                .map(rolBehandelaar -> rolBehandelaar.getBetrokkeneIdentificatie().getIdentificatie())
-                .ifPresent(behandelaar -> {
-                    if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
-                        if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
-                            // Toekennen of overdragen
-                            final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
-                            zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
-                        } else {
-                            // Vrijgeven
-                            zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
-                        }
-                    }
-                });
+        String behandelaar = zgwApiService.findBehandelaarForZaak(zaak)
+                .map(rolMedewerker -> rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie())
+                .orElse(null);
+
+        if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
+            if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
+                // Toekennen of overdragen
+                final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+                zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
+            } else {
+                // Vrijgeven
+                zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
+            }
+        }
 
         zgwApiService.findGroepForZaak(zaak)
                 .ifPresent(groep -> {
@@ -792,8 +794,10 @@ public class ZakenRESTService {
     @Path("besluittypes/{zaaktypeUUID}")
     public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
-        return besluittypeConverter.convertToRESTBesluittypes(
-                ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
+        final List<Besluittype> besluittypen = ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()).stream()
+                .filter(LocalDateUtil::dateNowIsBetween)
+                .toList();
+        return besluittypeConverter.convertToRESTBesluittypes(besluittypen);
     }
 
     @GET

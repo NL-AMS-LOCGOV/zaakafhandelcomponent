@@ -48,6 +48,8 @@ import {DateRangeFilterComponent} from './table-zoek-filters/date-range-filter/d
 import {FacetFilterComponent} from './table-zoek-filters/facet-filter/facet-filter.component';
 import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filter.component';
 import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
+import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
+import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -79,7 +81,9 @@ import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-f
         SkeletonLoaderComponent,
         DagenPipe,
         NotificationDialogComponent,
-        ExportButtonComponent
+        ExportButtonComponent,
+        InformatieObjectIndicatiesComponent,
+        ZaakIndicatiesComponent,
     ],
     imports: [
         FormsModule,
@@ -128,7 +132,9 @@ import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-f
         ColumnPickerComponent,
         SkeletonLoaderComponent,
         DagenPipe,
-        ExportButtonComponent
+        ExportButtonComponent,
+        InformatieObjectIndicatiesComponent,
+        ZaakIndicatiesComponent,
     ],
     providers: [
         Title,

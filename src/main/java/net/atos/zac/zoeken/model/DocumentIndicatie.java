@@ -13,5 +13,6 @@ package net.atos.zac.zoeken.model;
  */
 public enum DocumentIndicatie {
     VERGRENDELD,
-    ONDERTEKEND;
+    ONDERTEKEND,
+    GEBRUIKSRECHT;
 }

@@ -33,6 +33,7 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
 import {Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -41,6 +42,7 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
     animations: [detailExpand]
 })
 export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
+    readonly indicatiesLayout = IndicatiesLayout;
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
 
@@ -184,6 +186,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     getZaakUuid(): string {
         return this.taakModus ? this.zaakUUID : this.zaak.uuid;
+    }
+
+    getZaakUuidVanInformatieObject(informatieObject: GekoppeldeZaakEnkelvoudigInformatieobject): string {
+        return informatieObject.zaakUUID ? informatieObject.zaakUUID : this.taakModus ? this.zaakUUID : this.zaak.uuid;
     }
 
     updateSelected($event: MatCheckboxChange, document): void {

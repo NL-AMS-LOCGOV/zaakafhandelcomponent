@@ -80,6 +80,7 @@ import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/fo
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -88,6 +89,7 @@ import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-opt
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly skeletonLayout = SkeletonLayout;
+    readonly indicatiesLayout = IndicatiesLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
@@ -101,7 +103,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     allTakenExpanded: boolean = false;
     toonAfgerondeTaken = false;
     takenFilter: any = {};
-    takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
+    takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'fataledatum', 'groep', 'behandelaar', 'id'];
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -722,7 +724,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                               map(values => values.map(value => new ExpandableTableData(value)))
                           );
         this.taken$.subscribe(taken => {
-            taken = taken.sort((a, b) => a.data.streefdatum?.localeCompare(b.data.streefdatum) ||
+            taken = taken.sort((a, b) => a.data.fataledatum?.localeCompare(b.data.fataledatum) ||
                 a.data.creatiedatumTijd?.localeCompare(b.data.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();

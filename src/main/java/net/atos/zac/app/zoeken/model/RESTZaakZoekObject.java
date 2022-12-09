@@ -6,8 +6,10 @@
 package net.atos.zac.app.zoeken.model;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 
 import net.atos.zac.app.policy.model.RESTZaakRechten;
+import net.atos.zac.zoeken.model.ZaakIndicatie;
 
 public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
@@ -72,6 +74,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
     public String statusToelichting;
 
     public long aantalOpenstaandeTaken;
+
+    public EnumSet<ZaakIndicatie> indicaties;
 
     public RESTZaakRechten rechten;
 
