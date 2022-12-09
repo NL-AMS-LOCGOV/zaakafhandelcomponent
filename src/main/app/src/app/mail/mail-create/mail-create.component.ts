@@ -20,7 +20,7 @@ import {TakenService} from '../../taken/taken.service';
 import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
 import {MailService} from '../mail.service';
-import {MailObject} from '../model/mailobject';
+import {MailGegevens} from '../model/mail-gegevens';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
@@ -101,14 +101,14 @@ export class MailCreateComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup?.valid) {
-            const mailObject = new MailObject();
-            mailObject.ontvanger = this.ontvangerFormField.formControl.value;
-            mailObject.onderwerp = this.onderwerpFormField.formControl.value;
-            mailObject.body = this.bodyFormField.formControl.value;
-            mailObject.bijlagen = this.bijlagenFormField.formControl.value;
-            mailObject.createDocumentFromMail = true;
+            const mailGegevens = new MailGegevens();
+            mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
+            mailGegevens.onderwerp = this.onderwerpFormField.formControl.value;
+            mailGegevens.body = this.bodyFormField.formControl.value;
+            mailGegevens.bijlagen = this.bijlagenFormField.formControl.value;
+            mailGegevens.createDocumentFromMail = true;
 
-            this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {
+            this.mailService.sendMail(this.zaak.uuid, mailGegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.email.verstuurd');
                 this.mailVerstuurd.emit(true);
             });

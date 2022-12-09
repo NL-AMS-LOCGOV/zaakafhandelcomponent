@@ -24,11 +24,11 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
-import net.atos.zac.app.mail.model.RESTMailObject;
+import net.atos.zac.app.mail.converter.RESTMailGegevensConverter;
+import net.atos.zac.app.mail.model.RESTMailGegevens;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
-import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.ValidationUtil;
 
@@ -53,31 +53,34 @@ public class MailRESTService {
     @Inject
     private ZTCClientService ztcClientService;
 
+    @Inject
+    private RESTMailGegevensConverter restMailGegevensConverter;
+
     @POST
     @Path("send/{zaakUuid}")
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUUID,
-            final RESTMailObject restMailObject) throws MailjetException {
+            final RESTMailGegevens restMailGegevens) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
+        if (!ValidationUtil.isValidEmail(restMailGegevens.ontvanger)) {
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailGegevens.ontvanger));
         }
-        mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, Bronnen.fromZaak(zaak));
+        mailService.sendMail(
+                restMailGegevensConverter.convert(restMailGegevens), Bronnen.fromZaak(zaak));
     }
 
     @POST
     @Path("acknowledge/{zaakUuid}")
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
-            final RESTMailObject restMailObject) throws MailjetException {
+            final RESTMailGegevens restMailGegevens) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         assertPolicy(!caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false) &&
                              policyService.readZaakRechten(zaak).getBehandelen());
-        if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
+        if (!ValidationUtil.isValidEmail(restMailGegevens.ontvanger)) {
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailGegevens.ontvanger));
         }
-        mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, Bronnen.fromZaak(zaak));
+        mailService.sendMail(
+                restMailGegevensConverter.convert(restMailGegevens), Bronnen.fromZaak(zaak));
 
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
