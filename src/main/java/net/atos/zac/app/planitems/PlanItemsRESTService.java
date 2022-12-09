@@ -43,6 +43,7 @@ import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailGegevens;
 import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
@@ -146,12 +147,14 @@ public class PlanItemsRESTService {
                     .filter(template -> template.getMail().equals(mail))
                     .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
 
-            humanTaskData.taakdata.put(TAAKDATA_BODY,
-                                       mailService.sendMail(
-                                               new Ontvanger(humanTaskData.taakdata.get(TAAKDATA_EMAILADRES)),
-                                               mailTemplate.getOnderwerp(),
-                                               humanTaskData.taakdata.get(TAAKDATA_BODY),
-                                               bijlagen, true, Bronnen.fromZaak(zaak)));
+            humanTaskData.taakdata.put(TAAKDATA_BODY, mailService.sendMail(
+                    new MailGegevens(
+                            new Ontvanger(humanTaskData.taakdata.get(TAAKDATA_EMAILADRES)),
+                            mailTemplate.getOnderwerp(),
+                            humanTaskData.taakdata.get(TAAKDATA_BODY),
+                            bijlagen,
+                            true),
+                    Bronnen.fromZaak(zaak)));
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, fataledatum,

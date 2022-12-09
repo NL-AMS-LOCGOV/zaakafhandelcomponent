@@ -25,6 +25,7 @@ import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_URL;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -62,6 +63,8 @@ import net.atos.zac.mailtemplates.model.MailTemplateVariabelen;
 
 public class MailTemplateHelper {
 
+    public static final Pattern PTAGS = Pattern.compile("</?p>", Pattern.CASE_INSENSITIVE);
+
     @Inject
     private ConfiguratieService configuratieService;
 
@@ -85,6 +88,11 @@ public class MailTemplateHelper {
 
     @Inject
     private CaseVariablesService caseVariablesService;
+
+    public static String dePTag(final String onderwerp) {
+        // Can't parse HTML with a regular expression, but in this case there will only be bare P-tags.
+        return PTAGS.matcher(onderwerp).replaceAll(StringUtils.EMPTY);
+    }
 
     public String resolveVariabelen(final String tekst, final Zaak zaak) {
         String resolvedTekst = tekst;

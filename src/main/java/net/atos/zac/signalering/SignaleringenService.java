@@ -30,7 +30,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -44,6 +43,7 @@ import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailGegevens;
 import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringDetail;
@@ -230,8 +230,8 @@ public class SignaleringenService {
                 case TAAK -> bronnenBuilder.add(getTaak(signalering.getSubject()));
                 case DOCUMENT -> bronnenBuilder.add(getDocument(signalering.getSubject()));
             }
-            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(),
-                                 StringUtils.EMPTY, false, bronnenBuilder.build());
+            mailService.sendMail(new MailGegevens(to, mailTemplate.getOnderwerp(), mailTemplate.getBody()),
+                                 bronnenBuilder.build());
         }
     }
 

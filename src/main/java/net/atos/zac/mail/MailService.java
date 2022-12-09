@@ -53,9 +53,9 @@ import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
-import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mail.model.Verstuurder;
 import net.atos.zac.mailtemplates.MailTemplateHelper;
+import net.atos.zac.mailtemplates.model.MailGegevens;
 
 @ApplicationScoped
 public class MailService {
@@ -65,6 +65,9 @@ public class MailService {
 
     private static final String MAILJET_API_SECRET_KEY =
             ConfigProvider.getConfig().getValue("mailjet.api.secret.key", String.class);
+
+    // http://www.faqs.org/rfcs/rfc2822.html
+    private static final int SUBJECT_MAXWIDTH = 78;
 
     private static final Logger LOG = Logger.getLogger(MailService.class.getName());
 
@@ -94,32 +97,36 @@ public class MailService {
 
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public String sendMail(final Ontvanger ontvanger, final String onderwerp, final String body, final String bijlagen,
-            final boolean createDocumentFromMail, final Bronnen bronnen) {
+    public String sendMail(final MailGegevens mailGegevens, final Bronnen bronnen) {
 
-        final String resolvedOnderwerp = resolveVariabelen(onderwerp, bronnen);
-        final String resolvedBody = resolveVariabelen(body, bronnen);
-        final List<Attachment> attachments = getBijlagen(bijlagen);
+        final String subject = StringUtils.abbreviate(
+                resolveVariabelen(mailGegevens.getOnderwerp(), bronnen),
+                SUBJECT_MAXWIDTH);
+        final String body = resolveVariabelen(mailGegevens.getBody(), bronnen);
+        final List<Attachment> attachments = getAttachments(mailGegevens.getBijlagen());
 
-        final EMail eMail = new EMail(resolvedBody, new Verstuurder(), List.of(ontvanger), resolvedOnderwerp,
+        final EMail eMail = new EMail(body, new Verstuurder(),
+                                      List.of(mailGegevens.getOntvanger()),
+                                      subject,
                                       attachments);
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JSONB.toJson(new EMails(List.of(eMail))));
         try {
             final int status = mailjetClient.post(request).getStatus();
             if (status < 300) {
-                if (createDocumentFromMail) {
-                    createZaakDocumentFromMail(resolvedBody, resolvedOnderwerp, bronnen.zaak);
+                if (mailGegevens.isCreateDocumentFromMail()) {
+                    createZaakDocumentFromMail(body, subject, bronnen.zaak);
                 }
             } else {
                 LOG.log(Level.WARNING,
-                        String.format("Failed to send mail with subject '%s' (http result %d).", onderwerp, status));
+                        String.format("Failed to send mail with subject '%s' (http result %d).", subject,
+                                      status));
             }
         } catch (MailjetException e) {
-            LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s'.", onderwerp), e);
+            LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s'.", subject), e);
         }
 
-        return resolvedBody;
+        return body;
     }
 
     private void createZaakDocumentFromMail(final String body, final String onderwerp, final Zaak zaak) {
@@ -158,10 +165,10 @@ public class MailService {
                 .orElseThrow();
     }
 
-    private List<Attachment> getBijlagen(final String bijlagenString) {
+    private List<Attachment> getAttachments(final String[] bijlagenString) {
         final List<UUID> bijlagen = new ArrayList<>();
-        if (StringUtils.isNotEmpty(bijlagenString)) {
-            Arrays.stream(bijlagenString.split(";")).forEach(uuidString -> bijlagen.add(UUIDUtil.uuid(uuidString)));
+        if (bijlagenString != null && 0 < bijlagenString.length) {
+            Arrays.stream(bijlagenString).forEach(uuidString -> bijlagen.add(UUIDUtil.uuid(uuidString)));
         } else {
             return Collections.emptyList();
         }
