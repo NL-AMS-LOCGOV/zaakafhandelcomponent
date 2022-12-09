@@ -188,6 +188,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         return this.taakModus ? this.zaakUUID : this.zaak.uuid;
     }
 
+    getZaakUuidVanInformatieObject(informatieObject: GekoppeldeZaakEnkelvoudigInformatieobject): string {
+        return informatieObject.zaakUUID ? informatieObject.zaakUUID : this.taakModus ? this.zaakUUID : this.zaak.uuid;
+    }
+
     updateSelected($event: MatCheckboxChange, document): void {
         if ($event) {
             this.downloadAlsZipSelection.toggle(document);
