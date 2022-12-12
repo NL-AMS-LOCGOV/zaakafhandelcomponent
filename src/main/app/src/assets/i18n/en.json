@@ -538,6 +538,7 @@
   "msg.error.invalid.postcode": "The {{label}} field contains an invalid zip code. Use the 1111AA format!",
   "msg.error.invalid.bsn": "The {{label}} field contains an invalid SSN. Enter a valid social security number!",
   "msg.error.invalid.kvk": "The {{label}} field contains an invalid CoC-number. Enter a valid CoC-number!",
+  "msg.error.invalid.huisnummer": "The {{label}} field can only contain numbers. Any additions are also found.",
   "msg.error.invalid.vestigingsnummer": "The {{label}} field contains an invalid branch code.branch code!",
   "msg.error.invalid.rsin": "The {{label}} field contains an invalid RSIN. Enter a valid valide RSIN",
   "msg.error.invalid.email": "The {{label}} field contains an invalid E-Mail address. Use the voorbeeld@example.com format!",

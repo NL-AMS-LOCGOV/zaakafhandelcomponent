@@ -539,6 +539,8 @@
   "msg.error.invalid.bsn": "Het {{label}}-veld bevat een ongeldig burgerservicenummer. Vul een valide burgerservicenummer in",
   "msg.error.invalid.vestigingsnummer": "Het {{label}}-veld bevat een ongeldig vestigingsnummer. Vul een valide vestigingsnummer in",
   "msg.error.invalid.kvk": "Het {{label}}-veld bevat een ongeldig KvK-nummer. Vul een valide KvK-nummer in",
+  "msg.error.invalid.huisnummer": "Het {{label}}-veld mag alleen bestaan uit cijfers. Eventuele toevoegingen worden ook gevonden.",
+  "msg.error.invalid.rsin": "Het {{label}}-veld bevat een ongeldig RSIN. Vul een valide RSIN in",
   "msg.error.invalid.bsnOrVes": "Het {{label}}-veld bevat een ongeldig waarde. Vul een valide BSN of vestigingsnummer in",
   "msg.error.invalid.email": "Het {{label}}-veld bevat een ongeldig E-Mailadres. Gebruik het voorbeeld@example.com formaat!",
   "msg.error.invalid.formaat": "Het {{label}}-veld bevat een ongeldige waarde. Gebruik het {{requiredPattern}} formaat!",

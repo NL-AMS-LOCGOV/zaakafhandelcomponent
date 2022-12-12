@@ -15,6 +15,7 @@ export class CustomValidators {
     static email = CustomValidators.emailVFn(false);
     static emails = CustomValidators.emailVFn(true);
     static handelsnaam = CustomValidators.handelsnaamVFn();
+    static huisnummer = CustomValidators.huisnummerVFn();
 
     private static postcodeRegex = /^[1-9][0-9]{3}(?!sa|sd|ss)[a-z]{2}$/i;
 
@@ -123,4 +124,15 @@ export class CustomValidators {
             }
         };
     }
-}
+
+    private static huisnummerVFn(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            if (!control.value) {
+                return null;
+            }
+            if (isNaN(Number(control.value))) {
+                return {huisnummer: true};
+            }
+        };
+    }
+ }
