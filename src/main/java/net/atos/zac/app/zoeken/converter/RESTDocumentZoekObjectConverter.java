@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zoeken.converter;
 
-import java.util.UUID;
-
 import javax.inject.Inject;
 
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
@@ -26,7 +24,7 @@ public class RESTDocumentZoekObjectConverter {
 
     public RESTDocumentZoekObject convert(final DocumentZoekObject documentZoekObject) {
         final RESTDocumentZoekObject restDocumentZoekObject = new RESTDocumentZoekObject();
-        restDocumentZoekObject.id = UUID.fromString(documentZoekObject.getUuid());
+        restDocumentZoekObject.id = documentZoekObject.getUuid();
         restDocumentZoekObject.type = documentZoekObject.getType();
         restDocumentZoekObject.titel = documentZoekObject.getTitel();
         restDocumentZoekObject.beschrijving = documentZoekObject.getBeschrijving();
