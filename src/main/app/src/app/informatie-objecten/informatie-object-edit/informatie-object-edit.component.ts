@@ -164,7 +164,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         if (ontvangstDatum.formControl.value) {
             verzenddatum.formControl.disable();
-            //TODO: window.setTimeout verwijderen als angular versie >= 15
+            //TODO (zie Issue #2021): window.setTimeout verwijderen als angular versie >= 15
             // Bug in Angular 14 zorgt dat .disable() op sommige formControls pas werkt na repaint
             window.setTimeout(() => status.formControl.disable());
         }
