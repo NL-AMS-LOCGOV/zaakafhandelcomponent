@@ -43,13 +43,12 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
 
-        const heeftBesluit: boolean = this.zaak.besluiten?.length > 0 && !!this.zaak.resultaat;
-        const resultaattypeField = new SelectFormFieldBuilder(heeftBesluit ? this.zaak.resultaat.resultaattype : null).id('resultaattype').label('resultaat')
-                                                                                                                      .validators(Validators.required)
-                                                                                                                      .optionLabel('naam')
-                                                                                                                      .options(
-                                                                                                                          this.zakenService.listResultaattypes(
-                                                                                                                              this.zaak.zaaktype.uuid)).build();
+        const resultaattypeField = new SelectFormFieldBuilder(this.zaak.resultaat?.resultaattype).id('resultaattype').label('resultaat')
+                                                                                                 .validators(Validators.required)
+                                                                                                 .optionLabel('naam')
+                                                                                                 .options(
+                                                                                                     this.zakenService.listResultaattypes(
+                                                                                                         this.zaak.zaaktype.uuid)).build();
         const besluittypeField = new SelectFormFieldBuilder().id('besluittype').label('besluit').validators(Validators.required).optionLabel('naam')
                                                              .options(this.zakenService.listBesluittypes(this.zaak.zaaktype.uuid)).build();
         const toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000).build();

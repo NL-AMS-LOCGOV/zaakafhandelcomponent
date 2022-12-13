@@ -700,8 +700,8 @@ public class ZakenRESTService {
 
     @GET
     @Path("besluit/zaakUuid/{zaakUuid}")
-    public List<RESTBesluit> findBesluitByZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
-        return brcClientService.findBesluit(zrcClientService.readZaak(zaakUuid))
+    public List<RESTBesluit> listBesluitenForZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
+        return brcClientService.listBesluiten(zrcClientService.readZaak(zaakUuid))
                 .map(besluitConverter::convertToRESTBesluit)
                 .orElse(null);
     }

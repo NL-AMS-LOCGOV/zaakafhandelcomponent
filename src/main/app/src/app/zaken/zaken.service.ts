@@ -293,7 +293,7 @@ export class ZakenService {
         );
     }
 
-    findBesluitenByZaakUUID(zaakUuid: string): Observable<Besluit[]> {
+    listBesluitenForZaak(zaakUuid: string): Observable<Besluit[]> {
         return this.http.get<Besluit[]>(`${this.basepath}/besluit/zaakUuid/${zaakUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

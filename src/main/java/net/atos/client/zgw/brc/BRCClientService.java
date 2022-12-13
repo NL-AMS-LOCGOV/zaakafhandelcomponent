@@ -37,7 +37,7 @@ public class BRCClientService {
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
-    public Optional<List<Besluit>> findBesluit(final Zaak zaak) {
+    public Optional<List<Besluit>> listBesluiten(final Zaak zaak) {
         final BesluitenListParameters listParameters = new BesluitenListParameters(zaak.getUrl());
         final Results<Besluit> results = brcClient.besluitList(listParameters);
         if (results.getCount() > 0) {
