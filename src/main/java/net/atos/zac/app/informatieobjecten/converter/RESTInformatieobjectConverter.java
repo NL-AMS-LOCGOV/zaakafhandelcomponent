@@ -237,6 +237,7 @@ public class RESTInformatieobjectConverter {
 
         restEnkelvoudigInformatieObjectVersieGegevens.beschrijving = informatieobject.getBeschrijving();
         restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum = informatieobject.getVerzenddatum();
+        restEnkelvoudigInformatieObjectVersieGegevens.ontvangstdatum = informatieobject.getOntvangstdatum();
         restEnkelvoudigInformatieObjectVersieGegevens.titel = informatieobject.getTitel();
         restEnkelvoudigInformatieObjectVersieGegevens.auteur = informatieobject.getAuteur();
         configuratieService.findTaal(informatieobject.getTaal())
