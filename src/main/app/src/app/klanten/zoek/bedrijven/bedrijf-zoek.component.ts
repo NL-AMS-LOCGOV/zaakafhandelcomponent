@@ -44,23 +44,52 @@ export class BedrijfZoekComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.handelsnaamFormField = new InputFormFieldBuilder().id('handelsnaam').label('handelsnaam').maxlength(100)
-                                                               .validators(CustomValidators.handelsnaam).build();
-        this.kvkFormField = new InputFormFieldBuilder().id('kvknummer').label('kvknummer')
-                                                       .validators(CustomValidators.kvk).maxlength(8).build();
-        this.vestigingsnummerFormField = new InputFormFieldBuilder().id('vestigingsnummer').label('vestigingsnummer')
-                                                                    .validators(CustomValidators.vestigingsnummer)
-                                                                    .maxlength(12).build();
-        this.rsinFormField = new InputFormFieldBuilder().id('rsin').label('rsin')
-                                                        .validators(CustomValidators.rsin)
-                                                        .maxlength(9).build();
-        this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
-                                                            .validators(CustomValidators.postcode).maxlength(7).build();
-        this.typeFormField = new SelectFormFieldBuilder().id('type').label('type').options(this.types).build();
-        this.huisnummerFormField = new InputFormFieldBuilder().id('huisnummer').label('huisnummer')
-                                                              .validators(Validators.min(1), Validators.max(99999))
-                                                              .maxlength(5).build();
-        this.plaatsFormField = new InputFormFieldBuilder().id('plaats').label('plaats').maxlength(50).build();
+        this.handelsnaamFormField = new InputFormFieldBuilder()
+        .id('handelsnaam')
+        .label('handelsnaam')
+        .maxlength(100)
+        .validators(CustomValidators.handelsnaam)
+        .build();
+        this.kvkFormField = new InputFormFieldBuilder()
+        .id('kvknummer')
+        .label('kvknummer')
+        .validators(CustomValidators.kvk)
+        .maxlength(8)
+        .build();
+        this.vestigingsnummerFormField = new InputFormFieldBuilder()
+        .id('vestigingsnummer')
+        .label('vestigingsnummer')
+        .validators(CustomValidators.vestigingsnummer)
+        .maxlength(12)
+        .build();
+        this.rsinFormField = new InputFormFieldBuilder()
+        .id('rsin')
+        .label('rsin')
+        .validators(CustomValidators.rsin)
+        .maxlength(9)
+        .build();
+        this.postcodeFormField = new InputFormFieldBuilder()
+        .id('postcode')
+        .label('postcode')
+        .validators(CustomValidators.postcode)
+        .maxlength(7)
+        .build();
+        this.typeFormField = new SelectFormFieldBuilder()
+        .id('type')
+        .label('type')
+        .options(this.types)
+        .build();
+        this.huisnummerFormField = new InputFormFieldBuilder()
+        .id('huisnummer')
+        .label('huisnummer')
+        .validators(Validators.min(1), Validators.max(99999), CustomValidators.huisnummer)
+        .maxlength(5)
+        .build();
+        this.plaatsFormField = new InputFormFieldBuilder()
+        .id('plaats')
+        .label('plaats')
+        .maxlength(50)
+        .build();
         this.formGroup = this.formBuilder.group({
             kvkNummer: this.kvkFormField.formControl,
             handelsnaam: this.handelsnaamFormField.formControl,
