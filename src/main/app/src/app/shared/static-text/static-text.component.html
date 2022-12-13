@@ -4,9 +4,12 @@
   -->
 
 <div class="static-text">
-    <label class="static-text-label">{{label}}</label>
+    <label class="static-text-label">
+        {{label}}
+        <ng-content select="[position=label]"></ng-content>
+    </label>
     <div class="static-text-content">
-        <span *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></span>
+        <ng-content select="[position=content-before]"></ng-content>
         <read-more *ngIf="maxLength" [maxLength]="maxLength" text="{{value | empty}}"></read-more>
         <ng-container *ngIf="!maxLength">{{value | empty}}</ng-container>
         <mat-icon class="label-icon"
@@ -16,5 +19,6 @@
                   title="{{ icon.title | translate}}">
             {{icon.icon}}
         </mat-icon>
+        <ng-content select="[position=content-after]"></ng-content>
     </div>
 </div>

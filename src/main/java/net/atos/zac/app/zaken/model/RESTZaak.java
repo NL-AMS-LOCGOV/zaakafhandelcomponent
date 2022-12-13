@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
 import net.atos.zac.app.policy.model.RESTZaakRechten;
+import net.atos.zac.zoeken.model.ZaakIndicatie;
 
 public class RESTZaak {
 
@@ -100,4 +102,24 @@ public class RESTZaak {
     public boolean isInIntakeFase;
 
     public RESTZaakRechten rechten;
+
+    public EnumSet<ZaakIndicatie> getIndicaties() {
+        final EnumSet<ZaakIndicatie> indicaties = EnumSet.noneOf(ZaakIndicatie.class);
+        if (isHoofdzaak) {
+            indicaties.add(ZaakIndicatie.HOOFDZAAK);
+        }
+        if (isDeelzaak) {
+            indicaties.add(ZaakIndicatie.DEELZAAK);
+        }
+        if (isHeropend) {
+            indicaties.add(ZaakIndicatie.HEROPEND);
+        }
+        if (isOpgeschort) {
+            indicaties.add(ZaakIndicatie.OPSCHORTING);
+        }
+        if (isVerlengd) {
+            indicaties.add(ZaakIndicatie.VERLENGD);
+        }
+        return indicaties;
+    }
 }

@@ -14,7 +14,7 @@ export enum ZoekenColumn {
     SELECT = 'select',
     STARTDATUM = 'startdatum',
     STATUS = 'status',
-    STREEFDATUM = 'streefdatum',
+    FATALEDATUM = 'fataledatum',
     TOELICHTING = 'toelichting',
     UITERLIJKE_EINDDATUM_AFDOENING = 'uiterlijkeEinddatumAfdoening',
     URL = 'url',

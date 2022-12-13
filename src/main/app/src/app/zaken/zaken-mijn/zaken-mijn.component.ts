@@ -20,6 +20,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -27,7 +28,7 @@ import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
     animations: [detailExpand]
 })
 export class ZakenMijnComponent implements AfterViewInit, OnInit {
-
+    readonly indicatiesLayout = IndicatiesLayout;
     dataSource: ZakenMijnDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;

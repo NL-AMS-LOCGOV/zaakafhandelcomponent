@@ -29,6 +29,7 @@ import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {PolicyService} from '../../policy/policy.service';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -36,7 +37,7 @@ import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
     animations: [detailExpand]
 })
 export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
-
+    readonly indicatiesLayout = IndicatiesLayout;
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
     rechten = new WerklijstRechten();

@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zoeken.converter;
 
-import java.util.UUID;
-
 import javax.inject.Inject;
 
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
@@ -25,14 +23,15 @@ public class RESTTaakZoekObjectConverter {
 
     public RESTTaakZoekObject convert(final TaakZoekObject taakZoekObject) {
         final RESTTaakZoekObject restTaakZoekObject = new RESTTaakZoekObject();
-        restTaakZoekObject.id = UUID.fromString(taakZoekObject.getId());
+        restTaakZoekObject.id = taakZoekObject.getId();
         restTaakZoekObject.type = taakZoekObject.getType();
         restTaakZoekObject.naam = taakZoekObject.getNaam();
         restTaakZoekObject.status = taakZoekObject.getStatus();
         restTaakZoekObject.toelichting = taakZoekObject.getToelichting();
         restTaakZoekObject.creatiedatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getCreatiedatum());
-        restTaakZoekObject.toekenningsdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getToekenningsdatum());
-        restTaakZoekObject.streefdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getStreefdatum());
+        restTaakZoekObject.toekenningsdatum = DateTimeConverterUtil.convertToLocalDate(
+                taakZoekObject.getToekenningsdatum());
+        restTaakZoekObject.fataledatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getFataledatum());
         restTaakZoekObject.groepNaam = taakZoekObject.getGroepNaam();
         restTaakZoekObject.behandelaarNaam = taakZoekObject.getBehandelaarNaam();
         restTaakZoekObject.behandelaarGebruikersnaam = taakZoekObject.getBehandelaarGebruikersnaam();

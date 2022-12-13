@@ -179,7 +179,7 @@
             <th mat-header-cell cdkDrag *matHeaderCellDef
                 [mat-sort-header]="sorteerVeld.ZAAK_INDICATIES_SORT">{{ 'indicaties' | translate | empty}}</th>
             <td mat-cell *matCellDef="let row">
-                <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
+                <zac-zaak-indicaties [layout]="indicatiesLayout.WERKLIJST" [zaakZoekObject]="row"></zac-zaak-indicaties>
             </td>
         </ng-container>
 
@@ -239,7 +239,7 @@
                             <div fxFlex="33" *ngSwitchCase="zoekenColumn.INDICATIES" class="static-text">
                                 <label class="static-text-label">{{'indicaties' | translate}}</label>
                                 <div class="static-text-content">
-                                    <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
+                                    <zac-zaak-indicaties [layout]="indicatiesLayout.WERKLIJST" [zaakZoekObject]="row"></zac-zaak-indicaties>
                                 </div>
                             </div>
                         </ng-container>

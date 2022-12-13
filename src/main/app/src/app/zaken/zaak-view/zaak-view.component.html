@@ -66,7 +66,7 @@
                     <mat-card-title fxLayout="row">
                         {{'zaak' | translate}}
                     </mat-card-title>
-                    <zac-zaak-indicaties [zaak]="zaak"></zac-zaak-indicaties>
+                    <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
@@ -368,23 +368,29 @@
                                     </td>
                                 </ng-container>
                                 <ng-container matColumnDef="creatiedatumTijd">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'creatiedatum' | translate}} </th>
-                                    <td mat-cell *matCellDef="let taak"> {{taak.data.creatiedatumTijd | datum | empty}} </td>
+                                    <th mat-header-cell *matHeaderCellDef
+                                        mat-sort-header> {{'creatiedatum' | translate}} </th>
+                                    <td mat-cell
+                                        *matCellDef="let taak"> {{taak.data.creatiedatumTijd | datum | empty}} </td>
                                 </ng-container>
                                 <ng-container matColumnDef="toekenningsdatumTijd">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'toekenningsdatum' | translate}} </th>
-                                    <td mat-cell *matCellDef="let taak"> {{taak.data.toekenningsdatumTijd | datum | empty}} </td>
+                                    <th mat-header-cell *matHeaderCellDef
+                                        mat-sort-header> {{'toekenningsdatum' | translate}} </th>
+                                    <td mat-cell
+                                        *matCellDef="let taak"> {{taak.data.toekenningsdatumTijd | datum | empty}} </td>
                                 </ng-container>
-                                <ng-container matColumnDef="streefdatum">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'streefdatum' | translate}} </th>
-                                    <td mat-cell *matCellDef="let taak"> {{taak.data.streefdatum | datum | empty}} </td>
+                                <ng-container matColumnDef="fataledatum">
+                                    <th mat-header-cell *matHeaderCellDef
+                                        mat-sort-header> {{'fataledatum' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.fataledatum | datum | empty}} </td>
                                 </ng-container>
                                 <ng-container matColumnDef="groep">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'groep' | translate}} </th>
                                     <td mat-cell *matCellDef="let taak"> {{taak.data.groep |empty:'naam'}} </td>
                                 </ng-container>
                                 <ng-container matColumnDef="behandelaar">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'behandelaar' | translate}} </th>
+                                    <th mat-header-cell *matHeaderCellDef
+                                        mat-sort-header> {{'behandelaar' | translate}} </th>
                                     <td mat-cell *matCellDef="let taak"> {{taak.data.behandelaar | empty:'naam'}} </td>
                                 </ng-container>
                                 <ng-container matColumnDef="id" stickyEnd id="taakButtons">

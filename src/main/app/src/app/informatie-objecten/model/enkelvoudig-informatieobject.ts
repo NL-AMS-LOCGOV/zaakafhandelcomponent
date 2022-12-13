@@ -7,6 +7,7 @@ import {FileFormat} from './file-format';
 import {User} from '../../identity/model/user';
 import {DocumentRechten} from '../../policy/model/document-rechten';
 import {EnkelvoudigInformatieobjectOndertekening} from './enkelvoudig-informatieobject-ondertekening';
+import {InformatieobjectIndicatie} from '../../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 export class EnkelvoudigInformatieobject {
     uuid: string;
@@ -32,5 +33,6 @@ export class EnkelvoudigInformatieobject {
     ondertekening: EnkelvoudigInformatieobjectOndertekening;
     indicatieGebruiksrecht: boolean;
     gelockedDoor: User;
+    indicaties: InformatieobjectIndicatie[];
     rechten: DocumentRechten;
 }

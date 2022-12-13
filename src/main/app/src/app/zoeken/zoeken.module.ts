@@ -16,11 +16,14 @@ import {KlantFilterComponent} from './zoek/filters/klant-filter/klant-filter.com
 import {KlantFilterDialog} from './zoek/filters/klant-filter/klant-filter.dialog';
 import {KlantenModule} from '../klanten/klanten.module';
 import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
+import {RouterLink, RouterLinkWithHref} from '@angular/router';
+import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-object-link.component';
 
 @NgModule({
     declarations: [
         ZoekComponent,
         MultiFacetFilterComponent,
+        ZoekObjectLinkComponent,
         DateFilterComponent,
         ZaakZoekObjectComponent,
         TaakZoekObjectComponent,
@@ -33,7 +36,9 @@ import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/do
     ],
     imports: [
         SharedModule,
-        KlantenModule
+        KlantenModule,
+        RouterLinkWithHref,
+        RouterLink
     ]
 })
 export class ZoekenModule {

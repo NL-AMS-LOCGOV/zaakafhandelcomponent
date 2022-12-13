@@ -5,11 +5,10 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
-import {MailObject} from '../model/mailobject';
+import {MailGegevens} from '../model/mail-gegevens';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {CustomValidators} from '../../shared/validators/customValidators';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -95,14 +94,14 @@ export class OntvangstbevestigingComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            const mailObject = new MailObject();
-            mailObject.ontvanger = formGroup.controls['ontvanger'].value;
-            mailObject.onderwerp = formGroup.controls['onderwerp'].value;
-            mailObject.body = formGroup.controls['body'].value;
-            mailObject.bijlagen = formGroup.controls['bijlagen'].value;
-            mailObject.createDocumentFromMail = true;
+            const mailGegevens = new MailGegevens();
+            mailGegevens.ontvanger = formGroup.controls['ontvanger'].value;
+            mailGegevens.onderwerp = formGroup.controls['onderwerp'].value;
+            mailGegevens.body = formGroup.controls['body'].value;
+            mailGegevens.bijlagen = formGroup.controls['bijlagen'].value;
+            mailGegevens.createDocumentFromMail = true;
 
-            this.mailService.sendAcknowledgeReceipt(this.zaak.uuid, mailObject).subscribe(() => {
+            this.mailService.sendAcknowledgeReceipt(this.zaak.uuid, mailGegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.email.verstuurd');
                 this.ontvangstBevestigd.emit(true);
             });

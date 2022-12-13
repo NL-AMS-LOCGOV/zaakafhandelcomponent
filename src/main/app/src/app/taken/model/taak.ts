@@ -16,7 +16,7 @@ export class Taak {
     toelichting: string;
     creatiedatumTijd: string;
     toekenningsdatumTijd: string;
-    streefdatum: string;
+    fataledatum: string;
     behandelaar: User;
     groep: Group;
     zaakUuid: string;
