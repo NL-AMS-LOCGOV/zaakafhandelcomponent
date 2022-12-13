@@ -45,6 +45,7 @@
                             [zaak]="zaak"></zac-besluit-create>
         <zac-besluit-edit *ngSwitchCase="sideNavAction.BESLUIT_WIJZIGEN"
                           (besluitGewijzigd)="besluitVastgelegd($event)"
+                          [besluit]="teWijzigenBesluit"
                           [zaak]="zaak"></zac-besluit-edit>
         <zac-zaakdata *ngSwitchCase="sideNavAction.ZAAKDATA_WIJZIGEN"
                       (done)="sluitSidenav()"
@@ -340,9 +341,9 @@
                 </mat-card-content>
             </mat-card>
             <div fxFlex="calc(50%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
-                <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit"
+                <zac-besluit-view *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
-                                  (besluitWijzigen)="besluitWijzigen()"></zac-besluit-view>
+                                  (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
                 <mat-card class="taken-card">
                     <mat-card-header fxLayout="row">
                         <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>

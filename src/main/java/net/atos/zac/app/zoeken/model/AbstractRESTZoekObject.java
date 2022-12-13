@@ -5,13 +5,11 @@
 
 package net.atos.zac.app.zoeken.model;
 
-import java.util.UUID;
-
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public abstract class AbstractRESTZoekObject {
 
-    public UUID id;
+    public String id;
 
     public ZoekObjectType type;
 

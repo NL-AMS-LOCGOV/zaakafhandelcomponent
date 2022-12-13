@@ -109,11 +109,11 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
                                                                                    .label('verzenddatum')
                                                                                    .build();
 
-        const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
-                                                         .label('ontvangstdatum')
-                                                         .hint(new FormFieldHint(this.translateService.instant(
-                                                             'msg.document.ontvangstdatum.hint')))
-                                                         .build();
+        const ontvangstDatum = new DateFormFieldBuilder(this.infoObject.ontvangstdatum).id('ontvangstdatum')
+                                                                                       .label('ontvangstdatum')
+                                                                                       .hint(new FormFieldHint(this.translateService.instant(
+                                                                                           'msg.document.ontvangstdatum.hint')))
+                                                                                       .build();
 
         const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
                                                                                .validators(Validators.required)
@@ -157,13 +157,19 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         this.subscriptions$.push(verzenddatum.formControl.valueChanges.subscribe(value => {
             if (value && ontvangstDatum.formControl.enabled) {
                 ontvangstDatum.formControl.disable();
-            } else if (!value && ontvangstDatum.formControl.disabled && !this.infoObject.verzenddatum) {
+            } else if (!value && ontvangstDatum.formControl.disabled) {
                 ontvangstDatum.formControl.enable();
             }
         }));
 
-        if (verzenddatum.formControl.value || this.infoObject.verzenddatum) {
-            ontvangstDatum.formControl.disable(verzenddatum.formControl.value);
+        if (ontvangstDatum.formControl.value) {
+            verzenddatum.formControl.disable();
+            //TODO (zie Issue #2021): window.setTimeout verwijderen als angular versie >= 15
+            // Bug in Angular 14 zorgt dat .disable() op sommige formControls pas werkt na repaint
+            window.setTimeout(() => status.formControl.disable());
+        }
+        if (verzenddatum.formControl.value) {
+            ontvangstDatum.formControl.disable();
         }
     }
 

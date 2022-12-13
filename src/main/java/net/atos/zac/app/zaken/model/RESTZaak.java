@@ -33,7 +33,7 @@ public class RESTZaak {
 
     public RESTZaakResultaat resultaat;
 
-    public RESTBesluit besluit;
+    public List<RESTBesluit> besluiten;
 
     public String bronorganisatie;
 

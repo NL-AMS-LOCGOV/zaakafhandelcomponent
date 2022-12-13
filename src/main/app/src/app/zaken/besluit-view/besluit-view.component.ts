@@ -19,36 +19,60 @@ import {ZakenService} from '../zaken.service';
     styleUrls: ['./besluit-view.component.less']
 })
 export class BesluitViewComponent implements OnInit, OnChanges {
-    @Input() besluit: Besluit;
+    @Input() besluiten: Besluit[];
     @Input() readonly: boolean;
-    @Output() besluitWijzigen = new EventEmitter<void>();
-    historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
+    @Output() besluitWijzigen = new EventEmitter<Besluit>();
+    histories: Record<string, MatTableDataSource<HistorieRegel>> = {};
 
-    besluitInformatieobjecten: DocumentenLijstFormField;
+    besluitInformatieobjecten: Record<string, DocumentenLijstFormField> = {};
 
     constructor(private zakenService: ZakenService) {}
 
     ngOnInit(): void {
-        this.besluitInformatieobjecten = new DocumentenLijstFieldBuilder().id('documenten')
-                                                                          .label('documenten')
-                                                                          .documenten(of(this.besluit.informatieobjecten))
-                                                                          .verbergStatus()
-                                                                          .readonly(true)
-                                                                          .build();
-        this.loadHistorie();
+        if (this.besluiten.length > 0) {
+            this.loadBesluitData(this.besluiten[0].uuid);
+        }
     }
 
     ngOnChanges() {
-        if (this.besluitInformatieobjecten) {
-            this.besluitInformatieobjecten.documentenChanged.emit(of(this.besluit.informatieobjecten));
+        for (const key in this.besluitInformatieobjecten) {
+            if (this.besluitInformatieobjecten.hasOwnProperty(key)) {
+                this.besluitInformatieobjecten[key].documentenChanged.emit(of(this.getBesluit(key).informatieobjecten));
+            }
         }
-        this.loadHistorie();
+
+        for (const historieKey in this.histories) {
+            if (this.histories.hasOwnProperty(historieKey)) {
+                this.loadHistorie(historieKey);
+            }
+        }
     }
 
-    private loadHistorie(): void {
-        this.zakenService.listBesluitHistorie(this.besluit.uuid).subscribe(historie => {
-            this.historie.data = historie;
+    loadBesluitData(uuid) {
+        if (!this.histories[uuid]) {
+            this.loadHistorie(uuid);
+        }
+
+        if (!this.besluitInformatieobjecten[uuid]) {
+            const besluit = this.getBesluit(uuid);
+            this.besluitInformatieobjecten[uuid] = new DocumentenLijstFieldBuilder().id('documenten')
+                                                                                    .label('documenten')
+                                                                                    .documenten(of(besluit.informatieobjecten))
+                                                                                    .verbergStatus()
+                                                                                    .readonly(true)
+                                                                                    .build();
+        }
+    }
+
+    private loadHistorie(uuid) {
+        this.zakenService.listBesluitHistorie(uuid).subscribe(historie => {
+            this.histories[uuid] = new MatTableDataSource<HistorieRegel>();
+            this.histories[uuid].data = historie;
         });
+    }
+
+    private getBesluit(uuid: string): Besluit {
+        return this.besluiten.find(value => value.uuid === uuid);
     }
 
 }

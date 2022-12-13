@@ -7,7 +7,9 @@
     <p *ngIf="besluitVastleggen" class="readonly error" [innerHTML]="'msg.besluit.verplicht' | translate"></p>
     <p *ngIf="data.planItem.toelichting" class="readonly" [innerHTML]="data.planItem.toelichting"></p>
     <mfb-form-field [field]="resultaatFormField"></mfb-form-field>
-    <mfb-form-field *ngIf="data.zaak.besluit" [field]="besluitFormField"></mfb-form-field>
+    <ng-container *ngIf="data.zaak.besluiten">
+        <mfb-form-field *ngFor="let besluitFormField of besluitenFormField" [field]="besluitFormField"></mfb-form-field>
+    </ng-container>
     <mfb-form-field [field]="toelichtingFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.enabled" [field]="sendMailFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>

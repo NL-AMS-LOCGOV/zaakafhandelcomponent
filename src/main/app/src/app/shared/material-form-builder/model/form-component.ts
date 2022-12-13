@@ -55,7 +55,9 @@ export abstract class FormComponent {
             return this.labeled('msg.error.invalid.rsin', {});
         } else if (formControl.hasError('postcode')) {
             return this.labeled('msg.error.invalid.postcode', {});
-        } else {
+        } else if (formControl.hasError('huisnummer')) {
+            return this.labeled('msg.error.invalid.huisnummer', {});
+        }  else {
             return '';
         }
     }

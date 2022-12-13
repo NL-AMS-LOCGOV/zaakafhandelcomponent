@@ -31,7 +31,7 @@ export class PersoonZoekComponent implements OnInit {
     voorvoegselFormField: AbstractFormControlField;
     geboortedatumFormField: AbstractFormControlField;
     gemeenteCodeFormField: AbstractFormControlField;
-    straatFormFiled: AbstractFormControlField;
+    straatFormField: AbstractFormControlField;
     postcodeFormField: AbstractFormControlField;
     huisnummerFormField: AbstractFormControlField;
     formGroup: FormGroup;
@@ -43,23 +43,53 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.bsnFormField = new InputFormFieldBuilder().id('bsn').label('bsn').validators(CustomValidators.bsn)
-                                                       .maxlength(9).build();
-        this.voornamenFormField = new InputFormFieldBuilder().id('voornamen').label('voornamen').maxlength(50).build();
-        this.geslachtsnaamFormField = new InputFormFieldBuilder('Me*').id('achternaam').label('achternaam')
-                                                                 .maxlength(50).build();
-        this.voorvoegselFormField = new InputFormFieldBuilder().id('voorvoegsel').label('voorvoegsel').maxlength(10).build();
-        this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum').build();
-        this.gemeenteCodeFormField = new InputFormFieldBuilder('0599').id('gemeenteCode').label('gemeenteCode')
-                                                                .validators(Validators.min(1), Validators.max(9999))
-                                                                .maxlength(4).build();
-        this.straatFormFiled = new InputFormFieldBuilder().id('straat').label('straat').maxlength(55).build();
-        this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
-                                                            .validators(CustomValidators.postcode).maxlength(7).build();
-
-        this.huisnummerFormField = new InputFormFieldBuilder().id('huisnummer').label('huisnummer')
-                                                              .validators(Validators.min(1), Validators.max(99999))
-                                                              .maxlength(5).build();
+        this.bsnFormField = new InputFormFieldBuilder()
+        .id('bsn')
+        .label('bsn')
+        .validators(CustomValidators.bsn)
+        .maxlength(9)
+        .build();
+        this.voornamenFormField = new InputFormFieldBuilder()
+        .id('voornamen')
+        .label('voornamen')
+        .maxlength(50)
+        .build();
+        this.geslachtsnaamFormField = new InputFormFieldBuilder('Me*')
+        .id('achternaam')
+        .label('achternaam')
+        .maxlength(50)
+        .build();
+        this.voorvoegselFormField = new InputFormFieldBuilder()
+        .id('voorvoegsel')
+        .label('voorvoegsel')
+        .maxlength(10)
+        .build();
+        this.geboortedatumFormField = new DateFormFieldBuilder()
+        .id('geboortedatum')
+        .label('geboortedatum')
+        .build();
+        this.gemeenteCodeFormField = new InputFormFieldBuilder('0599')
+        .id('gemeenteCode')
+        .label('gemeenteCode')
+        .validators(Validators.min(1), Validators.max(9999))
+        .maxlength(4)
+        .build();
+        this.straatFormField = new InputFormFieldBuilder()
+        .id('straat')
+        .label('straat')
+        .maxlength(55)
+        .build();
+        this.postcodeFormField = new InputFormFieldBuilder()
+        .id('postcode')
+        .label('postcode')
+        .validators(CustomValidators.postcode)
+        .maxlength(7)
+        .build();
+        this.huisnummerFormField = new InputFormFieldBuilder()
+        .id('huisnummer')
+        .label('huisnummer')
+        .validators(Validators.min(1), Validators.max(99999), CustomValidators.huisnummer)
+        .maxlength(5).build();
 
         this.formGroup = this.formBuilder.group({
             bsn: this.bsnFormField.formControl,
@@ -68,7 +98,7 @@ export class PersoonZoekComponent implements OnInit {
             voorvoegsel: this.voorvoegselFormField.formControl,
             geboortedatum: this.geboortedatumFormField.formControl,
             gemeenteVanInschrijving: this.gemeenteCodeFormField.formControl,
-            straat: this.straatFormFiled.formControl,
+            straat: this.straatFormField.formControl,
             postcode: this.postcodeFormField.formControl,
             huisnummer: this.huisnummerFormField.formControl
         });
@@ -85,7 +115,7 @@ export class PersoonZoekComponent implements OnInit {
         const postcode = this.postcodeFormField.formControl.value;
         const huisnummer = this.huisnummerFormField.formControl.value;
         const gemeenteCode = this.gemeenteCodeFormField.formControl.value;
-        const straat = this.straatFormFiled.formControl.value;
+        const straat = this.straatFormField.formControl.value;
 
         return bsn || (geslachtsnaam && (geboortedatum || gemeenteCode)) || (postcode && huisnummer) || (straat && huisnummer && gemeenteCode);
     }
