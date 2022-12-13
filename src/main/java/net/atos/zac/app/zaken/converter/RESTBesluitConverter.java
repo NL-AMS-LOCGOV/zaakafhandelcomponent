@@ -55,6 +55,12 @@ public class RESTBesluitConverter {
         return restBesluit;
     }
 
+    public List<RESTBesluit> convertToRESTBesluit(final List<Besluit> besluiten) {
+        return besluiten.stream()
+                .map(this::convertToRESTBesluit)
+                .toList();
+    }
+
     public Besluit convertToBesluit(final Zaak zaak, final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
         final Besluit besluit = new Besluit();
         besluit.setZaak(zaak.getUrl());
@@ -73,4 +79,5 @@ public class RESTBesluitConverter {
                         besluitInformatieobject.getInformatieobject()))
                 .collect(Collectors.toList());
     }
+
 }

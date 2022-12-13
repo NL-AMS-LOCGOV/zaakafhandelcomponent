@@ -114,9 +114,9 @@ public class RESTZaakConverter {
         final RESTZaak restZaak = new RESTZaak();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
 
-        brcClientService.findBesluit(zaak)
+        brcClientService.listBesluiten(zaak)
                 .map(besluitConverter::convertToRESTBesluit)
-                .ifPresent(besluit -> restZaak.besluit = besluit);
+                .ifPresent(besluiten -> restZaak.besluiten = besluiten);
         restZaak.identificatie = zaak.getIdentificatie();
         restZaak.uuid = zaak.getUuid();
         restZaak.bronorganisatie = zaak.getBronorganisatie();

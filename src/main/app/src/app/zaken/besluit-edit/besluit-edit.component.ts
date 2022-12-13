@@ -34,16 +34,15 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 export class BesluitEditComponent implements OnInit, OnDestroy {
 
     formConfig: FormConfig;
+    @Input() besluit: Besluit;
     @Input() zaak: Zaak;
     @Output() besluitGewijzigd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     private ngDestroy = new Subject<void>();
-    besluit: Besluit;
 
     constructor(private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService) {}
 
     ngOnInit(): void {
-        this.besluit = this.zaak.besluit;
         this.formConfig = new FormConfigBuilder().saveText('actie.wijzigen').cancelText('actie.annuleren').build();
         const resultaattypeField = new SelectFormFieldBuilder(this.zaak.resultaat.resultaattype).id('resultaattype').label('resultaat')
                                                                                                 .optionLabel('naam')

@@ -81,6 +81,7 @@ import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-af
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
+import {Besluit} from '../model/besluit';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -97,6 +98,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     menu: MenuItem[];
     readonly sideNavAction = SideNavAction;
     action: SideNavAction;
+    teWijzigenBesluit: Besluit;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -367,7 +369,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
-        if (this.zaak.isOpen && !this.zaak.besluit && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.behandelen) {
+        if (this.zaak.isOpen && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.behandelen) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
@@ -902,13 +904,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     besluitVastgelegd(besluitVastgelegd: boolean): void {
         if (besluitVastgelegd) {
-            this.zakenService.findBesluitByZaakUUID(this.zaak.uuid).subscribe(besluit => this.zaak.besluit = besluit);
+            this.zakenService.listBesluitenForZaak(this.zaak.uuid).subscribe(besluiten => this.zaak.besluiten = besluiten);
         }
         this.sluitSidenav();
     }
 
-    besluitWijzigen(): void {
+    besluitWijzigen($event): void {
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
+        this.teWijzigenBesluit = $event;
         this.actionsSidenav.open();
     }
 }

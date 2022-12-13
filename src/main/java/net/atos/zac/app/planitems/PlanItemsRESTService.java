@@ -184,7 +184,7 @@ public class PlanItemsRESTService {
             }
             case ZAAK_AFHANDELEN -> {
                 assertPolicy(!zrcClientService.heeftOpenDeelzaken(zaak));
-                if (brcClientService.findBesluit(zaak).isPresent()) {
+                if (brcClientService.listBesluiten(zaak).isPresent()) {
                     final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
                     resultaat.setToelichting(userEventListenerData.resultaatToelichting);
                     zrcClientService.updateResultaat(resultaat);
