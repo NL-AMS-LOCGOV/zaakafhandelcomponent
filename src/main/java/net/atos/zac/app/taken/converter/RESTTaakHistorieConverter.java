@@ -6,7 +6,7 @@
 package net.atos.zac.app.taken.converter;
 
 import static javax.json.bind.annotation.JsonbDateFormat.TIME_IN_MILLIS;
-import static net.atos.zac.flowable.TaskService.USER_TASK_DESCRIPTION_CHANGED;
+import static net.atos.zac.flowable.TakenService.USER_TASK_DESCRIPTION_CHANGED;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 import static net.atos.zac.util.JsonbUtil.JSONB;
@@ -22,7 +22,7 @@ import org.flowable.task.api.history.HistoricTaskLogEntry;
 import org.flowable.task.api.history.HistoricTaskLogEntryType;
 
 import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.identity.IdentityService;
 
 public class RESTTaakHistorieConverter {
@@ -85,7 +85,8 @@ public class RESTTaakHistorieConverter {
     }
 
     private RESTTaakHistorieRegel convertDescriptionChanged(final String data) {
-        final TaskService.TaskDescriptionChangedData descriptionChangedData = JSONB.fromJson(data, TaskService.TaskDescriptionChangedData.class);
+        final TakenService.TaskDescriptionChangedData descriptionChangedData = JSONB.fromJson(data,
+                                                                                              TakenService.TaskDescriptionChangedData.class);
         return new RESTTaakHistorieRegel(TOELICHTING_ATTRIBUUT_LABEL,
                                          descriptionChangedData.previousDescription(),
                                          descriptionChangedData.newDescription());

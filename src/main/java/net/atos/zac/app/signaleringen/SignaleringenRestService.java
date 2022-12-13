@@ -31,7 +31,7 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.signalering.SignaleringenService;
@@ -53,7 +53,7 @@ public class SignaleringenRestService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @Inject
     private DRCClientService drcClientService;
@@ -103,8 +103,8 @@ public class SignaleringenRestService {
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.TAAK);
         return signaleringenService.listSignaleringen(parameters).stream()
-                .map(signalering -> taskService.readTask(signalering.getSubject()))
-                .map(task -> restTaakConverter.convert(task, true))
+                .map(signalering -> takenService.readTask(signalering.getSubject()))
+                .map(restTaakConverter::convert)
                 .toList();
     }
 

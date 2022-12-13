@@ -5,10 +5,10 @@
 
 package net.atos.zac.util;
 
-import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_OMSCHRIJVING;
-import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_UUUID;
-import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAK_IDENTIFICATIE;
-import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAK_UUID;
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_OMSCHRIJVING;
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_UUUID;
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_IDENTIFICATIE;
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_UUID;
 
 import java.util.List;
 import java.util.UUID;

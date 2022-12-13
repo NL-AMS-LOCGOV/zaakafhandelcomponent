@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,6 +37,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
+import org.flowable.task.api.Task;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -85,7 +85,8 @@ import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.TaskVariablesService;
+import net.atos.zac.flowable.TaakVariabelenService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.util.UriUtil;
@@ -111,7 +112,10 @@ public class InformatieObjectenRESTService {
     private ZGWApiService zgwApiService;
 
     @Inject
-    private TaskVariablesService taskVariablesService;
+    private TakenService takenService;
+
+    @Inject
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
@@ -247,10 +251,10 @@ public class InformatieObjectenRESTService {
                                                                 enkelvoudigInformatieobjectWithInhoud.getBeschrijving(),
                                                                 OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
-            final List<UUID> taakdocumenten =
-                    taskVariablesService.findTaakdocumenten(documentReferentieId).orElse(new LinkedList<>());
+            final Task task = takenService.readOpenTask(documentReferentieId);
+            final List<UUID> taakdocumenten = taakVariabelenService.readTaakdocumenten(task);
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            taskVariablesService.setTaakdocumenten(documentReferentieId, taakdocumenten);
+            taakVariabelenService.setTaakdocumenten(task, taakdocumenten);
         }
         return informatieobjectConverter.convertToREST(zaakInformatieobject);
     }

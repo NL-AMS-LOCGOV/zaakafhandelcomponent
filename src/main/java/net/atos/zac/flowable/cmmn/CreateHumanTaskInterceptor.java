@@ -35,7 +35,7 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
     public static final String VAR_TRANSIENT_OWNER = "owner";
 
     // This must be lower than the DEFAULT_SUSPENSION_TIMEOUT defined in websockets.service.ts
-    private static final int SECONDS_TO_DELAY = 3;
+    public static final int SECONDS_TO_DELAY = 3;
 
     @Override
     public void beforeCreateHumanTask(final CreateHumanTaskBeforeContext context) {
@@ -58,7 +58,7 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
     public void afterCreateHumanTask(final CreateHumanTaskAfterContext context) {
         final Map<String, String> taakdata = (Map<String, String>) context.getPlanItemInstanceEntity()
                 .getTransientVariable(VAR_TRANSIENT_TAAKDATA);
-        FlowableHelper.getInstance().getTaskVariablesService().setTaakdata(context.getTaskEntity().getId(), taakdata);
+        FlowableHelper.getInstance().getTaakVariabelenService().setTaakdata(context.getTaskEntity(), taakdata);
         context.getTaskEntity()
                 .setDueDate((Date) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_DUE_DATE));
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_ZAAK_UUID);

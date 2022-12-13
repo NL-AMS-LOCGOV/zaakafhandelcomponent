@@ -18,7 +18,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 
 @ApplicationScoped
 @Transactional
-public class CaseVariablesService {
+public class ZaakVariabelenService {
 
     public static final String VAR_ZAAK_UUID = "zaakUUID";
 
@@ -28,7 +28,7 @@ public class CaseVariablesService {
 
     public static final String VAR_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
-    public static final String VAR_ZAAK_DATA = "zaakData";
+    static final String VAR_ZAAK_DATA = "zaakData";
 
     private static final String VAR_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
@@ -36,6 +36,7 @@ public class CaseVariablesService {
 
     private static final String VAR_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
 
+    // Wordt gebruikt binnen het CMMN model
     private static final String VAR_ONTVANKELIJK = "ontvankelijk";
 
     @Inject
@@ -168,7 +169,7 @@ public class CaseVariablesService {
 
     private void setVariable(final UUID zaakUUID, final String variableName, final Object value) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
-                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
+                .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
 
         if (caseInstance != null) {
@@ -181,7 +182,7 @@ public class CaseVariablesService {
 
     private void removeVariable(final UUID zaakUUID, final String variableName) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
-                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
+                .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
 
         if (caseInstance != null) {

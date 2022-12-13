@@ -55,7 +55,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.zac.app.taken.model.TaakSortering;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.converter.AbstractZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZoekObject;
@@ -87,7 +87,7 @@ public class IndexeerService {
     private DRCClientService drcClientService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -213,13 +213,13 @@ public class IndexeerService {
     private void markAllTakenForReindexing() {
         int page = 0;
         final int maxResults = TAKEN_MAX_RESULTS;
-        final long numberOfTasks = taskService.countOpenTasks();
+        final long numberOfTasks = takenService.countOpenTasks();
         boolean hasNext;
         do {
             final int firstResult = page * maxResults;
-            final List<Task> tasks = taskService.listOpenTasks(TaakSortering.CREATIEDATUM, SorteerRichting.DESCENDING,
-                                                               firstResult, maxResults);
-            tasks.forEach(taak -> markItemForAddOrUpdateInSolrIndex(taak.getId(), TAAK));
+            final List<Task> tasks = takenService.listOpenTasks(TaakSortering.CREATIEDATUM, SorteerRichting.DESCENDING,
+                                                                firstResult, maxResults);
+            tasks.forEach(task -> markItemForAddOrUpdateInSolrIndex(task.getId(), TAAK));
             if (!tasks.isEmpty()) {
                 LOG.info("[%s] Aantal gelezen: %d (%d)".formatted(TAAK.toString(), firstResult + tasks.size(),
                                                                   numberOfTasks));
@@ -371,7 +371,7 @@ public class IndexeerService {
     public void addZaak(final UUID zaakUUID, boolean inclusieTaken) {
         markItemForAddOrUpdateInSolrIndex(zaakUUID.toString(), ZAAK);
         if (inclusieTaken) {
-            taskService.listTasksForCase(zaakUUID).forEach(taskInfo -> {
+            takenService.listTasksForZaak(zaakUUID).forEach(taskInfo -> {
                 addTaak(taskInfo.getId());
             });
         }

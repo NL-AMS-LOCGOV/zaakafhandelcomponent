@@ -37,7 +37,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.Ontvanger;
@@ -80,7 +80,7 @@ public class SignaleringenService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @Inject
     private DRCClientService drcClientService;
@@ -240,7 +240,7 @@ public class SignaleringenService {
     }
 
     private TaskInfo getTaak(final String taakID) {
-        return taskService.readTask(taakID);
+        return takenService.readTask(taakID);
     }
 
     private EnkelvoudigInformatieobject getDocument(final String documentUUID) {

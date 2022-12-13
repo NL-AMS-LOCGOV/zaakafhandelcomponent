@@ -22,10 +22,10 @@ import net.atos.zac.zoeken.IndexeerService;
 public class FlowableHelper {
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
 
     @Inject
-    private TaskVariablesService taskVariablesService;
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -62,12 +62,12 @@ public class FlowableHelper {
         return identityService;
     }
 
-    public CaseVariablesService getCaseVariablesService() {
-        return caseVariablesService;
+    public ZaakVariabelenService getZaakVariabelenService() {
+        return zaakVariabelenService;
     }
 
-    public TaskVariablesService getTaskVariablesService() {
-        return taskVariablesService;
+    public TaakVariabelenService getTaakVariabelenService() {
+        return taakVariabelenService;
     }
 
     public IndexeerService getIndexeerService() {

@@ -14,15 +14,15 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.zac.app.zaken.model.RESTOpenstaandeTaken;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 
 public class RESTOpenstaandeTakenConverter {
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     public RESTOpenstaandeTaken convert(final UUID zaakUUID) {
-        final List<Task> openstaandeTaken = taskService.listOpenTasks(zaakUUID);
+        final List<Task> openstaandeTaken = takenService.listOpenTasksForZaak(zaakUUID);
         final RESTOpenstaandeTaken restOpenstaandeTaken = new RESTOpenstaandeTaken();
 
         if (openstaandeTaken != null) {

@@ -48,7 +48,7 @@ import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.EMail;
@@ -87,7 +87,7 @@ public class MailService {
     private MailTemplateHelper mailTemplateHelper;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -202,6 +202,6 @@ public class MailService {
     private Zaak getZaakBron(final Bronnen bronnen) {
         return (bronnen.zaak != null || bronnen.taskInfo == null)
                 ? bronnen.zaak
-                : zrcClientService.readZaak(caseVariablesService.readZaakUUID(bronnen.taskInfo.getScopeId()));
+                : zrcClientService.readZaak(taakVariabelenService.readZaakUUID(bronnen.taskInfo));
     }
 }

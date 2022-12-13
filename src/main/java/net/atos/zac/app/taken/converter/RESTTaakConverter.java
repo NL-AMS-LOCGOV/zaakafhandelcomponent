@@ -21,15 +21,12 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
-import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.TaskService;
-import net.atos.zac.flowable.TaskVariablesService;
+import net.atos.zac.flowable.TaakVariabelenService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.TaakRechten;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
-import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 /**
  *
@@ -37,19 +34,16 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 public class RESTTaakConverter {
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private TakenService takenService;
 
     @Inject
-    private TaskService taskService;
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private RESTGroupConverter groepConverter;
 
     @Inject
     private RESTUserConverter medewerkerConverter;
-
-    @Inject
-    private TaskVariablesService taskVariablesService;
 
     @Inject
     private RESTRechtenConverter rechtenConverter;
@@ -63,50 +57,33 @@ public class RESTTaakConverter {
 
     public List<RESTTaak> convert(final List<? extends TaskInfo> tasks) {
         return tasks.stream()
-                .map(task -> convert(task, false))
+                .map(this::convert)
                 .toList();
     }
 
-    public RESTTaak convert(final TaskInfo taskInfo, boolean withTaakdata) {
-        final UUID zaaktypeUuid = caseVariablesService.readZaaktypeUUID(taskInfo.getScopeId());
-        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUuid);
-        final String zaaktypeOmschrijving = zaakafhandelParameters.getZaaktypeOmschrijving();
-        final TaakRechten rechten = policyService.readTaakRechten(zaaktypeOmschrijving);
-        final RESTTaak restTaak = new RESTTaak();
+    public RESTTaak convert(final TaskInfo taskInfo) {
+        final var restTaak = new RESTTaak();
         restTaak.id = taskInfo.getId();
-        restTaak.rechten = rechtenConverter.convert(rechten);
         restTaak.naam = taskInfo.getName();
-        restTaak.zaakUuid = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
-        restTaak.zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId());
-        restTaak.status = taskService.getTaakStatus(taskInfo);
-
+        restTaak.status = takenService.getTaakStatus(taskInfo);
+        restTaak.zaakUuid = taakVariabelenService.readZaakUUID(taskInfo);
+        restTaak.zaakIdentificatie = taakVariabelenService.readZaakIdentificatie(taskInfo);
+        final var zaaktypeOmschrijving = taakVariabelenService.readZaaktypeOmschrijving(taskInfo);
+        final var rechten = policyService.readTaakRechten(zaaktypeOmschrijving);
+        restTaak.rechten = rechtenConverter.convert(rechten);
         if (rechten.getLezen()) {
-
-            final HumanTaskParameters humanTaskParameters = zaakafhandelParameters.getHumanTaskParametersCollection().stream()
-                    .filter(zap -> taskInfo.getTaskDefinitionKey().equals(zap.getPlanItemDefinitionID())).findAny().orElseThrow(IllegalStateException::new);
-
+            restTaak.zaaktypeOmschrijving = zaaktypeOmschrijving;
             restTaak.toelichting = taskInfo.getDescription();
             restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());
             restTaak.toekenningsdatumTijd = convertToZonedDateTime(taskInfo.getClaimTime());
             restTaak.fataledatum = convertToLocalDate(taskInfo.getDueDate());
             restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
             restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
-            restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
-            humanTaskParameters.getReferentieTabellen().forEach(rt -> {
-                restTaak.tabellen.put(rt.getVeld(),
-                                      rt.getTabel().getWaarden().stream().map(ReferentieTabelWaarde::getNaam).toList());
-            });
-
-            restTaak.zaaktypeOmschrijving = zaaktypeOmschrijving;
-            taskVariablesService.findTaakinformatie(taskInfo.getId())
-                    .ifPresent(taakinformatie -> restTaak.taakinformatie = taakinformatie);
-
-            if (withTaakdata) {
-                taskVariablesService.findTaakdata(taskInfo.getId())
-                        .ifPresent(taakdata -> restTaak.taakdata = taakdata);
-                taskVariablesService.findTaakdocumenten(taskInfo.getId())
-                        .ifPresent(taakdocumenten -> restTaak.taakdocumenten = taakdocumenten);
-            }
+            restTaak.taakinformatie = taakVariabelenService.readTaakinformatie(taskInfo);
+            restTaak.taakdata = taakVariabelenService.readTaakdata(taskInfo);
+            restTaak.taakdocumenten = taakVariabelenService.readTaakdocumenten(taskInfo);
+            convertFormulierDefinitieEnReferentieTabellen(restTaak, taakVariabelenService.readZaaktypeUUID(taskInfo),
+                                                          taskInfo.getTaskDefinitionKey());
         }
         return restTaak;
     }
@@ -117,5 +94,26 @@ public class RESTTaakConverter {
                 .findAny()
                 .map(IdentityLinkInfo::getGroupId)
                 .orElse(null);
+    }
+
+    private void convertFormulierDefinitieEnReferentieTabellen(final RESTTaak restTaak, final UUID zaaktypeUUID,
+            final String taskDefinitionKey) {
+        zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID)
+                .getHumanTaskParametersCollection().stream()
+                .filter(zaakafhandelParameters -> taskDefinitionKey.equals(
+                        zaakafhandelParameters.getPlanItemDefinitionID()))
+                .findAny()
+                .ifPresent(zaakafhandelParameters -> verwerkZaakafhandelParameters(restTaak, zaakafhandelParameters));
+    }
+
+    private void verwerkZaakafhandelParameters(final RESTTaak restTaak,
+            final HumanTaskParameters humanTaskParameters) {
+        restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
+        humanTaskParameters.getReferentieTabellen().forEach(referentieTabel -> {
+            restTaak.tabellen.put(referentieTabel.getVeld(),
+                                  referentieTabel.getTabel().getWaarden().stream()
+                                          .map(ReferentieTabelWaarde::getNaam)
+                                          .toList());
+        });
     }
 }

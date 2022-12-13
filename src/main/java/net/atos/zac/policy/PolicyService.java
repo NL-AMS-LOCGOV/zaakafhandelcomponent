@@ -26,7 +26,8 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.flowable.TaakVariabelenService;
+import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.policy.exception.PolicyException;
 import net.atos.zac.policy.input.DocumentData;
 import net.atos.zac.policy.input.DocumentInput;
@@ -64,7 +65,10 @@ public class PolicyService {
     private EnkelvoudigInformatieObjectLockService lockService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
+
+    @Inject
+    private TaakVariabelenService taakVariabelenService;
 
     public OverigeRechten readOverigeRechten() {
         return evaluationClient.readOverigeRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get())))
@@ -128,7 +132,7 @@ public class PolicyService {
     }
 
     public TaakRechten readTaakRechten(final TaskInfo taskInfo) {
-        return readTaakRechten(caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
+        return readTaakRechten(taakVariabelenService.readZaaktypeOmschrijving(taskInfo));
     }
 
     public TaakRechten readTaakRechten(final String zaaktypeOmschrijving) {

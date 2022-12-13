@@ -22,7 +22,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringDetail;
 import net.atos.zac.signalering.model.SignaleringTarget;
@@ -64,7 +64,7 @@ public class SignaleringenJob {
     private ZoekenService zoekenService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     public void signaleringenVerzenden() {
         zaakSignaleringenVerzenden();
@@ -254,29 +254,29 @@ public class SignaleringenJob {
      */
     private int taakDueVerzenden() {
         final int[] verzonden = new int[1];
-        taskService.listOpenTasksDueNow().stream()
-                .map(taak -> buildTaakSignalering(getTaakSignaleringTarget(taak), taak))
+        takenService.listOpenTasksDueNow().stream()
+                .map(task -> buildTaakSignalering(getTaakSignaleringTarget(task), task))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendTaakSignalering(signalering));
         return verzonden[0];
     }
 
-    private String getTaakSignaleringTarget(final Task taak) {
-        if (signaleringenService.readInstellingenUser(SignaleringType.Type.TAAK_VERLOPEN, taak.getAssignee())
+    private String getTaakSignaleringTarget(final Task task) {
+        if (signaleringenService.readInstellingenUser(SignaleringType.Type.TAAK_VERLOPEN, task.getAssignee())
                 .isMail() &&
                 !signaleringenService.findSignaleringVerzonden(
-                        getTaakSignaleringVerzondenParameters(taak.getAssignee(), taak.getId())).isPresent()) {
-            return taak.getAssignee();
+                        getTaakSignaleringVerzondenParameters(task.getAssignee(), task.getId())).isPresent()) {
+            return task.getAssignee();
         }
         return null;
     }
 
-    private Signalering buildTaakSignalering(final String target, final Task taak) {
+    private Signalering buildTaakSignalering(final String target, final Task task) {
         if (target != null) {
             final Signalering signalering = signaleringenService.signaleringInstance(
                     SignaleringType.Type.TAAK_VERLOPEN);
             signalering.setTargetUser(target);
-            signalering.setSubject(taak);
+            signalering.setSubject(task);
             signalering.setDetail(SignaleringDetail.STREEFDATUM);
             return signalering;
         }
@@ -293,8 +293,8 @@ public class SignaleringenJob {
      * Make sure already sent E-Mail warnings will get send again (in cases where the due date has changed)
      */
     private void taakDueOnterechtVerzondenVerwijderen() {
-        taskService.listOpenTasksDueLater().stream()
-                .map(taak -> getTaakSignaleringVerzondenParameters(taak.getAssignee(), taak.getId()))
+        takenService.listOpenTasksDueLater().stream()
+                .map(task -> getTaakSignaleringVerzondenParameters(task.getAssignee(), task.getId()))
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
     }
 

@@ -122,9 +122,9 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.CaseService;
-import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.CMMNService;
+import net.atos.zac.flowable.TakenService;
+import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.healthcheck.HealthCheckService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -205,13 +205,13 @@ public class ZakenRESTService {
     private PolicyService policyService;
 
     @Inject
-    private CaseService caseService;
+    private CMMNService cmmnService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
 
     @Inject
     private ConfiguratieService configuratieService;
@@ -330,7 +330,7 @@ public class ZakenRESTService {
             final User user = identityService.readUser(restZaak.behandelaar.id);
             zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), AANMAKEN_ZAAK_REDEN);
         }
-        caseService.startCase(zaak, zaaktype,
+        cmmnService.startCase(zaak, zaaktype,
                               zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID()), null);
         return zaakConverter.convert(zaak);
     }
@@ -376,11 +376,11 @@ public class ZakenRESTService {
                                                             zaakConverter.convertToPatch(restZaakOpschortGegevens),
                                                             toelichting);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            caseVariablesService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
-            caseVariablesService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
+            zaakVariabelenService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
+            zaakVariabelenService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
         } else {
-            caseVariablesService.removeDatumtijdOpgeschort(zaakUUID);
-            caseVariablesService.removeVerwachteDagenOpgeschort(zaakUUID);
+            zaakVariabelenService.removeDatumtijdOpgeschort(zaakUUID);
+            zaakVariabelenService.removeVerwachteDagenOpgeschort(zaakUUID);
         }
         return zaakConverter.convert(updatedZaak, status, statustype);
     }
@@ -390,9 +390,9 @@ public class ZakenRESTService {
     public RESTZaakOpschorting readOpschortingZaak(@PathParam("uuid") final UUID zaakUUID) {
         assertPolicy(policyService.readZaakRechten(zrcClientService.readZaak(zaakUUID)).getLezen());
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        caseVariablesService.findDatumtijdOpgeschort(zaakUUID)
+        zaakVariabelenService.findDatumtijdOpgeschort(zaakUUID)
                 .ifPresent(datumtijdOpgeschort -> zaakOpschorting.vanafDatumTijd = datumtijdOpgeschort);
-        caseVariablesService.findVerwachteDagenOpgeschort(zaakUUID)
+        zaakVariabelenService.findVerwachteDagenOpgeschort(zaakUUID)
                 .ifPresent(verwachteDagenOpgeschort -> zaakOpschorting.duurDagen = verwachteDagenOpgeschort);
         return zaakOpschorting;
     }
@@ -514,7 +514,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getWijzigen());
 
-        caseVariablesService.setZaakdata(restZaak.uuid, restZaak.zaakdata);
+        zaakVariabelenService.setZaakdata(restZaak.uuid, restZaak.zaakdata);
         return restZaak;
     }
 
@@ -612,7 +612,7 @@ public class ZakenRESTService {
                                              zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         zgwApiService.endZaak(zaak, zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         // Terminate case after the zaak is ended in order to prevent the EndCaseLifecycleListener from ending the zaak.
-        caseService.terminateCase(zaakUUID);
+        cmmnService.terminateCase(zaakUUID);
     }
 
     @PATCH
@@ -899,11 +899,11 @@ public class ZakenRESTService {
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
         final int[] count = new int[1];
-        taskService.listOpenTasks(zaakUUID).stream()
+        takenService.listOpenTasksForZaak(zaakUUID).stream()
                 .filter(task -> task.getDueDate() != null)
                 .forEach(task -> {
                     task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));
-                    taskService.updateTask(task);
+                    takenService.updateTask(task);
                     eventingService.send(TAAK.updated(task));
                     count[0]++;
                 });

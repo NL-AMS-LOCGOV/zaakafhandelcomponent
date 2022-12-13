@@ -47,7 +47,7 @@ import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.PeriodUtil;
 
@@ -102,7 +102,7 @@ public class RESTZaakConverter {
     private PolicyService policyService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
 
     public RESTZaak convert(final Zaak zaak) {
         final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
@@ -195,11 +195,11 @@ public class RESTZaakConverter {
         restZaak.isHeropend = isHeropend(statustype);
         restZaak.isInIntakeFase = isIntake(statustype);
         restZaak.isOntvangstbevestigingVerstuurd =
-                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false);
+                zaakVariabelenService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false);
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 
-        restZaak.zaakdata = caseVariablesService.readZaakdata(zaak.getUuid());
+        restZaak.zaakdata = zaakVariabelenService.readZaakdata(zaak.getUuid());
 
         return restZaak;
     }
