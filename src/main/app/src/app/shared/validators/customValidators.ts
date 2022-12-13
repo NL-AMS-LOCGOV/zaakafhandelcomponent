@@ -26,6 +26,7 @@ export class CustomValidators {
     private static emailRegex = new RegExp('^' + CustomValidators.EMAIL + '$');
     private static emailsRegex = new RegExp('^(' + CustomValidators.EMAIL + ')(;//s*' + CustomValidators.EMAIL + ')*$');
     private static handelsnaamRegex = new RegExp('[*()]+');
+    private static nummerRegex = new RegExp('^[0-9]*$');
 
     private static bsnVFn(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
@@ -40,7 +41,7 @@ export class CustomValidators {
     }
 
     private static isValidBSN(bsn: string): boolean {
-        if (isNaN(Number(bsn)) || bsn.length !== 9) {
+        if (!CustomValidators.nummerRegex.test(bsn) || bsn.length !== 9) {
             return false;
         }
         let checksum: number = 0;
@@ -57,7 +58,7 @@ export class CustomValidators {
                 return null;
             }
             const val = control.value;
-            if (isNaN(Number(val)) || val.length !== 8) {
+            if (!CustomValidators.nummerRegex.test(val) || val.length !== 8) {
                 return {kvk: true};
             }
         };
@@ -69,7 +70,7 @@ export class CustomValidators {
                 return null;
             }
             const val = control.value;
-            if (isNaN(Number(val)) || val.length !== 12) {
+            if (!CustomValidators.nummerRegex.test(val) || val.length !== 12) {
                 return {vestigingsnummer: true};
             }
         };
@@ -81,7 +82,7 @@ export class CustomValidators {
                 return null;
             }
             const val = control.value;
-            if (isNaN(Number(val)) || val.length !== 9) {
+            if (!CustomValidators.nummerRegex.test(val) || val.length !== 9) {
                 return {rsin: true};
             }
         };
@@ -130,7 +131,7 @@ export class CustomValidators {
             if (!control.value) {
                 return null;
             }
-            if (isNaN(Number(control.value))) {
+            if (!CustomValidators.nummerRegex.test(control.value)) {
                 return {huisnummer: true};
             }
         };
