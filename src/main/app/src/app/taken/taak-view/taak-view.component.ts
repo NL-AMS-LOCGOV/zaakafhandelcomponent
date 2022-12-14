@@ -34,7 +34,7 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TaakStatus} from '../model/taak-status.enum';
-import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 
 @Component({

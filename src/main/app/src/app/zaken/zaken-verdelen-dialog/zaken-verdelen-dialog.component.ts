@@ -8,10 +8,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ZakenService} from '../zaken.service';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
-import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
+import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-form-field';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 
