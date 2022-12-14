@@ -14,6 +14,10 @@
     &:hover {
       text-decoration: underline;
     }
+
+    read-more {
+      display: inline-flex;
+    }
   }
 
   label {
@@ -27,5 +31,13 @@
     position: relative;
     top: 11px;
     left: 2px;
+  }
+
+  zac-zaak-indicaties, zac-informatie-object-indicaties {
+    margin-right: 5px;
+
+    ::ng-deep mat-chip-list {
+      max-width: 80px;
+    }
   }
 }
