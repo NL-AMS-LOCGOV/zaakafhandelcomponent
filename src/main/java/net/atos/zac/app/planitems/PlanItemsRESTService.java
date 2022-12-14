@@ -124,8 +124,8 @@ public class PlanItemsRESTService {
     @Path("humanTaskPlanItem/{id}")
     public RESTPlanItem readHumanTaskPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance humanTaskPlanItem = cmmnService.readOpenPlanItem(planItemId);
-        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
-        final UUID zaaktypeUUID = zaakVariabelenService.readZaaktypeUUID(humanTaskPlanItem.getCaseInstanceId());
+        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(humanTaskPlanItem);
+        final UUID zaaktypeUUID = zaakVariabelenService.readZaaktypeUUID(humanTaskPlanItem);
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 zaaktypeUUID);
         return planItemConverter.convertPlanItem(humanTaskPlanItem, zaakUUID, zaakafhandelParameters);
@@ -135,8 +135,8 @@ public class PlanItemsRESTService {
     @Path("processTaskPlanItem/{id}")
     public RESTPlanItem readProcessTaskPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance processTaskPlanItem = cmmnService.readOpenPlanItem(planItemId);
-        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(processTaskPlanItem.getCaseInstanceId());
-        final UUID zaaktypeUUID = zaakVariabelenService.readZaaktypeUUID(processTaskPlanItem.getCaseInstanceId());
+        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(processTaskPlanItem);
+        final UUID zaaktypeUUID = zaakVariabelenService.readZaaktypeUUID(processTaskPlanItem);
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 zaaktypeUUID);
         return planItemConverter.convertPlanItem(processTaskPlanItem, zaakUUID, zaakafhandelParameters);
@@ -146,7 +146,7 @@ public class PlanItemsRESTService {
     @Path("doHumanTaskPlanItem")
     public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = cmmnService.readOpenPlanItem(humanTaskData.planItemInstanceId);
-        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(planItem.getCaseInstanceId());
+        final UUID zaakUUID = zaakVariabelenService.readZaakUUID(planItem);
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
         final ZaakafhandelParameters zaakafhandelParameters =
@@ -199,8 +199,7 @@ public class PlanItemsRESTService {
             case INTAKE_AFRONDEN -> {
                 final PlanItemInstance planItemInstance = cmmnService.readOpenPlanItem(
                         userEventListenerData.planItemInstanceId);
-                zaakVariabelenService.setOntvankelijk(planItemInstance.getCaseInstanceId(),
-                                                      userEventListenerData.zaakOntvankelijk);
+                zaakVariabelenService.setOntvankelijk(planItemInstance, userEventListenerData.zaakOntvankelijk);
                 if (!userEventListenerData.zaakOntvankelijk) {
                     final ZaakafhandelParameters zaakafhandelParameters =
                             zaakafhandelParameterService.readZaakafhandelParameters(

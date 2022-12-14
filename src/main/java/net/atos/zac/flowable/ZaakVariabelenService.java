@@ -14,7 +14,7 @@ import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.history.HistoricCaseInstance;
 import org.flowable.cmmn.api.runtime.CaseInstance;
-import org.flowable.variable.api.history.HistoricVariableInstance;
+import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 @ApplicationScoped
 @Transactional
@@ -45,20 +45,20 @@ public class ZaakVariabelenService {
     @Inject
     private CmmnHistoryService cmmnHistoryService;
 
-    public UUID readZaakUUID(final String caseInstanceId) {
-        return (UUID) readCaseVariable(caseInstanceId, VAR_ZAAK_UUID);
+    public UUID readZaakUUID(final PlanItemInstance planItemInstance) {
+        return (UUID) readCaseVariable(planItemInstance, VAR_ZAAK_UUID);
     }
 
-    public String readZaakIdentificatie(final String caseInstanceId) {
-        return (String) readCaseVariable(caseInstanceId, VAR_ZAAK_IDENTIFICATIE);
+    public String readZaakIdentificatie(final PlanItemInstance planItemInstance) {
+        return (String) readCaseVariable(planItemInstance, VAR_ZAAK_IDENTIFICATIE);
     }
 
-    public UUID readZaaktypeUUID(final String caseInstanceId) {
-        return (UUID) readCaseVariable(caseInstanceId, VAR_ZAAKTYPE_UUUID);
+    public UUID readZaaktypeUUID(final PlanItemInstance planItemInstance) {
+        return (UUID) readCaseVariable(planItemInstance, VAR_ZAAKTYPE_UUUID);
     }
 
-    public String readZaaktypeOmschrijving(final String caseInstanceId) {
-        return (String) readCaseVariable(caseInstanceId, VAR_ZAAKTYPE_OMSCHRIJVING);
+    public String readZaaktypeOmschrijving(final PlanItemInstance planItemInstance) {
+        return (String) readCaseVariable(planItemInstance, VAR_ZAAKTYPE_OMSCHRIJVING);
     }
 
     public Optional<Boolean> findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
@@ -70,8 +70,8 @@ public class ZaakVariabelenService {
         setVariable(zaakUUID, VAR_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
     }
 
-    public void setOntvankelijk(final String caseInstanceId, final Boolean ontvankelijk) {
-        setVariable(caseInstanceId, VAR_ONTVANKELIJK, ontvankelijk);
+    public void setOntvankelijk(final PlanItemInstance planItemInstance, final Boolean ontvankelijk) {
+        setVariable(planItemInstance, VAR_ONTVANKELIJK, ontvankelijk);
     }
 
     public Optional<ZonedDateTime> findDatumtijdOpgeschort(final UUID zaakUUID) {
@@ -109,38 +109,26 @@ public class ZaakVariabelenService {
         setVariable(zaakUUID, VAR_ZAAK_DATA, zaakdata);
     }
 
-    private Object readCaseVariable(final String caseInstanceId, final String variableName) {
-        if (cmmnRuntimeService.createCaseInstanceQuery().caseInstanceId(caseInstanceId).singleResult() != null) {
-            return readOpenCaseVariable(caseInstanceId, variableName);
-        } else {
-            return readClosedCaseVariable(caseInstanceId, variableName);
-        }
-    }
-
-    private Object readOpenCaseVariable(final String caseInstanceId, final String variableName) {
-        final Object value = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
-        if (value != null) {
-            return value;
-        } else {
-            throw new RuntimeException(
-                    String.format("No variable found with name '%s' for open case instance id '%s'", variableName,
-                                  caseInstanceId));
-        }
-    }
-
-    private Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
-        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
-                .caseInstanceId(caseInstanceId)
-                .variableName(variableName)
+    private Object readCaseVariable(final PlanItemInstance planItemInstance, final String variableName) {
+        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
+                .caseInstanceId(planItemInstance.getCaseInstanceId())
+                .includeCaseVariables()
                 .singleResult();
-        final Object value = historicVariableInstance != null ? historicVariableInstance.getValue() : null;
-        if (value != null) {
-            return value;
-        } else {
-            throw new RuntimeException(
-                    String.format("No variable found with name '%s' for closed case instance id '%s'", variableName,
-                                  caseInstanceId));
+        if (caseInstance != null) {
+            return caseInstance.getCaseVariables().get(variableName);
         }
+
+        final HistoricCaseInstance historicCaseInstance = cmmnHistoryService.createHistoricCaseInstanceQuery()
+                .caseInstanceId(planItemInstance.getCaseInstanceId())
+                .includeCaseVariables()
+                .singleResult();
+        if (historicCaseInstance != null) {
+            return historicCaseInstance.getCaseVariables().get(variableName);
+        }
+
+        throw new RuntimeException(
+                String.format("No variable found with name '%s' for case instance id '%s'", variableName,
+                              planItemInstance.getCaseInstanceId()));
     }
 
     private Object findCaseVariable(final UUID zaakUUID, final String variableName) {
@@ -163,8 +151,8 @@ public class ZaakVariabelenService {
         return null;
     }
 
-    private void setVariable(final String caseInstanceId, final String variableName, final Object value) {
-        cmmnRuntimeService.setVariable(caseInstanceId, variableName, value);
+    private void setVariable(final PlanItemInstance planItemInstance, final String variableName, final Object value) {
+        cmmnRuntimeService.setVariable(planItemInstance.getCaseInstanceId(), variableName, value);
     }
 
     private void setVariable(final UUID zaakUUID, final String variableName, final Object value) {

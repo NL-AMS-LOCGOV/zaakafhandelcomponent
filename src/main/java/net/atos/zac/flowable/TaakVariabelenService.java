@@ -20,7 +20,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.flowable.cmmn.api.CmmnTaskService;
+import org.flowable.common.engine.api.scope.ScopeTypes;
+import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
@@ -35,10 +36,7 @@ public class TaakVariabelenService {
     private static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
 
     @Inject
-    private CmmnTaskService cmmnTaskService;
-
-    @Inject
-    private TakenService takenService;
+    private TaskService taskService;
 
     public Map<String, String> readTaakdata(final TaskInfo taskInfo) {
         return (Map<String, String>) findTaskVariable(taskInfo, VAR_TASK_TAAKDATA).orElse(Collections.emptyMap());
@@ -81,7 +79,7 @@ public class TaakVariabelenService {
     }
 
     private Map<String, Object> getVariables(final TaskInfo taskInfo) {
-        return !taskInfo.getCaseVariables().isEmpty() ? taskInfo.getCaseVariables() : taskInfo.getProcessVariables();
+        return isCmmnTask(taskInfo) ? taskInfo.getCaseVariables() : taskInfo.getProcessVariables();
     }
 
     private Optional<Object> findVariable(final TaskInfo taskInfo, final String variableName) {
@@ -110,11 +108,10 @@ public class TaakVariabelenService {
     }
 
     private void setTaskVariable(final Task task, final String variableName, final Object value) {
-        if (!takenService.isCmmnTask(task)) {
-            throw new RuntimeException(
-                    "Setting a task variable on a BPMN task is not supported yet. Task name = '%s'".formatted(
-                            task.getName()));
-        }
-        cmmnTaskService.setVariableLocal(task.getId(), variableName, value);
+        taskService.setVariableLocal(task.getId(), variableName, value);
+    }
+
+    private boolean isCmmnTask(final TaskInfo taskInfo) {
+        return ScopeTypes.CMMN.equals(taskInfo.getScopeType());
     }
 }

@@ -54,7 +54,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documentcreatie.converter.DataConverter;
-import net.atos.zac.flowable.ZaakVariabelenService;
+import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -87,7 +87,7 @@ public class MailTemplateHelper {
     private IdentityService identityService;
 
     @Inject
-    private ZaakVariabelenService zaakVariabelenService;
+    private TaakVariabelenService taakVariabelenService;
 
     public static String stripParagraphTags(final String onderwerp) {
         // Can't parse HTML with a regular expression, but in this case there will only be bare P-tags.
@@ -197,8 +197,8 @@ public class MailTemplateHelper {
     }
 
     private MailLink getLink(final TaskInfo taskInfo) {
-        final String zaakIdentificatie = zaakVariabelenService.readZaakIdentificatie(taskInfo.getScopeId());
-        final String zaaktypeOmschrijving = zaakVariabelenService.readZaaktypeOmschrijving(taskInfo.getScopeId());
+        final String zaakIdentificatie = taakVariabelenService.readZaakIdentificatie(taskInfo);
+        final String zaaktypeOmschrijving = taakVariabelenService.readZaaktypeOmschrijving(taskInfo);
         return new MailLink(taskInfo.getName(),
                             configuratieService.taakTonenUrl(taskInfo.getId()),
                             "de taak", "voor zaak %s (%s)".formatted(zaakIdentificatie, zaaktypeOmschrijving));

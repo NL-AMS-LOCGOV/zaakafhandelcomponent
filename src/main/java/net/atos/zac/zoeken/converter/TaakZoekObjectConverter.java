@@ -71,14 +71,14 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         }
 
         final Zaaktype zaaktype = ztcClientService.readZaaktype(
-                zaakVariabelenService.readZaaktypeUUID(taskInfo.getScopeId()));
+                taakVariabelenService.readZaaktypeUUID(taskInfo));
         taakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         taakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         taakZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
 
         final UUID zaakUUID = taakVariabelenService.readZaakUUID(taskInfo);
         taakZoekObject.setZaakUUID(zaakUUID.toString());
-        taakZoekObject.setZaakIdentificatie(zaakVariabelenService.readZaakIdentificatie(taskInfo.getScopeId()));
+        taakZoekObject.setZaakIdentificatie(taakVariabelenService.readZaakIdentificatie(taskInfo));
 
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
