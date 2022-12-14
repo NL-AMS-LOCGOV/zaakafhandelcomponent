@@ -7,7 +7,6 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {UtilService} from './core/service/util.service';
-import {SessionStorageUtil} from './shared/storage/session-storage.util';
 import {ZaakKoppelenService} from './zaken/zaak-koppelen/zaak-koppelen.service';
 import {InformatieObjectVerplaatsService} from './informatie-objecten/informatie-object-verplaats.service';
 
@@ -28,7 +27,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        SessionStorageUtil.clearSessionStorage();
         this.titleService.setTitle('Zaakafhandelcomponent');
         this.translate.addLangs(['nl', 'en']);
         this.translate.setDefaultLang('nl');
