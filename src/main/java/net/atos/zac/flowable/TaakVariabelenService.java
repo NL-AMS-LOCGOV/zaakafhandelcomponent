@@ -20,7 +20,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.flowable.common.engine.api.scope.ScopeTypes;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -37,6 +36,9 @@ public class TaakVariabelenService {
 
     @Inject
     private TaskService taskService;
+
+    @Inject
+    private TakenService takenService;
 
     public Map<String, String> readTaakdata(final TaskInfo taskInfo) {
         return (Map<String, String>) findTaskVariable(taskInfo, VAR_TASK_TAAKDATA).orElse(Collections.emptyMap());
@@ -79,7 +81,7 @@ public class TaakVariabelenService {
     }
 
     private Map<String, Object> getVariables(final TaskInfo taskInfo) {
-        return isCmmnTask(taskInfo) ? taskInfo.getCaseVariables() : taskInfo.getProcessVariables();
+        return takenService.isCmmnTask(taskInfo) ? taskInfo.getCaseVariables() : taskInfo.getProcessVariables();
     }
 
     private Optional<Object> findVariable(final TaskInfo taskInfo, final String variableName) {
@@ -109,9 +111,5 @@ public class TaakVariabelenService {
 
     private void setTaskVariable(final Task task, final String variableName, final Object value) {
         taskService.setVariableLocal(task.getId(), variableName, value);
-    }
-
-    private boolean isCmmnTask(final TaskInfo taskInfo) {
-        return ScopeTypes.CMMN.equals(taskInfo.getScopeType());
     }
 }

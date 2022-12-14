@@ -82,8 +82,13 @@ public class RESTTaakConverter {
             restTaak.taakinformatie = taakVariabelenService.readTaakinformatie(taskInfo);
             restTaak.taakdata = taakVariabelenService.readTaakdata(taskInfo);
             restTaak.taakdocumenten = taakVariabelenService.readTaakdocumenten(taskInfo);
-            convertFormulierDefinitieEnReferentieTabellen(restTaak, taakVariabelenService.readZaaktypeUUID(taskInfo),
-                                                          taskInfo.getTaskDefinitionKey());
+            if (takenService.isCmmnTask(taskInfo)) {
+                convertFormulierDefinitieEnReferentieTabellen(restTaak,
+                                                              taakVariabelenService.readZaaktypeUUID(taskInfo),
+                                                              taskInfo.getTaskDefinitionKey());
+            } else {
+                restTaak.formulierDefinitie = taskInfo.getFormKey();
+            }
         }
         return restTaak;
     }

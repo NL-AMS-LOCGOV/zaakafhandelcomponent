@@ -223,6 +223,10 @@ public class TakenService {
         return taskInfo instanceof Task ? (taskInfo.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND) : AFGEROND;
     }
 
+    public boolean isCmmnTask(final TaskInfo taskInfo) {
+        return ScopeTypes.CMMN.equals(taskInfo.getScopeType());
+    }
+
     private Task findOpenTask(final String taskId) {
         return taskService.createTaskQuery()
                 .taskId(taskId)
@@ -241,10 +245,6 @@ public class TakenService {
                 .includeTaskLocalVariables()
                 .includeIdentityLinks()
                 .singleResult();
-    }
-
-    private boolean isCmmnTask(final TaskInfo taskInfo) {
-        return ScopeTypes.CMMN.equals(taskInfo.getScopeType());
     }
 
     private Date tomorrow() {
