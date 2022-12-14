@@ -13,7 +13,8 @@ import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 import {AutocompleteValidators} from '../autocomplete/autocomplete-validators';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, tap} from 'rxjs/operators';
+import {OrderUtil} from '../../../order/order-util';
 
 @Component({
     templateUrl: './medewerker-groep.component.html',
@@ -51,24 +52,26 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     }
 
     initGroepen(): void {
-        this.identityService.listGroups().subscribe(groepen => {
-            this.groepen = groepen;
-            const validators: ValidatorFn[] = [];
-            validators.push(AutocompleteValidators.optionInList(groepen));
-            if (this.data.groep.hasValidator(Validators.required)) {
-                validators.push(Validators.required);
-            }
-            this.data.groep.setValidators(validators);
-            this.data.groep.updateValueAndValidity();
+        this.identityService.listGroups()
+            .pipe(tap(value => value.sort(OrderUtil.orderBy('naam'))))
+            .subscribe(groepen => {
+                this.groepen = groepen;
+                const validators: ValidatorFn[] = [];
+                validators.push(AutocompleteValidators.optionInList(groepen));
+                if (this.data.groep.hasValidator(Validators.required)) {
+                    validators.push(Validators.required);
+                }
+                this.data.groep.setValidators(validators);
+                this.data.groep.updateValueAndValidity();
 
-            this.filteredGroepen = this.data.groep.valueChanges.pipe(
-                startWith(''),
-                map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
-            );
-            if (this.data.groep.defaultValue) {
-                this.data.groep.setValue(groepen.find(groep => groep.id === this.data.groep.defaultValue.id));
-            }
-        });
+                this.filteredGroepen = this.data.groep.valueChanges.pipe(
+                    startWith(''),
+                    map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
+                );
+                if (this.data.groep.defaultValue) {
+                    this.data.groep.setValue(groepen.find(groep => groep.id === this.data.groep.defaultValue.id));
+                }
+            });
     }
 
     inGroepChanged($event: MouseEvent) {
@@ -85,22 +88,23 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         } else {
             observable = this.identityService.listUsers();
         }
-        observable.subscribe(medewerkers => {
-            this.medewerkers = medewerkers;
-            const validators: ValidatorFn[] = [];
-            validators.push(AutocompleteValidators.optionInList(medewerkers));
-            if (this.data.medewerker.hasValidator(Validators.required)) {
-                validators.push(Validators.required);
-            }
-            this.data.medewerker.setValidators(validators);
-            this.filteredMedewerkers = this.data.medewerker.valueChanges.pipe(
-                startWith(''),
-                map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
-            );
-            if (defaultMedewerkerId) {
-                this.data.medewerker.setValue(medewerkers.find(medewerker => medewerker.id === defaultMedewerkerId));
-            }
-        });
+        observable.pipe(tap(value => value.sort(OrderUtil.orderBy('naam'))))
+                  .subscribe(medewerkers => {
+                      this.medewerkers = medewerkers;
+                      const validators: ValidatorFn[] = [];
+                      validators.push(AutocompleteValidators.optionInList(medewerkers));
+                      if (this.data.medewerker.hasValidator(Validators.required)) {
+                          validators.push(Validators.required);
+                      }
+                      this.data.medewerker.setValidators(validators);
+                      this.filteredMedewerkers = this.data.medewerker.valueChanges.pipe(
+                          startWith(''),
+                          map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
+                      );
+                      if (defaultMedewerkerId) {
+                          this.data.medewerker.setValue(medewerkers.find(medewerker => medewerker.id === defaultMedewerkerId));
+                      }
+                  });
     }
 
     displayFn(obj: User | Group): string {

@@ -5,7 +5,7 @@
 
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {Taak} from '../../taken/model/taak';
-import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {HumanTaskData} from '../../plan-items/model/human-task-data';
 import {DividerFormFieldBuilder} from '../../shared/material-form-builder/form-components/divider/divider-form-field-builder';
 import {TaakStatus} from '../../taken/model/taak-status.enum';

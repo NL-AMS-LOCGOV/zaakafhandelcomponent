@@ -110,8 +110,8 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
         this.zaakafhandelParametersService.listZaakafhandelParameters().subscribe(parameters => {
             this.loading = false;
             this.parameters.data = parameters;
-            this.zaaktypes = this.utilService.getUniqueItemsList(parameters, 'zaaktype', 'identificatie');
-            this.caseDefinitions = this.utilService.getUniqueItemsList(parameters, 'caseDefinition', 'key');
+            this.zaaktypes = this.utilService.getUniqueItemsList(parameters, 'zaaktype', 'identificatie', 'omschrijving');
+            this.caseDefinitions = this.utilService.getUniqueItemsList(parameters, 'caseDefinition', 'key', 'naam');
         });
     }
 

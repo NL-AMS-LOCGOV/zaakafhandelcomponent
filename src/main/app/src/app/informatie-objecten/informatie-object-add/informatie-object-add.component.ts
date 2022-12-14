@@ -12,7 +12,6 @@ import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {FormGroup, Validators} from '@angular/forms';
 import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import * as moment from 'moment/moment';
-import {Informatieobjecttype} from '../model/informatieobjecttype';
 import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.enum';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
@@ -48,7 +47,6 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
     @ViewChild(FormComponent) form: FormComponent;
 
     fields: Array<AbstractFormField[]>;
-    informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
     ingelogdeMedewerker: User;
 

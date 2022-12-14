@@ -6,6 +6,7 @@
 import {Observable, tap} from 'rxjs';
 import {EventEmitter} from '@angular/core';
 import {AbstractFormControlField} from './abstract-form-control-field';
+import {OrderUtil} from '../../order/order-util';
 
 /**
  * Abstract class voor Form Fields die meerdere waardes tonen (checkbox, radiobutton, select)
@@ -38,7 +39,7 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
             tap({
                 subscribe: () => this.loading$.emit(true),
                 next: () => this.loading$.emit(false)
-            }));
+            }), tap(value => value.sort(OrderUtil.orderBy(this.optionLabel))));
         this.optionsChanged$.next();
     }
 }

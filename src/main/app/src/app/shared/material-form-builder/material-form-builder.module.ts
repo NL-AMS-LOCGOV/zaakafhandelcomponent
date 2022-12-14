@@ -45,7 +45,7 @@ import {ParagraphComponent} from './form-components/paragraph/paragraph.componen
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
+import {MedewerkerGroepComponent} from './form-components/medewerker-groep/medewerker-groep.component';
 import {DividerComponent} from './form-components/divider/divider.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
