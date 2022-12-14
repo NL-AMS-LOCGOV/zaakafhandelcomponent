@@ -150,11 +150,9 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Singleton
 public class ZakenRESTService {
 
-    private static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String ROL_VERWIJDER_REDEN = "Verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    private static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
-
-    private static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String ROL_TOEVOEGEN_REDEN = "Toegekend door de medewerker tijdens het behandelen van de zaak";
 
     private static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
 
@@ -821,7 +819,7 @@ public class ZakenRESTService {
         groep.setIdentificatie(group.getId());
         groep.setNaam(group.getName());
         final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
-        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
+        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype, "Behandelend groep van de zaak", groep);
     }
 
     private RolMedewerker bepaalRolMedewerker(final User user, final Zaak zaak) {
@@ -830,7 +828,7 @@ public class ZakenRESTService {
         medewerker.setVoorletters(user.getFirstName());
         medewerker.setAchternaam(user.getLastName());
         final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
-        return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
+        return new RolMedewerker(zaak.getUrl(), roltype, "Behandelaar van de zaak", medewerker);
     }
 
     private void deleteSignaleringen(final Zaak zaak) {
@@ -843,16 +841,16 @@ public class ZakenRESTService {
 
     private void removeInitiator(final Zaak zaak, final Rol<?> initiator) {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        zrcClientService.deleteRol(initiator.getUuid(), INITIATOR_VERWIJDER_REDEN);
+        zrcClientService.deleteRol(initiator, ROL_VERWIJDER_REDEN);
     }
 
     private void addInitiator(final IdentificatieType identificatieType, final String identificatie, final Zaak zaak) {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
         final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaak.getZaaktype());
         switch (identificatieType) {
-            case BSN -> addBetrokkenNatuurlijkPersoon(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
-            case VN -> addBetrokkenVestiging(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
-            case RSIN -> addBetrokkenNietNatuurlijkPersoon(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
+            case BSN -> addBetrokkenNatuurlijkPersoon(initiator, identificatie, zaak, ROL_TOEVOEGEN_REDEN);
+            case VN -> addBetrokkenVestiging(initiator, identificatie, zaak, ROL_TOEVOEGEN_REDEN);
+            case RSIN -> addBetrokkenNietNatuurlijkPersoon(initiator, identificatie, zaak, ROL_TOEVOEGEN_REDEN);
             default -> throw new IllegalStateException(
                     String.format("Unexpected value: %s '%s'", identificatieType, identificatie));
         }
@@ -860,7 +858,7 @@ public class ZakenRESTService {
 
     private void removeBetrokkene(final Zaak zaak, final Rol<?> betrokkene) {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        zrcClientService.deleteRol(betrokkene.getUuid(), BETROKKENE_VERWIJDER_REDEN);
+        zrcClientService.deleteRol(betrokkene, ROL_VERWIJDER_REDEN);
     }
 
     private void addBetrokkene(final UUID roltype, IdentificatieType identificatieType, final String identificatie,
@@ -878,21 +876,21 @@ public class ZakenRESTService {
 
     private void addBetrokkenNatuurlijkPersoon(final Roltype roltype, final String bsn, final Zaak zaak,
             String toelichting) {
-        final RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting,
+        final RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype, toelichting,
                                                                   new NatuurlijkPersoon(bsn));
         zrcClientService.createRol(rol, toelichting);
     }
 
     private void addBetrokkenVestiging(final Roltype roltype, final String vestigingsnummer, final Zaak zaak,
             String toelichting) {
-        final RolVestiging rol = new RolVestiging(zaak.getUrl(), roltype.getUrl(), toelichting,
+        final RolVestiging rol = new RolVestiging(zaak.getUrl(), roltype, toelichting,
                                                   new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol, toelichting);
     }
 
     private void addBetrokkenNietNatuurlijkPersoon(final Roltype roltype, final String rsin, final Zaak zaak,
             String toelichting) {
-        final RolNietNatuurlijkPersoon rol = new RolNietNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting,
+        final RolNietNatuurlijkPersoon rol = new RolNietNatuurlijkPersoon(zaak.getUrl(), roltype, toelichting,
                                                                           new NietNatuurlijkPersoon(rsin));
         zrcClientService.createRol(rol, toelichting);
     }
