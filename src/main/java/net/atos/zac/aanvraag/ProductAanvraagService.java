@@ -5,6 +5,19 @@
 
 package net.atos.zac.aanvraag;
 
+import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
+import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
+import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
@@ -13,7 +26,16 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.*;
+import net.atos.client.zgw.zrc.model.Medewerker;
+import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolVestiging;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -24,19 +46,6 @@ import net.atos.zac.identity.model.User;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Logger;
-
-import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
-import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
-import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 @ApplicationScoped
 public class ProductAanvraagService {
@@ -56,7 +65,7 @@ public class ProductAanvraagService {
 
     private static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
 
-    private static final String ROL_TOELICHTING = "Initiator";
+    private static final String ROL_TOELICHTING = "Overgenomen vanuit de product aanvraag";
 
     @Inject
     private ObjectsClientService objectsClientService;
@@ -137,7 +146,7 @@ public class ProductAanvraagService {
     private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
         if (bsn != null) {
             final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
-            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(),
+            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator,
                                                                                        ROL_TOELICHTING,
                                                                                        new NatuurlijkPersoon(bsn));
             zrcClientService.createRol(rolNatuurlijkPersoon);
@@ -145,7 +154,7 @@ public class ProductAanvraagService {
             final Optional<ResultaatItem> hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
             if (hoofdvestiging.isPresent()) {
                 final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
-                final RolVestiging rolVestiging = new RolVestiging(zaak, initiator.getUrl(), ROL_TOELICHTING,
+                final RolVestiging rolVestiging = new RolVestiging(zaak, initiator, ROL_TOELICHTING,
                                                                    new net.atos.client.zgw.zrc.model.Vestiging(
                                                                            hoofdvestiging.get().getVestigingsnummer()));
                 zrcClientService.createRol(rolVestiging);
@@ -193,7 +202,7 @@ public class ProductAanvraagService {
         groep.setIdentificatie(group.getId());
         groep.setNaam(group.getName());
         final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
-        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
+        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype, "Behandelend groep van de zaak", groep);
     }
 
     private RolMedewerker creeerRolMedewerker(final String behandelaarGebruikersnaam, final Zaak zaak) {
@@ -203,6 +212,6 @@ public class ProductAanvraagService {
         medewerker.setVoorletters(user.getFirstName());
         medewerker.setAchternaam(user.getLastName());
         final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
-        return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
+        return new RolMedewerker(zaak.getUrl(), roltype, "Behandelaar van de zaak", medewerker);
     }
 }
