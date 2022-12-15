@@ -22,7 +22,7 @@ import {DocumentenLijstComponent} from './form-components/documenten-lijst/docum
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
 import {RadioComponent} from './form-components/radio/radio.component';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
-import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
+import {MedewerkerGroepComponent} from './form-components/medewerker-groep/medewerker-groep.component';
 import {DividerComponent} from './form-components/divider/divider.component';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';

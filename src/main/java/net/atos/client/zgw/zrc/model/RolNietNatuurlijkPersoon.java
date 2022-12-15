@@ -10,12 +10,14 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.zgw.ztc.model.Roltype;
+
 public class RolNietNatuurlijkPersoon extends Rol<NietNatuurlijkPersoon> {
 
     public RolNietNatuurlijkPersoon() {
     }
 
-    public RolNietNatuurlijkPersoon(final URI zaak, final URI roltype, final String roltoelichting, final NietNatuurlijkPersoon betrokkeneIdentificatie) {
+    public RolNietNatuurlijkPersoon(final URI zaak, final Roltype roltype, final String roltoelichting, final NietNatuurlijkPersoon betrokkeneIdentificatie) {
         super(zaak, roltype, BetrokkeneType.NIET_NATUURLIJK_PERSOON, betrokkeneIdentificatie, roltoelichting);
     }
 

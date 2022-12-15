@@ -10,7 +10,7 @@ import {InputFormField} from '../../material-form-builder/form-components/input/
 import {IdentityService} from '../../../identity/identity.service';
 import {User} from '../../../identity/model/user';
 import {EditComponent} from '../edit.component';
-import {MedewerkerGroepFormField} from '../../material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
+import {MedewerkerGroepFormField} from '../../material-form-builder/form-components/medewerker-groep/medewerker-groep-form-field';
 import {FormControl} from '@angular/forms';
 
 @Component({

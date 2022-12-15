@@ -5,6 +5,8 @@
 
 package net.atos.zac.identity.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class User {
 
     private final String id;
@@ -63,10 +65,12 @@ public class User {
     }
 
     public String getFullName() {
-        if (fullName != null) {
+        if (StringUtils.isNotBlank(fullName)) {
             return fullName;
-        } else if (firstName != null && lastName != null) {
+        } else if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
             return String.format("%s %s", firstName, lastName);
+        } else if (StringUtils.isNotBlank(lastName)) {
+            return lastName;
         } else {
             return id;
         }

@@ -90,19 +90,19 @@ public class ZRCClientService {
      * @return Created {@link Rol}.
      */
     public Rol<?> createRol(final Rol<?> rol, final String toelichting) {
-        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        zgwClientHeadersFactory.setAuditToelichting("%s:%s".formatted(rol.getOmschrijving(), toelichting));
         return zrcClient.rolCreate(rol);
     }
 
     /**
      * Delete {@link Rol}.
      *
-     * @param rolUUID     uuid van de {@link Rol}/
+     * @param rol         de betreffende rol {@link Rol}/
      * @param toelichting de toelichting
      */
-    public void deleteRol(final UUID rolUUID, final String toelichting) {
-        zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        zrcClient.rolDelete(rolUUID);
+    public void deleteRol(final Rol<?> rol, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting("%s: %s".formatted(rol.getOmschrijving(), toelichting));
+        zrcClient.rolDelete(rol.getUuid());
     }
 
     /**
@@ -442,7 +442,7 @@ public class ZRCClientService {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .noneMatch(oud::equalBetrokkeneRol))
-                .forEach(rol -> deleteRol(rol.getUuid(), toelichting));
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
     private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
@@ -450,7 +450,7 @@ public class ZRCClientService {
                 .filter(oud -> rollen.stream()
                         .filter(oud::equalBetrokkeneRol)
                         .anyMatch(nieuw -> !nieuw.equals(oud)))
-                .forEach(rol -> deleteRol(rol.getUuid(), toelichting));
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
     private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {

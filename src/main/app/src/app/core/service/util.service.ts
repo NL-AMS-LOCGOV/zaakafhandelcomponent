@@ -13,6 +13,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {DOCUMENT} from '@angular/common';
 import {Router} from '@angular/router';
 import {ActionBarAction} from '../actionbar/model/action-bar-action';
+import {OrderUtil} from '../../shared/order/order-util';
 
 @Injectable({
     providedIn: 'root'
@@ -129,12 +130,12 @@ export class UtilService {
         });
     }
 
-    getUniqueItemsList(source, item, key): any[] {
+    getUniqueItemsList(source: any[], item: string, key: string, sortKey?: string): any[] {
         return source.map(value => value[item])
                      .filter((value, index, self) => {
                              return value && self.findIndex(v => v[key] === value[key]) === index;
                          }
-                     );
+                     ).sort(OrderUtil.orderBy(sortKey));
     }
 
     downloadBlobResponse(response: Blob, fileName: string) {
