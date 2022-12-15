@@ -200,13 +200,13 @@ public class TakenService {
         return readClosedTask(Task.getId());
     }
 
-    public Task assignTaskToUser(final Task task, final String userId) {
+    public Task assignTaskToUser(final String taskId, final String userId) {
         if (userId != null) {
-            taskService.setAssignee(task.getId(), userId);
+            taskService.setAssignee(taskId, userId);
         } else {
-            taskService.unclaim(task.getId());
+            taskService.unclaim(taskId);
         }
-        return readOpenTask(task.getId());
+        return readOpenTask(taskId);
     }
 
     public Task assignTaskToGroup(final Task task, final String groupId) {
