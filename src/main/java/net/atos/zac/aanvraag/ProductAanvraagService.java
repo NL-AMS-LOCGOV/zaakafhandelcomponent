@@ -39,7 +39,7 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.flowable.CaseService;
+import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -95,7 +95,7 @@ public class ProductAanvraagService {
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
     @Inject
-    private CaseService caseService;
+    private CMMNService cmmnService;
 
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
@@ -140,7 +140,7 @@ public class ProductAanvraagService {
                          zaak.getZaaktype());
         }
 
-        caseService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
+        cmmnService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
     }
 
     private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {

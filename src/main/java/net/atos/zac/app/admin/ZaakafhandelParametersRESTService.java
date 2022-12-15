@@ -38,7 +38,7 @@ import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.CaseService;
+import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
@@ -61,7 +61,7 @@ public class ZaakafhandelParametersRESTService {
     private ConfiguratieService configuratieService;
 
     @Inject
-    private CaseService caseService;
+    private CMMNService cmmnService;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
@@ -96,7 +96,7 @@ public class ZaakafhandelParametersRESTService {
     @Path("caseDefinition")
     public List<RESTCaseDefinition> listCaseDefinitions() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
-        final List<CaseDefinition> caseDefinitions = caseService.listCaseDefinitions();
+        final List<CaseDefinition> caseDefinitions = cmmnService.listCaseDefinitions();
         return caseDefinitions.stream().map(caseDefinition -> caseDefinitionConverter.convertToRESTCaseDefinition(caseDefinition, true)).toList();
     }
 

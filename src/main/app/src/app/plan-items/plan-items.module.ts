@@ -7,11 +7,13 @@ import {NgModule} from '@angular/core';
 
 import {HumanTaskDoComponent} from './human-task-do/human-task-do.component';
 import {SharedModule} from '../shared/shared.module';
+import {ProcessTaskDoComponent} from './process-task-do/process-task-do.component';
 
 @NgModule({
-    declarations: [HumanTaskDoComponent],
+    declarations: [HumanTaskDoComponent, ProcessTaskDoComponent],
     exports: [
-        HumanTaskDoComponent
+        HumanTaskDoComponent,
+        ProcessTaskDoComponent
     ],
     imports: [
         SharedModule

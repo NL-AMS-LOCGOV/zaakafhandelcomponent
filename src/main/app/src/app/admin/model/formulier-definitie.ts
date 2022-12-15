@@ -16,4 +16,5 @@ export type FormulierDefinitieID =
     'ADVIES' |
     'EXTERN_ADVIES_VASTLEGGEN' |
     'EXTERN_ADVIES_MAIL' |
-    'GOEDKEUREN';
+    'GOEDKEUREN' |
+    'VERZENDEN_BESLUIT';

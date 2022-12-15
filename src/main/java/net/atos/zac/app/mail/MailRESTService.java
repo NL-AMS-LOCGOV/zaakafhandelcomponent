@@ -26,7 +26,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.zac.app.mail.converter.RESTMailGegevensConverter;
 import net.atos.zac.app.mail.model.RESTMailGegevens;
-import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.policy.PolicyService;
@@ -42,7 +42,7 @@ public class MailRESTService {
     private MailService mailService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
 
     @Inject
     private PolicyService policyService;
@@ -74,7 +74,7 @@ public class MailRESTService {
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailGegevens restMailGegevens) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        assertPolicy(!caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false) &&
+        assertPolicy(!zaakVariabelenService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false) &&
                              policyService.readZaakRechten(zaak).getBehandelen());
         if (!ValidationUtil.isValidEmail(restMailGegevens.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailGegevens.ontvanger));
@@ -85,7 +85,7 @@ public class MailRESTService {
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         if (!Statustype.isHeropend(statustype)) {
-            caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
+            zaakVariabelenService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
         }
     }
 }

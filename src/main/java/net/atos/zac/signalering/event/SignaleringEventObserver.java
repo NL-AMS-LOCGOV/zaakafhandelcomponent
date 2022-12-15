@@ -29,7 +29,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.TakenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
@@ -51,7 +51,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     private ZRCClientService zrcClientService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @Inject
     private IdentityService identityService;
@@ -161,7 +161,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 }
             }
             case TAAK_OP_NAAM -> {
-                final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId().getResource());
+                final TaskInfo subject = takenService.readOpenTask((String) event.getObjectId().getResource());
                 return getSignaleringVoorBehandelaar(fixActor(event, subject), subject);
             }
             case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {

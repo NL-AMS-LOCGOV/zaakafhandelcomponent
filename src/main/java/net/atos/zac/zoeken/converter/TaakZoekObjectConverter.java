@@ -13,13 +13,12 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.TaskService;
-import net.atos.zac.flowable.TaskVariablesService;
+import net.atos.zac.flowable.TaakVariabelenService;
+import net.atos.zac.flowable.TakenService;
+import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
-import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
 
@@ -29,13 +28,13 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
     private IdentityService identityService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private ZaakVariabelenService zaakVariabelenService;
 
     @Inject
-    private TaskVariablesService taskVariablesService;
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -45,7 +44,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
     @Override
     public TaakZoekObject convert(final String taskID) {
-        final TaskInfo taskInfo = taskService.readTask(taskID);
+        final TaskInfo taskInfo = takenService.readTask(taskID);
         final TaakZoekObject taakZoekObject = new TaakZoekObject();
 
         taakZoekObject.setNaam(taskInfo.getName());
@@ -63,7 +62,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
             taakZoekObject.setToegekend(true);
         }
 
-        taakZoekObject.setStatus(taskService.getTaakStatus(taskInfo));
+        taakZoekObject.setStatus(takenService.getTaakStatus(taskInfo));
         final String groupID = extractGroupId(taskInfo.getIdentityLinks());
         if (groupID != null) {
             final Group group = identityService.readGroup(groupID);
@@ -71,29 +70,29 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
             taakZoekObject.setGroepNaam(group.getName());
         }
 
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(caseVariablesService.readZaaktypeUUID(taskInfo.getScopeId()));
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(
+                taakVariabelenService.readZaaktypeUUID(taskInfo));
         taakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         taakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
-        taakZoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
+        taakZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
 
-        taakZoekObject.setZaakUUID(caseVariablesService.readZaakUUID(taskInfo.getScopeId()).toString());
-        taakZoekObject.setZaakIdentificatie(caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId()));
+        final UUID zaakUUID = taakVariabelenService.readZaakUUID(taskInfo);
+        taakZoekObject.setZaakUUID(zaakUUID.toString());
+        taakZoekObject.setZaakIdentificatie(taakVariabelenService.readZaakIdentificatie(taskInfo));
 
-        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(taakZoekObject.getZaakUUID()));
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
         taakZoekObject.setZaakToelichting(zaak.getToelichting());
 
-        taskVariablesService.findTaakdata(taskInfo.getId())
-                .map(taakdata -> taakdata.entrySet().stream()
-                        .map(es -> "%s|%s".formatted(es.getKey(), es.getValue()))
-                        .toList())
-                .ifPresent(taakZoekObject::setTaakData);
+        taakZoekObject.setTaakData(
+                taakVariabelenService.readTaakdata(taskInfo).entrySet().stream()
+                        .map(data -> "%s|%s".formatted(data.getKey(), data.getValue()))
+                        .toList());
 
-        taskVariablesService.findTaakinformatie(taskInfo.getId())
-                .map(taakinformatie -> taakinformatie.entrySet().stream()
-                        .map(es -> "%s|%s".formatted(es.getKey(), es.getValue()))
-                        .toList())
-                .ifPresent(taakZoekObject::setTaakInformatie);
+        taakZoekObject.setTaakInformatie(
+                taakVariabelenService.readTaakinformatie(taskInfo).entrySet().stream()
+                        .map(informatie -> "%s|%s".formatted(informatie.getKey(), informatie.getValue()))
+                        .toList());
 
         return taakZoekObject;
     }

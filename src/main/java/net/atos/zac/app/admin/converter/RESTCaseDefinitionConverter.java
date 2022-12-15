@@ -16,30 +16,31 @@ import org.flowable.cmmn.model.UserEventListener;
 
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
-import net.atos.zac.flowable.CaseService;
-import net.atos.zac.flowable.TaskService;
+import net.atos.zac.flowable.CMMNService;
+import net.atos.zac.flowable.TakenService;
 
 public class RESTCaseDefinitionConverter {
 
     @Inject
-    private CaseService caseService;
+    private CMMNService cmmnService;
 
     @Inject
-    private TaskService taskService;
+    private TakenService takenService;
 
 
     public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, final boolean inclusiefRelaties) {
-        final CaseDefinition caseDefinition = caseService.readCaseDefinition(caseDefinitionKey);
+        final CaseDefinition caseDefinition = cmmnService.readCaseDefinition(caseDefinitionKey);
         return convertToRESTCaseDefinition(caseDefinition, inclusiefRelaties);
     }
 
     public RESTCaseDefinition convertToRESTCaseDefinition(final CaseDefinition caseDefinition, final boolean inclusiefRelaties) {
         final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinition.getKey());
         if (inclusiefRelaties) {
-            restCaseDefinition.humanTaskDefinitions = taskService.listHumanTasks(caseDefinition.getId()).stream()
+            restCaseDefinition.humanTaskDefinitions = cmmnService.listHumanTasks(caseDefinition.getId()).stream()
                     .map(this::convertHumanTaskDefinition)
                     .toList();
-            restCaseDefinition.userEventListenerDefinitions = caseService.listUserEventListeners(caseDefinition.getId()).stream()
+            restCaseDefinition.userEventListenerDefinitions = cmmnService.listUserEventListeners(caseDefinition.getId())
+                    .stream()
                     .map(this::convertUserEventListenerDefinition)
                     .toList();
         }

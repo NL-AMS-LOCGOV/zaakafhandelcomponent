@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
+import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.common.engine.api.delegate.Expression;
 
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -43,16 +44,18 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
     }
 
     @Override
-    public void stateChanged(final DelegatePlanItemInstance planItemInstance, final String oldState, final String newState) {
+    public void stateChanged(final DelegatePlanItemInstance planItemInstance, final String oldState,
+            final String newState) {
         if (statusExpression != null) {
-            updateZaak(planItemInstance.getCaseInstanceId(), statusExpression.getValue(planItemInstance).toString());
+            updateZaak(planItemInstance, statusExpression.getValue(planItemInstance).toString());
         }
     }
 
-    private void updateZaak(final String caseInstanceId, final String statustypeOmschrijving) {
-        final UUID zaakUUID = FlowableHelper.getInstance().getCaseVariablesService().readZaakUUID(caseInstanceId);
+    private void updateZaak(final PlanItemInstance planItemInstance, final String statustypeOmschrijving) {
+        final UUID zaakUUID = FlowableHelper.getInstance().getZaakVariabelenService().readZaakUUID(planItemInstance);
         final Zaak zaak = FlowableHelper.getInstance().getZrcClientService().readZaak(zaakUUID);
         LOG.info(format("Zaak %s: Change Status to '%s'", zaakUUID, statustypeOmschrijving));
-        FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
+        FlowableHelper.getInstance().getZgwApiService()
+                .createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
     }
 }

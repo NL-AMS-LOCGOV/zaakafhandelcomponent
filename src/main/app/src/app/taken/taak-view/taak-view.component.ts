@@ -116,14 +116,17 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private createTaakForm(taak: Taak): void {
         if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
-            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden')
-                                                     .build();
+            this.formConfig = new FormConfigBuilder()
+            .partialText('actie.opslaan')
+            .saveText('actie.opslaan.afronden')
+            .build();
         } else {
             this.formConfig = null;
         }
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie)
-                             .behandelForm(taak).build();
+                             .behandelForm(taak)
+                             .build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
@@ -132,17 +135,18 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private setEditableFormFields(): void {
         this.editFormFields.set('medewerker-groep',
-            new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar).id('medewerker-groep')
-                                                                                   .groepLabel('groep.-kies-')
-                                                                                   .groepRequired()
-                                                                                   .medewerkerLabel(
-                                                                                       'behandelaar.-kies-')
-                                                                                   .build());
+            new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar)
+            .id('medewerker-groep')
+            .groepLabel('groep.-kies-')
+            .groepRequired()
+            .medewerkerLabel('behandelaar.-kies-')
+            .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder(this.taak.toelichting).id('toelichting')
-                                                               .label('toelichting')
-                                                               .maxlength(1000)
-                                                               .build());
+            new TextareaFormFieldBuilder(this.taak.toelichting)
+            .id('toelichting')
+            .label('toelichting')
+            .maxlength(1000)
+            .build());
 
         this.fataledatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'errorTaakVerlopen_icon',
             'msg.datum.overschreden', 'error');
