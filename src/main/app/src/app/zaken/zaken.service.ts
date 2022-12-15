@@ -168,8 +168,8 @@ export class ZakenService {
         );
     }
 
-    deleteInitiator(zaak: Zaak): Observable<Zaak> {
-        return this.http.delete<Zaak>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
+    deleteInitiator(zaak: Zaak, reden: string): Observable<Zaak> {
+        return this.http.delete<Zaak>(`${this.basepath}/${zaak.uuid}/initiator`, {body: {reden}}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -186,8 +186,8 @@ export class ZakenService {
         );
     }
 
-    deleteBetrokkene(rolUUID: string): Observable<Zaak> {
-        return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${rolUUID}`).pipe(
+    deleteBetrokkene(rolUUID: string, reden: string): Observable<Zaak> {
+        return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${rolUUID}`, {body: {reden}}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

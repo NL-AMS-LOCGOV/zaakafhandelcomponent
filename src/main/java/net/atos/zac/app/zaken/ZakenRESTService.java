@@ -101,6 +101,7 @@ import net.atos.zac.app.zaken.model.RESTBesluitWijzigenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
+import net.atos.zac.app.zaken.model.RESTReden;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
@@ -278,17 +279,17 @@ public class ZakenRESTService {
     public RESTZaak updateInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         zgwApiService.findInitiatorForZaak(zaak)
-                .ifPresent(initiator -> removeInitiator(zaak, initiator));
+                .ifPresent(initiator -> removeInitiator(zaak, initiator, ROL_VERWIJDER_REDEN));
         addInitiator(gegevens.betrokkeneIdentificatieType, gegevens.betrokkeneIdentificatie, zaak);
         return zaakConverter.convert(zaak);
     }
 
     @DELETE
     @Path("{uuid}/initiator")
-    public RESTZaak deleteInitiator(@PathParam("uuid") final UUID zaakUUID) {
+    public RESTZaak deleteInitiator(@PathParam("uuid") final UUID zaakUUID, RESTReden reden) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         zgwApiService.findInitiatorForZaak(zaak)
-                .ifPresent(initiator -> removeInitiator(zaak, initiator));
+                .ifPresent(initiator -> removeInitiator(zaak, initiator, reden.reden));
         return zaakConverter.convert(zaak);
     }
 
@@ -303,10 +304,10 @@ public class ZakenRESTService {
 
     @DELETE
     @Path("betrokkene/{uuid}")
-    public RESTZaak deleteBetrokkene(@PathParam("uuid") final UUID betrokkeneUUID) {
+    public RESTZaak deleteBetrokkene(@PathParam("uuid") final UUID betrokkeneUUID, final RESTReden reden) {
         final Rol<?> betrokkene = zrcClientService.readRol(betrokkeneUUID);
         final Zaak zaak = zrcClientService.readZaak(betrokkene.getZaak());
-        removeBetrokkene(zaak, betrokkene);
+        removeBetrokkene(zaak, betrokkene, reden.reden);
         return zaakConverter.convert(zaak);
     }
 
@@ -839,9 +840,9 @@ public class ZakenRESTService {
                         .subject(zaak));
     }
 
-    private void removeInitiator(final Zaak zaak, final Rol<?> initiator) {
+    private void removeInitiator(final Zaak zaak, final Rol<?> initiator, final String reden) {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        zrcClientService.deleteRol(initiator, ROL_VERWIJDER_REDEN);
+        zrcClientService.deleteRol(initiator, reden);
     }
 
     private void addInitiator(final IdentificatieType identificatieType, final String identificatie, final Zaak zaak) {
@@ -856,9 +857,9 @@ public class ZakenRESTService {
         }
     }
 
-    private void removeBetrokkene(final Zaak zaak, final Rol<?> betrokkene) {
+    private void removeBetrokkene(final Zaak zaak, final Rol<?> betrokkene, final String reden) {
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        zrcClientService.deleteRol(betrokkene, ROL_VERWIJDER_REDEN);
+        zrcClientService.deleteRol(betrokkene, reden);
     }
 
     private void addBetrokkene(final UUID roltype, IdentificatieType identificatieType, final String identificatie,

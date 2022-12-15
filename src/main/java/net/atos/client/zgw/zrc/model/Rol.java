@@ -112,6 +112,7 @@ public abstract class Rol<BETROKKENE_IDENTIFICATIE> {
         this.roltype = roltype.getUrl();
         this.roltoelichting = roltoelichting;
         this.omschrijving = roltype.getOmschrijving();
+        this.omschrijvingGeneriek = roltype.getOmschrijvingGeneriek().toValue();
     }
 
     public URI getUrl() {
