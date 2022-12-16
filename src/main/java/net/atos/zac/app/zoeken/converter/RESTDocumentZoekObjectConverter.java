@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.zoeken.converter;
 
+import java.util.EnumSet;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
@@ -52,7 +55,9 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.inhoudUrl = documentZoekObject.getInhoudUrl();
         restDocumentZoekObject.indicatieVergrendeld = documentZoekObject.isIndicatie(DocumentIndicatie.VERGRENDELD);
         restDocumentZoekObject.vergrendeldDoor = documentZoekObject.getVergrendeldDoorNaam();
-        restDocumentZoekObject.indicaties = documentZoekObject.getDocumentIndicaties();
+        restDocumentZoekObject.indicaties = documentZoekObject.getDocumentIndicaties().stream()
+                .filter(indicatie -> !indicatie.equals(DocumentIndicatie.GEBRUIKSRECHT))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(DocumentIndicatie.class)));
         restDocumentZoekObject.rechten = restRechtenConverter.convert(policyService.readDocumentRechten(documentZoekObject));
         return restDocumentZoekObject;
     }
