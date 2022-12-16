@@ -5,14 +5,17 @@
 
 package net.atos.zac.zoeken;
 
+import static java.util.logging.Level.WARNING;
 import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
 import static net.atos.client.zgw.shared.model.Results.NUM_ITEMS_PER_PAGE;
+import static net.atos.zac.zoeken.model.index.IndexStatus.ADD;
+import static net.atos.zac.zoeken.model.index.IndexStatus.REMOVE;
+import static net.atos.zac.zoeken.model.index.IndexStatus.UPDATE;
 import static net.atos.zac.zoeken.model.index.ZoekObjectType.DOCUMENT;
 import static net.atos.zac.zoeken.model.index.ZoekObjectType.TAAK;
 import static net.atos.zac.zoeken.model.index.ZoekObjectType.ZAAK;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +30,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -89,12 +91,21 @@ public class IndexeerService {
     @Inject
     private TakenService takenService;
 
+    @Inject
+    private IndexeerServiceHelper helper;
+
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
     private SolrClient solrClient;
 
     private final Set<ZoekObjectType> herindexerenBezig = new HashSet<>();
+
+    public record Resultaat(int indexed, int removed, int errors, int remaining) {
+        public Resultaat() {
+            this(0, 0, 0, 0);
+        }
+    }
 
     public IndexeerService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
@@ -133,47 +144,58 @@ public class IndexeerService {
                 case DOCUMENT -> markAllInformatieobjectenForReindexing();
             }
 
-            final int removeCount = countZoekIndexEntities(type, IndexStatus.REMOVE);
-            final int addCount = countZoekIndexEntities(type, IndexStatus.ADD);
-            final int updateCount = countZoekIndexEntities(type, IndexStatus.UPDATE);
-            LOG.info("[%s] Herindexeren gereed".formatted(type.toString()));
+            final int removeCount = countZoekIndexEntities(type, REMOVE);
+            final int addCount = countZoekIndexEntities(type, ADD);
+            final int updateCount = countZoekIndexEntities(type, UPDATE);
+            LOG.info("[%s] Herindexeren gereed. Toevoegen: %d, updaten: %d, verwijderen: %d".formatted(
+                    type.toString(), addCount, updateCount, removeCount));
             return new HerindexerenInfo(addCount, updateCount, removeCount);
         } finally {
             herindexerenBezig.remove(type);
         }
     }
 
-    public int indexeer(final int batchGrootte, final ZoekObjectType type) {
+    public Resultaat indexeer(final int batchGrootte, final ZoekObjectType type) {
         if (herindexerenBezig.contains(type)) {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
-            return 0;
+            return new Resultaat();
         }
         final int count = countZoekIndexEntities(type);
         if (count == 0) {
-            return 0;
+            return new Resultaat();
         }
-        LOG.info("[%s] aantal te indexeren: %d (%d)".formatted(type.toString(),
-                                                               batchGrootte <= count ? batchGrootte : count, count));
-        final List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
-        final List<ZoekObject> addOrUpdateList = new ArrayList<>();
-        final List<String> removeList = new ArrayList<>();
+        final List<ZoekIndexEntity> entities = helper.retrieveEntities(type, batchGrootte);
+        LOG.info("[%s] aantal te verwerken: %d (%d)".formatted(type.toString(), entities.size(), count));
         final AbstractZoekObjectConverter<? extends ZoekObject> converter = getConverter(type);
-        entities.forEach(zoekIndexEntity -> {
-            try {
-                switch (IndexStatus.valueOf(zoekIndexEntity.getStatus())) {
-                    case ADD, UPDATE -> addOrUpdateList.add(converter.convert(zoekIndexEntity.getObjectId()));
-                    case REMOVE -> removeList.add(zoekIndexEntity.getObjectId());
-                }
-            } catch (final RuntimeException e) {
-                LOG.severe("[%s] Exception on object with id: %s".formatted(type.toString(),
-                                                                            zoekIndexEntity.getObjectId()));
-                throw e;
-            }
-        });
+        final List<ZoekObject> addOrUpdateList = entities.stream()
+                .filter(zoekIndexEntity -> zoekIndexEntity.getStatus() == ADD || zoekIndexEntity.getStatus() == UPDATE)
+                .map(zoekIndexEntity -> convertToZoekObject(zoekIndexEntity, converter))
+                .filter(Objects::nonNull)
+                .toList();
+        final List<String> removeList = entities.stream()
+                .filter(zoekIndexEntity -> zoekIndexEntity.getStatus() == REMOVE)
+                .map(ZoekIndexEntity::getObjectId)
+                .toList();
         commitToSolrIndex(addOrUpdateList);
         removeFromSolrIndex(removeList);
-        entities.forEach(entity -> entityManager.remove(entity));
-        return countZoekIndexEntities(type);
+        final var resultaat = new Resultaat(addOrUpdateList.size(), removeList.size(),
+                                            entities.size() - addOrUpdateList.size() - removeList.size(),
+                                            count - entities.size());
+        LOG.info("[%s] geindexeerd: %d, verwijderd: %d, fouten: %d, resterend: %d"
+                         .formatted(type.toString(), resultaat.indexed(), resultaat.removed(),
+                                    resultaat.errors(), resultaat.remaining()));
+        return resultaat;
+    }
+
+    private ZoekObject convertToZoekObject(final ZoekIndexEntity zoekIndexEntity,
+            final AbstractZoekObjectConverter<? extends ZoekObject> converter) {
+        try {
+            return converter.convert(zoekIndexEntity.getObjectId());
+        } catch (final RuntimeException e) {
+            LOG.log(WARNING, "[%s] Exception on object with id '%s'"
+                    .formatted(zoekIndexEntity.getType().toString(), zoekIndexEntity.getObjectId()), e);
+            return null;
+        }
     }
 
     private void markAllZakenForReindexing() {
@@ -231,17 +253,6 @@ public class IndexeerService {
         } while (hasNext);
     }
 
-    private List<ZoekIndexEntity> listEntities(final ZoekObjectType type, final int rows) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
-        final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
-        query.select(root).where(builder.equal(root.get("type"), type.toString()));
-        query.orderBy(builder.asc(root.get("id")));
-        final TypedQuery<ZoekIndexEntity> emQuery = entityManager.createQuery(query);
-        emQuery.setMaxResults(rows);
-        return emQuery.getResultList();
-    }
-
     private void deleteAllZoekIndexEntities(final ZoekObjectType type) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaDelete<ZoekIndexEntity> query = builder.createCriteriaDelete(ZoekIndexEntity.class);
@@ -292,7 +303,7 @@ public class IndexeerService {
             entity.setStatus(IndexStatus.UPDATE);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(objectId, type, IndexStatus.ADD));
+            entityManager.persist(new ZoekIndexEntity(objectId, type, ADD));
         }
     }
 

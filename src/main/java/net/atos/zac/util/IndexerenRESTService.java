@@ -54,8 +54,10 @@ public class IndexerenRESTService {
         SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         final StringBuilder info = new StringBuilder();
         Arrays.stream(ZoekObjectType.values()).forEach(type -> {
-            int aantalResterend = indexeerService.indexeer(aantal, type);
-            info.append("[%s] Aantal resterend: %d\n".formatted(type.toString(), aantalResterend));
+            final IndexeerService.Resultaat resultaat = indexeerService.indexeer(aantal, type);
+            info.append(("[%s] geindexeerd: %d, verwijderd: %d, fouten: %d, resterend: %d\n")
+                                .formatted(type.toString(), resultaat.indexed(), resultaat.removed(),
+                                           resultaat.errors(), resultaat.remaining()));
         });
         return info.toString();
     }
