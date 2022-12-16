@@ -43,7 +43,6 @@ import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertr
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
-import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klanten/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {AddressResult, LocationService} from '../../shared/location/location.service';
@@ -789,10 +788,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     deleteInitiator(): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.initiator.ontkoppelen.bevestigen'),
-                this.zakenService.deleteInitiator(this.zaak)
+        this.dialog.open(DialogComponent, {
+            data: new DialogData(
+                [new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build()],
+                (results: any[]) => this.zakenService.deleteInitiator(this.zaak, results['reden']),
+                this.translate.instant('msg.initiator.ontkoppelen.bevestigen')
             )
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -823,10 +823,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     deleteBetrokkene(betrokkene: ZaakBetrokkene): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         const betrokkeneIdentificatie: string = betrokkene.roltype + ' ' + betrokkene.identificatie;
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.betrokkene.ontkoppelen.bevestigen', {betrokkene: betrokkeneIdentificatie}),
-                this.zakenService.deleteBetrokkene(betrokkene.rolid)
+        this.dialog.open(DialogComponent, {
+            data: new DialogData(
+                [new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build()],
+                (results: any[]) => this.zakenService.deleteBetrokkene(betrokkene.rolid, results['reden']),
+                this.translate.instant('msg.betrokkene.ontkoppelen.bevestigen', {betrokkene: betrokkeneIdentificatie})
             )
         }).afterClosed().subscribe(result => {
             if (result) {
