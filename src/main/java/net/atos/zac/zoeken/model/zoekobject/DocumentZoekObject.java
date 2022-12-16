@@ -358,6 +358,7 @@ public class DocumentZoekObject implements ZoekObject {
             return EnumSet.noneOf(DocumentIndicatie.class);
         }
         return this.indicaties.stream().map(DocumentIndicatie::valueOf)
+                .filter(indicatie -> !indicatie.equals(DocumentIndicatie.GEBRUIKSRECHT))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(DocumentIndicatie.class)));
     }
 
