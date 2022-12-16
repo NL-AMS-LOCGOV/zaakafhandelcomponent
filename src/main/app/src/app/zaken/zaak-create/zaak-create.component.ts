@@ -37,6 +37,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
+import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -89,11 +90,11 @@ export class ZaakCreateComponent implements OnInit {
         const overigeGegevensTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig')
                                                                   .level(HeadingLevel.H2).build();
 
-        const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
-                                                     .validators(Validators.required)
-                                                     .optionLabel('omschrijving')
-                                                     .options(this.zakenService.listZaaktypes())
-                                                     .build();
+        const zaaktype = new AutocompleteFormFieldBuilder().id('zaaktype').label('zaaktype')
+                                                           .validators(Validators.required)
+                                                           .optionLabel('omschrijving')
+                                                           .options(this.zakenService.listZaaktypes())
+                                                           .build();
 
         this.subscription$ = zaaktype.formControl.valueChanges.subscribe(v => this.zaaktypeGeselecteerd(v));
 
