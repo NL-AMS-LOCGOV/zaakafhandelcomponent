@@ -22,6 +22,10 @@ public class RESTPersoon extends RESTKlant {
 
     public String inschrijfadres;
 
+    public String emailadres;
+
+    public String telefoonnummer;
+
     public RESTPersoon() {
     }
 
