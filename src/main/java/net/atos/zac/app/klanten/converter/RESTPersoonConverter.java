@@ -11,8 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.brp.model.Geboorte;
@@ -20,7 +18,6 @@ import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.model.NaamPersoon;
 import net.atos.client.brp.model.Verblijfplaats;
-import net.atos.client.klanten.KlantenClientService;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 
@@ -41,9 +38,6 @@ public class RESTPersoonConverter {
 
     public static final String ONBEKEND = "<onbekend>";
 
-    @Inject
-    private KlantenClientService klantenClientService;
-
     public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal persoon) {
         final RESTPersoon restPersoon = new RESTPersoon();
         restPersoon.bsn = persoon.getBurgerservicenummer();
@@ -51,11 +45,6 @@ public class RESTPersoonConverter {
         restPersoon.naam = convertToNaam(persoon.getNaam());
         restPersoon.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
         restPersoon.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
-        klantenClientService.findKlant(persoon.getBurgerservicenummer())
-                .ifPresent(klant -> {
-                    restPersoon.emailadres = klant.getEmailadres();
-                    restPersoon.telefoonnummer = klant.getTelefoonnummer();
-                });
         return restPersoon;
     }
 

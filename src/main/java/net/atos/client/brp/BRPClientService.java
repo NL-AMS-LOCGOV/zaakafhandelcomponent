@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import java.util.logging.Logger;
 
 @ApplicationScoped
@@ -75,9 +76,28 @@ public class BRPClientService {
         try {
             return Optional.of(ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields));
         } catch (final PersoonNotFoundException e) {
-        } catch (final TimeoutException | ProcessingException e) {
-            LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", e.getMessage()));
+            // Nothing to report
+        } catch (final TimeoutException | ProcessingException exception) {
+            LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", exception.getMessage()));
         }
         return Optional.empty();
+    }
+
+    public CompletionStage<Optional<IngeschrevenPersoonHal>> findPersoonAsync(final String burgerservicenummer,
+            final String fields) {
+        return ingeschrevenpersonenClient.readPersoonAsync(burgerservicenummer, fields)
+                .handle((persoon, exception) -> convert(persoon, exception));
+    }
+
+    private Optional<IngeschrevenPersoonHal> convert(final IngeschrevenPersoonHal persoon, final Throwable exception) {
+        if (persoon != null) {
+            return Optional.of(persoon);
+        } else {
+            if (!(exception instanceof PersoonNotFoundException)) {
+                LOG.severe(
+                        () -> String.format("Error while calling BRP bevragen provider: %s", exception.getMessage()));
+            }
+            return Optional.empty();
+        }
     }
 }

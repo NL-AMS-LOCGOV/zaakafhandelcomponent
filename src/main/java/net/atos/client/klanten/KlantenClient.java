@@ -7,6 +7,7 @@ package net.atos.client.klanten;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -93,6 +94,14 @@ public interface KlantenClient {
     @GET
     @Produces({"application/json", "application/problem+json"})
     public KlantList200Response klantList(
+            @BeanParam final KlantListParameters listParameters) throws ProcessingException;
+
+    /**
+     * Alle KLANTen asynchroon opvragen.
+     */
+    @GET
+    @Produces({"application/json", "application/problem+json"})
+    public CompletionStage<KlantList200Response> klantListAsync(
             @BeanParam final KlantListParameters listParameters) throws ProcessingException;
 
     /**

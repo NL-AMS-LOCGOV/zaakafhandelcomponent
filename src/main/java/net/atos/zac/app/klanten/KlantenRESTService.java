@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -27,8 +29,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.client.brp.BRPClientService;
+import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.ListPersonenParameters;
+import net.atos.client.klanten.KlantenClientService;
+import net.atos.client.klanten.model.generated.Klant;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;
@@ -82,12 +87,31 @@ public class KlantenRESTService {
     @Inject
     private RESTRoltypeConverter roltypeConverter;
 
+    @Inject
+    private KlantenClientService klantenClientService;
+
     @GET
     @Path("persoon/{bsn}")
-    public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) {
-        return brpClientService.findPersoon(bsn, FIELDS_PERSOON)
+    public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) throws ExecutionException, InterruptedException {
+        return brpClientService.findPersoonAsync(bsn, FIELDS_PERSOON)
+                .thenCombine(klantenClientService.findKlantAsync(bsn), (persoon, klant) -> convert(persoon, klant))
+                .toCompletableFuture()
+                .get();
+    }
+
+    private RESTPersoon convert(final Optional<IngeschrevenPersoonHal> persoon, final Optional<Klant> klant) {
+        return persoon
                 .map(persoonConverter::convertToPersoon)
+                .map(restPersoon -> addKlantGegevens(restPersoon, klant))
                 .orElse(ONBEKEND_PERSOON);
+    }
+
+    private RESTPersoon addKlantGegevens(final RESTPersoon restPersoon, final Optional<Klant> klantOptional) {
+        klantOptional.ifPresent(klant -> {
+            restPersoon.telefoonnummer = klant.getTelefoonnummer();
+            restPersoon.emailadres = klant.getEmailadres();
+        });
+        return restPersoon;
     }
 
     @GET
