@@ -75,8 +75,8 @@ public class ZoekIndexEntity {
         this.type = type.toString();
     }
 
-    public String getStatus() {
-        return status;
+    public IndexStatus getStatus() {
+        return IndexStatus.valueOf(status);
     }
 
     public void setStatus(final IndexStatus status) {
