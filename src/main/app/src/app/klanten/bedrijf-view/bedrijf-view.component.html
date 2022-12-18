@@ -9,7 +9,7 @@
     </mat-card-header>
     <mat-card-content>
         <zac-skeleton-loader [loading$]="bedrijf$"
-                             [options]="{layout: skeletonLoaderLayout.FIELDS, fields:5, fieldsPerRow:5}">
+                             [options]="{layout: skeletonLoaderLayout.FIELDS, fields:7, fieldsPerRow:7}">
             <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <zac-static-text fxFlex="" [label]="'handelsnaam' | translate"
                                  [value]="bedrijf?.naam"></zac-static-text>
@@ -22,6 +22,10 @@
                                  [value]="bedrijf?.rsin"></zac-static-text>
                 <zac-static-text fxFlex="" [label]="'type' | translate"
                                  [value]="bedrijf?.type | translate"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'telefoonnummer' | translate"
+                                 [value]="bedrijf?.telefoonnummer"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'emailadres' | translate"
+                                 [value]="bedrijf?.emailadres"></zac-static-text>
             </div>
         </zac-skeleton-loader>
     </mat-card-content>

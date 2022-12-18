@@ -12,6 +12,7 @@
 package net.atos.client.kvk;
 
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletionStage;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -46,4 +47,12 @@ public interface ZoekenClient {
      */
     @GET
     Resultaat getResults(@BeanParam final KVKZoekenParameters zoekenParameters);
+
+    /**
+     * Voor een bedrijf zoeken naar basisinformatie asynchron.
+     * <p>
+     * Er wordt max. 1000 resultaten getoond.
+     */
+    @GET
+    CompletionStage<Resultaat> getResultsAsync(@BeanParam final KVKZoekenParameters zoekenParameters);
 }

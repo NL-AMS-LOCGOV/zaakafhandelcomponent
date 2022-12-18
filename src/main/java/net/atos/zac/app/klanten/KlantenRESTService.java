@@ -8,7 +8,6 @@ package net.atos.zac.app.klanten;
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.ONBEKEND;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -46,6 +44,7 @@ import net.atos.zac.app.klanten.converter.RESTPersoonConverter;
 import net.atos.zac.app.klanten.converter.RESTRoltypeConverter;
 import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
+import net.atos.zac.app.klanten.model.klant.RESTKlant;
 import net.atos.zac.app.klanten.model.klant.RESTRoltype;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
@@ -58,8 +57,6 @@ import net.atos.zac.app.shared.RESTResultaat;
 public class KlantenRESTService {
 
     public static final Set<AardVanRol> betrokkenen;
-
-    private static final Logger LOG = Logger.getLogger(KlantenRESTService.class.getName());
 
     private static final RESTPersoon ONBEKEND_PERSOON = new RESTPersoon(ONBEKEND, ONBEKEND, ONBEKEND);
 
@@ -94,31 +91,43 @@ public class KlantenRESTService {
     @Path("persoon/{bsn}")
     public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) throws ExecutionException, InterruptedException {
         return brpClientService.findPersoonAsync(bsn, FIELDS_PERSOON)
-                .thenCombine(klantenClientService.findKlantAsync(bsn), (persoon, klant) -> convert(persoon, klant))
+                .thenCombine(klantenClientService.findPersoonAsync(bsn),
+                             (persoon, klant) -> convertToRESTPersoon(persoon, klant))
                 .toCompletableFuture()
                 .get();
     }
 
-    private RESTPersoon convert(final Optional<IngeschrevenPersoonHal> persoon, final Optional<Klant> klant) {
+    private RESTPersoon convertToRESTPersoon(final Optional<IngeschrevenPersoonHal> persoon,
+            final Optional<Klant> klant) {
         return persoon
-                .map(persoonConverter::convertToPersoon)
-                .map(restPersoon -> addKlantGegevens(restPersoon, klant))
+                .map(persoonConverter::convert)
+                .map(restPersoon -> (RESTPersoon) addKlantData(restPersoon, klant))
                 .orElse(ONBEKEND_PERSOON);
     }
 
-    private RESTPersoon addKlantGegevens(final RESTPersoon restPersoon, final Optional<Klant> klantOptional) {
+    private RESTKlant addKlantData(final RESTKlant restKlant, final Optional<Klant> klantOptional) {
         klantOptional.ifPresent(klant -> {
-            restPersoon.telefoonnummer = klant.getTelefoonnummer();
-            restPersoon.emailadres = klant.getEmailadres();
+            restKlant.telefoonnummer = klant.getTelefoonnummer();
+            restKlant.emailadres = klant.getEmailadres();
         });
-        return restPersoon;
+        return restKlant;
     }
 
     @GET
     @Path("vestiging/{vestigingsnummer}")
-    public RESTBedrijf readVestiging(@PathParam("vestigingsnummer") final String vestigingsnummer) {
-        return kvkClientService.findVestiging(vestigingsnummer)
+    public RESTBedrijf readVestiging(@PathParam("vestigingsnummer") final String vestigingsnummer)
+            throws ExecutionException, InterruptedException {
+        return kvkClientService.findVestigingAsync(vestigingsnummer)
+                .thenCombine(klantenClientService.findVestigingAsync(vestigingsnummer),
+                             (vestiging, klant) -> convertToRESTBedrijf(vestiging, klant))
+                .toCompletableFuture()
+                .get();
+    }
+
+    private RESTBedrijf convertToRESTBedrijf(final Optional<ResultaatItem> vestiging, final Optional<Klant> klant) {
+        return vestiging
                 .map(bedrijfConverter::convert)
+                .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
                 .orElse(new RESTBedrijf());
     }
 
@@ -133,35 +142,22 @@ public class KlantenRESTService {
     @PUT
     @Path("personen")
     public RESTResultaat<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
-        try {
-            final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
-            final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(
-                    listPersonenParameters);
-            return new RESTResultaat<>(
-                    persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
-        } catch (final RuntimeException e) {
-            LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
-            return new RESTResultaat<>(e.getMessage());
-        }
+        final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
+        final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(
+                listPersonenParameters);
+        return new RESTResultaat<>(
+                persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
     }
 
     @PUT
     @Path("bedrijven")
     public RESTResultaat<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
-        try {
-            final KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
-            final Resultaat resultaat = kvkClientService.find(zoekenParameters);
-            if (resultaat.getResultaten() == null) {
-                return new RESTResultaat<>(Collections.emptyList());
-            }
-            return new RESTResultaat<>(resultaat.getResultaten().stream()
-                                               .filter(KlantenRESTService::isKoppelbaar)
-                                               .map(bedrijfConverter::convert)
-                                               .toList());
-        } catch (final RuntimeException e) {
-            LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
-            return new RESTResultaat<>(e.getMessage());
-        }
+        final KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
+        final Resultaat resultaat = kvkClientService.list(zoekenParameters);
+        return new RESTResultaat<>(resultaat.getResultaten().stream()
+                                           .filter(KlantenRESTService::isKoppelbaar)
+                                           .map(bedrijfConverter::convert)
+                                           .toList());
     }
 
     private static boolean isKoppelbaar(final ResultaatItem item) {
