@@ -8,7 +8,7 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <mat-stepper orientation="horizontal" linear="true" *ngIf="algemeenFormGroup">
+        <mat-stepper orientation="horizontal" [linear]="!algemeenFormGroup.valid" *ngIf="algemeenFormGroup">
             <mat-step [stepControl]="algemeenFormGroup">
                 <ng-template matStepLabel>{{"gegevens.algemeen" | translate}}</ng-template>
                 <form [formGroup]="algemeenFormGroup" fxLayout="column">
@@ -170,8 +170,7 @@
                     </form>
                 </ng-template>
             </mat-step>
-
-            <mat-step [stepControl]="userEventListenersFormGroup">
+            <mat-step [stepControl]="userEventListenersFormGroup" [hasError]="userEventListenersFormGroup.invalid">
                 <ng-template matStepLabel>{{"gegevens.acties" | translate}}</ng-template>
                 <ng-template matStepContent>
                     <form [formGroup]="userEventListenersFormGroup" fxLayout="column">
@@ -203,8 +202,7 @@
                     </form>
                 </ng-template>
             </mat-step>
-
-            <mat-step [stepControl]="mailtemplateKoppelingenFormGroup">
+            <mat-step [stepControl]="mailtemplateKoppelingenFormGroup" [hasError]="mailtemplateKoppelingenFormGroup.invalid">
                 <ng-template matStepLabel>{{"gegevens.mailtemplate.koppelingen" | translate}}</ng-template>
                 <ng-template matStepContent>
                     <form [formGroup]="mailtemplateKoppelingenFormGroup" fxLayout="column">
@@ -237,8 +235,7 @@
                     </form>
                 </ng-template>
             </mat-step>
-
-            <mat-step [stepControl]="zaakbeeindigFormGroup">
+            <mat-step [stepControl]="zaakbeeindigFormGroup" [hasError]="zaakbeeindigFormGroup.invalid">
                 <ng-template matStepLabel>{{"gegevens.beeindiging" | translate}}</ng-template>
                 <ng-template matStepContent>
                     <form [formGroup]="zaakbeeindigFormGroup" fxLayout="column">
