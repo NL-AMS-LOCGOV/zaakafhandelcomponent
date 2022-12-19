@@ -38,6 +38,7 @@ import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
+import {shareReplay} from 'rxjs/operators';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -93,7 +94,7 @@ export class ZaakCreateComponent implements OnInit {
         const zaaktype = new AutocompleteFormFieldBuilder().id('zaaktype').label('zaaktype')
                                                            .validators(Validators.required)
                                                            .optionLabel('omschrijving')
-                                                           .options(this.zakenService.listZaaktypes())
+                                                           .options(this.zakenService.listZaaktypes().pipe(shareReplay(1)))
                                                            .build();
 
         this.subscription$ = zaaktype.formControl.valueChanges.subscribe(v => this.zaaktypeGeselecteerd(v));
