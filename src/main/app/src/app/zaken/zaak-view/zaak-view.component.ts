@@ -106,7 +106,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
-    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie', 'roltoelichting', 'rolid'];
+    betrokkenenColumns: string[] = ['roltype', 'betrokkenegegevens', 'betrokkeneidentificatie', 'roltoelichting', 'actions'];
     adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
     adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
@@ -940,5 +940,35 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
         this.teWijzigenBesluit = $event;
         this.actionsSidenav.open();
+    }
+
+    betrokkeneGegevensOphalen(betrokkene: ZaakBetrokkene): void {
+        betrokkene['gegevens'] = 'LOADING';
+        switch (betrokkene.type) {
+            case 'NATUURLIJK_PERSOON':
+                this.klantenService.readPersoon(betrokkene.identificatie).subscribe(persoon => {
+                    betrokkene['gegevens'] = persoon.naam;
+                    if (persoon.geboortedatum) {
+                        betrokkene['gegevens'] += ` (${persoon.geboortedatum})`;
+                    }
+                    if (persoon.inschrijfadres) {
+                        betrokkene['gegevens'] += ` \n${persoon.inschrijfadres}`;
+                    }
+                });
+                break;
+            case 'NIET_NATUURLIJK_PERSOON':
+            case 'VESTIGING':
+                this.klantenService.readBedrijf(betrokkene.identificatie).subscribe(bedrijf => {
+                    betrokkene['gegevens'] = bedrijf.naam;
+                    if (bedrijf.adres) {
+                        betrokkene['gegevens'] += ` \n${bedrijf.adres}`;
+                    }
+                });
+                break;
+            case 'ORGANISATORISCHE_EENHEID':
+            case 'MEDEWERKER':
+                betrokkene['gegevens'] = '-';
+                break;
+        }
     }
 }

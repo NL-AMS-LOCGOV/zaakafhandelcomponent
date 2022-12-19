@@ -31,6 +31,10 @@ export class KlantenService {
         );
     }
 
+    readBedrijf(nummer: string): Observable<Bedrijf> {
+        return nummer.length === 9 ? this.readRechtspersoon(nummer) : this.readVestiging(nummer);
+    }
+
     readVestiging(vestigingsnummer: string): Observable<Bedrijf> {
         return this.http.get<Bedrijf>(`${this.basepath}/vestiging/${vestigingsnummer}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
