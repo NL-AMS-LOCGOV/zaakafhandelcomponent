@@ -24,6 +24,7 @@ import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_TYPE;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_URL;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -65,6 +66,8 @@ public class MailTemplateHelper {
 
     public static final Pattern PTAGS = Pattern.compile("</?p>", Pattern.CASE_INSENSITIVE);
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
     @Inject
     private ConfiguratieService configuratieService;
 
@@ -105,10 +108,14 @@ public class MailTemplateHelper {
 
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_OMSCHRIJVING, zaak.getOmschrijving());
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_TOELICHTING, zaak.getToelichting());
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_REGISTRATIEDATUM, zaak.getRegistratiedatum());
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STARTDATUM, zaak.getStartdatum());
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STREEFDATUM, zaak.getEinddatumGepland());
-            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_FATALEDATUM, zaak.getUiterlijkeEinddatumAfdoening());
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_REGISTRATIEDATUM,
+                                             zaak.getRegistratiedatum().format(DATE_FORMATTER));
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STARTDATUM,
+                                             zaak.getStartdatum().format(DATE_FORMATTER));
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STREEFDATUM,
+                                             zaak.getEinddatumGepland().format(DATE_FORMATTER));
+            resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_FATALEDATUM,
+                                             zaak.getUiterlijkeEinddatumAfdoening().format(DATE_FORMATTER));
 
             if (resolvedTekst.contains(ZAAK_STATUS.getVariabele())) {
                 resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STATUS,
