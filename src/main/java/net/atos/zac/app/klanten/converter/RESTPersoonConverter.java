@@ -38,7 +38,7 @@ public class RESTPersoonConverter {
 
     public static final String ONBEKEND = "<onbekend>";
 
-    public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal persoon) {
+    public RESTPersoon convert(final IngeschrevenPersoonHal persoon) {
         final RESTPersoon restPersoon = new RESTPersoon();
         restPersoon.bsn = persoon.getBurgerservicenummer();
         restPersoon.geslacht = persoon.getGeslachtsaanduiding().toString();
@@ -87,7 +87,7 @@ public class RESTPersoonConverter {
         if (ingeschrevenPersonen == null) {
             return Collections.emptyList();
         }
-        return ingeschrevenPersonen.stream().map(this::convertToPersoon).toList();
+        return ingeschrevenPersonen.stream().map(this::convert).toList();
     }
 
     private String convertToNaam(final NaamPersoon naam) {

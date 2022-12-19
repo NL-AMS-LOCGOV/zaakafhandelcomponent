@@ -5,20 +5,20 @@
 
 package net.atos.client.brp;
 
-import net.atos.client.brp.exception.PersoonNotFoundException;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.ListPersonenParameters;
-
-import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.ProcessingException;
 
-import java.util.Optional;
-import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import net.atos.client.brp.exception.PersoonNotFoundException;
+import net.atos.client.brp.model.IngeschrevenPersoonHal;
+import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
+import net.atos.client.brp.model.IngeschrevenPersoonHalCollectieEmbedded;
+import net.atos.client.brp.model.ListPersonenParameters;
 
 @ApplicationScoped
 public class BRPClientService {
@@ -61,7 +61,14 @@ public class BRPClientService {
      * - verblijfplaats__nummeraanduidingIdentificatie
      */
     public IngeschrevenPersoonHalCollectie listPersonen(final ListPersonenParameters parameters) {
-        return ingeschrevenpersonenClient.listPersonen(parameters);
+        try {
+            return ingeschrevenpersonenClient.listPersonen(parameters);
+        } catch (final RuntimeException exception) {
+            LOG.warning(() -> "Error while calling listPersonen: %s".formatted(exception.getMessage()));
+            final var ingeschrevenPersoonHalCollectie = new IngeschrevenPersoonHalCollectie();
+            ingeschrevenPersoonHalCollectie.setEmbedded(new IngeschrevenPersoonHalCollectieEmbedded());
+            return ingeschrevenPersoonHalCollectie;
+        }
     }
 
     /**
@@ -74,10 +81,29 @@ public class BRPClientService {
     public Optional<IngeschrevenPersoonHal> findPersoon(final String burgerservicenummer, final String fields) {
         try {
             return Optional.of(ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields));
-        } catch (final PersoonNotFoundException e) {
-        } catch (final TimeoutException | ProcessingException e) {
-            LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", e.getMessage()));
+        } catch (final PersoonNotFoundException exception) {
+            // Nothing to report
+        } catch (final RuntimeException exception) {
+            LOG.warning(() -> "Error while calling findPersoon: %s".formatted(exception.getMessage()));
         }
         return Optional.empty();
+    }
+
+    public CompletionStage<Optional<IngeschrevenPersoonHal>> findPersoonAsync(final String burgerservicenummer,
+            final String fields) {
+        return ingeschrevenpersonenClient.readPersoonAsync(burgerservicenummer, fields)
+                .handle((persoon, exception) -> handleFindPersoonAsync(persoon, exception));
+    }
+
+    private Optional<IngeschrevenPersoonHal> handleFindPersoonAsync(final IngeschrevenPersoonHal persoon,
+            final Throwable exception) {
+        if (persoon != null) {
+            return Optional.of(persoon);
+        } else {
+            if (!(exception instanceof PersoonNotFoundException)) {
+                LOG.warning(() -> "Error while calling findPersoonAsync: %s".formatted(exception.getMessage()));
+            }
+            return Optional.empty();
+        }
     }
 }

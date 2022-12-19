@@ -5,8 +5,6 @@
 
 package net.atos.client.zgw.shared.util;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,10 +16,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
-
+import net.atos.client.util.JWTTokenGenerator;
 import net.atos.zac.authentication.LoggedInUser;
 
 /**
@@ -43,7 +38,8 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     private static final Map<String, String> AUDIT_TOELICHTINGEN = new ConcurrentHashMap<>();
 
     @Override
-    public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders, final MultivaluedMap<String, String> outgoingHeaders) {
+    public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
+            final MultivaluedMap<String, String> outgoingHeaders) {
         final LoggedInUser loggedInUser = loggedInUserInstance.get();
         try {
             addAutorizationHeader(outgoingHeaders, loggedInUser);
@@ -55,7 +51,7 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     }
 
     public String generateJWTToken() {
-        return generateJWTToken(loggedInUserInstance.get());
+        return JWTTokenGenerator.generate(clientId, secret, loggedInUserInstance.get());
     }
 
     public void setAuditToelichting(final String toelichting) {
@@ -73,27 +69,13 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         }
     }
 
-    private String generateJWTToken(final LoggedInUser loggedInUser) {
-        final Map<String, Object> headerClaims = new HashMap<>();
-        headerClaims.put("client_identifier", clientId);
-        final JWTCreator.Builder jwtBuilder = JWT.create();
-        jwtBuilder.withIssuer(clientId)
-                .withIssuedAt(new Date())
-                .withHeader(headerClaims)
-                .withClaim("client_id", clientId);
-        if (loggedInUser != null) {
-            jwtBuilder.withClaim("user_id", loggedInUser.getId());
-            jwtBuilder.withClaim("user_representation", loggedInUser.getFullName());
-        }
-        String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(secret));
-        return "Bearer " + jwtToken;
+    private void addAutorizationHeader(final MultivaluedMap<String, String> outgoingHeaders,
+            final LoggedInUser loggedInUser) {
+        outgoingHeaders.add(HttpHeaders.AUTHORIZATION, JWTTokenGenerator.generate(clientId, secret, loggedInUser));
     }
 
-    private void addAutorizationHeader(final MultivaluedMap<String, String> outgoingHeaders, final LoggedInUser loggedInUser) {
-        outgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(loggedInUser));
-    }
-
-    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> outgoingHeaders, final LoggedInUser loggedInUser) {
+    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> outgoingHeaders,
+            final LoggedInUser loggedInUser) {
         if (loggedInUser != null) {
             final String toelichting = AUDIT_TOELICHTINGEN.get(loggedInUser.getId());
             if (toelichting != null) {

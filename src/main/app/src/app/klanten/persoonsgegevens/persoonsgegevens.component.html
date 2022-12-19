@@ -8,13 +8,9 @@
                          [expanded]="klantExpanded"
                          (expandedChange)="klantExpandedChanged($event)">
         <mat-expansion-panel-header>
-            <mat-panel-title>
-                {{'initiator.titel'| translate}}
-            </mat-panel-title>
+            <mat-panel-title>{{'initiator.titel'| translate}}</mat-panel-title>
             <mat-panel-description>
-                <zac-skeleton-loader [loading$]="persoon$">
-                    {{persoon?.naam}}
-                </zac-skeleton-loader>
+                <zac-skeleton-loader [loading$]="persoon$">{{persoon?.naam}}</zac-skeleton-loader>
                 <div>
                     <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
                             (click)="$event.stopPropagation(); delete.emit(persoon)">
@@ -28,14 +24,12 @@
                     </a>
                 </div>
             </mat-panel-description>
-
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="persoon$"
                              [options]="{layout: skeletonLayout.FIELDS, fields:4, fieldsPerRow:5}">
             <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <div [fxFlex]="100/5" fxFlex.lt-md="50">
-                    <zac-static-text [label]="'naam' | translate"
-                                     [value]="persoon?.naam"></zac-static-text>
+                    <zac-static-text [label]="'naam' | translate" [value]="persoon?.naam"></zac-static-text>
                 </div>
                 <div [fxFlex]="100/5" fxFlex.lt-md="50">
                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

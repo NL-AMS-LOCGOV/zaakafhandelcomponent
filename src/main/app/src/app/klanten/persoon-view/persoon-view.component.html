@@ -9,7 +9,7 @@
     </mat-card-header>
     <mat-card-content>
         <zac-skeleton-loader [loading$]="persoon$"
-                             [options]="{layout: skeletonLayout.FIELDS, fields:4, fieldsPerRow:4}">
+                             [options]="{layout: skeletonLayout.FIELDS, fields:6, fieldsPerRow:6}">
             <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <zac-static-text fxFlex="" [label]="'naam' | translate" [value]="persoon?.naam"></zac-static-text>
                 <zac-static-text fxFlex="" [label]="'inschrijfadres' | translate"
@@ -17,6 +17,10 @@
                 <zac-static-text fxFlex="" [label]="'geboortedatum' | translate"
                                  [value]="persoon?.geboortedatum | datum"></zac-static-text>
                 <zac-static-text fxFlex="" [label]="'burgerservicenummer' | translate" [value]="bsn"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'telefoonnummer' | translate"
+                                 [value]="persoon?.telefoonnummer"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'emailadres' | translate"
+                                 [value]="persoon?.emailadres"></zac-static-text>
             </div>
         </zac-skeleton-loader>
     </mat-card-content>

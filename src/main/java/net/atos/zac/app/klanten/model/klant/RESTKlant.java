@@ -6,6 +6,11 @@
 package net.atos.zac.app.klanten.model.klant;
 
 public abstract class RESTKlant {
+
+    public String emailadres;
+
+    public String telefoonnummer;
+
     public abstract IdentificatieType getIdentificatieType();
 
     public abstract String getIdentificatie();

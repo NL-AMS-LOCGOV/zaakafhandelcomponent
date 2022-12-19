@@ -5,14 +5,14 @@
 
 package net.atos.client.kvk;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.ProcessingException;
 
-import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.kvk.exception.KvKClientNoResultException;
@@ -29,43 +29,71 @@ public class KVKClientService {
     @RestClient
     private ZoekenClient zoekenClient;
 
-    public Resultaat find(final KVKZoekenParameters parameters) {
+    public Resultaat list(final KVKZoekenParameters parameters) {
         try {
             return zoekenClient.getResults(parameters);
-        } catch (final KvKClientNoResultException e) {
-            return new Resultaat().totaal(0);
-        } catch (final TimeoutException | ProcessingException e) {
-            LOG.severe(() -> String.format("Error while calling KVKClient provider: %s", e.getMessage()));
-            return new Resultaat().totaal(0);
+        } catch (final KvKClientNoResultException exception) {
+            // Nothing to report
+        } catch (final RuntimeException exception) {
+            LOG.warning(() -> "Error while calling list: %s".formatted(exception.getMessage()));
         }
+        return createEmptyResultaat();
+    }
+
+    public CompletionStage<Resultaat> listAsync(final KVKZoekenParameters parameters) {
+        return zoekenClient.getResultsAsync(parameters)
+                .handle((resultaat, exception) -> handleListAsync(resultaat, exception));
     }
 
     public Optional<ResultaatItem> findHoofdvestiging(final String kvkNummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setType("hoofdvestiging");
         zoekParameters.setKvkNummer(kvkNummer);
-        return findSingleItem(zoekParameters);
+        return convertToSingleItem(list(zoekParameters));
     }
 
     public Optional<ResultaatItem> findVestiging(final String vestigingsnummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setVestigingsnummer(vestigingsnummer);
-        return findSingleItem(zoekParameters);
+        return convertToSingleItem(list(zoekParameters));
+    }
+
+    public CompletionStage<Optional<ResultaatItem>> findVestigingAsync(final String vestigingsnummer) {
+        final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
+        zoekParameters.setVestigingsnummer(vestigingsnummer);
+        return listAsync(zoekParameters).thenApply(this::convertToSingleItem);
+    }
+
+    private Resultaat handleListAsync(final Resultaat resultaat, final Throwable exception) {
+        if (resultaat != null) {
+            return resultaat;
+        } else {
+            if (!(exception instanceof KvKClientNoResultException)) {
+                LOG.warning(() -> "Error while calling listAsync: %s".formatted(exception.getMessage()));
+            }
+            return createEmptyResultaat();
+        }
     }
 
     public Optional<ResultaatItem> findRechtspersoon(final String rsin) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setType("rechtspersoon");
         zoekParameters.setRsin(rsin);
-        return findSingleItem(zoekParameters);
+        return convertToSingleItem(list(zoekParameters));
     }
 
-    private Optional<ResultaatItem> findSingleItem(final KVKZoekenParameters parameters) {
-        final Resultaat resultaat = find(parameters);
+    private Optional<ResultaatItem> convertToSingleItem(final Resultaat resultaat) {
         return switch (resultaat.getTotaal()) {
             case 0 -> Optional.empty();
             case 1 -> Optional.of(resultaat.getResultaten().get(0));
-            default -> throw new IllegalStateException("%s: %d".formatted("Too many results", resultaat.getAantal()));
+            default -> throw new IllegalStateException("Too many results: %d".formatted(resultaat.getAantal()));
         };
+    }
+
+    private Resultaat createEmptyResultaat() {
+        final Resultaat resultaat = new Resultaat();
+        resultaat.setAantal(0);
+        resultaat.setResultaten(Collections.emptyList());
+        return resultaat;
     }
 }

@@ -6,6 +6,7 @@
 package net.atos.client.brp;
 
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletionStage;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -96,4 +97,18 @@ public interface IngeschrevenpersonenClient {
     @Path("{burgerservicenummer}")
     IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer,
             @QueryParam("fields") final String fields) throws PersoonNotFoundException;
+
+    /**
+     * Raadpleeg een persoon asynchroon
+     * <p>
+     * Raadpleeg een (overleden) persoon.
+     * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
+     * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature).
+     */
+    @GET
+    @Path("{burgerservicenummer}")
+    CompletionStage<IngeschrevenPersoonHal> readPersoonAsync(
+            @PathParam("burgerservicenummer") final String burgerservicenummer,
+            @QueryParam("fields") final String fields) throws PersoonNotFoundException;
+
 }
