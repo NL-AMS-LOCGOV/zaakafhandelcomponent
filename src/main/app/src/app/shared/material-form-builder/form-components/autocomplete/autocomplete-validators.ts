@@ -48,18 +48,7 @@ export class AutocompleteValidators {
                 return object1.name === object2.name;
             }
 
-            let sameKeys = true;
-            for (const k in object1) {
-                if (typeof object1[k] !== 'object') {
-                    sameKeys = object1[k] === object2[k];
-                } else {
-                    sameKeys = AutocompleteValidators.equals(object1[k], object2[k]);
-                }
-                if (!sameKeys) {
-                    return false;
-                }
-            }
-            return sameKeys;
+            return JSON.stringify(object1) === JSON.stringify(object2);
         }
         return false;
     }
