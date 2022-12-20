@@ -31,8 +31,8 @@ export class KlantenService {
         );
     }
 
-    readBedrijf(nummer: string): Observable<Bedrijf> {
-        return nummer.length === 9 ? this.readRechtspersoon(nummer) : this.readVestiging(nummer);
+    readBedrijf(rsinOfVestigingsnummer: string): Observable<Bedrijf> {
+        return rsinOfVestigingsnummer.length === 9 ? this.readRechtspersoon(rsinOfVestigingsnummer) : this.readVestiging(rsinOfVestigingsnummer);
     }
 
     readVestiging(vestigingsnummer: string): Observable<Bedrijf> {
