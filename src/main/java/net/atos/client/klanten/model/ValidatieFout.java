@@ -15,7 +15,7 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
 import java.util.ArrayList;
 import java.util.List;

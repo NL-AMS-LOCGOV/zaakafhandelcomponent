@@ -15,33 +15,89 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
+
 
 import javax.json.bind.annotation.JsonbProperty;
 
 
-public class SubjectIdentificatieNatuurlijkPersoon {
-
-    @JsonbProperty("subjectIdentificatie")
-    private NatuurlijkPersoon subjectIdentificatie;
+public class FieldValidationError {
 
     /**
-     * Get subjectIdentificatie
-     * @return subjectIdentificatie
+     * Naam van het veld met ongeldige gegevens
      **/
-    public NatuurlijkPersoon getSubjectIdentificatie() {
-        return subjectIdentificatie;
+    @JsonbProperty("name")
+    private String name;
+
+    /**
+     * Systeemcode die het type fout aangeeft
+     **/
+    @JsonbProperty("code")
+    private String code;
+
+    /**
+     * Uitleg wat er precies fout is met de gegevens
+     **/
+    @JsonbProperty("reason")
+    private String reason;
+
+    /**
+     * Naam van het veld met ongeldige gegevens
+     * @return name
+     **/
+    public String getName() {
+        return name;
     }
 
     /**
-     * Set subjectIdentificatie
+     * Set name
      **/
-    public void setSubjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
-        this.subjectIdentificatie = subjectIdentificatie;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public SubjectIdentificatieNatuurlijkPersoon subjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
-        this.subjectIdentificatie = subjectIdentificatie;
+    public FieldValidationError name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Systeemcode die het type fout aangeeft
+     * @return code
+     **/
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Set code
+     **/
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public FieldValidationError code(String code) {
+        this.code = code;
+        return this;
+    }
+
+    /**
+     * Uitleg wat er precies fout is met de gegevens
+     * @return reason
+     **/
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * Set reason
+     **/
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public FieldValidationError reason(String reason) {
+        this.reason = reason;
         return this;
     }
 
@@ -52,9 +108,11 @@ public class SubjectIdentificatieNatuurlijkPersoon {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class SubjectIdentificatieNatuurlijkPersoon {\n");
+        sb.append("class FieldValidationError {\n");
 
-        sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
+        sb.append("    code: ").append(toIndentedString(code)).append("\n");
+        sb.append("    reason: ").append(toIndentedString(reason)).append("\n");
         sb.append("}");
         return sb.toString();
     }

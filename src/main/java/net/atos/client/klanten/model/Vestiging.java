@@ -15,7 +15,7 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
 import java.net.URI;
 
@@ -23,16 +23,16 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 
-public class NatuurlijkPersoon extends Klant {
+public class Vestiging extends Klant {
 
     @JsonbProperty("subjectIdentificatie")
-    private NatuurlijkPersoon subjectIdentificatie;
+    private Vestiging subjectIdentificatie;
 
-    public NatuurlijkPersoon() {
+    public Vestiging() {
     }
 
     @JsonbCreator
-    public NatuurlijkPersoon(
+    public Vestiging(
             @JsonbProperty(value = "url", nillable = true) URI url
     ) {
         this.url = url;
@@ -42,18 +42,18 @@ public class NatuurlijkPersoon extends Klant {
      * Get subjectIdentificatie
      * @return subjectIdentificatie
      **/
-    public NatuurlijkPersoon getSubjectIdentificatie() {
+    public Vestiging getSubjectIdentificatie() {
         return subjectIdentificatie;
     }
 
     /**
      * Set subjectIdentificatie
      **/
-    public void setSubjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
+    public void setSubjectIdentificatie(Vestiging subjectIdentificatie) {
         this.subjectIdentificatie = subjectIdentificatie;
     }
 
-    public NatuurlijkPersoon subjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
+    public Vestiging subjectIdentificatie(Vestiging subjectIdentificatie) {
         this.subjectIdentificatie = subjectIdentificatie;
         return this;
     }
@@ -65,7 +65,7 @@ public class NatuurlijkPersoon extends Klant {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class NatuurlijkPersoon {\n");
+        sb.append("class Vestiging {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
         sb.append("}");

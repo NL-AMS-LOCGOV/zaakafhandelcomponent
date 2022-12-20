@@ -15,63 +15,46 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
+import java.net.URI;
 
+import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 
-public class Wijzigingen {
+public class NatuurlijkPersoon extends Klant {
 
-    /**
-     * Volledige JSON body van het object zoals dat bestond voordat de actie heeft plaatsgevonden.
-     **/
-    @JsonbProperty("oud")
-    private Object oud;
+    @JsonbProperty("subjectIdentificatie")
+    private NatuurlijkPersoon subjectIdentificatie;
 
-    /**
-     * Volledige JSON body van het object na de actie.
-     **/
-    @JsonbProperty("nieuw")
-    private Object nieuw;
+    public NatuurlijkPersoon() {
+    }
 
-    /**
-     * Volledige JSON body van het object zoals dat bestond voordat de actie heeft plaatsgevonden.
-     * @return oud
-     **/
-    public Object getOud() {
-        return oud;
+    @JsonbCreator
+    public NatuurlijkPersoon(
+            @JsonbProperty(value = "url", nillable = true) URI url
+    ) {
+        this.url = url;
     }
 
     /**
-     * Set oud
+     * Get subjectIdentificatie
+     * @return subjectIdentificatie
      **/
-    public void setOud(Object oud) {
-        this.oud = oud;
-    }
-
-    public Wijzigingen oud(Object oud) {
-        this.oud = oud;
-        return this;
+    public NatuurlijkPersoon getSubjectIdentificatie() {
+        return subjectIdentificatie;
     }
 
     /**
-     * Volledige JSON body van het object na de actie.
-     * @return nieuw
+     * Set subjectIdentificatie
      **/
-    public Object getNieuw() {
-        return nieuw;
+    public void setSubjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
+        this.subjectIdentificatie = subjectIdentificatie;
     }
 
-    /**
-     * Set nieuw
-     **/
-    public void setNieuw(Object nieuw) {
-        this.nieuw = nieuw;
-    }
-
-    public Wijzigingen nieuw(Object nieuw) {
-        this.nieuw = nieuw;
+    public NatuurlijkPersoon subjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
+        this.subjectIdentificatie = subjectIdentificatie;
         return this;
     }
 
@@ -82,10 +65,9 @@ public class Wijzigingen {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Wijzigingen {\n");
-
-        sb.append("    oud: ").append(toIndentedString(oud)).append("\n");
-        sb.append("    nieuw: ").append(toIndentedString(nieuw)).append("\n");
+        sb.append("class NatuurlijkPersoon {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
         sb.append("}");
         return sb.toString();
     }

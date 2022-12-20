@@ -15,15 +15,28 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
+import java.net.URI;
+
+import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 
-public class SubjectIdentificatieNietNatuurlijkPersoon {
+public class NietNatuurlijkPersoon extends Klant {
 
     @JsonbProperty("subjectIdentificatie")
     private NietNatuurlijkPersoon subjectIdentificatie;
+
+    public NietNatuurlijkPersoon() {
+    }
+
+    @JsonbCreator
+    public NietNatuurlijkPersoon(
+            @JsonbProperty(value = "url", nillable = true) URI url
+    ) {
+        this.url = url;
+    }
 
     /**
      * Get subjectIdentificatie
@@ -40,7 +53,7 @@ public class SubjectIdentificatieNietNatuurlijkPersoon {
         this.subjectIdentificatie = subjectIdentificatie;
     }
 
-    public SubjectIdentificatieNietNatuurlijkPersoon subjectIdentificatie(NietNatuurlijkPersoon subjectIdentificatie) {
+    public NietNatuurlijkPersoon subjectIdentificatie(NietNatuurlijkPersoon subjectIdentificatie) {
         this.subjectIdentificatie = subjectIdentificatie;
         return this;
     }
@@ -52,8 +65,8 @@ public class SubjectIdentificatieNietNatuurlijkPersoon {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class SubjectIdentificatieNietNatuurlijkPersoon {\n");
-
+        sb.append("class NietNatuurlijkPersoon {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
         sb.append("}");
         return sb.toString();

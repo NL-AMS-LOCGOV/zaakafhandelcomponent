@@ -13,9 +13,9 @@ import javax.inject.Inject;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.klanten.model.Klant;
+import net.atos.client.klanten.model.KlantList200Response;
 import net.atos.client.klanten.model.KlantListParameters;
-import net.atos.client.klanten.model.generated.Klant;
-import net.atos.client.klanten.model.generated.KlantList200Response;
 import net.atos.zac.configuratie.ConfiguratieService;
 
 @ApplicationScoped

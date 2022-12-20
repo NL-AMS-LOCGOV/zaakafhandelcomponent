@@ -15,32 +15,32 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
 import javax.json.bind.annotation.JsonbProperty;
 
 
-public class SubjectIdentificatieVestiging {
+public class SubjectIdentificatieNatuurlijkPersoon {
 
     @JsonbProperty("subjectIdentificatie")
-    private Vestiging subjectIdentificatie;
+    private NatuurlijkPersoon subjectIdentificatie;
 
     /**
      * Get subjectIdentificatie
      * @return subjectIdentificatie
      **/
-    public Vestiging getSubjectIdentificatie() {
+    public NatuurlijkPersoon getSubjectIdentificatie() {
         return subjectIdentificatie;
     }
 
     /**
      * Set subjectIdentificatie
      **/
-    public void setSubjectIdentificatie(Vestiging subjectIdentificatie) {
+    public void setSubjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
         this.subjectIdentificatie = subjectIdentificatie;
     }
 
-    public SubjectIdentificatieVestiging subjectIdentificatie(Vestiging subjectIdentificatie) {
+    public SubjectIdentificatieNatuurlijkPersoon subjectIdentificatie(NatuurlijkPersoon subjectIdentificatie) {
         this.subjectIdentificatie = subjectIdentificatie;
         return this;
     }
@@ -52,7 +52,7 @@ public class SubjectIdentificatieVestiging {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class SubjectIdentificatieVestiging {\n");
+        sb.append("class SubjectIdentificatieNatuurlijkPersoon {\n");
 
         sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
         sb.append("}");

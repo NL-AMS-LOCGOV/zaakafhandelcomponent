@@ -31,7 +31,7 @@ import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.klanten.KlantenClientService;
-import net.atos.client.klanten.model.generated.Klant;
+import net.atos.client.klanten.model.Klant;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;

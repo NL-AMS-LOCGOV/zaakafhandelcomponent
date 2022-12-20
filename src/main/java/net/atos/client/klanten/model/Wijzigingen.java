@@ -15,46 +15,63 @@
  * Do not edit the class manually.
  */
 
-package net.atos.client.klanten.model.generated;
+package net.atos.client.klanten.model;
 
-import java.net.URI;
 
 import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbCreator;
 
 
-public class Vestiging extends Klant {
+public class Wijzigingen {
 
-    @JsonbProperty("subjectIdentificatie")
-    private Vestiging subjectIdentificatie;
+    /**
+     * Volledige JSON body van het object zoals dat bestond voordat de actie heeft plaatsgevonden.
+     **/
+    @JsonbProperty("oud")
+    private Object oud;
 
-    public Vestiging() {
-    }
+    /**
+     * Volledige JSON body van het object na de actie.
+     **/
+    @JsonbProperty("nieuw")
+    private Object nieuw;
 
-    @JsonbCreator
-    public Vestiging(
-            @JsonbProperty(value = "url", nillable = true) URI url
-    ) {
-        this.url = url;
+    /**
+     * Volledige JSON body van het object zoals dat bestond voordat de actie heeft plaatsgevonden.
+     * @return oud
+     **/
+    public Object getOud() {
+        return oud;
     }
 
     /**
-     * Get subjectIdentificatie
-     * @return subjectIdentificatie
+     * Set oud
      **/
-    public Vestiging getSubjectIdentificatie() {
-        return subjectIdentificatie;
+    public void setOud(Object oud) {
+        this.oud = oud;
+    }
+
+    public Wijzigingen oud(Object oud) {
+        this.oud = oud;
+        return this;
     }
 
     /**
-     * Set subjectIdentificatie
+     * Volledige JSON body van het object na de actie.
+     * @return nieuw
      **/
-    public void setSubjectIdentificatie(Vestiging subjectIdentificatie) {
-        this.subjectIdentificatie = subjectIdentificatie;
+    public Object getNieuw() {
+        return nieuw;
     }
 
-    public Vestiging subjectIdentificatie(Vestiging subjectIdentificatie) {
-        this.subjectIdentificatie = subjectIdentificatie;
+    /**
+     * Set nieuw
+     **/
+    public void setNieuw(Object nieuw) {
+        this.nieuw = nieuw;
+    }
+
+    public Wijzigingen nieuw(Object nieuw) {
+        this.nieuw = nieuw;
         return this;
     }
 
@@ -65,9 +82,10 @@ public class Vestiging extends Klant {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Vestiging {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    subjectIdentificatie: ").append(toIndentedString(subjectIdentificatie)).append("\n");
+        sb.append("class Wijzigingen {\n");
+
+        sb.append("    oud: ").append(toIndentedString(oud)).append("\n");
+        sb.append("    nieuw: ").append(toIndentedString(nieuw)).append("\n");
         sb.append("}");
         return sb.toString();
     }

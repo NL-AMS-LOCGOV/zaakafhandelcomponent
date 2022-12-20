@@ -28,10 +28,10 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.klanten.exception.RuntimeExceptionMapper;
+import net.atos.client.klanten.model.AuditTrail;
+import net.atos.client.klanten.model.Klant;
+import net.atos.client.klanten.model.KlantList200Response;
 import net.atos.client.klanten.model.KlantListParameters;
-import net.atos.client.klanten.model.generated.AuditTrail;
-import net.atos.client.klanten.model.generated.Klant;
-import net.atos.client.klanten.model.generated.KlantList200Response;
 import net.atos.client.klanten.util.KlantenClientHeadersFactory;
 import net.atos.client.kvk.exception.KvKClientNoResultExceptionMapper;
 
