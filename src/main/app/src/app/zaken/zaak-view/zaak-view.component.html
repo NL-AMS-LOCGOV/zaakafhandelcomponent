@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-drawer-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+<mat-drawer-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode" xmlns="http://www.w3.org/1999/html">
     <mat-drawer #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
@@ -274,16 +274,28 @@
                                             <read-more [text]="betrokkene.roltype" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
-                                    <ng-container matColumnDef="betrokkenetype">
-                                        <th mat-header-cell *matHeaderCellDef> {{ 'betrokkenetype' | translate }} </th>
-                                        <td mat-cell *matCellDef="let betrokkene">
-                                            {{ 'betrokkenetype.' + betrokkene.type | translate }}
-                                        </td>
-                                    </ng-container>
                                     <ng-container matColumnDef="betrokkeneidentificatie">
                                         <th mat-header-cell *matHeaderCellDef> {{ 'identificatie' | translate }} </th>
                                         <td mat-cell *matCellDef="let betrokkene">
-                                            <read-more [text]="betrokkene.identificatie" [maxLength]="20"></read-more>
+                                            {{betrokkene.identificatie}}
+                                            <span *ngIf="betrokkene.type === 'NATUURLIJK_PERSOON'"
+                                                  [matTooltip]="'betrokkenetype.NATUURLIJK_PERSOON' | translate">(P)</span>
+                                            <span *ngIf="betrokkene.type === 'NIET_NATUURLIJK_PERSOON'"
+                                                  [matTooltip]="'betrokkenetype.NIET_NATUURLIJK_PERSOON' | translate">(R)</span>
+                                            <span *ngIf="betrokkene.type === 'VESTIGING'"
+                                                  [matTooltip]="'betrokkenetype.VESTIGING' | translate">(V)</span>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="betrokkenegegevens">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'gegevens' | translate }} </th>
+                                        <td mat-cell *matCellDef="let betrokkene">
+                                            <button mat-icon-button *ngIf="!betrokkene.gegevens" (click)="betrokkeneGegevensOphalen(betrokkene)">
+                                                <mat-icon>more_horiz</mat-icon>
+                                            </button>
+                                            <button mat-icon-button *ngIf="betrokkene.gegevens === 'LOADING'">
+                                                <mat-icon>hourglass_empty</mat-icon>
+                                            </button>
+                                            <span *ngIf="betrokkene.gegevens && betrokkene.gegevens !== 'LOADING'">{{betrokkene.gegevens}}</span>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="roltoelichting">
@@ -292,12 +304,26 @@
                                             <read-more [text]="betrokkene.roltoelichting" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
-                                    <ng-container matColumnDef="rolid" stickyEnd>
+                                    <ng-container matColumnDef="actions" stickyEnd>
                                         <th mat-header-cell *matHeaderCellDef></th>
-                                        <td mat-cell *matCellDef="let row">
+                                        <td mat-cell *matCellDef="let betrokkene">
+                                            <a *ngIf="betrokkene.type === 'NATUURLIJK_PERSOON'" mat-flat-button
+                                               [routerLink]="['/persoon', betrokkene.identificatie]"
+                                               (click)="$event.stopPropagation()"
+                                               [id]="'persoonBekijken_' + betrokkene.identificatie +'_button'"
+                                               title="{{ 'actie.persoon.bekijken' | translate }}">
+                                                <mat-icon>visibility</mat-icon>
+                                            </a>
+                                            <a *ngIf="betrokkene.type === 'NIET_NATUURLIJK_PERSOON' || betrokkene.type === 'VESTIGING'" mat-flat-button
+                                               [routerLink]="['/bedrijf', betrokkene.identificatie]"
+                                               (click)="$event.stopPropagation()"
+                                               [id]="'bedrijfBekijken_' + betrokkene.identificatie +'_button'"
+                                               title="{{ 'actie.bedrijf.bekijken' | translate }}">
+                                                <mat-icon>visibility</mat-icon>
+                                            </a>
                                             <button *ngIf="zaak.rechten.behandelen"
                                                     mat-flat-button
-                                                    (click)="deleteBetrokkene(row)"
+                                                    (click)="deleteBetrokkene(betrokkene)"
                                                     title="{{ 'actie.betrokkene.verwijderen' | translate}}">
                                                 <mat-icon>delete</mat-icon>
                                             </button>
