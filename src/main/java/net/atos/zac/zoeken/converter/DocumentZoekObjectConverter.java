@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -25,6 +26,9 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
 
     @Inject
     private IdentityService identityService;
+
+    @Inject
+    private BRCClientService brcClientService;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -99,6 +103,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         }
         documentZoekObject.setIndicatie(DocumentIndicatie.VERGRENDELD, informatieobject.getLocked());
         documentZoekObject.setIndicatie(DocumentIndicatie.GEBRUIKSRECHT, informatieobject.getIndicatieGebruiksrecht());
+        documentZoekObject.setIndicatie(DocumentIndicatie.BESLUIT, brcClientService.isInformatieObjectGekoppeldAanBesluit(informatieobject.getUrl()));
         if (informatieobject.getLocked()) {
             final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.readLock(
                     informatieobject.getUUID());

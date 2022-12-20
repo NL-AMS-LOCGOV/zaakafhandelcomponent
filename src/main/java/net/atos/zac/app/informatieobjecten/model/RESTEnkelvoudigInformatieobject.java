@@ -74,10 +74,15 @@ public class RESTEnkelvoudigInformatieobject {
         if (indicatieGebruiksrecht) {
             indicaties.add(DocumentIndicatie.GEBRUIKSRECHT);
         }
+        if (isBesluitDocument) {
+            indicaties.add(DocumentIndicatie.BESLUIT);
+        }
         return indicaties;
     }
 
     public RESTUser gelockedDoor;
+
+    public boolean isBesluitDocument;
 
     public RESTDocumentRechten rechten;
 }

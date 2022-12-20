@@ -14,6 +14,7 @@ import {IndicatiesComponent} from '../indicaties.component';
 export enum InformatieobjectIndicatie {
     VERGRENDELD = 'VERGRENDELD',
     ONDERTEKEND = 'ONDERTEKEND',
+    BESLUIT = 'BESLUIT',
     GEBRUIKSRECHT = 'GEBRUIKSRECHT',
 }
 
@@ -41,6 +42,9 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
                     break;
                 case InformatieobjectIndicatie.ONDERTEKEND:
                     this.indicaties.push(new Indicatie(indicatie, false, this.getOndertekeningToelichting()));
+                    break;
+                case InformatieobjectIndicatie.BESLUIT:
+                    this.indicaties.push(new Indicatie(indicatie, false, this.translateService.instant('msg.document.besluit')));
                     break;
                 case InformatieobjectIndicatie.GEBRUIKSRECHT:
                     this.indicaties.push(new Indicatie(indicatie, true, ''));
