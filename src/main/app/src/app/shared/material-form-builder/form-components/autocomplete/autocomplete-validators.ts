@@ -47,7 +47,8 @@ export class AutocompleteValidators {
             } else if (object1.hasOwnProperty('name')) {
                 return object1.name === object2.name;
             }
-            return object1 === object2;
+
+            return JSON.stringify(object1) === JSON.stringify(object2);
         }
         return false;
     }
