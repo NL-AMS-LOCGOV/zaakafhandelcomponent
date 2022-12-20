@@ -20,6 +20,8 @@ import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-co
 import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
 import {Mail} from '../model/mail';
 import {MailtemplateVariabeleUtil} from '../model/mailtemplate-variabele';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './mailtemplate.component.html',
@@ -51,7 +53,8 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
                 private service: MailtemplateBeheerService,
                 public utilService: UtilService,
                 private route: ActivatedRoute,
-                private router: Router) {
+                private router: Router,
+                private translateService: TranslateService) {
         super(utilService);
     }
 
@@ -69,21 +72,26 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
 
     createForm() {
         const mails = this.utilService.getEnumAsSelectList('mail', Mail);
-        const mail = mails.find(type => this.template.mail === type.value);
 
         this.naamFormField = new InputFormFieldBuilder(this.template.mailTemplateNaam)
         .id(this.fields.NAAM)
         .label(this.fields.NAAM)
         .validators(Validators.required)
         .build();
-        this.mailFormField = new SelectFormFieldBuilder(mail ? mail.label : null)
-        .id(this.fields.MAIL)
-        .label(this.fields.MAIL)
-        .readonly(mail != null)
-        .optionLabel('label')
-        .options(mails)
-        .validators(Validators.required)
-        .build();
+        if (this.template.mail) {
+            this.mailFormField = new ReadonlyFormFieldBuilder(this.translateService.instant('mail.' + this.template.mail))
+            .id(this.fields.MAIL)
+            .label(this.fields.MAIL)
+            .build();
+        } else {
+            this.mailFormField = new SelectFormFieldBuilder()
+            .id(this.fields.MAIL)
+            .label(this.fields.MAIL)
+            .optionLabel('label')
+            .options(mails)
+            .validators(Validators.required)
+            .build();
+        }
         this.onderwerpFormField = new HtmlEditorFormFieldBuilder(this.template.onderwerp)
         .id(this.fields.ONDERWERP)
         .label(this.fields.ONDERWERP)
