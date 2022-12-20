@@ -40,6 +40,10 @@ export class AutocompleteValidators {
         if (object1 && object2) {
             if (object1.hasOwnProperty('key')) {
                 return object1.key === object2.key;
+            } else if (object1.hasOwnProperty('uuid')) {
+                return object1.uuid === object2.uuid;
+            } else if (object1.hasOwnProperty('identificatie')) {
+                return object1.identificatie === object2.identificatie;
             } else if (object1.hasOwnProperty('id')) {
                 return object1.id === object2.id;
             } else if (object1.hasOwnProperty('naam')) {
@@ -48,7 +52,7 @@ export class AutocompleteValidators {
                 return object1.name === object2.name;
             }
 
-            return JSON.stringify(object1) === JSON.stringify(object2);
+            throw new Error('Er is geen property aanwezig om te kunnen vergelijken');
         }
         return false;
     }
