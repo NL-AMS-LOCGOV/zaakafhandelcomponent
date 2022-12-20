@@ -51,8 +51,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.PROCES_AANVULLENDE_INFORMATIE, this.zaakUuid);
-        this.humanTaskData.taakStuurGegevens.mail = Mail.PROCES_AANVULLENDE_INFORMATIE;
+        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.TAAK_AANVULLENDE_INFORMATIE, this.zaakUuid);
+        this.humanTaskData.taakStuurGegevens.mail = Mail.TAAK_AANVULLENDE_INFORMATIE;
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
