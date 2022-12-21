@@ -3,7 +3,7 @@
     {{'variabelen' | translate}}
 </button>
 
-<mat-menu #beschikbare_variabelen="matMenu">
+<mat-menu #beschikbare_variabelen="matMenu" [classList]="'variabelenMenu'">
     <tr *ngFor="let variabele of variabelen">
         <button mat-menu-item type="button" (click)="plakExpressie(variabele)">
             {{variabele + ': ' + ('mailtemplate.variabele.' + variabele | translate)}}
