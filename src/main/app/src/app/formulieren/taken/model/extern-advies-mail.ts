@@ -45,12 +45,12 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
     _initStartForm() {
         const fields = this.fields;
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.humanTaskData.taakStuurGegevens.mail = Mail.PROCES_ADVIES;
+        this.humanTaskData.taakStuurGegevens.mail = Mail.TAAK_ADVIES_EXTERN;
 
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
-        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.PROCES_ADVIES, this.zaakUuid);
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ADVIES_EXTERN, this.zaakUuid);
 
         this.form.push(
             [new InputFormFieldBuilder()

@@ -59,7 +59,7 @@ export class OntvangstbevestigingComponent implements OnInit {
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
 
-        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.PROCES_ONTVANGSTBEVESTIGING, this.zaak.uuid);
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ONTVANGSTBEVESTIGING, this.zaak.uuid);
 
         const ontvanger = new InputFormFieldBuilder()
         .id('ontvanger')

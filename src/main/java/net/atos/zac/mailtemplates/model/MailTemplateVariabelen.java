@@ -78,7 +78,7 @@ public enum MailTemplateVariabelen {
     public static final Set<MailTemplateVariabelen> ZAAK_VOORTGANG_VARIABELEN =
             add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
 
-    public static final Set<MailTemplateVariabelen> PROCES_VARIABELEN =
+    public static final Set<MailTemplateVariabelen> ACTIE_VARIABELEN =
             add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
 
     public static final Set<MailTemplateVariabelen> ZAAK_SIGNALERING_VARIABELEN =
