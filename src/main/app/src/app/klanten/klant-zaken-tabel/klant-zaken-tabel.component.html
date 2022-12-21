@@ -51,7 +51,6 @@
                     <td mat-cell *matCellDef="let object"> {{object.startdatum | datum | empty}} </td>
                 </ng-container>
 
-
                 <ng-container matColumnDef="zaaktype_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="zaaktype"
@@ -94,7 +93,7 @@
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-                <tr mat-header-row *matHeaderRowDef="filerColumns; sticky:true"></tr>
+                <tr mat-header-row *matHeaderRowDef="filterColumns; sticky:true"></tr>
                 <tr mat-row *matRowDef="let row; columns: columns;"></tr>
             </table>
         </div>

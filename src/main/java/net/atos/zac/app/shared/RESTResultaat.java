@@ -18,6 +18,12 @@ public class RESTResultaat<TYPE> {
 
     String foutmelding;
 
+    public RESTResultaat() {
+        this.resultaten = Collections.emptyList();
+        this.totaal = 0;
+        this.foutmelding = StringUtils.EMPTY;
+    }
+
     public RESTResultaat(final Collection<TYPE> resultaten, final long aantalTotaal) {
         this.resultaten = resultaten;
         this.totaal = aantalTotaal;

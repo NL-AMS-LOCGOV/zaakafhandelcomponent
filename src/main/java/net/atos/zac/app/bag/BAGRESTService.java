@@ -69,7 +69,7 @@ public class BAGRESTService {
                                                .map(this::convertToREST)
                                                .toList());
         } else {
-            return new RESTResultaat<>(Collections.emptyList());
+            return new RESTResultaat<>();
         }
     }
 

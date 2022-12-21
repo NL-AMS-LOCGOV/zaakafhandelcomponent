@@ -4,7 +4,16 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {merge, Observable} from 'rxjs';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -28,7 +37,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     @ViewChild(MatSort) sort: MatSort;
     dataSource: MatTableDataSource<ZaakZoekObject> = new MatTableDataSource<ZaakZoekObject>();
     columns: string[] = ['identificatie', 'status', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
-    filerColumns: string[] = this.columns.map(n => n + '_filter');
+    filterColumns: string[] = this.columns.map(n => n + '_filter');
     isLoadingResults = true;
     sorteerVeld = SorteerVeld;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
@@ -57,20 +66,20 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         merge(this.sort.sortChange, this.paginator.page, this.filterChange).pipe(
             startWith({}),
-            switchMap(() => {
-                this.isLoadingResults = true;
-                this.utilService.setLoading(true);
-                return this.loadZaken();
-            }),
-            map(data => {
-                this.isLoadingResults = false;
-                this.utilService.setLoading(false);
-                return data;
-            })
-        ).subscribe(data => {
-            this.zoekResultaat = data;
-            this.paginator.length = data.totaal;
-            this.dataSource.data = data.resultaten;
+                switchMap(() => {
+                    this.isLoadingResults = true;
+                    this.utilService.setLoading(true);
+                    return this.loadZaken();
+                }),
+                map(zoekResultaat => {
+                    this.isLoadingResults = false;
+                    this.utilService.setLoading(false);
+                    return zoekResultaat;
+                })
+        ).subscribe(zoekResultaat => {
+            this.zoekResultaat = zoekResultaat;
+            this.paginator.length = zoekResultaat.totaal;
+            this.dataSource.data = zoekResultaat.resultaten;
         });
     }
 

@@ -5,6 +5,8 @@
 
 package net.atos.client.zgw.zrc.model;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.net.URI;
 import java.util.Objects;
 
@@ -38,17 +40,21 @@ public class RolMedewerker extends Rol<Medewerker> {
             return null;
         }
         final Medewerker medewerker = getBetrokkeneIdentificatie();
-        final StringBuilder sb = new StringBuilder();
-        sb.append(medewerker.getVoorletters());
-        sb.append(StringUtils.SPACE);
-        if (StringUtils.isNotEmpty(medewerker.getVoorvoegselAchternaam())) {
-            sb.append(medewerker.getVoorvoegselAchternaam());
-            sb.append(StringUtils.SPACE);
+        if (isNotBlank(medewerker.getAchternaam())) {
+            final StringBuilder naam = new StringBuilder();
+            if (isNotBlank(medewerker.getVoorletters())) {
+                naam.append(medewerker.getVoorletters());
+                naam.append(StringUtils.SPACE);
+            }
+            if (isNotBlank(medewerker.getVoorvoegselAchternaam())) {
+                naam.append(medewerker.getVoorvoegselAchternaam());
+                naam.append(StringUtils.SPACE);
+            }
+            naam.append(medewerker.getAchternaam());
+            return naam.toString();
+        } else {
+            return medewerker.getIdentificatie();
         }
-        sb.append(medewerker.getAchternaam());
-        return !sb.isEmpty()
-                ? sb.toString()
-                : getIdentificatienummer();
     }
 
     @Override
