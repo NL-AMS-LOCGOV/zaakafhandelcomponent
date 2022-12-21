@@ -31,3 +31,6 @@
     </mat-card-content>
 </mat-card>
 <zac-klant-zaken-tabel [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
+<zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer"
+                                 [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
+

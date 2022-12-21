@@ -5,6 +5,7 @@
 
 export class ListContactmomentenParameters {
     bsn: string;
+    vestigingsnummer: string;
     page: number;
     pageSize: number;
 }

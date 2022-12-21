@@ -20,7 +20,8 @@ import {map, startWith, switchMap} from 'rxjs/operators';
     styleUrls: ['./klant-contactmomenten-tabel.component.less']
 })
 export class KlantContactmomentenTabelComponent implements OnInit, AfterViewInit, OnChanges {
-    @Input() klantIdentificatie: string;
+    @Input() bsn: string;
+    @Input() vestigingsnummer: string;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     dataSource: MatTableDataSource<Contactmoment> = new MatTableDataSource<Contactmoment>();
     columns: string[] = ['registratiedatum', 'kanaal', 'initiatiefnemer', 'medewerker', 'tekst'];
@@ -33,7 +34,8 @@ export class KlantContactmomentenTabelComponent implements OnInit, AfterViewInit
     }
 
     ngOnInit(): void {
-        this.listParameters.bsn = this.klantIdentificatie;
+        this.listParameters.bsn = this.bsn;
+        this.listParameters.vestigingsnummer = this.vestigingsnummer;
     }
 
     ngAfterViewInit(): void {
@@ -58,7 +60,8 @@ export class KlantContactmomentenTabelComponent implements OnInit, AfterViewInit
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.klantIdentificatie = changes.klantIdentificatie.currentValue;
+        this.bsn = changes.bsn?.currentValue;
+        this.vestigingsnummer = changes.vestigingsnummer?.currentValue;
         if (this.init) {
             this.paginator.pageIndex = 0;
             this.paginator.page.emit();

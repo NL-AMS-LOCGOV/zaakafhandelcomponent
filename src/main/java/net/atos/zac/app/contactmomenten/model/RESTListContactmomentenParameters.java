@@ -6,7 +6,10 @@
 package net.atos.zac.app.contactmomenten.model;
 
 public class RESTListContactmomentenParameters {
+
     public String bsn;
+
+    public String vestigingsnummer;
 
     public Integer page;
 

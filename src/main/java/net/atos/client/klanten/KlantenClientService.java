@@ -34,6 +34,10 @@ public class KlantenClientService {
                 .thenApply(this::convertToSingleItem);
     }
 
+    public Optional<Klant> findVestiging(final String vestigingsnummer) {
+        return convertToSingleItem(klantenClient.klantList(createFindVestigingListParameters(vestigingsnummer)));
+    }
+
     public CompletionStage<Optional<Klant>> findVestigingAsync(final String vestigingsnummer) {
         return klantenClient.klantListAsync(createFindVestigingListParameters(vestigingsnummer))
                 .thenApply(this::convertToSingleItem);

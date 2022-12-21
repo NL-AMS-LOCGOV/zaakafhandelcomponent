@@ -8,6 +8,7 @@ package net.atos.zac.app.contactmomenten;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -48,8 +49,10 @@ public class ContactmomentenRESTService {
 
     @PUT
     public RESTResultaat<RESTContactmoment> listContactmomenten(final RESTListContactmomentenParameters parameters) {
-        return klantenClientService.findPersoon(parameters.bsn)
-                .map(klant -> listContactmomenten(klant, parameters.page, parameters.pageSize))
+        final Optional<Klant> klantOptional = parameters.bsn != null ?
+                klantenClientService.findPersoon(parameters.bsn) :
+                klantenClientService.findVestiging(parameters.vestigingsnummer);
+        return klantOptional.map(klant -> listContactmomenten(klant, parameters.page, parameters.pageSize))
                 .orElse(new RESTResultaat<>());
     }
 
