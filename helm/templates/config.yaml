@@ -15,6 +15,8 @@ data:
   MAIL_DOMEIN: {{ required "Valid .Values.mail.domein entry required!" .Values.mail.domein }}
   ZGW_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.zgwApis.url entry required!" .Values.zgwApis.url }}
   ZGW_API_URL_EXTERN: {{ required "Valid .Values.zgwApis.urlExtern entry required!" .Values.zgwApis.urlExtern }}
+  KLANTEN_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.klantenApi.url entry required!" .Values.klantenApi.url }}
+  CONTACTMOMENTEN_API_CLIENT_MP_REST_UR: {{ required "Valid .Values.contactmomentenApi.url entry required!" .Values.contactmomentenApi.url }}
   OBJECTS_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objectenApi.url entry required!" .Values.objectenApi.url }}
   OBJECTTYPES_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objecttypenApi.url entry required!" .Values.objecttypenApi.url }}
   BRP_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.brpApi.url entry required!" .Values.brpApi.url }}
