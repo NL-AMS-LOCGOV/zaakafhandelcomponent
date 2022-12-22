@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.klanten.util;
+package net.atos.client.contactmomenten.util;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -16,17 +16,17 @@ import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 import net.atos.client.util.JWTTokenGenerator;
 import net.atos.zac.authentication.LoggedInUser;
 
-public class KlantenClientHeadersFactory implements ClientHeadersFactory {
+public class ContactmomentenClientHeadersFactory implements ClientHeadersFactory {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
     @Inject
-    @ConfigProperty(name = "KLANTEN_API_CLIENTID")
+    @ConfigProperty(name = "CONTACTMOMENTEN_API_CLIENTID")
     private String clientId;
 
     @Inject
-    @ConfigProperty(name = "KLANTEN_API_SECRET")
+    @ConfigProperty(name = "CONTACTMOMENTEN_API_SECRET")
     private String secret;
 
     @Override

@@ -33,7 +33,6 @@ import net.atos.client.klanten.model.Klant;
 import net.atos.client.klanten.model.KlantList200Response;
 import net.atos.client.klanten.model.KlantListParameters;
 import net.atos.client.klanten.util.KlantenClientHeadersFactory;
-import net.atos.client.kvk.exception.KvKClientNoResultExceptionMapper;
 
 /**
  * Klanten API
@@ -45,8 +44,7 @@ import net.atos.client.kvk.exception.KvKClientNoResultExceptionMapper;
 @RegisterRestClient(configKey = "Klanten-API-Client")
 @RegisterClientHeaders(KlantenClientHeadersFactory.class)
 @RegisterProviders({
-        @RegisterProvider(RuntimeExceptionMapper.class),
-        @RegisterProvider(KvKClientNoResultExceptionMapper.class)
+        @RegisterProvider(RuntimeExceptionMapper.class)
 })
 @Path("api/v1/klanten")
 public interface KlantenClient {
@@ -72,7 +70,6 @@ public interface KlantenClient {
      * Maak een KLANT aan.
      */
     @POST
-
     @Consumes({"application/json"})
     @Produces({"application/json", "application/problem+json"})
     public Klant klantCreate(@HeaderParam("Content-Type") String contentType, Klant klant,

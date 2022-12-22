@@ -1,0 +1,50 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{'contactmomenten' | translate}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="registratiedatum">
+                    <th mat-header-cell *matHeaderCellDef> {{'contactmoment.registratiedatum' | translate}} </th>
+                    <td mat-cell
+                        *matCellDef="let contactmoment"> {{contactmoment.registratiedatum | datum:'short' | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kanaal">
+                    <th mat-header-cell *matHeaderCellDef> {{'contactmoment.kanaal' | translate}} </th>
+                    <td mat-cell *matCellDef="let contactmoment"> {{contactmoment.kanaal | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="initiatiefnemer">
+                    <th mat-header-cell *matHeaderCellDef> {{'contactmoment.initiatiefnemer' | translate}} </th>
+                    <td mat-cell *matCellDef="let contactmoment"> {{contactmoment.initiatiefnemer | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="medewerker">
+                    <th mat-header-cell *matHeaderCellDef> {{'contactmoment.medewerker' | translate}} </th>
+                    <td mat-cell *matCellDef="let contactmoment"> {{contactmoment.medewerker | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tekst">
+                    <th mat-header-cell *matHeaderCellDef> {{'contactmoment.tekst' | translate}} </th>
+                    <td mat-cell *matCellDef="let contactmoment"> {{contactmoment.tekst | empty}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+            </table>
+        </div>
+        <mat-paginator #paginator
+                       [pageIndex]="0"
+                       [pageSize]="5"
+                       [pageSizeOptions]="[5, 10, 20]"
+                       sticky>
+        </mat-paginator>
+    </mat-card-content>
+</mat-card>

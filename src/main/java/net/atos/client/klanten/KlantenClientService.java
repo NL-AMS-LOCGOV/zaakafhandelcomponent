@@ -8,8 +8,8 @@ package net.atos.client.klanten;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -18,16 +18,24 @@ import net.atos.client.klanten.model.KlantList200Response;
 import net.atos.client.klanten.model.KlantListParameters;
 import net.atos.zac.configuratie.ConfiguratieService;
 
-@ApplicationScoped
+@Singleton
 public class KlantenClientService {
 
     @Inject
     @RestClient
     private KlantenClient klantenClient;
 
+    public Optional<Klant> findPersoon(final String bsn) {
+        return convertToSingleItem(klantenClient.klantList(createFindPersoonListParameters(bsn)));
+    }
+
     public CompletionStage<Optional<Klant>> findPersoonAsync(final String bsn) {
         return klantenClient.klantListAsync(createFindPersoonListParameters(bsn))
                 .thenApply(this::convertToSingleItem);
+    }
+
+    public Optional<Klant> findVestiging(final String vestigingsnummer) {
+        return convertToSingleItem(klantenClient.klantList(createFindVestigingListParameters(vestigingsnummer)));
     }
 
     public CompletionStage<Optional<Klant>> findVestigingAsync(final String vestigingsnummer) {
