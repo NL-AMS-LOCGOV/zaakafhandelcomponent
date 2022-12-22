@@ -27,12 +27,14 @@ export abstract class ViewComponent implements OnDestroy, AfterViewInit {
 
     menuModeChanged(mode: string): void {
         this.sideNaveMode = mode as MatDrawerMode;
-        setTimeout(() => {
-            this.sideNavContainer.updateContentMargins(); // update after sideNavToggle animation is finished
-        }, 300);
+        this.updateMargins();
     }
 
     ngOnDestroy(): void {
         this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
+    }
+
+    protected updateMargins(): void {
+        setTimeout(() => this.sideNavContainer.updateContentMargins(), 300);
     }
 }
