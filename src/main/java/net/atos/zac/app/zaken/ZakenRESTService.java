@@ -19,7 +19,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -131,6 +130,7 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.shared.helper.OpschortenZaakHelper;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -254,6 +254,9 @@ public class ZakenRESTService {
     @Inject
     private HealthCheckService healthCheckService;
 
+    @Inject
+    private OpschortenZaakHelper opschortenZaakHelper;
+
     @GET
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID zaakUUID) {
@@ -358,30 +361,13 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/opschorting")
     public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID,
-            final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
+            final RESTZaakOpschortGegevens opschortGegevens) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
-        final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
-        if (restZaakOpschortGegevens.indicatieOpschorting) {
-            assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort() && StringUtils.isEmpty(
-                    zaak.getOpschorting().getReden()));
+        if (opschortGegevens.indicatieOpschorting) {
+            return zaakConverter.convert(opschortenZaakHelper.opschortenZaak(zaak, opschortGegevens.duurDagen, opschortGegevens.redenOpschorting));
         } else {
-            assertPolicy(zaak.isOpgeschort());
+            return zaakConverter.convert(opschortenZaakHelper.hervattenZaak(zaak, opschortGegevens.redenOpschorting));
         }
-        final String toelichting = String.format("%s: %s", restZaakOpschortGegevens.indicatieOpschorting ?
-                OPSCHORTING : HERVATTING, restZaakOpschortGegevens.redenOpschorting);
-        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID,
-                                                            zaakConverter.convertToPatch(restZaakOpschortGegevens),
-                                                            toelichting);
-        if (restZaakOpschortGegevens.indicatieOpschorting) {
-            zaakVariabelenService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
-            zaakVariabelenService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
-        } else {
-            zaakVariabelenService.removeDatumtijdOpgeschort(zaakUUID);
-            zaakVariabelenService.removeVerwachteDagenOpgeschort(zaakUUID);
-        }
-        return zaakConverter.convert(updatedZaak, status, statustype);
     }
 
     @GET

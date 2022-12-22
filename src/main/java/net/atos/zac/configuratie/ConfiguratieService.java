@@ -100,8 +100,6 @@ public class ConfiguratieService {
 
     public static final String TAAK_ELEMENT_ONDERTEKENEN = "ondertekenen";
 
-    public static final String BIJLAGEN = "bijlagen";
-
     public static final String COMMUNICATIEKANAAL_EFORMULIER = "E-formulier";
 
     public static final String INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL = "e-mail";

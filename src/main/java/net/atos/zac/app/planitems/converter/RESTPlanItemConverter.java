@@ -10,6 +10,7 @@ import static net.atos.zac.app.planitems.model.PlanItemType.PROCESS_TASK;
 import static net.atos.zac.app.planitems.model.PlanItemType.USER_EVENT_LISTENER;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,6 +90,9 @@ public class RESTPlanItemConverter {
                                         humanTaskPlanItem.getPlanItemDefinitionId());
                     }
                     restPlanItem.groepId = humanTaskParameters.getGroepID();
+                    if (humanTaskParameters.getDoorlooptijd() != null) {
+                        restPlanItem.fataledatum = LocalDate.now().plusDays(humanTaskParameters.getDoorlooptijd());
+                    }
                 });
         return restPlanItem;
     }

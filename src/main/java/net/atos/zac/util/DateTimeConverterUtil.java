@@ -10,6 +10,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  */
@@ -34,5 +36,9 @@ public final class DateTimeConverterUtil {
 
     public static Date convertToDate(final ZonedDateTime zonedDateTime) {
         return zonedDateTime != null ? Date.from(zonedDateTime.withZoneSameInstant(DEFAULT_ZONE_ID).toInstant()) : null;
+    }
+
+    public static Date convertToDate(final String isoString) {
+        return StringUtils.isNotBlank(isoString) ? convertToDate(ZonedDateTime.parse(isoString)) : null;
     }
 }

@@ -18,4 +18,5 @@ export class PlanItem {
     zaakUuid: string;
     userEventListenerActie: UserEventListenerActie;
     toelichting: string;
+    fataledatum: string;
 }

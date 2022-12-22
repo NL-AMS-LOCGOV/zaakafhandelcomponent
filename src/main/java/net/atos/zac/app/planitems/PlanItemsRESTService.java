@@ -5,13 +5,17 @@
 
 package net.atos.zac.app.planitems;
 
-import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
+
 import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_BODY;
 import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_EMAILADRES;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,6 +52,8 @@ import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailGegevens;
 import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.shared.helper.OpschortenZaakHelper;
+import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -63,6 +69,14 @@ import net.atos.zac.zoeken.IndexeerService;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PlanItemsRESTService {
+
+    public static final String TAAK_DATA_BIJLAGEN = "bijlagen";
+
+    public static final String TAAK_DATA_OPSCHORTEN = "opschorten";
+
+    public static final String TAAK_DATA_DOORLOPTIJD = "doorlooptijd";
+
+    public static final String REDEN_OPSCHORTING = "Aanvullende informatie opgevraagd";
 
     @Inject
     private ZaakVariabelenService zaakVariabelenService;
@@ -96,6 +110,9 @@ public class PlanItemsRESTService {
 
     @Inject
     private PolicyService policyService;
+
+    @Inject
+    private OpschortenZaakHelper opschortenZaakHelper;
 
     @GET
     @Path("zaak/{uuid}/humanTaskPlanItems")
@@ -153,13 +170,24 @@ public class PlanItemsRESTService {
                 zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
         final Optional<HumanTaskParameters> humanTaskParameters = zaakafhandelParameters
                 .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
-        final Date fataledatum =
-                humanTaskParameters.isPresent() && humanTaskParameters.get().getDoorlooptijd() != null ?
-                        DateUtils.addDays(new Date(), humanTaskParameters.get().getDoorlooptijd()) : null;
+
+        final Date fataleDatum;
+        if (humanTaskData.taakdata.containsKey(TAAK_DATA_DOORLOPTIJD)) {
+            fataleDatum = DateTimeConverterUtil.convertToDate(humanTaskData.taakdata.get(TAAK_DATA_DOORLOPTIJD));
+            if (humanTaskData.taakdata.containsKey(TAAK_DATA_OPSCHORTEN) && humanTaskData.taakdata.get(TAAK_DATA_OPSCHORTEN).equals("true")) {
+                final long aantalDagen = ChronoUnit.DAYS.between(
+                        ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS),
+                        Objects.requireNonNull(DateTimeConverterUtil.convertToZonedDateTime(fataleDatum)).truncatedTo(ChronoUnit.DAYS));
+                opschortenZaakHelper.opschortenZaak(zaak, aantalDagen, REDEN_OPSCHORTING);
+            }
+        } else {
+            fataleDatum = humanTaskParameters.isPresent() && humanTaskParameters.get().getDoorlooptijd() != null ?
+                    DateUtils.addDays(new Date(), humanTaskParameters.get().getDoorlooptijd()) : null;
+        }
         if (humanTaskData.taakStuurGegevens.sendMail) {
             String bijlagen = null;
-            if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
-                bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
+            if (humanTaskData.taakdata.containsKey(TAAK_DATA_BIJLAGEN) && humanTaskData.taakdata.get(TAAK_DATA_BIJLAGEN) != null) {
+                bijlagen = humanTaskData.taakdata.get(TAAK_DATA_BIJLAGEN);
             }
             final Mail mail = Mail.valueOf(humanTaskData.taakStuurGegevens.mail);
 
@@ -179,7 +207,7 @@ public class PlanItemsRESTService {
         }
         cmmnService.startHumanTaskPlanItem(humanTaskData.planItemInstanceId, humanTaskData.groep.id,
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
-                                           fataledatum,
+                                           fataleDatum,
                                            humanTaskData.taakdata, zaakUUID);
         indexeerService.addZaak(zaakUUID, false);
     }

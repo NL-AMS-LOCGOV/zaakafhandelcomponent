@@ -11,6 +11,8 @@ import {DividerFormFieldBuilder} from '../../shared/material-form-builder/form-c
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {Group} from '../../identity/model/group';
 import {AbstractTaakFormulier} from './abstract-taak-formulier';
+import * as moment from 'moment/moment';
+import {Zaak} from '../../zaken/model/zaak';
 
 export class TaakFormulierBuilder {
 
@@ -20,12 +22,16 @@ export class TaakFormulierBuilder {
         this._formulier = formulier;
     }
 
-    startForm(planItem: PlanItem): TaakFormulierBuilder {
+    startForm(planItem: PlanItem, zaak: Zaak): TaakFormulierBuilder {
+        console.log(planItem);
         this._formulier.tabellen = planItem.tabellen;
-        this._formulier.zaakUuid = planItem.zaakUuid;
+        this._formulier.zaak = zaak;
         this._formulier.taakNaam = planItem.naam;
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
+        if (planItem.fataledatum) {
+            this._formulier.humanTaskData.fataleDatum = moment(planItem.fataledatum, moment.ISO_8601);
+        }
         this._formulier.initStartForm();
         let groep = null;
         if (planItem.groepId) {
@@ -43,8 +49,8 @@ export class TaakFormulierBuilder {
         return this;
     }
 
-    behandelForm(taak: Taak): TaakFormulierBuilder {
-        this._formulier.zaakUuid = taak.zaakUuid;
+    behandelForm(taak: Taak, zaak: Zaak): TaakFormulierBuilder {
+        this._formulier.zaak = zaak;
         this._formulier.taak = taak;
         this._formulier.tabellen = taak.tabellen;
         this._formulier.dataElementen = taak.taakdata;

@@ -44,7 +44,7 @@ export class Advies extends AbstractTaakFormulier {
 
     _initStartForm() {
         const zoekparameters = new InformatieobjectZoekParameters();
-        zoekparameters.zaakUUID = this.zaakUuid;
+        zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
@@ -92,7 +92,7 @@ export class Advies extends AbstractTaakFormulier {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new InformatieobjectZoekParameters();
-            zoekParameters.zaakUUID = this.zaakUuid;
+            zoekParameters.zaakUUID = this.zaak.uuid;
             zoekParameters.informatieobjectUUIDs = dataElement.split(';');
             return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
         }

@@ -36,6 +36,9 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {TaakStatus} from '../model/taak-status.enum';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
+import {Observable, share} from 'rxjs';
+import {Zaak} from '../../zaken/model/zaak';
+import {ZakenService} from '../../zaken/zaken.service';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -48,7 +51,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('historieSort') historieSort: MatSort;
 
-    taak: Taak;
+    taak: Taak = new Taak();
+    zaak$: Observable<Zaak>;
     menu: MenuItem[] = [];
     readonly sideNavAction = SideNavAction;
     action: SideNavAction;
@@ -66,7 +70,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     private ingelogdeMedewerker: User;
     readonly TaakStatusAfgerond = TaakStatus.Afgerond;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+    constructor(private route: ActivatedRoute, private takenService: TakenService, private zakenService: ZakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
                 protected translate: TranslateService) {
         super();
@@ -111,10 +115,11 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private init(taak: Taak): void {
         this.initTaakGegevens(taak);
-        this.createTaakForm(taak);
+        this.zaak$ = this.zakenService.readZaak(this.taak.zaakUuid).pipe(share());
+        this.zaak$.subscribe(zaak => this.createTaakForm(taak, zaak));
     }
 
-    private createTaakForm(taak: Taak): void {
+    private createTaakForm(taak: Taak, zaak: Zaak): void {
         if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
             this.formConfig = new FormConfigBuilder()
             .partialText('actie.opslaan')
@@ -125,7 +130,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie)
-                             .behandelForm(taak)
+                             .behandelForm(taak, zaak)
                              .build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
