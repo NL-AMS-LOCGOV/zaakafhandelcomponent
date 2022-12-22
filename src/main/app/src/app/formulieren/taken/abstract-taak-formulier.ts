@@ -44,7 +44,8 @@ export abstract class AbstractTaakFormulier {
         this.humanTaskData.taakStuurGegevens = new TaakStuurGegevens();
         this.form = [];
         this.form.push(
-            [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level(HeadingLevel.H2).build()]);
+            [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level(HeadingLevel.H2)
+                                          .build()]);
         this._initStartForm();
     }
 
@@ -142,11 +143,23 @@ export abstract class AbstractTaakFormulier {
             this.dataElementen = {};
         }
         Object.keys(formGroup.controls).forEach((key) => {
-            if (key !== AbstractTaakFormulier.TOEKENNING_FIELD) {
+            if (key !== AbstractTaakFormulier.TOEKENNING_FIELD && !this.isReadonlyFormField(key)) {
                 this.dataElementen[key] = formGroup.controls[key]?.value;
             }
         });
         return this.dataElementen;
+    }
+
+    private isReadonlyFormField(id: string): boolean {
+        let readonly = false;
+        this.form.forEach((formFields) => {
+            formFields.forEach((formField) => {
+                if (formField.id === id) {
+                    readonly = formField.readonly;
+                }
+            });
+        });
+        return readonly;
     }
 
     private getTaakinformatie(formGroup: FormGroup): Taakinformatie {
