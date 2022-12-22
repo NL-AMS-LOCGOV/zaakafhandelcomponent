@@ -3,34 +3,40 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <zac-skeleton-loader [loading$]="bedrijf$"
-                             [options]="{layout: skeletonLoaderLayout.FIELDS, fields:7, fieldsPerRow:7}">
-            <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <zac-static-text fxFlex="" [label]="'handelsnaam' | translate"
-                                 [value]="bedrijf?.naam"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'adres' | translate" [value]="bedrijf?.adres"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'kvknummer' | translate"
-                                 [value]="bedrijf?.kvkNummer"></zac-static-text>
-                <zac-static-text *ngIf="vestigingsnummer" fxFlex="" [label]="'vestigingsnummer' | translate"
-                                 [value]="bedrijf?.vestigingsnummer"></zac-static-text>
-                <zac-static-text *ngIf="rsin" fxFlex="" [label]="'rsin' | translate"
-                                 [value]="bedrijf?.rsin"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'type' | translate"
-                                 [value]="bedrijf?.type | translate"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'telefoonnummer' | translate"
-                                 [value]="bedrijf?.telefoonnummer"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'emailadres' | translate"
-                                 [value]="bedrijf?.emailadres"></zac-static-text>
-            </div>
-        </zac-skeleton-loader>
-    </mat-card-content>
-</mat-card>
-<zac-klant-zaken-tabel [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
-<zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer"
-                                 [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
+<mat-drawer-container class="inner-sidenav-container tablet-bottom-toolbar">
+    <mat-drawer-content fxLayout="column" fxLayoutGap="10px">
+        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="10px">
+            <mat-card fxFlex="calc(15%-10px)" fxFlex.lt-lg="100">
+                <mat-card-header>
+                    <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <zac-skeleton-loader [loading$]="bedrijf$"
+                                         [options]="{layout: skeletonLoaderLayout.FIELDS, fields:7, fieldsPerRow:1}">
+                        <div id="bedrijfsgegevens" class="content" fxLayout="column wrap">
+                            <zac-static-text [label]="'handelsnaam' | translate"
+                                             [value]="bedrijf?.naam"></zac-static-text>
+                            <zac-static-text [label]="'adres' | translate" [value]="bedrijf?.adres"></zac-static-text>
+                            <zac-static-text [label]="'kvknummer' | translate"
+                                             [value]="bedrijf?.kvkNummer"></zac-static-text>
+                            <zac-static-text *ngIf="vestigingsnummer" [label]="'vestigingsnummer' | translate"
+                                             [value]="bedrijf?.vestigingsnummer"></zac-static-text>
+                            <zac-static-text *ngIf="rsin" [label]="'rsin' | translate"
+                                             [value]="bedrijf?.rsin"></zac-static-text>
+                            <zac-static-text [label]="'type' | translate"
+                                             [value]="bedrijf?.type | translate"></zac-static-text>
+                            <zac-static-text [label]="'telefoonnummer' | translate"
+                                             [value]="bedrijf?.telefoonnummer"></zac-static-text>
+                            <zac-static-text [label]="'emailadres' | translate"
+                                             [value]="bedrijf?.emailadres"></zac-static-text>
+                        </div>
+                    </zac-skeleton-loader>
+                </mat-card-content>
+            </mat-card>
+            <zac-klant-zaken-tabel fxFlex="calc(85%-10px)" [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
+        </div>
 
+        <zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer"
+                                         [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
+    </mat-drawer-content>
+</mat-drawer-container>

@@ -434,6 +434,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     processTaskPlanItems.map(
                         processTaskPlanItem => this.createProcessTaskPlanItemMenuItem(processTaskPlanItem)));
             }
+
+            this.updateMargins();
         });
     }
 
