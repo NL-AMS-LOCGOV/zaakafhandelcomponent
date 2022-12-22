@@ -46,6 +46,18 @@ zgwApis:
 # Configuration of the notifications receiving endpoint.
 notificationsSecretKey: ""
 
+# Configuration of Klanten API provider (Open Klant)
+klantenApi:
+  url: "" # http://open-klant.internal
+  clientId: ""
+  secret: ""
+
+# Configuration of Contactmomenten API provider (Open Klant)
+contactmomentenApi:
+  url: "" # http://open-klant.internal
+  clientId: ""
+  secret: ""
+
 # Configuration of the Objecten API provider (Overige Registraties)
 objectenApi:
   url: "" # http://objecten.internal
