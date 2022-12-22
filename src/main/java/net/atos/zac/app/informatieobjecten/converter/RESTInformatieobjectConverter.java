@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -50,6 +51,9 @@ public class RESTInformatieobjectConverter {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    private BRCClientService brcClientService;
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -108,6 +112,7 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restEnkelvoudigInformatieobject.rechten = rechtenConverter.convert(rechten);
+        restEnkelvoudigInformatieobject.isBesluitDocument = brcClientService.isInformatieObjectGekoppeldAanBesluit(enkelvoudigInformatieObject.getUrl());
         if (rechten.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()

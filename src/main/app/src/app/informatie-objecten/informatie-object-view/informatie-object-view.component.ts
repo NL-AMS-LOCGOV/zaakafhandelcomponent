@@ -163,7 +163,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'lock_open'));
         }
 
-        if (this.laatsteVersieInfoObject.rechten.verwijderen) {
+        if (this.laatsteVersieInfoObject.rechten.verwijderen && !this.laatsteVersieInfoObject.isBesluitDocument) {
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
 
@@ -227,7 +227,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     private openDocumentVerwijderenDialog(): void {
-        const dialogData = new DialogData(this.zaak? [
+        const dialogData = new DialogData(this.zaak ? [
                 new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
                                            .validators(Validators.required)
                                            .maxlength(100)

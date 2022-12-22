@@ -77,6 +77,11 @@ public class BRCClientService {
     }
 
     public List<BesluitInformatieobject> listBesluitInformatieobjecten(final URI besluit) {
-        return brcClient.listBesluitInformatieobjecten(besluit);
+        return brcClient.listBesluitInformatieobjectenByBesluit(besluit);
+    }
+
+    public boolean isInformatieObjectGekoppeldAanBesluit(final URI informatieobject) {
+        final List<BesluitInformatieobject> besluitInformatieobjecten = brcClient.listBesluitInformatieobjectenByInformatieObject(informatieobject);
+        return !besluitInformatieobjecten.isEmpty();
     }
 }

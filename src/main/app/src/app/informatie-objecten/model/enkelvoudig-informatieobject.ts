@@ -35,4 +35,5 @@ export class EnkelvoudigInformatieobject {
     gelockedDoor: User;
     indicaties: InformatieobjectIndicatie[];
     rechten: DocumentRechten;
+    isBesluitDocument: boolean;
 }
