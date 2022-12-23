@@ -151,15 +151,14 @@ export abstract class AbstractTaakFormulier {
     }
 
     private isReadonlyFormField(id: string): boolean {
-        let readonly = false;
-        this.form.forEach((formFields) => {
-            formFields.forEach((formField) => {
-                if (formField.id === id) {
-                    readonly = formField.readonly;
+        for (const fieldArray of this.form) {
+            for (const field of fieldArray) {
+                if (field.id === id) {
+                    return field.readonly;
                 }
-            });
-        });
-        return readonly;
+            }
+        }
+        return false;
     }
 
     private getTaakinformatie(formGroup: FormGroup): Taakinformatie {
