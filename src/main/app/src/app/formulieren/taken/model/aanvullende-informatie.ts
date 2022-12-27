@@ -24,6 +24,7 @@ import {Mailtemplate} from '../../../admin/model/mailtemplate';
 import {Mail} from '../../../admin/model/mail';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 import {CheckboxFormFieldBuilder} from '../../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {ZaakIndicatie} from '../../../shared/indicaties/zaak-indicaties/zaak-indicaties.component';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -35,7 +36,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         OPMERKINGEN: 'opmerkingen',
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
         BIJLAGEN: 'bijlagen',
-        OPSCHORTEN: 'opschorten',
+        ZAAK_OPSCHORTEN: 'zaakOpschorten',
+        ZAAK_HERVATTEN: 'zaakHervatten',
         DOORLOOPTIJD: 'doorlooptijd'
     };
 
@@ -96,11 +98,11 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         if (this.opschortenMogelijk()) {
             this.form.push(
                 [new CheckboxFormFieldBuilder()
-                .id(fields.OPSCHORTEN)
-                .label(fields.OPSCHORTEN)
+                .id(fields.ZAAK_OPSCHORTEN)
+                .label(fields.ZAAK_OPSCHORTEN)
                 .build()]
             );
-            this.getFormField(fields.OPSCHORTEN).formControl.valueChanges.subscribe(opschorten => {
+            this.getFormField(fields.ZAAK_OPSCHORTEN).formControl.valueChanges.subscribe(opschorten => {
                 this.getFormField(this.fields.DOORLOOPTIJD).required = opschorten;
             });
 
@@ -140,8 +142,28 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
                                                                                                             .options(this.getAanvullendeInformatieOpties())
                                                                                                             .validators(Validators.required)
                                                                                                             .readonly(this.readonly)
-                                                                                                            .build()]
-        );
+                                                                                                            .build()]);
+
+        if (this.toonHervatten()) {
+            if (this.readonly) {
+                this.form.push([
+                    new ReadonlyFormFieldBuilder(
+                        this.translate.instant(this.getDataElement(fields.ZAAK_HERVATTEN) === 'true' ? 'zaak.hervatten.ja' : 'zaak.hervatten.nee'))
+                    .id(fields.ZAAK_HERVATTEN)
+                    .label('actie.zaak.hervatten').build()]);
+            } else {
+                this.form.push(
+                    [new RadioFormFieldBuilder(this.getDataElement(fields.ZAAK_HERVATTEN))
+                    .id(fields.ZAAK_HERVATTEN)
+                    .label('actie.zaak.hervatten')
+                    .options([{value: 'true', label: 'zaak.hervatten.ja'}, {value: 'false', label: 'zaak.hervatten.nee'}])
+                    .validators(Validators.required)
+                    .optionLabel('label')
+                    .optionValue('value')
+                    .readonly(this.readonly)
+                    .build()]);
+            }
+        }
     }
 
     getStartTitel(): string {
@@ -162,6 +184,13 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             'aanvullende-informatie.geleverd-niet-akkoord',
             'aanvullende-informatie.niet-geleverd'
         ]);
+    }
+
+    private toonHervatten(): boolean {
+        if (this.readonly) {
+            return this.getDataElement(this.fields.ZAAK_HERVATTEN);
+        }
+        return this.zaak.indicaties.find(indicatie => indicatie === ZaakIndicatie.OPSCHORTING) && this.zaak.rechten.behandelen;
     }
 }
 

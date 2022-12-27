@@ -66,8 +66,8 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
-import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.shared.helper.OpschortenZaakHelper;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -85,11 +85,12 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Produces(MediaType.APPLICATION_JSON)
 public class TakenRESTService {
 
-    @Inject
-    private TakenService takenService;
+    public static final String TAAK_DATA_ZAAK_HERVATTEN = "zaakHervatten";
+
+    public static final String REDEN_HERVATTING = "Aanvullende informatie geleverd";
 
     @Inject
-    private ZaakVariabelenService zaakVariabelenService;
+    private TakenService takenService;
 
     @Inject
     private TaakVariabelenService taakVariabelenService;
@@ -133,6 +134,9 @@ public class TakenRESTService {
 
     @Inject
     private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
+
+    @Inject
+    private OpschortenZaakHelper opschortenZaakHelper;
 
     @GET
     @Path("zaak/{zaakUUID}")
@@ -254,14 +258,16 @@ public class TakenRESTService {
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         Task task = takenService.readOpenTask(restTaak.id);
+        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUuid);
         assertPolicy(takenService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
             task = takenService.assignTaskToUser(task.getId(), loggedInUserId);
         }
-
-        createDocuments(restTaak);
-        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUuid);
+        createDocuments(restTaak, zaak);
+        if (restTaak.taakdata.containsKey(TAAK_DATA_ZAAK_HERVATTEN) && restTaak.taakdata.get(TAAK_DATA_ZAAK_HERVATTEN).equals("true")) {
+            opschortenZaakHelper.hervattenZaak(zaak, REDEN_HERVATTING);
+        }
         ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata, zaak);
         taakVariabelenService.setTaakdata(task, restTaak.taakdata);
         taakVariabelenService.setTaakinformatie(task, restTaak.taakinformatie);
@@ -306,8 +312,7 @@ public class TakenRESTService {
         return task;
     }
 
-    private void createDocuments(final RESTTaak restTaak) {
-        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUuid);
+    private void createDocuments(final RESTTaak restTaak, final Zaak zaak) {
         final HttpSession httpSession = this.httpSession.get();
         for (String key : restTaak.taakdata.keySet()) {
             final String fileKey = String.format("_FILE__%s__%s", restTaak.id, key);

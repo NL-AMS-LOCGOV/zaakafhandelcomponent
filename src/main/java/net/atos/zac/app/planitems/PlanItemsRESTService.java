@@ -72,7 +72,7 @@ public class PlanItemsRESTService {
 
     public static final String TAAK_DATA_BIJLAGEN = "bijlagen";
 
-    public static final String TAAK_DATA_OPSCHORTEN = "opschorten";
+    public static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
 
     public static final String TAAK_DATA_DOORLOPTIJD = "doorlooptijd";
 
@@ -174,7 +174,7 @@ public class PlanItemsRESTService {
         final Date fataleDatum;
         if (humanTaskData.taakdata.containsKey(TAAK_DATA_DOORLOPTIJD)) {
             fataleDatum = DateTimeConverterUtil.convertToDate(humanTaskData.taakdata.get(TAAK_DATA_DOORLOPTIJD));
-            if (humanTaskData.taakdata.containsKey(TAAK_DATA_OPSCHORTEN) && humanTaskData.taakdata.get(TAAK_DATA_OPSCHORTEN).equals("true")) {
+            if (humanTaskData.taakdata.containsKey(TAAK_DATA_ZAAK_OPSCHORTEN) && humanTaskData.taakdata.get(TAAK_DATA_ZAAK_OPSCHORTEN).equals("true")) {
                 final long aantalDagen = ChronoUnit.DAYS.between(
                         ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS),
                         Objects.requireNonNull(DateTimeConverterUtil.convertToZonedDateTime(fataleDatum)).truncatedTo(ChronoUnit.DAYS));

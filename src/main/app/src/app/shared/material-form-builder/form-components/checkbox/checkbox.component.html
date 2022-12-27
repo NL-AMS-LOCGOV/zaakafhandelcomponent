@@ -4,4 +4,6 @@
   -->
 
 <mat-checkbox [formControl]="data.formControl"
-              [id]="data.id + '_checkbox'">{{ data.label | translate }}</mat-checkbox>
+              [id]="data.id + '_checkbox'">{{ data.label | translate }}
+</mat-checkbox>
+<mat-hint *ngIf="data.hint" align="start">{{data.hint.label | translate}}</mat-hint>

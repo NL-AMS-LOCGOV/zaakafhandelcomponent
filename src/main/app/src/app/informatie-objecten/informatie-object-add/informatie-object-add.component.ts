@@ -29,7 +29,6 @@ import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
-import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -145,7 +144,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         const ontvangstDatum = new DateFormFieldBuilder()
         .id('ontvangstdatum')
         .label('ontvangstdatum')
-        .hint(new FormFieldHint(this.translateService.instant('msg.document.ontvangstdatum.hint')))
+        .hint('msg.document.ontvangstdatum.hint')
         .build();
 
         const verzendDatum = new DateFormFieldBuilder()
