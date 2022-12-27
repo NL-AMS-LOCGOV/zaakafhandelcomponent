@@ -5,7 +5,6 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {DateFormField} from './date-form-field';
-import {Observable} from 'rxjs';
 
 export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
     readonly formField: DateFormField;
@@ -14,6 +13,9 @@ export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
         super();
         this.formField = new DateFormField();
         this.formField.initControl(value);
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 36525); // default maxDate (100 jaar)
+        this.maxDate(maxDate);
     }
 
     minDate(date: Date) {

@@ -13,7 +13,7 @@ public class RESTZaakOpschortGegevens {
 
     public String redenOpschorting;
 
-    public Integer duurDagen;
+    public long duurDagen;
 
     public LocalDate einddatumGepland;
 

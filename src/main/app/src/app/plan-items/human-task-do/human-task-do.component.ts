@@ -14,6 +14,7 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
+import {Zaak} from '../../zaken/model/zaak';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -26,6 +27,7 @@ export class HumanTaskDoComponent implements OnInit {
     formConfig: FormConfig;
     private formulier: AbstractTaakFormulier;
     @Input() planItem: PlanItem;
+    @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService) {
@@ -35,7 +37,7 @@ export class HumanTaskDoComponent implements OnInit {
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
-                                 .startForm(this.planItem).build();
+                                 .startForm(this.planItem, this.zaak).build();
             if (this.formulier.disablePartialSave) {
                 this.formConfig.partialButtonText = null;
             }

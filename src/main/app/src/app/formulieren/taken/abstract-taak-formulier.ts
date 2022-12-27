@@ -19,13 +19,14 @@ import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
+import {Zaak} from '../../zaken/model/zaak';
 
 export abstract class AbstractTaakFormulier {
 
     public static TOEKENNING_FIELD: string = 'toekenning-field';
     public static BIJLAGEN_FIELD: string = 'bijlagen';
 
-    zaakUuid: string;
+    zaak: Zaak;
     taakNaam: string;
     humanTaskData: HumanTaskData;
     taak: Taak;
@@ -33,7 +34,7 @@ export abstract class AbstractTaakFormulier {
     abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
     dataElementen: {};
     readonly: boolean;
-    form: Array<AbstractFormField[]>;
+    form: AbstractFormField[][];
     disablePartialSave: boolean = false;
     taakDocumenten: EnkelvoudigInformatieobject[];
 
@@ -116,7 +117,7 @@ export abstract class AbstractTaakFormulier {
 
     private getTaakdocumenten(): Observable<EnkelvoudigInformatieobject[]> {
         const zoekParameters = new InformatieobjectZoekParameters();
-        zoekParameters.zaakUUID = this.zaakUuid;
+        zoekParameters.zaakUUID = this.zaak.uuid;
         zoekParameters.informatieobjectUUIDs = [];
 
         if (this.taak?.taakdocumenten) {
@@ -146,6 +147,9 @@ export abstract class AbstractTaakFormulier {
             if (key !== AbstractTaakFormulier.TOEKENNING_FIELD && !this.isReadonlyFormField(key)) {
                 this.dataElementen[key] = formGroup.controls[key]?.value;
             }
+            if (typeof this.dataElementen[key] === 'boolean') {
+                this.dataElementen[key] = `${this.dataElementen[key]}`; // convert to string, boolean not allowed in string map (yasson/jsonb exception)
+            }
         });
         return this.dataElementen;
     }
@@ -168,4 +172,16 @@ export abstract class AbstractTaakFormulier {
             bijlagen: this.getDocumentInformatie()
         };
     }
+
+    getFormField(id: string): AbstractFormField {
+        for (const fieldArray of this.form) {
+            for (const field of fieldArray) {
+                if (field.id === id) {
+                    return field;
+                }
+            }
+        }
+        throw new Error(`FormField: "${id}" not found!`);
+    }
+
 }

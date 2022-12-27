@@ -23,6 +23,7 @@ import {MailtemplateService} from '../../../mailtemplate/mailtemplate.service';
 import {Mailtemplate} from '../../../admin/model/mailtemplate';
 import {Mail} from '../../../admin/model/mail';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
+import {CheckboxFormFieldBuilder} from '../../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -33,7 +34,9 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         DATUMGELEVERD: 'datumGeleverd',
         OPMERKINGEN: 'opmerkingen',
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
-        BIJLAGEN: 'bijlagen'
+        BIJLAGEN: 'bijlagen',
+        OPSCHORTEN: 'opschorten',
+        DOORLOOPTIJD: 'doorlooptijd'
     };
 
     taakinformatieMapping = {
@@ -49,13 +52,19 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         super(translate, informatieObjectenService);
     }
 
+    private opschortenMogelijk(): boolean {
+        return this.zaak.zaaktype.opschortingMogelijk && !this.zaak.redenOpschorting && !this.zaak.isHeropend && this.zaak.rechten.behandelen;
+    }
+
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.TAAK_AANVULLENDE_INFORMATIE, this.zaakUuid);
+        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.TAAK_AANVULLENDE_INFORMATIE, this.zaak.uuid);
         this.humanTaskData.taakStuurGegevens.mail = Mail.TAAK_AANVULLENDE_INFORMATIE;
         const zoekparameters = new InformatieobjectZoekParameters();
-        zoekparameters.zaakUUID = this.zaakUuid;
+        zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+        const morgen = new Date();
+        morgen.setDate(morgen.getDate() + 1);
         const fields = this.fields;
         this.form.push(
             [new InputFormFieldBuilder()
@@ -77,8 +86,26 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
-            .documenten(documenten).build()]
-        );
+            .documenten(documenten).build()],
+            [new DateFormFieldBuilder(this.humanTaskData.fataleDatum)
+            .id(fields.DOORLOOPTIJD)
+            .minDate(morgen)
+            .label(fields.DOORLOOPTIJD)
+            .build()
+            ]);
+        if (this.opschortenMogelijk()) {
+            this.form.push(
+                [new CheckboxFormFieldBuilder()
+                .id(fields.OPSCHORTEN)
+                .label(fields.OPSCHORTEN)
+                .build()]
+            );
+            this.getFormField(fields.OPSCHORTEN).formControl.valueChanges.subscribe(opschorten => {
+                this.getFormField(this.fields.DOORLOOPTIJD).required = opschorten;
+            });
+
+        }
+
     }
 
     _initBehandelForm() {

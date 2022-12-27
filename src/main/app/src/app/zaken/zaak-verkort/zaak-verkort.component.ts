@@ -25,10 +25,10 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
     styleUrls: ['./zaak-verkort.component.less']
 })
 export class ZaakVerkortComponent implements OnInit, OnDestroy {
-    @Input() zaakUuid: string;
+    zaakUuid: string;
 
     einddatumGeplandIcon: TextIcon;
-    zaak$: Observable<Zaak>;
+    @Input() zaak$: Observable<Zaak>;
     skeletonLayout = SkeletonLayout;
 
     private zaakListener: WebsocketListener;
@@ -40,26 +40,22 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.loadZaak();
-
-        this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid,
-            (event) => this.loadZaak(event));
-        this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid,
-            (event) => this.loadZaak(event));
+        this.zaak$.subscribe(zaak => {
+            this.zaakUuid = zaak.uuid;
+            this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, zaak.uuid,
+                (event) => this.loadZaak(event));
+        });
     }
 
     private loadZaak(event?: ScreenEvent) {
         if (event) {
             console.debug('callback loadZaak: ' + event.key);
         }
-
         this.zaak$ = this.zakenService.readZaak(this.zaakUuid).pipe(share());
-
         this.zaak$.subscribe(zaak => {
             this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
                 'msg.datum.overschreden', 'warning');
         });
-
     }
 
     ngOnDestroy(): void {

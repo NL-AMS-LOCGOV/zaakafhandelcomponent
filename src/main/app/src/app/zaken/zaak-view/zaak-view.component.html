@@ -30,6 +30,7 @@
                                    (document)="documentToegevoegd($event)"></zac-informatie-object-add>
         <zac-human-task-do *ngSwitchCase="sideNavAction.TAAK_STARTEN"
                            (done)="taakGestart()"
+                           [zaak]="zaak"
                            [planItem]="actiefPlanItem"></zac-human-task-do>
         <zac-process-task-do *ngSwitchCase="sideNavAction.PROCESS_STARTEN"
                              (done)="processGestart()"

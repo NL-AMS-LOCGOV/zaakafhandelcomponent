@@ -48,9 +48,9 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
         this.humanTaskData.taakStuurGegevens.mail = Mail.TAAK_ADVIES_EXTERN;
 
         const zoekparameters = new InformatieobjectZoekParameters();
-        zoekparameters.zaakUUID = this.zaakUuid;
+        zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
-        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ADVIES_EXTERN, this.zaakUuid);
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ADVIES_EXTERN, this.zaak.uuid);
 
         this.form.push(
             [new InputFormFieldBuilder()
