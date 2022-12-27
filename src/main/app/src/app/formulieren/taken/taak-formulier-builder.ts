@@ -23,7 +23,6 @@ export class TaakFormulierBuilder {
     }
 
     startForm(planItem: PlanItem, zaak: Zaak): TaakFormulierBuilder {
-        console.log(planItem);
         this._formulier.tabellen = planItem.tabellen;
         this._formulier.zaak = zaak;
         this._formulier.taakNaam = planItem.naam;
