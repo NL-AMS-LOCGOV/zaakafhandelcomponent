@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
 
 import {ZoekObject} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
@@ -26,21 +26,10 @@ import {ZoekObjectType} from '../model/zoek-object-type';
     templateUrl: './zoek.component.html',
     styleUrls: ['./zoek.component.less']
 })
-export class ZoekComponent implements AfterViewInit {
+export class ZoekComponent implements AfterViewInit, OnInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
-    @Input() sideNav: MatSidenav;
-
-    @Input() set keywords(value: string) {
-        if (this.zoekenControl.value !== value) {
-            this.zoekenControl.setValue(value);
-            this.zoek.emit();
-        }
-    }
-
-    get keywords(): string {
-        return this.zoekenControl.value;
-    }
+    @Input() zoekenSideNav: MatSidenav;
 
     zoekType: ZoekType = ZoekType.ZAC;
     ZoekType = ZoekType;
@@ -57,6 +46,23 @@ export class ZoekComponent implements AfterViewInit {
     hasDocument = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
+    }
+
+    ngOnInit(): void {
+        this.zoekService.trefwoorden$.subscribe(trefwoorden => {
+            if (this.zoekenControl.value !== trefwoorden) {
+                this.zoekenControl.setValue(trefwoorden);
+            }
+        });
+        this.zoekenControl.valueChanges.subscribe(trefwoorden => {
+            this.zoekService.trefwoorden$.next(trefwoorden);
+        });
+        this.zoekenSideNav.openedStart.subscribe(o => {
+            if (this.zoekenControl.value) {
+                this.zoek.emit();
+            }
+        });
+        this.zoekService.reset$.subscribe(() => this.reset());
     }
 
     ngAfterViewInit(): void {
@@ -81,6 +87,7 @@ export class ZoekComponent implements AfterViewInit {
         ).subscribe(data => {
             this.paginator.length = data.totaal;
             this.hasSearched = true;
+            this.zoekService.hasSearched$.next(true);
             this.zoekResultaat = data;
             this.bepaalContext();
         });
@@ -143,4 +150,15 @@ export class ZoekComponent implements AfterViewInit {
         }
     }
 
+    reset(): void {
+        this.zoekService.hasSearched$.next(false);
+        this.paginator.length = 0;
+        this.zoekenControl.setValue('');
+        this.zoekResultaat = new ZoekResultaat();
+        this.zoekParameters = new ZoekParameters();
+        this.hasSearched = false;
+        this.hasTaken = false;
+        this.hasZaken = false;
+        this.hasDocument = false;
+    }
 }

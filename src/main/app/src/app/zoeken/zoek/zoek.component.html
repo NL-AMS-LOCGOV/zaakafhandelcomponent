@@ -8,25 +8,36 @@
         <mat-form-field appearance="fill" fxFlex="grow">
             <mat-label>{{'actie.zoeken' | translate}}</mat-label>
             <input [formControl]="zoekenControl" id="zoekVeld" matInput
-                   (blur)="keywordsChange()" (keyup.enter)="keywordsChange()"
+                   (keyup.enter)="keywordsChange()"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
-            <button mat-icon-button type="button" matSuffix
+            <button *ngIf="hasSearched && zoekType === ZoekType.ZAC" [title]="'actie.zoekopdracht.wissen'|translate"
+                    (click)="reset()" mat-icon-button matSuffix color="warn" id="wissen-button">
+                <mat-icon fontIcon="backspace"></mat-icon>
+            </button>
+            <button *ngIf="!hasSearched && zoekType === ZoekType.ZAC"
+                    (click)="zoek.emit()"
+                    mat-icon-button matSuffix
+                    id="zoeken-button"
+                    [title]="'actie.zoeken' | translate">
+                <mat-icon fontIcon="keyboard_return"></mat-icon>
+            </button>
+            <button mat-icon-button type="button" matSuffix id="zac-button"
                     title="{{'zaken' | translate}}"
                     [color]="zoekType === ZoekType.ZAC ? 'primary' : null"
                     (click)="setZoektype(ZoekType.ZAC)">
-                <mat-icon>cases</mat-icon>
+                <mat-icon fontIcon="cases"></mat-icon>
             </button>
-            <button mat-icon-button type="button" matSuffix
-                    title="{{'personen' | translate}}"
+            <button mat-icon-button type="button" matSuffix id="personen-button"
+                    title="{{'actie.zoeken.persoon' | translate}}"
                     [color]="zoekType === ZoekType.PERSONEN ? 'primary' : null"
                     (click)="setZoektype(ZoekType.PERSONEN)">
-                <mat-icon>person</mat-icon>
+                <mat-icon fontIcon="person"></mat-icon>
             </button>
-            <button mat-icon-button type="button" matSuffix
-                    title="{{'bedrijven' | translate}}"
+            <button mat-icon-button type="button" matSuffix id="bedrijven-button"
+                    title="{{'actie.zoeken.bedrijf' | translate}}"
                     [color]="zoekType === ZoekType.BEDRIJVEN ? 'primary' : null"
                     (click)="setZoektype(ZoekType.BEDRIJVEN)">
-                <mat-icon>domain</mat-icon>
+                <mat-icon fontIcon="domain"></mat-icon>
             </button>
             <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
         </mat-form-field>
@@ -71,11 +82,11 @@
             <div fxFlex="grow">
                 <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
                     <ng-container [ngSwitch]="zoekObject.type">
-                        <zac-zaak-zoek-object *ngSwitchCase="zoekObjectType.ZAAK" [sideNav]="sideNav"
+                        <zac-zaak-zoek-object *ngSwitchCase="zoekObjectType.ZAAK" [sideNav]="zoekenSideNav"
                                               [zaak]="getZaakZoekObject(zoekObject)"></zac-zaak-zoek-object>
-                        <zac-taak-zoek-object *ngSwitchCase="zoekObjectType.TAAK" [sideNav]="sideNav"
+                        <zac-taak-zoek-object *ngSwitchCase="zoekObjectType.TAAK" [sideNav]="zoekenSideNav"
                                               [taak]="getTaakZoekObject(zoekObject)"></zac-taak-zoek-object>
-                        <zac-document-zoek-object *ngSwitchCase="zoekObjectType.DOCUMENT" [sideNav]="sideNav"
+                        <zac-document-zoek-object *ngSwitchCase="zoekObjectType.DOCUMENT" [sideNav]="zoekenSideNav"
                                                   [document]="getDocumentZoekObject(zoekObject)"></zac-document-zoek-object>
                     </ng-container>
                     <mat-divider></mat-divider>
@@ -85,10 +96,10 @@
         </div>
     </ng-container>
     <ng-container *ngIf="zoekType===ZoekType.PERSONEN">
-        <zac-persoon-zoek [sideNav]="sideNav"></zac-persoon-zoek>
+        <zac-persoon-zoek [sideNav]="zoekenSideNav"></zac-persoon-zoek>
     </ng-container>
     <ng-container *ngIf="zoekType===ZoekType.BEDRIJVEN">
-        <zac-bedrijf-zoek [sideNav]="sideNav"></zac-bedrijf-zoek>
+        <zac-bedrijf-zoek [sideNav]="zoekenSideNav"></zac-bedrijf-zoek>
     </ng-container>
     <mat-paginator [fxHide]="zoekType !== ZoekType.ZAC"
                    #paginator
