@@ -20,6 +20,7 @@ import {ZoekResultaat} from '../model/zoek-resultaat';
 import {ZoekType} from '../model/zoek-type';
 import {DocumentZoekObject} from '../model/documenten/document-zoek-object';
 import {ZoekObjectType} from '../model/zoek-object-type';
+import {ZoekVeld} from '../model/zoek-veld';
 
 @Component({
     selector: 'zac-zoeken',
@@ -33,12 +34,14 @@ export class ZoekComponent implements AfterViewInit, OnInit {
 
     zoekType: ZoekType = ZoekType.ZAC;
     ZoekType = ZoekType;
+    ZoekVeld = ZoekVeld;
     readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: ZoekResultaat<ZoekObject> = new ZoekResultaat<ZoekObject>();
     zoekParameters: ZoekParameters = new ZoekParameters();
     isLoadingResults = true;
     slow = false;
-    zoekenControl = new FormControl('');
+    zoekveldControl = new FormControl<ZoekVeld>(ZoekVeld.ALLE);
+    trefwoordenControl = new FormControl('');
     zoek = new EventEmitter<void>();
     hasSearched = false;
     hasTaken = false;
@@ -50,15 +53,15 @@ export class ZoekComponent implements AfterViewInit, OnInit {
 
     ngOnInit(): void {
         this.zoekService.trefwoorden$.subscribe(trefwoorden => {
-            if (this.zoekenControl.value !== trefwoorden) {
-                this.zoekenControl.setValue(trefwoorden);
+            if (this.trefwoordenControl.value !== trefwoorden) {
+                this.trefwoordenControl.setValue(trefwoorden);
             }
         });
-        this.zoekenControl.valueChanges.subscribe(trefwoorden => {
+        this.trefwoordenControl.valueChanges.subscribe(trefwoorden => {
             this.zoekService.trefwoorden$.next(trefwoorden);
         });
         this.zoekenSideNav.openedStart.subscribe(o => {
-            if (this.zoekenControl.value) {
+            if (this.trefwoordenControl.value) {
                 this.zoek.emit();
             }
         });
@@ -111,7 +114,7 @@ export class ZoekComponent implements AfterViewInit, OnInit {
     }
 
     getZoekParameters(): ZoekParameters {
-        this.zoekParameters.zoeken.ALLE = this.zoekenControl.value;
+        this.zoekParameters.zoeken[this.zoekveldControl.value] = this.trefwoordenControl.value;
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         return this.zoekParameters;
@@ -134,7 +137,7 @@ export class ZoekComponent implements AfterViewInit, OnInit {
     }
 
     keywordsChange() {
-        if (this.zoekenControl.value !== this.zoekParameters.zoeken.ALLE) {
+        if (this.trefwoordenControl.value !== this.zoekParameters.zoeken[this.zoekveldControl.value]) {
             this.zoek.emit();
         }
     }
@@ -144,21 +147,29 @@ export class ZoekComponent implements AfterViewInit, OnInit {
     setZoektype(zoekType: ZoekType): void {
         this.zoekType = zoekType;
         if (zoekType === ZoekType.ZAC) {
-            this.zoekenControl.enable();
+            this.trefwoordenControl.enable();
         } else {
-            this.zoekenControl.disable();
+            this.trefwoordenControl.disable();
         }
     }
 
     reset(): void {
         this.zoekService.hasSearched$.next(false);
         this.paginator.length = 0;
-        this.zoekenControl.setValue('');
+        this.trefwoordenControl.setValue('');
+        this.zoekveldControl.setValue(ZoekVeld.ALLE);
         this.zoekResultaat = new ZoekResultaat();
         this.zoekParameters = new ZoekParameters();
         this.hasSearched = false;
         this.hasTaken = false;
         this.hasZaken = false;
         this.hasDocument = false;
+    }
+
+    zoekVeldChanged() {
+        this.zoekParameters.zoeken = {};
+        if (this.trefwoordenControl.value) {
+            this.zoek.emit();
+        }
     }
 }

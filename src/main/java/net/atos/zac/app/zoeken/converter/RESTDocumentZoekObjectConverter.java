@@ -44,7 +44,9 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.ondertekeningDatum = DateTimeConverterUtil.convertToLocalDate(documentZoekObject.getOndertekeningDatum());
         restDocumentZoekObject.vertrouwelijkheidaanduiding = documentZoekObject.getVertrouwelijkheidaanduiding();
         restDocumentZoekObject.auteur = documentZoekObject.getAuteur();
-        restDocumentZoekObject.status = documentZoekObject.getStatus().toString();
+        if (documentZoekObject.getStatus() != null) {
+            restDocumentZoekObject.status = documentZoekObject.getStatus().toString();
+        }
         restDocumentZoekObject.formaat = documentZoekObject.getFormaat();
         restDocumentZoekObject.versie = documentZoekObject.getVersie();
         restDocumentZoekObject.bestandsnaam = documentZoekObject.getBestandsnaam();
