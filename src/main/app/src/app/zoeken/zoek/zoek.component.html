@@ -11,7 +11,7 @@
                    (keyup.enter)="keywordsChange()"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
             <button *ngIf="hasSearched && zoekType === ZoekType.ZAC" [title]="'actie.zoekopdracht.wissen'|translate"
-                    (click)="reset()" mat-icon-button matSuffix color="warn" id="wissen-button">
+                    (click)="reset()" mat-icon-button matSuffix id="wissen-button">
                 <mat-icon fontIcon="backspace"></mat-icon>
             </button>
             <button *ngIf="!hasSearched && zoekType === ZoekType.ZAC"
@@ -19,8 +19,9 @@
                     mat-icon-button matSuffix
                     id="zoeken-button"
                     [title]="'actie.zoeken' | translate">
-                <mat-icon fontIcon="keyboard_return"></mat-icon>
+                <mat-icon fontIcon="search"></mat-icon>
             </button>
+            <span *ngIf="zoekType === ZoekType.ZAC" class="separator" matSuffix></span>
             <button mat-icon-button type="button" matSuffix id="zac-button"
                     title="{{'zaken' | translate}}"
                     [color]="zoekType === ZoekType.ZAC ? 'primary' : null"
