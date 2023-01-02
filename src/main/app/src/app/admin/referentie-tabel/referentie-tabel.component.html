@@ -26,7 +26,9 @@
         <mat-card>
             <mat-card-content>
                 <div class="table-wrapper" [ngClass]="{'table-loading-shade':isLoadingResults}">
-                    <table mat-table [dataSource]="dataSource">
+                    <table mat-table [dataSource]="dataSource"
+                           cdkDropList cdkDropListOrientation="vertical"
+                           (cdkDropListDropped)="moveTabelWaarde($event)" [cdkDropListData]="dataSource.data">
                         <ng-container matColumnDef="naam">
                             <th mat-header-cell *matHeaderCellDef>
                                 {{'rij' | translate}}
@@ -56,7 +58,9 @@
                             </td>
                         </ng-container>
                         <tr mat-header-row *matHeaderRowDef="columns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columns;" cdkDrag>
+                            <div class="placeholder" *cdkDragPlaceholder></div>
+                        </tr>
                         <tr mat-row *matNoDataRow>
                             <td [colSpan]="columns.length">
                                 {{'msg.geen.gegevens.gevonden' | translate}}
