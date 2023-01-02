@@ -17,10 +17,19 @@ import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 import {MailtemplateKoppelingService} from '../mailtemplate-koppeling.service';
 import {MailtemplateKoppeling} from '../model/mailtemplate-koppeling';
 import {forkJoin} from 'rxjs';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Sort} from '@angular/material/sort';
 
 @Component({
     templateUrl: './mailtemplates.component.html',
-    styleUrls: ['./mailtemplates.component.less']
+    styleUrls: ['./mailtemplates.component.less'],
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed', style({height: '0px', minHeight: '0'})),
+            state('expanded', style({height: '*'})),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+        ])
+    ]
 })
 export class MailtemplatesComponent extends AdminComponent implements OnInit, AfterViewInit {
 
@@ -29,8 +38,11 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
 
     isLoadingResults: boolean = false;
     columns: string[] = ['mailTemplateNaam', 'mail', 'defaultMailtemplate', 'id'];
+    columnsToDisplay = ['expand', 'mailTemplateNaam', 'mail', 'defaultMailtemplate', 'id'];
     dataSource: MatTableDataSource<Mailtemplate> = new MatTableDataSource<Mailtemplate>();
     mailKoppelingen: MailtemplateKoppeling[];
+    filterValue: string = '';
+    expandedRow: Mailtemplate | null;
 
     constructor(private identityService: IdentityService,
                 private mailtemplateBeheerService: MailtemplateBeheerService,
@@ -82,7 +94,50 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
         });
     }
 
+    getKoppelingen(mailtemplate: Mailtemplate) {
+        const koppelingen: MailtemplateKoppeling[] = [];
+        this.mailKoppelingen.forEach(koppeling => {
+            if (koppeling.mailtemplate.id === mailtemplate.id) {
+                koppelingen.push(koppeling);
+            }
+        });
+
+        return koppelingen;
+    }
+
     private getMailtemplateKoppeling(mailtemplate: Mailtemplate) {
         return this.mailKoppelingen.find(koppeling => koppeling.mailtemplate.id === mailtemplate.id);
+    }
+
+    applyFilter(event?: Event) {
+        if (event) {
+            const filterValue = (event.target as HTMLInputElement).value;
+            this.filterValue = filterValue.trim().toLowerCase();
+            this.dataSource.filter = filterValue;
+        } else { // toggleSwitch
+            this.dataSource.filter = ' ' + this.filterValue;
+        }
+    }
+
+    sortData(sort: Sort) {
+        if (!sort.active || sort.direction === '') {
+            return;
+        }
+
+        this.dataSource.data = this.dataSource.data.slice().sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'mail':
+                    return this.compare(a.mail, b.mail, isAsc);
+                case 'mailTemplateNaam':
+                    return this.compare(a.mailTemplateNaam, b.mailTemplateNaam, isAsc);
+                default:
+                    return 0;
+            }
+        });
+    }
+
+    compare(a: number | string, b: number | string, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 }

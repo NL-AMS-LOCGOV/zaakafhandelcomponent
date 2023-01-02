@@ -10,69 +10,101 @@
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <mat-card>
             <mat-card-content>
-                <div class="table-wrapper" [ngClass]="{'table-loading-shade':isLoadingResults}">
-                    <table mat-table [dataSource]="dataSource">
-                        <ng-container matColumnDef="mailTemplateNaam">
-                            <th mat-header-cell *matHeaderCellDef>
-                                {{'mailTemplateNaam' | translate}}
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row.mailTemplateNaam}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="mail">
-                            <th mat-header-cell *matHeaderCellDef>
-                                {{'mail' | translate}}
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{'mail.' + row.mail | translate}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="defaultMailtemplate">
-                            <th mat-header-cell *matHeaderCellDef>
-                                {{'defaultMailtemplate' | translate}}
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                <mat-icon *ngIf="row.defaultMailtemplate" color="primary">done</mat-icon>
-                                <mat-icon *ngIf="!row.defaultMailtemplate">close</mat-icon>
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="id" stickyEnd>
-                            <th mat-header-cell *matHeaderCellDef>
-                                <button mat-icon-button
-                                        [routerLink]="['/admin/mailtemplate']"
-                                        id="toevoegen"
-                                        title="{{ 'actie.toevoegen' | translate}}">
-                                    <mat-icon>add_circle</mat-icon>
-                                </button>
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                <a mat-flat-button
-                                   [routerLink]="['/admin/mailtemplate/', row.id]"
-                                   id="edit"
-                                   title="{{ 'actie.bewerken' | translate}}">
-                                    <mat-icon>visibility</mat-icon>
-                                </a>
-                                <button mat-flat-button
-                                        *ngIf="!row.defaultMailtemplate"
-                                        [disabled]="isDisabled(row)"
-                                        id="verwijderen"
-                                        [title]="isDisabled(row) ? getDisabledTitle(row) : 'actie.verwijderen' | translate"
-                                        (click)="verwijderMailtemplate(row)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-                        <tr mat-row *matNoDataRow>
-                            <td [colSpan]="columns.length">
-                                {{'msg.geen.gegevens.gevonden' | translate}}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </mat-card-content>
+                <table fxFlex="100" mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)"
+                       multiTemplateDataRows>
+                    <ng-container matColumnDef="expand">
+                        <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-icon *ngIf="expandedRow !== row && isDisabled(row) && !row.defaultMailtemplate">keyboard_arrow_down</mat-icon>
+                            <mat-icon *ngIf="expandedRow === row">keyboard_arrow_up</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="mailTemplateNaam">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="mailTemplateNaam">{{'mailTemplateNaam'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.mailTemplateNaam}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="mail">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="mail">{{'mail'|translate}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <read-more [text]="'mail.' + row.mail | translate" [maxLength]="100"></read-more>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="defaultMailtemplate">
+                        <th mat-header-cell *matHeaderCellDef>{{'defaultMailtemplate'|translate}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-icon *ngIf="row.defaultMailtemplate" color="primary">done</mat-icon>
+                            <mat-icon *ngIf="!row.defaultMailtemplate">close</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="id" stickyEnd>
+                        <th mat-header-cell *matHeaderCellDef>
+                            <button mat-icon-button
+                                    [routerLink]="['/admin/mailtemplate']"
+                                    id="toevoegen"
+                                    title="{{ 'actie.toevoegen' | translate}}">
+                                <mat-icon>add_circle</mat-icon>
+                            </button>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <a mat-flat-button
+                               [routerLink]="['/admin/mailtemplate/', row.id]"
+                               id="edit"
+                               title="{{ 'actie.bewerken' | translate}}">
+                                <mat-icon>visibility</mat-icon>
+                            </a>
+                            <button mat-flat-button
+                                    *ngIf="!row.defaultMailtemplate"
+                                    [disabled]="isDisabled(row)"
+                                    id="verwijderen"
+                                    [title]="'actie.verwijderen' | translate"
+                                    (click)="verwijderMailtemplate(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="expandedPrefix">
+                        <td mat-cell *matCellDef="let row" colspan="1"></td>
+                    </ng-container>
+                    <ng-container matColumnDef="expandedTitle">
+                        <td mat-cell *matCellDef="let row">
+                            <div class="detail" fxLayout="column" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                                <div *ngFor="let koppeling of getKoppelingen(row)">
+                                    {{'msg.mailtemplate.verwijderen.gekoppeld' | translate:{zaaktype: koppeling.zaakafhandelParameters.zaaktype.omschrijving,
+                                    versie: koppeling.zaakafhandelParameters.zaaktype.uuid} }}
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="zoekFilter">
+                        <th mat-header-cell *matHeaderCellDef colspan="6">
+                            <mat-form-field appearance="standard">
+                                <mat-label>{{'filter' | translate}}</mat-label>
+                                <input matInput (keyup)="applyFilter($event)">
+                            </mat-form-field>
+                        </th>
+                    </ng-container>
+                    <ng-container matColumnDef="expandedSuffix">
+                        <td mat-cell *matCellDef="let row" colspan="3">
+                            <div class="detail" fxLayout="column" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                                <div *ngFor="let koppeling of getKoppelingen(row)">
+                                    <a *ngIf="koppeling.zaakafhandelParameters?.zaaktype?.uuid" mat-flat-button
+                                       [routerLink]="['/admin/parameters/', koppeling.zaakafhandelParameters?.zaaktype?.uuid]"
+                                       title="{{ 'actie.zaakafhandelparameters' | translate}}">
+                                        <mat-icon>visibility</mat-icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+                    <tr mat-header-row *matHeaderRowDef="['zoekFilter']"></tr>
+                    <tr (click)="isDisabled(row) && !row.defaultMailtemplate ? (expandedRow = expandedRow === row ? null : row) : null"
+                        class="main-row" mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedPrefix','expandedTitle', 'expandedSuffix']" class="detail-row"></tr>
+                </table>
+                <p *ngIf="dataSource.data.length === 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                <p *ngIf="dataSource.data.length === 0">{{'msg.loading' | translate}}</p>
+                </mat-card-content>
         </mat-card>
     </mat-sidenav-content>
 </mat-sidenav-container>
