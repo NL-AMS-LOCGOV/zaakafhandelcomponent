@@ -80,7 +80,6 @@ export class OntvangstbevestigingComponent implements OnInit {
         .label('body')
         .validators(Validators.required)
         .mailtemplateBody(mailtemplate)
-        .maxlength(1000)
         .build();
         const bijlagen = new DocumentenLijstFieldBuilder()
         .id('bijlagen')
