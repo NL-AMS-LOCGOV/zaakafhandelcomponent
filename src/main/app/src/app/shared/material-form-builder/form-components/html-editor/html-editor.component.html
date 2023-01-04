@@ -12,7 +12,8 @@
         <ngx-editor
                 [editor]="editor"
                 [formControl]="data.formControl"
-                [placeholder]="'mailTemplatePlaceholder' | translate">
+                [placeholder]="'mailTemplatePlaceholder' | translate"
+                [maxlength]="data.maxlength">
         </ngx-editor>
         <ng-template #variabelenKiesMenu>
             <variabelen-kies-menu [editor]="editor" [variabelen]="data.variabelen"></variabelen-kies-menu>

@@ -89,7 +89,6 @@ export class MailCreateComponent implements OnInit {
         .id(this.fieldNames.BODY)
         .label(this.fieldNames.BODY)
         .validators(Validators.required)
-        .maxlength(1000)
         .build();
         this.bijlagenFormField = new DocumentenLijstFieldBuilder()
         .id(this.fieldNames.BIJLAGEN)
