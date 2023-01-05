@@ -38,6 +38,8 @@ public class RESTZaakafhandelParameters {
 
     public String productaanvraagtype;
 
+    public String domein;
+
     public boolean valide;
 
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
