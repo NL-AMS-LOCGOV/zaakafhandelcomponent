@@ -252,7 +252,7 @@ public class InformatieObjectenRESTService {
                                                                 OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
             final Task task = takenService.readOpenTask(documentReferentieId);
-            final List<UUID> taakdocumenten = taakVariabelenService.readTaakdocumenten(task);
+            final List<UUID> taakdocumenten = new ArrayList<>(taakVariabelenService.readTaakdocumenten(task));
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
             taakVariabelenService.setTaakdocumenten(task, taakdocumenten);
         }
@@ -307,7 +307,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("informatieobject/upload/{uuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
+    public Response uploadFile(@PathParam("uuid") final String uuid, @MultipartForm final RESTFileUpload data) {
         httpSession.get().setAttribute("FILE_" + uuid, data);
         return Response.ok("\"Success\"").build();
     }

@@ -29,6 +29,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -174,7 +175,7 @@ public class PlanItemsRESTService {
         final Date fataleDatum;
         if (humanTaskData.taakdata.containsKey(TAAK_DATA_DOORLOPTIJD)) {
             fataleDatum = DateTimeConverterUtil.convertToDate(humanTaskData.taakdata.get(TAAK_DATA_DOORLOPTIJD));
-            if (humanTaskData.taakdata.containsKey(TAAK_DATA_OPSCHORTEN) && humanTaskData.taakdata.get(TAAK_DATA_OPSCHORTEN).equals("true")) {
+            if (humanTaskData.taakdata.containsKey(TAAK_DATA_OPSCHORTEN) && StringUtils.equals(humanTaskData.taakdata.get(TAAK_DATA_OPSCHORTEN), "true")) {
                 final long aantalDagen = ChronoUnit.DAYS.between(
                         ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS),
                         Objects.requireNonNull(DateTimeConverterUtil.convertToZonedDateTime(fataleDatum)).truncatedTo(ChronoUnit.DAYS));
