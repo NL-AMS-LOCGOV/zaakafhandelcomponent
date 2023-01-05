@@ -32,7 +32,7 @@ import {ReferentieTabelService} from '../referentie-tabel.service';
 import {FormulierDefinitie} from '../model/formulier-definitie';
 import {HumanTaskReferentieTabel} from '../model/human-task-referentie-tabel';
 import {FormulierVeldDefinitie} from '../model/formulier-veld-definitie';
-import { MailtemplateKoppeling } from '../model/mailtemplate-koppeling';
+import {MailtemplateKoppeling} from '../model/mailtemplate-koppeling';
 import {MailtemplateKoppelingMail, MailtemplateKoppelingMailUtil} from '../model/mailtemplate-koppeling-mail';
 import {Mailtemplate} from '../model/mailtemplate';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
@@ -63,6 +63,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     mailOpties: { label: string, value: string }[];
 
     caseDefinitions: CaseDefinition[];
+    domeinen: string[];
     groepen: Group[];
     medewerkers: User[];
     resultaattypes: Resultaattype[];
@@ -87,20 +88,23 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 adminService.listCaseDefinitions(),
                 adminService.listFormulierDefinities(),
                 referentieTabelService.listReferentieTabellen(),
+                referentieTabelService.readDomeinen(),
                 identityService.listGroups(),
                 identityService.listUsers(),
                 this.adminService.listZaakbeeindigRedenen(),
                 mailtemplateBeheerService.listKoppelbareMailtemplates()
-            ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen, groepen, medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
-                this.caseDefinitions = caseDefinitions;
-                this.formulierDefinities = formulierDefinities;
-                this.referentieTabellen = referentieTabellen;
-                this.groepen = groepen;
-                this.medewerkers = medewerkers;
-                this.zaakbeeindigRedenen = zaakbeeindigRedenen;
-                this.mailtemplates = mailtemplates;
-                this.createForm();
-            });
+            ]).subscribe(
+                ([caseDefinitions, formulierDefinities, referentieTabellen, domeinen, groepen, medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
+                    this.caseDefinitions = caseDefinitions;
+                    this.formulierDefinities = formulierDefinities;
+                    this.referentieTabellen = referentieTabellen;
+                    this.domeinen = domeinen;
+                    this.groepen = groepen;
+                    this.medewerkers = medewerkers;
+                    this.zaakbeeindigRedenen = zaakbeeindigRedenen;
+                    this.mailtemplates = mailtemplates;
+                    this.createForm();
+                });
         });
     }
 
@@ -152,6 +156,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     createForm() {
         this.algemeenFormGroup = this.formBuilder.group({
             caseDefinition: [this.parameters.caseDefinition, [Validators.required]],
+            domein: [this.parameters.domein],
             defaultGroepId: [this.parameters.defaultGroepId, [Validators.required]],
             defaultBehandelaarId: [this.parameters.defaultBehandelaarId],
             einddatumGeplandWaarschuwing: [this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing],

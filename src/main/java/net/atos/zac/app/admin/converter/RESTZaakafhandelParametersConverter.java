@@ -77,6 +77,7 @@ public class RESTZaakafhandelParametersConverter {
             restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getAfrondenMail());
         }
         restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
+        restZaakafhandelParameters.domein = zaakafhandelParameters.getDomein();
 
         restZaakafhandelParameters.mailtemplateKoppelingen =
                 mailtemplateKoppelingConverter.convert(zaakafhandelParameters.getMailtemplateKoppelingen());
@@ -96,6 +97,7 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setIntakeMail(restZaakafhandelParameters.intakeMail.name());
         zaakafhandelParameters.setAfrondenMail(restZaakafhandelParameters.afrondenMail.name());
         zaakafhandelParameters.setProductaanvraagtype(restZaakafhandelParameters.productaanvraagtype);
+        zaakafhandelParameters.setDomein(restZaakafhandelParameters.domein);
         zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaarId);
         if (restZaakafhandelParameters.einddatumGeplandWaarschuwing != null) {
             zaakafhandelParameters.setEinddatumGeplandWaarschuwing(restZaakafhandelParameters.einddatumGeplandWaarschuwing);

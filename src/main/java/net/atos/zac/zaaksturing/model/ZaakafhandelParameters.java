@@ -90,6 +90,9 @@ public class ZaakafhandelParameters {
     @Column(name = "productaanvraagtype")
     private String productaanvraagtype;
 
+    @Column(name = "domein")
+    private String domein;
+
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<HumanTaskParameters> humanTaskParametersCollection;
@@ -282,13 +285,22 @@ public class ZaakafhandelParameters {
         this.productaanvraagtype = productaanvraagtype;
     }
 
+    public String getDomein() {
+        return domein;
+    }
+
+    public void setDomein(final String domein) {
+        this.domein = domein;
+    }
+
     /**
      * Geeft aan dat er voldoende gegevens zijn ingevuld om een zaak te starten
      *
      * @return true indien er een zaak kan worden gestart
      */
     public boolean isValide() {
-        return StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(caseDefinitionID) && nietOntvankelijkResultaattype != null;
+        return StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(
+                caseDefinitionID) && nietOntvankelijkResultaattype != null;
     }
 
 
