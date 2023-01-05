@@ -44,6 +44,7 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.behandelaarGebruikersnaam = zoekItem.getBehandelaarGebruikersnaam();
         restZoekItem.initiatorIdentificatie = zoekItem.getInitiatorIdentificatie();
         restZoekItem.zaaktypeOmschrijving = zoekItem.getZaaktypeOmschrijving();
+        restZoekItem.zaaktypeDomein = zoekItem.getZaaktypeDomein();
         restZoekItem.statustypeOmschrijving = zoekItem.getStatustypeOmschrijving();
         restZoekItem.resultaattypeOmschrijving = zoekItem.getResultaattypeOmschrijving();
         restZoekItem.aantalOpenstaandeTaken = zoekItem.getAantalOpenstaandeTaken();

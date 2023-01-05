@@ -33,6 +33,8 @@ public class RESTTaakZoekObject extends AbstractRESTZoekObject {
 
     public String zaaktypeOmschrijving;
 
+    public String zaaktypeDomein;
+
     public LocalDate creatiedatum;
 
     public LocalDate toekenningsdatum;

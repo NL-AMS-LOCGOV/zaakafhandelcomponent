@@ -16,7 +16,7 @@ public class DocumentData {
     @JsonbProperty("vergrendeld_door")
     public String vergrendeldDoor;
 
-    public String zaaktype;
+    public String domein;
 
     @JsonbProperty("zaak_open")
     public Boolean zaakOpen;

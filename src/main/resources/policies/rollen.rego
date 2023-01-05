@@ -19,3 +19,12 @@ beheerder := {
 functioneel := {
     "rol": "functionele_gebruiker"
 }
+
+rollen[rol]{
+    rol := [behandelaar
+           ,coordinator
+           ,recordmanager
+           ,beheerder
+           ,functioneel
+           ][i].rol
+}

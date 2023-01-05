@@ -8,7 +8,6 @@ package net.atos.zac.policy;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -19,6 +18,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
 import net.atos.zac.policy.input.DocumentInput;
+import net.atos.zac.policy.input.NoInput;
 import net.atos.zac.policy.input.TaakInput;
 import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakInput;
@@ -34,8 +34,8 @@ import net.atos.zac.policy.output.ZaakRechten;
 public interface OPAEvaluationClient {
 
     @POST
-    @Path("zaaktype/zaaktypen")
-    RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
+    @Path("rol/rollen")
+    RuleResponse<List<String>> readRollen(final RuleQuery<NoInput> query);
 
     @POST
     @Path("zaak/zaak_rechten")

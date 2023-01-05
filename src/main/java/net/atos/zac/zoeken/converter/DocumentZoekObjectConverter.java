@@ -18,6 +18,8 @@ import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockS
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.util.DateTimeConverterUtil;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
@@ -42,6 +44,8 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
     @Inject
     private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Override
     public DocumentZoekObject convert(final String documentUUID) {
@@ -67,6 +71,9 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         documentZoekObject.setTitel(informatieobject.getTitel());
         documentZoekObject.setBeschrijving(informatieobject.getBeschrijving());
         documentZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
+        final ZaakafhandelParameters zaakafhandelParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID());
+        documentZoekObject.setZaaktypeDomein(zaakafhandelParameters.getDomein());
         documentZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
         documentZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         documentZoekObject.setZaakIdentificatie(zaak.getIdentificatie());

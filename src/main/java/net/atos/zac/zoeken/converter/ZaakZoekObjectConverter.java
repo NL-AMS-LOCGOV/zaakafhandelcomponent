@@ -24,6 +24,8 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.util.DateTimeConverterUtil;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.model.ZaakIndicatie;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
@@ -48,6 +50,9 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     @Inject
     private TakenService takenService;
 
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
     public ZaakZoekObject convert(final String zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
         return convert(zaak);
@@ -69,14 +74,14 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
-        zgwApiService.findInitiatorForZaak(zaak).ifPresent(initiator -> zaakZoekObject.setInitiator(initiator));
+        zgwApiService.findInitiatorForZaak(zaak).ifPresent(zaakZoekObject::setInitiator);
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
         if (zaak.getCommunicatiekanaal() != null) {
             vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()))
                     .map(CommunicatieKanaal::getNaam)
                     .ifPresent(
-                            communicatieKanaal -> zaakZoekObject.setCommunicatiekanaal(communicatieKanaal));
+                            zaakZoekObject::setCommunicatiekanaal);
         }
 
         final Group groep = findGroep(zaak);
@@ -108,8 +113,11 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
 
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         zaakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
+        zaakZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
         zaakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
-        zaakZoekObject.setZaaktypeUuid(uuidFromURI(zaaktype.getUrl()).toString());
+        final ZaakafhandelParameters zaakafhandelParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID());
+        zaakZoekObject.setZaaktypeDomein(zaakafhandelParameters.getDomein());
 
         if (zaak.getStatus() != null) {
             final Status status = zrcClientService.readStatus(zaak.getStatus());

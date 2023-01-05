@@ -42,6 +42,9 @@ public class TaakZoekObject implements ZoekObject {
     @Field("taak_zaaktypeOmschrijving")
     private String zaaktypeOmschrijving;
 
+    @Field("taak_zaaktypeDomein")
+    private String zaaktypeDomein;
+
     @Field("taak_zaakUuid")
     private String zaakUUID;
 
@@ -135,6 +138,14 @@ public class TaakZoekObject implements ZoekObject {
 
     public void setZaaktypeOmschrijving(final String zaaktypeOmschrijving) {
         this.zaaktypeOmschrijving = zaaktypeOmschrijving;
+    }
+
+    public String getZaaktypeDomein() {
+        return zaaktypeDomein;
+    }
+
+    public void setZaaktypeDomein(final String zaaktypeDomein) {
+        this.zaaktypeDomein = zaaktypeDomein;
     }
 
     public String getZaaktypeUuid() {

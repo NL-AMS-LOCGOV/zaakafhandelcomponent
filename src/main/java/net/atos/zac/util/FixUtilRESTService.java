@@ -5,6 +5,7 @@
 
 package net.atos.zac.util;
 
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_DOMEIN;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_UUUID;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_IDENTIFICATIE;
@@ -53,6 +54,7 @@ public class FixUtilRESTService {
         countMissingVariable(VAR_ZAAK_IDENTIFICATIE);
         countMissingVariable(VAR_ZAAKTYPE_UUUID);
         countMissingVariable(VAR_ZAAKTYPE_OMSCHRIJVING);
+        countMissingVariable(VAR_ZAAKTYPE_DOMEIN);
         return Response.noContent().build();
     }
 

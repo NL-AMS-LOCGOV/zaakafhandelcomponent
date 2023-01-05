@@ -7,5 +7,5 @@ package net.atos.zac.policy.input;
 
 public class TaakData {
 
-    public String zaaktype;
+    public String domein;
 }

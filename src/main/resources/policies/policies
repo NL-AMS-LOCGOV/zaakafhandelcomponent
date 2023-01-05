@@ -1,6 +1,5 @@
 rollen.rego
 domeinen.rego
-zaaktypen.rego
 zaak-rechten.rego
 taak-rechten.rego
 document-rechten.rego

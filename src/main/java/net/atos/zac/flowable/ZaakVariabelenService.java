@@ -28,6 +28,8 @@ public class ZaakVariabelenService {
 
     public static final String VAR_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
+    public static final String VAR_ZAAKTYPE_DOMEIN = "zaaktypeDomein";
+
     static final String VAR_ZAAK_DATA = "zaakData";
 
     private static final String VAR_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
@@ -59,6 +61,11 @@ public class ZaakVariabelenService {
 
     public String readZaaktypeOmschrijving(final PlanItemInstance planItemInstance) {
         return (String) readCaseVariable(planItemInstance, VAR_ZAAKTYPE_OMSCHRIJVING);
+    }
+
+    public Optional<String> readZaaktypeDomein(final PlanItemInstance planItemInstance) {
+        final Object caseVariable = findCaseVariable(planItemInstance, VAR_ZAAKTYPE_DOMEIN);
+        return caseVariable != null ? Optional.of((String) caseVariable) : Optional.empty();
     }
 
     public Optional<Boolean> findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
@@ -110,6 +117,16 @@ public class ZaakVariabelenService {
     }
 
     private Object readCaseVariable(final PlanItemInstance planItemInstance, final String variableName) {
+        final Object caseVariabele = findCaseVariable(planItemInstance, variableName);
+        if (caseVariabele == null) {
+            throw new RuntimeException(
+                    String.format("No variable found with name '%s' for case instance id '%s'", variableName,
+                                  planItemInstance.getCaseInstanceId()));
+        }
+        return caseVariabele;
+    }
+
+    private Object findCaseVariable(final PlanItemInstance planItemInstance, final String variableName) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
                 .caseInstanceId(planItemInstance.getCaseInstanceId())
                 .includeCaseVariables()
@@ -126,9 +143,7 @@ public class ZaakVariabelenService {
             return historicCaseInstance.getCaseVariables().get(variableName);
         }
 
-        throw new RuntimeException(
-                String.format("No variable found with name '%s' for case instance id '%s'", variableName,
-                              planItemInstance.getCaseInstanceId()));
+        return null;
     }
 
     private Object findCaseVariable(final UUID zaakUUID, final String variableName) {

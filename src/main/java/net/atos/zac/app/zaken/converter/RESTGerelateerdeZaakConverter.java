@@ -35,7 +35,7 @@ public class RESTGerelateerdeZaakConverter {
 
     public RESTGerelateerdeZaak convert(final Zaak zaak, final RelatieType relatieType) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak);
         final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
         restGerelateerdeZaak.identificatie = zaak.getIdentificatie();
         restGerelateerdeZaak.relatieType = relatieType;

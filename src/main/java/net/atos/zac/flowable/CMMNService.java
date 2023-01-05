@@ -5,6 +5,7 @@
 
 package net.atos.zac.flowable;
 
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_DOMEIN;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_UUUID;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_DATA;
@@ -109,7 +110,8 @@ public class CMMNService {
                     .variable(VAR_ZAAK_UUID, zaak.getUuid())
                     .variable(VAR_ZAAK_IDENTIFICATIE, zaak.getIdentificatie())
                     .variable(VAR_ZAAKTYPE_UUUID, zaaktype.getUUID())
-                    .variable(VAR_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving());
+                    .variable(VAR_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
+                    .variable(VAR_ZAAKTYPE_DOMEIN, zaakafhandelParameters.getDomein());
             if (zaakData != null) {
                 caseInstanceBuilder.variable(VAR_ZAAK_DATA, zaakData);
             }

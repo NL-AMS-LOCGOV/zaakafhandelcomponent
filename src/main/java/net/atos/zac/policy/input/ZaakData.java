@@ -9,5 +9,5 @@ public class ZaakData {
 
     public boolean open;
 
-    public String zaaktype;
+    public String domein;
 }

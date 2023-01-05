@@ -50,7 +50,7 @@ public class RESTZaakOverzichtConverter {
 
     public RESTZaakOverzicht convert(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak);
         final RESTZaakOverzicht restZaakOverzicht = new RESTZaakOverzicht();
         restZaakOverzicht.uuid = zaak.getUuid();
         restZaakOverzicht.identificatie = zaak.getIdentificatie();

@@ -112,6 +112,9 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_zaaktypeOmschrijving")
     private String zaaktypeOmschrijving;
 
+    @Field("zaak_zaaktypeDomein")
+    private String zaaktypeDomein;
+
     @Field("zaak_resultaattypeOmschrijving")
     private String resultaattypeOmschrijving;
 
@@ -358,6 +361,14 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setZaaktypeOmschrijving(final String zaaktypeOmschrijving) {
         this.zaaktypeOmschrijving = zaaktypeOmschrijving;
+    }
+
+    public String getZaaktypeDomein() {
+        return zaaktypeDomein;
+    }
+
+    public void setZaaktypeDomein(final String zaaktypeDomein) {
+        this.zaaktypeDomein = zaaktypeDomein;
     }
 
     public String getResultaattypeOmschrijving() {

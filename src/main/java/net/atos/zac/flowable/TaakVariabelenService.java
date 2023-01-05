@@ -5,6 +5,7 @@
 
 package net.atos.zac.flowable;
 
+import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_DOMEIN;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_UUUID;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_IDENTIFICATIE;
@@ -78,6 +79,10 @@ public class TaakVariabelenService {
 
     public String readZaaktypeOmschrijving(final TaskInfo taskInfo) {
         return (String) readVariable(taskInfo, VAR_ZAAKTYPE_OMSCHRIJVING);
+    }
+
+    public String readZaaktypeDomein(final TaskInfo taskInfo) {
+        return (String) findTaskVariable(taskInfo, VAR_ZAAKTYPE_DOMEIN).orElse(null);
     }
 
     private Map<String, Object> getVariables(final TaskInfo taskInfo) {

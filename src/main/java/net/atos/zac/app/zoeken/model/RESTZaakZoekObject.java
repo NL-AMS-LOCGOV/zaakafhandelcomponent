@@ -65,6 +65,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public String zaaktypeOmschrijving;
 
+    public String zaaktypeDomein;
+
     public String resultaattypeOmschrijving;
 
     public String resultaatToelichting;

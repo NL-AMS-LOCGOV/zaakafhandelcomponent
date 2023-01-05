@@ -49,9 +49,9 @@ public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
 
-    private static final String NON_EXISTING_ZAAKTYPE = quoted("-NON-EXISTING-ZAAKTYPE-");
+    private static final String NON_EXISTING_DOMEIN = quoted("-NON-EXISTING-DOMEIN-");
 
-    private static final String ZAAKTYPE_OMSCHRIJVING_VELD = "zaaktypeOmschrijving";
+    private static final String ZAAKTYPE_DOMEIN_VELD = "zaaktypeDomein";
 
     private static final char SOLR_ESCAPE = '\\';
 
@@ -60,7 +60,7 @@ public class ZoekenService {
     @Inject
     private PolicyService policyService;
 
-    private SolrClient solrClient;
+    private final SolrClient solrClient;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -74,7 +74,7 @@ public class ZoekenService {
         final SolrQuery query = new SolrQuery("*:*");
 
         if (loggedInUserInstance.get() != null) { // SignaleringenJob heeft geen ingelogde gebruiker
-            applyAllowedZaaktypenPolicy(query);
+            applyAllowedDomeinenForUserPolicy(query);
         }
 
         if (zoekParameters.getType() != null) {
@@ -179,15 +179,15 @@ public class ZoekenService {
         }
     }
 
-    private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
-        final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
-        if (allowedZaaktypen != null) {
-            if (allowedZaaktypen.isEmpty()) {
-                query.addFilterQuery(format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, NON_EXISTING_ZAAKTYPE));
+    private void applyAllowedDomeinenForUserPolicy(final SolrQuery query) {
+        final Set<String> userDomeinen = policyService.getAllowedDomeinenForUser();
+        if (userDomeinen != null) {
+            if (userDomeinen.isEmpty()) {
+                query.addFilterQuery(format("%s:%s", ZAAKTYPE_DOMEIN_VELD, NON_EXISTING_DOMEIN));
             } else {
-                query.addFilterQuery(allowedZaaktypen.stream()
+                query.addFilterQuery(userDomeinen.stream()
                                              .map(ZoekenService::quoted)
-                                             .map(zaaktype -> format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktype))
+                                             .map(domein -> format("%s:%s", ZAAKTYPE_DOMEIN_VELD, domein))
                                              .collect(joining(" OR ")));
             }
         }

@@ -88,7 +88,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 adminService.listCaseDefinitions(),
                 adminService.listFormulierDefinities(),
                 referentieTabelService.listReferentieTabellen(),
-                referentieTabelService.readDomeinen(),
+                referentieTabelService.listDomeinen(),
                 identityService.listGroups(),
                 identityService.listUsers(),
                 this.adminService.listZaakbeeindigRedenen(),

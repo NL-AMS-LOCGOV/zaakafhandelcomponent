@@ -40,7 +40,7 @@ public class RESTZaakInformatieobjectConverter {
     public RESTZaakInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak);
         final RESTZaakInformatieobject restZaakInformatieobject = new RESTZaakInformatieobject();
         restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
         restZaakInformatieobject.zaakRechten = rechtenConverter.convert(zaakrechten);

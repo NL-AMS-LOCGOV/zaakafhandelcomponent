@@ -15,10 +15,11 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
-import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
 
@@ -31,9 +32,6 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
     private TakenService takenService;
 
     @Inject
-    private ZaakVariabelenService zaakVariabelenService;
-
-    @Inject
     private TaakVariabelenService taakVariabelenService;
 
     @Inject
@@ -41,6 +39,9 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Override
     public TaakZoekObject convert(final String taskID) {
@@ -73,8 +74,11 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         final Zaaktype zaaktype = ztcClientService.readZaaktype(
                 taakVariabelenService.readZaaktypeUUID(taskInfo));
         taakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
-        taakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         taakZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
+        taakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
+        final ZaakafhandelParameters zaakafhandelParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID());
+        taakZoekObject.setZaaktypeDomein(zaakafhandelParameters.getDomein());
 
         final UUID zaakUUID = taakVariabelenService.readZaakUUID(taskInfo);
         taakZoekObject.setZaakUUID(zaakUUID.toString());

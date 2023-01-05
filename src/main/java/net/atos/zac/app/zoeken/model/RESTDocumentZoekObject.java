@@ -23,6 +23,8 @@ public class RESTDocumentZoekObject extends AbstractRESTZoekObject {
 
     public String zaaktypeOmschrijving;
 
+    public String zaaktypeDomein;
+
     public String zaakIdentificatie;
 
     public String zaakUuid;

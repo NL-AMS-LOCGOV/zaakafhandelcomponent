@@ -69,7 +69,8 @@ public class RESTTaakConverter {
         restTaak.zaakUuid = taakVariabelenService.readZaakUUID(taskInfo);
         restTaak.zaakIdentificatie = taakVariabelenService.readZaakIdentificatie(taskInfo);
         final var zaaktypeOmschrijving = taakVariabelenService.readZaaktypeOmschrijving(taskInfo);
-        final var rechten = policyService.readTaakRechten(zaaktypeOmschrijving);
+        final var zaaktypeDomein = taakVariabelenService.readZaaktypeDomein(taskInfo);
+        final var rechten = policyService.readTaakRechten(zaaktypeDomein);
         restTaak.rechten = rechtenConverter.convert(rechten);
         if (rechten.getLezen()) {
             restTaak.zaaktypeOmschrijving = zaaktypeOmschrijving;
@@ -114,11 +115,10 @@ public class RESTTaakConverter {
     private void verwerkZaakafhandelParameters(final RESTTaak restTaak,
             final HumanTaskParameters humanTaskParameters) {
         restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
-        humanTaskParameters.getReferentieTabellen().forEach(referentieTabel -> {
-            restTaak.tabellen.put(referentieTabel.getVeld(),
-                                  referentieTabel.getTabel().getWaarden().stream()
-                                          .map(ReferentieTabelWaarde::getNaam)
-                                          .toList());
-        });
+        humanTaskParameters.getReferentieTabellen().forEach(
+                referentieTabel -> restTaak.tabellen.put(referentieTabel.getVeld(),
+                                                         referentieTabel.getTabel().getWaarden().stream()
+                                                                 .map(ReferentieTabelWaarde::getNaam)
+                                                                 .toList()));
     }
 }
