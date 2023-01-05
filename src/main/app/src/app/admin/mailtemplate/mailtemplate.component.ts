@@ -107,7 +107,6 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .variabelen(this.template.variabelen ? this.template.variabelen :
             MailtemplateVariabeleUtil.getDefaultVariabelen())
         .validators(Validators.required)
-        .maxlength(1000)
         .build();
         this.defaultMailtemplateFormField = new InputFormFieldBuilder(this.template.defaultMailtemplate)
         .id(this.fields.DEFAULT_MAILTEMPLATE)

@@ -38,6 +38,9 @@ public class ReferentieTabelWaarde {
     @Column(name = "naam", nullable = false)
     private String naam;
 
+    @Column(name = "volgorde", nullable = false)
+    private int volgorde;
+
     public Long getId() {
         return id;
     }
@@ -61,4 +64,8 @@ public class ReferentieTabelWaarde {
     public void setNaam(final String naam) {
         this.naam = naam;
     }
+
+    public int getVolgorde() {return volgorde;}
+
+    public void setVolgorde(final int volgorde) {this.volgorde = volgorde;}
 }

@@ -19,6 +19,7 @@ import {ReferentieTabelWaarde} from '../model/referentie-tabel-waarde';
 import {Observable, of} from 'rxjs';
 import {FoutAfhandelingService} from '../../fout-afhandeling/fout-afhandeling.service';
 import {catchError} from 'rxjs/operators';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
     templateUrl: './referentie-tabel.component.html',
@@ -88,7 +89,7 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
                                                                                     .validators(Validators.required)
                                                                                     .build();
         });
-        this.dataSource.data = this.tabel.waarden.sort((a, b) => a.naam.localeCompare(b.naam));
+        this.dataSource.data = this.tabel.waarden;
         this.isLoadingResults = false;
     }
 
@@ -109,6 +110,14 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
         }
         this.tabel.waarden[this.getTabelWaardeIndex(row)].naam = naam;
         this.persistTabel();
+    }
+
+    moveTabelWaarde(event: CdkDragDrop<ReferentieTabelWaarde[]>) {
+        const sameRow = event.previousIndex === event.currentIndex;
+        if (!sameRow) {
+            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+            this.persistTabel();
+        }
     }
 
     verwijderTabelWaarde(row: ReferentieTabelWaarde): void {

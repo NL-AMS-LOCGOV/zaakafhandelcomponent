@@ -77,7 +77,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .label(fields.BODY)
             .validators(Validators.required)
             .mailtemplateBody(this.mailtemplate$)
-            .maxlength(1000)
             .build()],
             [new HiddenFormFieldBuilder(moment())
             .id(fields.DATUMGEVRAAGD)
