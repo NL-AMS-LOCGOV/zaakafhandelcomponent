@@ -307,7 +307,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("informatieobject/upload/{uuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("uuid") final String uuid, @MultipartForm final RESTFileUpload data) {
+    public Response uploadFile(@PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
         httpSession.get().setAttribute("FILE_" + uuid, data);
         return Response.ok("\"Success\"").build();
     }
