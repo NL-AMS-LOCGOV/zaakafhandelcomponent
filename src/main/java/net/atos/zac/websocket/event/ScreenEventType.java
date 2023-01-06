@@ -17,12 +17,12 @@ import java.util.UUID;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.Opcode;
 import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 import net.atos.zac.signalering.model.Signalering;
+import net.atos.zac.util.UriUtil;
 
 /**
  * Enumeration of the type of objects that can be referenced by a {@link ScreenEvent} event.
@@ -104,9 +104,7 @@ public enum ScreenEventType {
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final URI url,
             final URI detail) {
-        return instance(opcode, type,
-                        URIUtil.parseUUIDFromResourceURI(url),
-                        detail != null ? URIUtil.parseUUIDFromResourceURI(detail) : null);
+        return instance(opcode, type, UriUtil.uuidFromURI(url), detail != null ? UriUtil.uuidFromURI(detail) : null);
     }
 
     // These methods determine what is used as an id, so that it is the same everywhere

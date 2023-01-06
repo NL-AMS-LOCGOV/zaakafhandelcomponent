@@ -31,6 +31,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -42,6 +44,7 @@ import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
+import net.atos.zac.zoeken.IndexeerService;
 
 @ApplicationScoped
 @Transactional
@@ -54,6 +57,12 @@ public class ZaakafhandelParameterBeheerService {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
         ztcClientService.readCacheTime();
@@ -93,9 +102,16 @@ public class ZaakafhandelParameterBeheerService {
 
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
+        final ZaakafhandelParameters previous = entityManager.find(ZaakafhandelParameters.class,
+                                                                   zaakafhandelParameters.getId());
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
-        zaakafhandelParameters.setCreatiedatum(entityManager.find(ZaakafhandelParameters.class, zaakafhandelParameters.getId()).getCreatiedatum());
-        return entityManager.merge(zaakafhandelParameters);
+        zaakafhandelParameters.setCreatiedatum(previous.getCreatiedatum());
+        final ZaakafhandelParameters updated = entityManager.merge(zaakafhandelParameters);
+        zaakafhandelParameterService.cacheRemoveZaakafhandelParameters(zaakafhandelParameters.getZaakTypeUUID());
+        if (!StringUtils.equals(zaakafhandelParameters.getDomein(), previous.getDomein())) {
+            indexeerService.addZakenByZaaktype(zaakafhandelParameters.getZaakTypeUUID(), true, true);
+        }
+        return updated;
     }
 
     public Optional<UUID> findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
@@ -136,15 +152,18 @@ public class ZaakafhandelParameterBeheerService {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUri);
         if (!zaaktype.getConcept()) {
             final String omschrijving = zaaktype.getOmschrijving();
-            final ZaakafhandelParameters vorigeZaakafhandelparameters = readRecentsteZaakafhandelParameters(omschrijving);
+            final ZaakafhandelParameters vorigeZaakafhandelparameters = readRecentsteZaakafhandelParameters(
+                    omschrijving);
             final ZaakafhandelParameters nieuweZaakafhandelParameters = new ZaakafhandelParameters();
             nieuweZaakafhandelParameters.setZaakTypeUUID(UriUtil.uuidFromURI(zaaktype.getUrl()));
             nieuweZaakafhandelParameters.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
             nieuweZaakafhandelParameters.setCaseDefinitionID(vorigeZaakafhandelparameters.getCaseDefinitionID());
             nieuweZaakafhandelParameters.setGroepID(vorigeZaakafhandelparameters.getGroepID());
-            nieuweZaakafhandelParameters.setGebruikersnaamMedewerker(vorigeZaakafhandelparameters.getGebruikersnaamMedewerker());
+            nieuweZaakafhandelParameters.setGebruikersnaamMedewerker(
+                    vorigeZaakafhandelparameters.getGebruikersnaamMedewerker());
             if (zaaktype.isServicenormBeschikbaar()) {
-                nieuweZaakafhandelParameters.setEinddatumGeplandWaarschuwing(vorigeZaakafhandelparameters.getEinddatumGeplandWaarschuwing());
+                nieuweZaakafhandelParameters.setEinddatumGeplandWaarschuwing(
+                        vorigeZaakafhandelparameters.getEinddatumGeplandWaarschuwing());
             }
             nieuweZaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(
                     vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
@@ -168,7 +187,8 @@ public class ZaakafhandelParameterBeheerService {
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
         query.select(root).where(builder.equal(root.get(ZAAKTYPE_OMSCHRIJVING), zaaktypeOmschrijving));
         query.orderBy(builder.desc(root.get(CREATIEDATUM)));
-        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).setMaxResults(1).getResultList();
+        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).setMaxResults(1)
+                .getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
@@ -182,7 +202,8 @@ public class ZaakafhandelParameterBeheerService {
      * @param vorigeZaakafhandelparameters bron
      * @param nieuweZaakafhandelParameters bestemming
      */
-    private void mapHumanTaskParameters(final ZaakafhandelParameters vorigeZaakafhandelparameters, final ZaakafhandelParameters nieuweZaakafhandelParameters) {
+    private void mapHumanTaskParameters(final ZaakafhandelParameters vorigeZaakafhandelparameters,
+            final ZaakafhandelParameters nieuweZaakafhandelParameters) {
         final HashSet<HumanTaskParameters> humanTaskParametersCollection = new HashSet<>();
         vorigeZaakafhandelparameters.getHumanTaskParametersCollection().forEach(humanTaskParameters -> {
             final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
@@ -209,7 +230,8 @@ public class ZaakafhandelParameterBeheerService {
         final HashSet<UserEventListenerParameters> userEventListenerParametersCollection = new HashSet<>();
         vorigeZaakafhandelparameters.getUserEventListenerParametersCollection().forEach(userEventListenerParameters -> {
             final UserEventListenerParameters nieuweUserEventListenerParameters = new UserEventListenerParameters();
-            nieuweUserEventListenerParameters.setPlanItemDefinitionID(userEventListenerParameters.getPlanItemDefinitionID());
+            nieuweUserEventListenerParameters.setPlanItemDefinitionID(
+                    userEventListenerParameters.getPlanItemDefinitionID());
             nieuweUserEventListenerParameters.setToelichting(userEventListenerParameters.getToelichting());
             userEventListenerParametersCollection.add(nieuweUserEventListenerParameters);
         });
@@ -226,9 +248,11 @@ public class ZaakafhandelParameterBeheerService {
     private void mapZaakbeeindigGegevens(final ZaakafhandelParameters vorigeZaakafhandelparameters,
             final ZaakafhandelParameters nieuweZaakafhandelParameters, final Zaaktype nieuwZaaktype) {
 
-        final List<Resultaattype> nieuweResultaattypen = nieuwZaaktype.getResultaattypen().stream().map(rt -> ztcClientService.readResultaattype(rt)).toList();
+        final List<Resultaattype> nieuweResultaattypen = nieuwZaaktype.getResultaattypen().stream()
+                .map(rt -> ztcClientService.readResultaattype(rt)).toList();
         nieuweZaakafhandelParameters.setNietOntvankelijkResultaattype(
-                mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen, vorigeZaakafhandelparameters.getNietOntvankelijkResultaattype()));
+                mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen,
+                                                          vorigeZaakafhandelparameters.getNietOntvankelijkResultaattype()));
 
         final HashSet<ZaakbeeindigParameter> zaakbeeindigParametersCollection = new HashSet<>();
         vorigeZaakafhandelparameters.getZaakbeeindigParameters().forEach(vorigeZaakbeeindigParameter -> {
@@ -256,13 +280,15 @@ public class ZaakafhandelParameterBeheerService {
         nieuweZaakafhandelParameters.setMailtemplateKoppelingen(mailtemplateKoppelingen);
     }
 
-    private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen, final UUID vorigResultaattypeUUID) {
+    private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen,
+            final UUID vorigResultaattypeUUID) {
         if (vorigResultaattypeUUID == null) {
             return null;
         }
         final Resultaattype vorigResultaattype = ztcClientService.readResultaattype(vorigResultaattypeUUID);
         return nieuweResultaattypen.stream()
-                .filter(resultaattype -> resultaattype.getOmschrijving().equals(vorigResultaattype.getOmschrijving())).findAny()
+                .filter(resultaattype -> resultaattype.getOmschrijving().equals(vorigResultaattype.getOmschrijving()))
+                .findAny()
                 .map(resultaattype -> UriUtil.uuidFromURI(resultaattype.getUrl())).orElse(null);
     }
 }

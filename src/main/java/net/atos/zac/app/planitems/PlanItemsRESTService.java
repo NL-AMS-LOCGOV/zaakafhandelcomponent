@@ -209,7 +209,7 @@ public class PlanItemsRESTService {
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
                                            fataleDatum,
                                            humanTaskData.taakdata, zaakUUID);
-        indexeerService.addZaak(zaakUUID, false);
+        indexeerService.addZaak(zaakUUID, false, false);
     }
 
     @POST

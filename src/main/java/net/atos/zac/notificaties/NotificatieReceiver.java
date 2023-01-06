@@ -124,14 +124,16 @@ public class NotificatieReceiver {
 
     private void handleWebsockets(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
+                                      notificatie.getResourceInfo())
                     .forEach(eventingService::send);
         }
     }
 
     private void handleSignaleringen(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
+                                           notificatie.getResourceInfo())
                     .forEach(eventingService::send);
         }
     }
@@ -147,7 +149,8 @@ public class NotificatieReceiver {
         if (notificatie.getResource() != OBJECT || notificatie.getAction() != CREATE || isEmpty(producttypeUri)) {
             return false;
         }
-        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
+        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(
+                objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
     }
 
     private void handleIndexering(final Notificatie notificatie) {
@@ -155,12 +158,13 @@ public class NotificatieReceiver {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
                     // Updaten van taak is nodig bij afsluiten zaak
-                    indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
+                    indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()),
+                                            notificatie.getAction() == UPDATE, false);
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+                indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false, false);
             } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
                 indexeerService.addInformatieobjectByZaakinformatieobject(uuidFromURI(notificatie.getResourceUrl()));
             }

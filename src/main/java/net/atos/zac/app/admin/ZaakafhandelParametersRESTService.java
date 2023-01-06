@@ -154,7 +154,6 @@ public class ZaakafhandelParametersRESTService {
             zaakafhandelParameters = zaakafhandelParameterBeheerService.createZaakafhandelParameters(zaakafhandelParameters);
         } else {
             zaakafhandelParameters = zaakafhandelParameterBeheerService.updateZaakafhandelParameters(zaakafhandelParameters);
-            zaakafhandelParameterService.cacheRemoveZaakafhandelParameters(zaakafhandelParameters.getZaakTypeUUID());
         }
         return zaakafhandelParametersConverter.convertZaakafhandelParameters(zaakafhandelParameters, true);
     }

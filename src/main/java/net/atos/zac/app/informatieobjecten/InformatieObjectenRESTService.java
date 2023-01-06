@@ -46,11 +46,9 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Besluittype;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
@@ -253,7 +251,7 @@ public class InformatieObjectenRESTService {
         if (taakObject) {
             final Task task = takenService.readOpenTask(documentReferentieId);
             final List<UUID> taakdocumenten = taakVariabelenService.readTaakdocumenten(task);
-            taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
+            taakdocumenten.add(UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()));
             taakVariabelenService.setTaakdocumenten(task, taakdocumenten);
         }
         return informatieobjectConverter.convertToREST(zaakInformatieobject);
@@ -529,24 +527,16 @@ public class InformatieObjectenRESTService {
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final Zaak zaak) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setZaak(zaak.getUrl());
-        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(
-                parameters);
-        return informatieobjectConverter.convertToREST(zaakInformatieobjecten);
+        return informatieobjectConverter.convertToREST(zrcClientService.listZaakinformatieobjecten(zaak));
     }
 
     private List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(
             final URI zaakURI,
             final RelatieType relatieType) {
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setZaak(zaak.getUrl());
-        final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(
-                parameters);
-        return zaakInformatieobjects.stream()
-                .map(zaakInformatieobject -> informatieobjectConverter.convertToREST(zaakInformatieobject, relatieType,
-                                                                                     zaak))
+        return zrcClientService.listZaakinformatieobjecten(zaak).stream()
+                .map(zaakInformatieobject ->
+                             informatieobjectConverter.convertToREST(zaakInformatieobject, relatieType, zaak))
                 .toList();
     }
 

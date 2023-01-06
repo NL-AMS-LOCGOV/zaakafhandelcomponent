@@ -314,10 +314,16 @@ public class ZRCClientService {
         return zrcClient.zaakinformatieobjectList(filter);
     }
 
+    public List<ZaakInformatieobject> listZaakinformatieobjecten(final Zaak zaak) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(zaak.getUrl());
+        return listZaakinformatieobjecten(zaak);
+    }
+
     public List<ZaakInformatieobject> listZaakinformatieobjecten(final EnkelvoudigInformatieobject informatieobject) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setInformatieobject(informatieobject.getUrl());
-        return listZaakinformatieobjecten(parameters);
+        return listZaakinformatieobjecten(informatieobject);
     }
 
     /**
@@ -426,10 +432,6 @@ public class ZRCClientService {
 
     public URI createUrlExternToZaak(final UUID zaakUUID) {
         return UriBuilder.fromUri(zgwApiUrlExtern).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
-    }
-
-    public URI createUrlZaak(final UUID zaakUUID) {
-        return UriBuilder.fromUri(getZgwApiClientMpRestUrl).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
     }
 
     public boolean heeftOpenDeelzaken(final Zaak zaak) {

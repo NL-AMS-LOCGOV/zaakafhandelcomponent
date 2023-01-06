@@ -53,7 +53,6 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.GeometryZaakPatch;
@@ -463,7 +462,7 @@ public class ZakenRESTService {
             final LocalDate vandaag,
             final Map<UUID, LocalDate> einddatumGeplandWaarschuwing,
             final Map<UUID, LocalDate> uiterlijkeEinddatumAfdoeningWaarschuwing) {
-        final UUID zaaktypeUUID = URIUtil.parseUUIDFromResourceURI(zaak.getZaaktype());
+        final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaak.getZaaktype());
         return (zaak.getEinddatumGepland() != null &&
                 isWaarschuwing(vandaag, zaak.getEinddatumGepland(), einddatumGeplandWaarschuwing.get(zaaktypeUUID))) ||
                 isWaarschuwing(vandaag, zaak.getUiterlijkeEinddatumAfdoening(),
@@ -902,7 +901,7 @@ public class ZakenRESTService {
         System.out.println("koppelHoofdEnDeelzaak ZAAK.updated " + hoofdzaak.getUuid());
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdzaak.getUuid(), false);
+        indexeerService.addZaak(hoofdzaak.getUuid(), false, false);
         eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
     }
 
@@ -911,7 +910,7 @@ public class ZakenRESTService {
         zrcClientService.patchZaak(deelzaakUUID, deelzaakPatch, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdzaakUUID, false);
+        indexeerService.addZaak(hoofdzaakUUID, false, false);
         eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 }

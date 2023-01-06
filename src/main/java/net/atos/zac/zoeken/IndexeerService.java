@@ -46,19 +46,21 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.shared.model.Results;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
+import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.flowable.TakenService;
 import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.converter.AbstractZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.HerindexerenInfo;
@@ -81,6 +83,9 @@ public class IndexeerService {
     @Inject
     @Any
     private Instance<AbstractZoekObjectConverter<? extends ZoekObject>> converterInstances;
+
+    @Inject
+    private ZTCClientService ztcClientService;
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -300,8 +305,10 @@ public class IndexeerService {
     private void markItemForAddOrUpdateInSolrIndex(final String objectId, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(objectId);
         if (entity != null) {
-            entity.setStatus(IndexStatus.UPDATE);
-            entityManager.merge(entity);
+            if (entity.getStatus() == ADD) {
+                entity.setStatus(UPDATE);
+                entityManager.merge(entity);
+            }
         } else {
             entityManager.persist(new ZoekIndexEntity(objectId, type, ADD));
         }
@@ -310,10 +317,10 @@ public class IndexeerService {
     private void markItemForRemovalFromSolrIndex(final String id, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(id);
         if (entity != null) {
-            entity.setStatus(IndexStatus.REMOVE);
+            entity.setStatus(REMOVE);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(id, type, IndexStatus.REMOVE));
+            entityManager.persist(new ZoekIndexEntity(id, type, REMOVE));
         }
     }
 
@@ -379,13 +386,27 @@ public class IndexeerService {
         throw new RuntimeException("No converter found for '%s'".formatted(type));
     }
 
-    public void addZaak(final UUID zaakUUID, boolean inclusieTaken) {
+    public void addZaak(final UUID zaakUUID, boolean inclTaken, boolean inclInformatieobjecten) {
         markItemForAddOrUpdateInSolrIndex(zaakUUID.toString(), ZAAK);
-        if (inclusieTaken) {
-            takenService.listTasksForZaak(zaakUUID).forEach(taskInfo -> {
-                addTaak(taskInfo.getId());
-            });
+        if (inclTaken) {
+            takenService.listTasksForZaak(zaakUUID).stream()
+                    .map(TaskInfo::getId)
+                    .forEach(this::addTaak);
         }
+        if (inclInformatieobjecten) {
+            zrcClientService.listZaakinformatieobjecten(zrcClientService.readZaak(zaakUUID)).stream()
+                    .map(ZaakInformatieobject::getInformatieobject)
+                    .map(UriUtil::uuidFromURI)
+                    .forEach(this::addInformatieobject);
+        }
+    }
+
+    public void addZakenByZaaktype(final UUID zaaktypeUUID, boolean inclTaken, boolean inclInformatieobjecten) {
+        final ZaakListParameters parameters = new ZaakListParameters();
+        parameters.setZaaktype(ztcClientService.readZaaktype(zaaktypeUUID).getUrl());
+        zrcClientService.listZaken(parameters).getResults().stream()
+                .map(Zaak::getUuid)
+                .forEach(uuid -> addZaak(uuid, true, true));
     }
 
     public void removeZaak(final UUID zaakUUID) {
@@ -400,7 +421,7 @@ public class IndexeerService {
         final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(
                 zaakinformatieobjectUUID);
         markItemForAddOrUpdateInSolrIndex(
-                URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()).toString(), DOCUMENT);
+                UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString(), DOCUMENT);
     }
 
 
