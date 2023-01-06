@@ -527,7 +527,7 @@ public class InformatieObjectenRESTService {
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
 
         // Hiervoor wordt door open zaak geen notificatie verstuurd. Dus zelf het ScreenEvent versturen!
-        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(enkelvoudigInformatieobject));
 
         return Response.ok().build();
     }
