@@ -523,6 +523,10 @@ public class InformatieObjectenRESTService {
                              policyService.readDocumentRechten(enkelvoudigInformatieobject,
                                                                zrcClientService.readZaak(zaakUUID)).getOndertekenen());
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
+
+        // Hiervoor wordt door open zaak geen notificatie verstuurd. Dus zelf het ScreenEvent versturen!
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(enkelvoudigInformatieobject));
+
         return Response.ok().build();
     }
 
