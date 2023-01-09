@@ -35,6 +35,6 @@ public class RESTPlanItem {
 
     public String toelichting;
 
-    public LocalDate fataledatum;
+    public LocalDate fataleDatum;
 
 }
