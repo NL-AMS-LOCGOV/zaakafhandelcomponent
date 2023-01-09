@@ -18,6 +18,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {Router} from '@angular/router';
 import {Observable, share} from 'rxjs';
 import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -25,10 +26,10 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
     styleUrls: ['./zaak-verkort.component.less']
 })
 export class ZaakVerkortComponent implements OnInit, OnDestroy {
-    zaakUuid: string;
-
-    einddatumGeplandIcon: TextIcon;
     @Input() zaak$: Observable<Zaak>;
+    readonly indicatiesLayout = IndicatiesLayout;
+    zaakUuid: string;
+    einddatumGeplandIcon: TextIcon;
     skeletonLayout = SkeletonLayout;
 
     private zaakListener: WebsocketListener;

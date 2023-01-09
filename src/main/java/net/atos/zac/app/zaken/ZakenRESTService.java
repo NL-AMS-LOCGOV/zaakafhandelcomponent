@@ -53,7 +53,6 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.GeometryZaakPatch;
@@ -156,10 +155,6 @@ public class ZakenRESTService {
     private static final String ROL_TOEVOEGEN_REDEN = "Toegekend door de medewerker tijdens het behandelen van de zaak";
 
     private static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
-
-    private static final String OPSCHORTING = "Opschorting";
-
-    private static final String HERVATTING = "Hervatting";
 
     private static final String VERLENGING = "Verlenging";
 
@@ -465,7 +460,7 @@ public class ZakenRESTService {
             final LocalDate vandaag,
             final Map<UUID, LocalDate> einddatumGeplandWaarschuwing,
             final Map<UUID, LocalDate> uiterlijkeEinddatumAfdoeningWaarschuwing) {
-        final UUID zaaktypeUUID = URIUtil.parseUUIDFromResourceURI(zaak.getZaaktype());
+        final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaak.getZaaktype());
         return (zaak.getEinddatumGepland() != null &&
                 isWaarschuwing(vandaag, zaak.getEinddatumGepland(), einddatumGeplandWaarschuwing.get(zaaktypeUUID))) ||
                 isWaarschuwing(vandaag, zaak.getUiterlijkeEinddatumAfdoening(),
@@ -490,7 +485,9 @@ public class ZakenRESTService {
                 .filter(Zaaktype::isNuGeldig)
                 .filter(zaaktype -> healthCheckService.controleerZaaktype(zaaktype.getUrl()).isValide())
                 .toList();
-        return policyService.filterAllowedZaaktypen(zaaktypen).stream().map(zaaktypeConverter::convert).toList();
+        return policyService.filterAllowedZaaktypen(zaaktypen).stream()
+                .map(zaaktypeConverter::convert)
+                .toList();
     }
 
     @PUT

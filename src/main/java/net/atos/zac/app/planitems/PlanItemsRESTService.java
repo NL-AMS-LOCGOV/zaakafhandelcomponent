@@ -5,9 +5,6 @@
 
 package net.atos.zac.app.planitems;
 
-
-import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_BODY;
-import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_EMAILADRES;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.time.ZoneId;
@@ -15,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +41,7 @@ import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.CMMNService;
+import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
@@ -70,13 +69,10 @@ import net.atos.zac.zoeken.IndexeerService;
 @Produces(MediaType.APPLICATION_JSON)
 public class PlanItemsRESTService {
 
-    public static final String TAAK_DATA_BIJLAGEN = "bijlagen";
+    private static final String REDEN_OPSCHORTING = "Aanvullende informatie opgevraagd";
 
-    public static final String TAAK_DATA_OPSCHORTEN = "opschorten";
-
-    public static final String TAAK_DATA_DOORLOPTIJD = "doorlooptijd";
-
-    public static final String REDEN_OPSCHORTING = "Aanvullende informatie opgevraagd";
+    @Inject
+    private TaakVariabelenService taakVariabelenService;
 
     @Inject
     private ZaakVariabelenService zaakVariabelenService;
@@ -165,6 +161,7 @@ public class PlanItemsRESTService {
         final PlanItemInstance planItem = cmmnService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = zaakVariabelenService.readZaakUUID(planItem);
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final Map<String, String> taakdata = humanTaskData.taakdata;
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
         final ZaakafhandelParameters zaakafhandelParameters =
                 zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
@@ -172,9 +169,10 @@ public class PlanItemsRESTService {
                 .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
 
         final Date fataleDatum;
-        if (humanTaskData.taakdata.containsKey(TAAK_DATA_DOORLOPTIJD)) {
-            fataleDatum = DateTimeConverterUtil.convertToDate(humanTaskData.taakdata.get(TAAK_DATA_DOORLOPTIJD));
-            if (humanTaskData.taakdata.containsKey(TAAK_DATA_OPSCHORTEN) && humanTaskData.taakdata.get(TAAK_DATA_OPSCHORTEN).equals("true")) {
+        final Optional<String> doorlooptijd = taakVariabelenService.readDoorlooptijd(taakdata);
+        if (doorlooptijd.isPresent()) {
+            fataleDatum = DateTimeConverterUtil.convertToDate(doorlooptijd.get());
+            if (taakVariabelenService.isZaakOpschorten(taakdata)) {
                 final long aantalDagen = ChronoUnit.DAYS.between(
                         ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS),
                         Objects.requireNonNull(DateTimeConverterUtil.convertToZonedDateTime(fataleDatum)).truncatedTo(ChronoUnit.DAYS));
@@ -185,10 +183,6 @@ public class PlanItemsRESTService {
                     DateUtils.addDays(new Date(), humanTaskParameters.get().getDoorlooptijd()) : null;
         }
         if (humanTaskData.taakStuurGegevens.sendMail) {
-            String bijlagen = null;
-            if (humanTaskData.taakdata.containsKey(TAAK_DATA_BIJLAGEN) && humanTaskData.taakdata.get(TAAK_DATA_BIJLAGEN) != null) {
-                bijlagen = humanTaskData.taakdata.get(TAAK_DATA_BIJLAGEN);
-            }
             final Mail mail = Mail.valueOf(humanTaskData.taakStuurGegevens.mail);
 
             final MailTemplate mailTemplate = zaakafhandelParameters.getMailtemplateKoppelingen().stream()
@@ -196,19 +190,19 @@ public class PlanItemsRESTService {
                     .filter(template -> template.getMail().equals(mail))
                     .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
 
-            humanTaskData.taakdata.put(TAAKDATA_BODY, mailService.sendMail(
+            taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
-                            new Ontvanger(humanTaskData.taakdata.get(TAAKDATA_EMAILADRES)),
+                            new Ontvanger(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
                             mailTemplate.getOnderwerp(),
-                            humanTaskData.taakdata.get(TAAKDATA_BODY),
-                            bijlagen,
+                            taakVariabelenService.readMailBody(taakdata).orElse(null),
+                            taakVariabelenService.readBijlagen(taakdata).orElse(null),
                             true),
                     Bronnen.fromZaak(zaak)));
         }
         cmmnService.startHumanTaskPlanItem(humanTaskData.planItemInstanceId, humanTaskData.groep.id,
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
                                            fataleDatum,
-                                           humanTaskData.taakdata, zaakUUID);
+                                           taakdata, zaakUUID);
         indexeerService.addZaak(zaakUUID, false);
     }
 

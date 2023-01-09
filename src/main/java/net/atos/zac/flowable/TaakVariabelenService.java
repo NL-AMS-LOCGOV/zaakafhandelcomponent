@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -27,6 +28,20 @@ import org.flowable.task.api.TaskInfo;
 @ApplicationScoped
 @Transactional
 public class TaakVariabelenService {
+
+    private static final String TAAK_DATA_BIJLAGEN = "bijlagen";
+
+    private static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
+
+    private static final String TAAK_DATA_DOORLOPTIJD = "doorlooptijd";
+
+    private static final String TAAK_DATA_ZAAK_HERVATTEN = "zaakHervatten";
+
+    private final static String TAAK_DATA_MAIL_BODY = "body";
+
+    private final static String TAAK_DATA_EMAILADRES = "emailadres";
+
+    public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
 
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 
@@ -58,6 +73,40 @@ public class TaakVariabelenService {
 
     public List<UUID> readTaakdocumenten(final TaskInfo taskInfo) {
         return (List<UUID>) findTaskVariable(taskInfo, VAR_TASK_TAAKDOCUMENTEN).orElse(Collections.emptyList());
+    }
+
+    public Optional<String> readDoorlooptijd(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_DOORLOPTIJD);
+    }
+
+    public Optional<String> readBijlagen(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_BIJLAGEN);
+    }
+
+    public Optional<String> readMailBody(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_MAIL_BODY);
+    }
+
+    public void setMailBody(Map<String, String> taakData, final String body) {
+        taakData.put(TAAK_DATA_MAIL_BODY, body);
+    }
+
+    public Optional<String> readOndertekeningen(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_ONDERTEKENEN);
+    }
+
+    public Optional<String> readEmailadres(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_EMAILADRES);
+    }
+
+    public boolean isZaakOpschorten(Map<String, String> taakData) {
+        Optional<String> zaakOpgeschort = findTaskDataElement(taakData, TAAK_DATA_ZAAK_OPSCHORTEN);
+        return zaakOpgeschort.filter(BooleanUtils.TRUE::equals).isPresent();
+    }
+
+    public boolean isZaakHervatten(Map<String, String> taakData) {
+        final Optional<String> zaakHervatten = findTaskDataElement(taakData, TAAK_DATA_ZAAK_HERVATTEN);
+        return zaakHervatten.filter(BooleanUtils.TRUE::equals).isPresent();
     }
 
     public void setTaakdocumenten(final Task task, final List<UUID> taakdocumenten) {
@@ -108,6 +157,16 @@ public class TaakVariabelenService {
             return Optional.empty();
         }
     }
+
+    private Optional<String> findTaskDataElement(final Map<String, String> taakData, final String elementName) {
+        final String value = taakData.get(elementName);
+        if (value != null) {
+            return Optional.of(value);
+        } else {
+            return Optional.empty();
+        }
+    }
+
 
     private void setTaskVariable(final Task task, final String variableName, final Object value) {
         taskService.setVariableLocal(task.getId(), variableName, value);

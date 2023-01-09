@@ -103,7 +103,7 @@ public class ReferentieTabelRESTService {
 
     @GET
     @Path("domein")
-    public List<String> readDomeinen() {
+    public List<String> listDomeinen() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restReferentieWaardeConverter.convert(
                 referentieTabelService.readReferentieTabel(DOMEIN.name()).getWaarden());
