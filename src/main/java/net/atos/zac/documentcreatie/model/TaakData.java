@@ -9,10 +9,6 @@ import java.util.Map;
 
 public class TaakData {
 
-    public final static String TAAKDATA_BODY = "body";
-
-    public final static String TAAKDATA_EMAILADRES = "emailadres";
-
     public String naam;
 
     public String behandelaar;
