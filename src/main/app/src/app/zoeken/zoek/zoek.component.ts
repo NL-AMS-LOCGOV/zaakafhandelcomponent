@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
 
 import {ZoekObject} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
@@ -20,36 +20,28 @@ import {ZoekResultaat} from '../model/zoek-resultaat';
 import {ZoekType} from '../model/zoek-type';
 import {DocumentZoekObject} from '../model/documenten/document-zoek-object';
 import {ZoekObjectType} from '../model/zoek-object-type';
+import {ZoekVeld} from '../model/zoek-veld';
 
 @Component({
     selector: 'zac-zoeken',
     templateUrl: './zoek.component.html',
     styleUrls: ['./zoek.component.less']
 })
-export class ZoekComponent implements AfterViewInit {
+export class ZoekComponent implements AfterViewInit, OnInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
-    @Input() sideNav: MatSidenav;
-
-    @Input() set keywords(value: string) {
-        if (this.zoekenControl.value !== value) {
-            this.zoekenControl.setValue(value);
-            this.zoek.emit();
-        }
-    }
-
-    get keywords(): string {
-        return this.zoekenControl.value;
-    }
+    @Input() zoekenSideNav: MatSidenav;
 
     zoekType: ZoekType = ZoekType.ZAC;
     ZoekType = ZoekType;
+    ZoekVeld = ZoekVeld;
     readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: ZoekResultaat<ZoekObject> = new ZoekResultaat<ZoekObject>();
     zoekParameters: ZoekParameters = new ZoekParameters();
     isLoadingResults = true;
     slow = false;
-    zoekenControl = new FormControl('');
+    zoekveldControl = new FormControl<ZoekVeld>(ZoekVeld.ALLE);
+    trefwoordenControl = new FormControl('');
     zoek = new EventEmitter<void>();
     hasSearched = false;
     hasTaken = false;
@@ -57,6 +49,23 @@ export class ZoekComponent implements AfterViewInit {
     hasDocument = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
+    }
+
+    ngOnInit(): void {
+        this.zoekService.trefwoorden$.subscribe(trefwoorden => {
+            if (this.trefwoordenControl.value !== trefwoorden) {
+                this.trefwoordenControl.setValue(trefwoorden);
+            }
+        });
+        this.trefwoordenControl.valueChanges.subscribe(trefwoorden => {
+            this.zoekService.trefwoorden$.next(trefwoorden);
+        });
+        this.zoekenSideNav.openedStart.subscribe(o => {
+            if (this.trefwoordenControl.value) {
+                this.zoek.emit();
+            }
+        });
+        this.zoekService.reset$.subscribe(() => this.reset());
     }
 
     ngAfterViewInit(): void {
@@ -81,6 +90,7 @@ export class ZoekComponent implements AfterViewInit {
         ).subscribe(data => {
             this.paginator.length = data.totaal;
             this.hasSearched = true;
+            this.zoekService.hasSearched$.next(true);
             this.zoekResultaat = data;
             this.bepaalContext();
         });
@@ -104,7 +114,7 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     getZoekParameters(): ZoekParameters {
-        this.zoekParameters.zoeken.ALLE = this.zoekenControl.value;
+        this.zoekParameters.zoeken[this.zoekveldControl.value] = this.trefwoordenControl.value;
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         return this.zoekParameters;
@@ -127,7 +137,7 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     keywordsChange() {
-        if (this.zoekenControl.value !== this.zoekParameters.zoeken.ALLE) {
+        if (this.trefwoordenControl.value !== this.zoekParameters.zoeken[this.zoekveldControl.value]) {
             this.zoek.emit();
         }
     }
@@ -137,10 +147,29 @@ export class ZoekComponent implements AfterViewInit {
     setZoektype(zoekType: ZoekType): void {
         this.zoekType = zoekType;
         if (zoekType === ZoekType.ZAC) {
-            this.zoekenControl.enable();
+            this.trefwoordenControl.enable();
         } else {
-            this.zoekenControl.disable();
+            this.trefwoordenControl.disable();
         }
     }
 
+    reset(): void {
+        this.zoekService.hasSearched$.next(false);
+        this.paginator.length = 0;
+        this.trefwoordenControl.setValue('');
+        this.zoekveldControl.setValue(ZoekVeld.ALLE);
+        this.zoekResultaat = new ZoekResultaat();
+        this.zoekParameters = new ZoekParameters();
+        this.hasSearched = false;
+        this.hasTaken = false;
+        this.hasZaken = false;
+        this.hasDocument = false;
+    }
+
+    zoekVeldChanged() {
+        this.zoekParameters.zoeken = {};
+        if (this.trefwoordenControl.value) {
+            this.zoek.emit();
+        }
+    }
 }

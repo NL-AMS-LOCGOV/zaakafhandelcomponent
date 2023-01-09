@@ -18,7 +18,6 @@ import {InformatieObjectVerplaatsService} from './informatie-objecten/informatie
 export class AppComponent implements OnInit, AfterViewInit {
 
     initialized = false;
-    trefwoorden: string;
 
     constructor(private translate: TranslateService, private titleService: Title,
                 private informatieObjectVerplaatsService: InformatieObjectVerplaatsService, private zaakKoppelenService: ZaakKoppelenService,

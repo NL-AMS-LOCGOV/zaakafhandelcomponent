@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../service/util.service';
 import {IdentityService} from '../../identity/identity.service';
@@ -20,6 +20,8 @@ import {PolicyService} from '../../policy/policy.service';
 import {OverigeRechten} from '../../policy/model/overige-rechten';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {FormControl} from '@angular/forms';
+import {ZoekenService} from '../../zoeken/zoeken.service';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-toolbar',
@@ -27,8 +29,9 @@ import {FormControl} from '@angular/forms';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
-    @Output() openZoeken = new EventEmitter<string>();
+    @Input() zoekenSideNav: MatSidenav;
     zoekenFormControl = new FormControl<string>('');
+    hasSearched = false;
 
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
@@ -41,10 +44,22 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     private signaleringListener: WebsocketListener;
 
     constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService,
-                private signaleringenService: SignaleringenService, private websocketService: WebsocketService, private policyService: PolicyService) {
+                private zoekenService: ZoekenService, private signaleringenService: SignaleringenService, private websocketService: WebsocketService,
+                private policyService: PolicyService) {
     }
 
     ngOnInit(): void {
+        this.zoekenService.trefwoorden$.subscribe(trefwoorden => {
+            if (this.zoekenFormControl.value !== trefwoorden) {
+                this.zoekenFormControl.setValue(trefwoorden);
+            }
+        });
+        this.zoekenService.hasSearched$.subscribe(hasSearched => {
+            this.hasSearched = hasSearched;
+        });
+        this.zoekenFormControl.valueChanges.subscribe(trefwoorden => {
+            this.zoekenService.trefwoorden$.next(trefwoorden);
+        });
         this.headerTitle$ = this.utilService.headerTitle$;
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
@@ -80,5 +95,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 }
             }
         );
+    }
+
+    resetSearch(): void {
+        this.zoekenService.reset$.next();
     }
 }
