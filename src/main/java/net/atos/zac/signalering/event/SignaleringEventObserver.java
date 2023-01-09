@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import org.flowable.task.api.TaskInfo;
 
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -35,6 +34,7 @@ import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
+import net.atos.zac.util.UriUtil;
 
 /**
  * This bean listens for SignaleringEvents and handles them.
@@ -142,7 +142,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId().getResource());
                 final ZaakInformatieobject detail =
                         zrcClientService.readZaakinformatieobject(
-                                URIUtil.parseUUIDFromResourceURI((URI) event.getObjectId().getDetail()));
+                                UriUtil.uuidFromURI((URI) event.getObjectId().getDetail()));
                 return getSignaleringVoorBehandelaar(event, subject, detail);
             }
             case ZAAK_OP_NAAM -> {

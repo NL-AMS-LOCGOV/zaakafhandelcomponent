@@ -27,12 +27,12 @@ import org.apache.commons.lang3.StringUtils;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.DateTimeUtil;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.InboxDocumentListParameters;
 import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.DatumRange;
 
 @ApplicationScoped
@@ -103,8 +103,7 @@ public class InboxDocumentenService {
     public void delete(final UUID zaakinformatieobjectUUID) {
         final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(
                 zaakinformatieobjectUUID);
-        final UUID enkelvoudiginformatieobjectUUID = URIUtil.parseUUIDFromResourceURI(
-                zaakInformatieobject.getInformatieobject());
+        final UUID enkelvoudiginformatieobjectUUID = UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject());
         find(enkelvoudiginformatieobjectUUID).ifPresent(entityManager::remove);
     }
 

@@ -60,7 +60,7 @@ public class ZoekenService {
     @Inject
     private PolicyService policyService;
 
-    private SolrClient solrClient;
+    private final SolrClient solrClient;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;

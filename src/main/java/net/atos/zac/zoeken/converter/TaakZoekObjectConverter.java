@@ -15,7 +15,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
-import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -29,9 +28,6 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
     @Inject
     private TakenService takenService;
-
-    @Inject
-    private ZaakVariabelenService zaakVariabelenService;
 
     @Inject
     private TaakVariabelenService taakVariabelenService;
