@@ -34,6 +34,15 @@
                                             [value]="cd">{{ cd.naam }}</mat-option>
                             </mat-select>
                         </mat-form-field>
+                        <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'domein' | translate}}</mat-label>
+                            <mat-select placeholder="{{'domein.-geen-' | translate}}"
+                                        formControlName="domein" [compareWith]="compareObject">
+                                <mat-option [value]="">{{'domein.-geen-' | translate}}</mat-option>
+                                <mat-option *ngFor="let domein of domeinen"
+                                            [value]="domein">{{ domein }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                     <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
                         <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">

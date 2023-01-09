@@ -6,6 +6,7 @@
 package net.atos.zac.app.admin;
 
 import static net.atos.zac.policy.PolicyService.assertPolicy;
+import static net.atos.zac.zaaksturing.model.ReferentieTabel.Systeem.DOMEIN;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.zac.app.admin.converter.RESTReferentieTabelConverter;
+import net.atos.zac.app.admin.converter.RESTReferentieWaardeConverter;
 import net.atos.zac.app.admin.model.RESTReferentieTabel;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.zaaksturing.ReferentieTabelBeheerService;
@@ -41,6 +43,9 @@ public class ReferentieTabelRESTService {
 
     @Inject
     private RESTReferentieTabelConverter restReferentieTabelConverter;
+
+    @Inject
+    private RESTReferentieWaardeConverter restReferentieWaardeConverter;
 
     @Inject
     private PolicyService policyService;
@@ -80,7 +85,8 @@ public class ReferentieTabelRESTService {
 
     @PUT
     @Path("{id}")
-    public RESTReferentieTabel updateReferentieTabel(@PathParam("id") final long id, final RESTReferentieTabel referentieTabel) {
+    public RESTReferentieTabel updateReferentieTabel(@PathParam("id") final long id,
+            final RESTReferentieTabel referentieTabel) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restReferentieTabelConverter.convert(
                 referentieTabelBeheerService.updateReferentieTabel(
@@ -93,5 +99,13 @@ public class ReferentieTabelRESTService {
     public void deleteReferentieTabel(@PathParam("id") final long id) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         referentieTabelBeheerService.deleteReferentieTabel(id);
+    }
+
+    @GET
+    @Path("domein")
+    public List<String> readDomeinen() {
+        assertPolicy(policyService.readOverigeRechten().getBeheren());
+        return restReferentieWaardeConverter.convert(
+                referentieTabelService.readReferentieTabel(DOMEIN.name()).getWaarden());
     }
 }
