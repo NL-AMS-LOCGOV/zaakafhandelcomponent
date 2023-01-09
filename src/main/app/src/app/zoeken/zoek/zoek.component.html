@@ -8,12 +8,12 @@
         <mat-form-field fxFlex="24" appearance="fill">
             <mat-label>Zoeken in</mat-label>
             <mat-select [formControl]="zoekveldControl" (selectionChange)="zoekVeldChanged()">
-                <mat-option [value]="ZoekVeld.ALLE">Alles</mat-option>
-                <mat-option [value]="ZoekVeld.ZAAK_OMSCHRIJVING">{{'ZoekVeld.ZAAK_OMSCHRIJVING' | translate}}</mat-option>
-                <mat-option [value]="ZoekVeld.ZAAK_TOELICHTING">{{'ZoekVeld.ZAAK_TOELICHTING' | translate}}</mat-option>
-                <mat-option [value]="ZoekVeld.TAAK_TOELICHTING">{{'ZoekVeld.TAAK_TOELICHTING' | translate}}</mat-option>
-                <mat-option [value]="ZoekVeld.DOCUMENT_TITEL">{{'ZoekVeld.DOCUMENT_TITEL' | translate}}</mat-option>
-                <mat-option [value]="ZoekVeld.DOCUMENT_BESCHRIJVING">{{'ZoekVeld.DOCUMENT_BESCHRIJVING' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.ALLE">{{'zoekVeld.ALLE' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.ZAAK_OMSCHRIJVING">{{'zoekVeld.ZAAK_OMSCHRIJVING' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.ZAAK_TOELICHTING">{{'zoekVeld.ZAAK_TOELICHTING' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.TAAK_TOELICHTING">{{'zoekVeld.TAAK_TOELICHTING' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.DOCUMENT_TITEL">{{'zoekVeld.DOCUMENT_TITEL' | translate}}</mat-option>
+                <mat-option [value]="ZoekVeld.DOCUMENT_BESCHRIJVING">{{'zoekVeld.DOCUMENT_BESCHRIJVING' | translate}}</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill" fxFlex="grow">
