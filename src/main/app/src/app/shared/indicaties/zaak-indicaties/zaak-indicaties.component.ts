@@ -3,19 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ZaakZoekObject} from '../../../zoeken/model/zaken/zaak-zoek-object';
 import {Zaak} from '../../../zaken/model/zaak';
 import {ZaakRelatietype} from '../../../zaken/model/zaak-relatietype';
 import {Indicatie} from '../../model/indicatie';
 import {TranslateService} from '@ngx-translate/core';
 import {IndicatiesComponent} from '../indicaties.component';
-import {WebsocketListener} from '../../../core/websocket/model/websocket-listener';
-import {Opcode} from '../../../core/websocket/model/opcode';
-import {ObjectType} from '../../../core/websocket/model/object-type';
-import {WebsocketService} from '../../../core/websocket/websocket.service';
-import {ScreenEvent} from '../../../core/websocket/model/screen-event';
-import {ZakenService} from '../../../zaken/zaken.service';
 
 export enum ZaakIndicatie {
     OPSCHORTING = 'OPSCHORTING',
@@ -30,28 +24,21 @@ export enum ZaakIndicatie {
     templateUrl: '../indicaties.component.html',
     styleUrls: ['../indicaties.component.less']
 })
-export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnInit {
+export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnChanges {
     @Input() zaakZoekObject: ZaakZoekObject;
     @Input() zaak: Zaak;
 
-    private zaakListener: WebsocketListener;
-
-    constructor(private translateService: TranslateService,
-                private websocketService: WebsocketService,
-                private zakenService: ZakenService) {
+    constructor(private translateService: TranslateService) {
         super();
     }
 
-    ngOnInit(): void {
-        this.zaakListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
-            (event) => {
-                this.loadZaak(event);
-            });
-
+    ngOnChanges(changes: SimpleChanges): void {
+        this.zaak = changes.zaak.currentValue;
         this.loadIndicaties();
     }
 
     loadIndicaties(): void {
+        this.indicaties = [];
         const indicaties = this.zaak ? this.zaak.indicaties : this.zaakZoekObject.indicaties;
         indicaties.forEach(indicatie => {
             switch (indicatie) {
@@ -103,15 +90,5 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnIn
 
     private getRedenVerlenging() {
         return this.zaakZoekObject ? this.zaakZoekObject.redenVerlenging : this.zaak.redenVerlenging;
-    }
-
-    private loadZaak(event?: ScreenEvent) {
-        if (event) {
-            console.debug('callback loadZaak: ' + event.key);
-        }
-        this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.loadIndicaties();
-        });
     }
 }

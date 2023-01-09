@@ -3,19 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {DocumentZoekObject} from '../../../zoeken/model/documenten/document-zoek-object';
 import {TranslateService} from '@ngx-translate/core';
 import {DatumPipe} from '../../pipes/datum.pipe';
 import {Indicatie} from '../../model/indicatie';
 import {IndicatiesComponent} from '../indicaties.component';
-import {Opcode} from '../../../core/websocket/model/opcode';
-import {ObjectType} from '../../../core/websocket/model/object-type';
-import {WebsocketListener} from '../../../core/websocket/model/websocket-listener';
-import {WebsocketService} from '../../../core/websocket/websocket.service';
-import {ScreenEvent} from '../../../core/websocket/model/screen-event';
-import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
 
 export enum InformatieobjectIndicatie {
     VERGRENDELD = 'VERGRENDELD',
@@ -29,32 +23,21 @@ export enum InformatieobjectIndicatie {
     templateUrl: '../indicaties.component.html',
     styleUrls: ['../indicaties.component.less']
 })
-export class InformatieObjectIndicatiesComponent extends IndicatiesComponent implements OnInit, OnDestroy {
+export class InformatieObjectIndicatiesComponent extends IndicatiesComponent implements OnChanges {
+
     datumPipe = new DatumPipe('nl');
 
     @Input() document: EnkelvoudigInformatieobject;
     @Input() documentZoekObject: DocumentZoekObject;
 
-    private documentListener: WebsocketListener;
-
-    constructor(private translateService: TranslateService,
-                private informatieObjectenService: InformatieObjectenService,
-                private websocketService: WebsocketService) {
+    constructor(private translateService: TranslateService) {
         super();
     }
 
-    ngOnInit() {
-        this.documentListener = this.websocketService.addListener(Opcode.UPDATED,
-            ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
-            (event) => {
-                this.loadInformatieObject(event);
-            });
-
+    ngOnChanges(changes: SimpleChanges): void {
+        this.document = changes.document?.currentValue;
+        this.documentZoekObject = changes.documentZoekObject?.currentValue;
         this.loadIndicaties();
-    }
-
-    ngOnDestroy() {
-        this.websocketService.removeListener(this.documentListener);
     }
 
     private loadIndicaties(): void {
@@ -92,15 +75,5 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
         } else {
             return this.translateService.instant('msg.document.vergrendeld', {gebruiker: this.document.gelockedDoor.naam});
         }
-    }
-
-    private loadInformatieObject(event?: ScreenEvent) {
-        if (event) {
-            console.debug('callback loadInformatieObject: ' + event.key);
-        }
-        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.document.uuid).subscribe(infoObject => {
-            this.document = infoObject;
-            this.loadIndicaties();
-        });
     }
 }
