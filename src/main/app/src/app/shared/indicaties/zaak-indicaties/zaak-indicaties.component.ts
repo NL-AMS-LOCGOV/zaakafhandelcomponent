@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ZaakZoekObject} from '../../../zoeken/model/zaken/zaak-zoek-object';
 import {Zaak} from '../../../zaken/model/zaak';
 import {ZaakRelatietype} from '../../../zaken/model/zaak-relatietype';
@@ -24,7 +24,7 @@ export enum ZaakIndicatie {
     templateUrl: '../indicaties.component.html',
     styleUrls: ['../indicaties.component.less']
 })
-export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnInit {
+export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnChanges {
     @Input() zaakZoekObject: ZaakZoekObject;
     @Input() zaak: Zaak;
 
@@ -32,8 +32,13 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnIn
         super();
     }
 
-    ngOnInit(): void {
+    ngOnChanges(changes: SimpleChanges): void {
+        this.zaak = changes.zaak.currentValue;
+        this.loadIndicaties();
+    }
 
+    loadIndicaties(): void {
+        this.indicaties = [];
         const indicaties = this.zaak ? this.zaak.indicaties : this.zaakZoekObject.indicaties;
         indicaties.forEach(indicatie => {
             switch (indicatie) {
@@ -54,7 +59,6 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnIn
                     break;
             }
         });
-
     }
 
     private getRedenOpschorting(): string {
