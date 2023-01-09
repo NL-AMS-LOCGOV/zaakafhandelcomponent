@@ -69,7 +69,6 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             .label(fields.BODY)
             .validators(Validators.required)
             .mailtemplateBody(mailtemplate)
-            .maxlength(1000)
             .build()],
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)

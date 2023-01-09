@@ -15,6 +15,7 @@ import {MailtemplateKoppeling} from './mailtemplate-koppeling';
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
     caseDefinition: CaseDefinition;
+    domein: string;
     defaultBehandelaarId: string;
     defaultGroepId: string;
     creatiedatum: string;

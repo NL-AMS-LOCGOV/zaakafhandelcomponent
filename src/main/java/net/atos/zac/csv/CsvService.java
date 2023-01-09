@@ -5,15 +5,6 @@
 
 package net.atos.zac.csv;
 
-import com.opencsv.CSVWriter;
-
-import net.atos.zac.zoeken.model.ZoekObject;
-import net.atos.zac.zoeken.model.ZoekResultaat;
-
-import org.apache.commons.lang3.StringUtils;
-
-import javax.ws.rs.core.StreamingOutput;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -25,12 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.ws.rs.core.StreamingOutput;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.opencsv.CSVWriter;
+
+import net.atos.zac.zoeken.model.ZoekObject;
+import net.atos.zac.zoeken.model.ZoekResultaat;
+
 public class CsvService {
+
+    private final static char SEPARATOR = ';';
+
+    private final static char QUOTE_ESCAPE_CHAR = '"';
+
+    private final static String LINE_END = "\n";
 
     private final static List<String> uitzonderingen = List.of("class", "uuid", "zaaktypeUuid", "type",
                                                        "zaakUUID", "taakData", "taakInformatie", "id",
                                                                "zaaktypeIdentificatie");
-
 
     public StreamingOutput exportToCsv(final ZoekResultaat<? extends ZoekObject> zoekResultaat) {
         final AtomicInteger headerCounter = new AtomicInteger();
@@ -42,7 +47,7 @@ public class CsvService {
                         final List<String> record = new ArrayList<>();
                         final BeanInfo beanInfo = Introspector.getBeanInfo(zoekObject.getClass());
                         for (final PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
-                            if (uitzonderingen.contains(property.getName())) {
+                            if (uitzonderingen.contains(property.getName()) || property.getReadMethod() == null) {
                                 continue;
                             }
 
@@ -69,7 +74,8 @@ public class CsvService {
                 });
 
         return outputStream -> {
-            try (final CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream))) {
+            try (final CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), SEPARATOR,
+                                                        QUOTE_ESCAPE_CHAR, QUOTE_ESCAPE_CHAR, LINE_END)) {
                 writer.writeNext(headers.toArray(new String[0]));
                 writer.writeAll(records);
             }

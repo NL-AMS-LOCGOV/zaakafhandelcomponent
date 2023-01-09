@@ -9,8 +9,8 @@ import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -31,7 +31,8 @@ import javax.validation.constraints.NotBlank;
 @SequenceGenerator(schema = SCHEMA, name = "sq_referentie_tabel", sequenceName = "sq_referentie_tabel", allocationSize = 1)
 public class ReferentieTabel {
     public enum Systeem {
-        ADVIES
+        ADVIES,
+        DOMEIN
     }
 
     @Id
@@ -86,16 +87,19 @@ public class ReferentieTabel {
     }
 
     public List<ReferentieTabelWaarde> getWaarden() {
-        return Collections.unmodifiableList(waarden);
+        return Collections.unmodifiableList(waarden.stream()
+                                                    .sorted(Comparator.comparingInt(ReferentieTabelWaarde::getVolgorde))
+                                                    .toList());
     }
 
-    public void setWaarden(final Collection<ReferentieTabelWaarde> waarden) {
+    public void setWaarden(final List<ReferentieTabelWaarde> waarden) {
         this.waarden.clear();
         waarden.forEach(this::addWaarde);
     }
 
     public void addWaarde(final ReferentieTabelWaarde waarde) {
         waarde.setTabel(this);
+        waarde.setVolgorde(waarden.size());
         waarden.add(waarde);
     }
 

@@ -3,6 +3,50 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+@import "../../../variables";
+
+.detail {
+  overflow: hidden;
+  line-height: 36px;
+}
+
+.main-row td {
+  border-bottom-width: 0;
+}
+
+tr.detail-row {
+  height: 0;
+  background-color: @table-hover-background-color;
+
+  .detail div {
+    width: 100%;
+    border-bottom: 1px solid @border-color;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+td.mat-cell {
+  border-color: @border-color;
+}
+
+p {
+  padding-left: 24px;
+}
+
 .mat-flat-button.mat-button-disabled.mat-button-disabled {
   background-color: transparent;
+}
+
+.mat-expansion-panel-header {
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+  mat-icon {
+    margin-right: 10px;
+  }
+
+  .mat-expansion-panel-header-title {
+    margin-left: 0;
+  }
 }

@@ -81,16 +81,16 @@ Stappen:
  
 ## Mailtemplates
 
-Tijdens de zaakbehandeling gebruikt de ZAC een aantal e-mails dat verstuurd wordt, voornamelijk aan de klant. Sommige van deze mails worden verplicht verstuurd en andere zijn optioneel. Iedere e-mail heeft een eigen template dat de inhoud van het  onderwerp en het bericht bepaalt.
+Tijdens de zaakbehandeling gebruikt de ZAC een aantal e-mails dat verstuurd wordt, voornamelijk aan de klant. Sommige van deze mails worden verplicht verstuurd en andere zijn optioneel. Iedere e-mail heeft een eigen template dat de standaard inhoud van het bericht en het onderwerp bepaalt.
 
 Er zijn drie categoriën mails die verstuurd kunnen worden tijdens de zaakbehandeling. Hieronder volgt een overzicht van de mails per categorie:
 
 **Taak**
   - Ontvangstbevestiging | deze mail wordt aan de klant verstuurd nadat de actie ‘Ontvangstbevestiging’ is uitgevoerd
-  - Taak aanvullende informatie | deze mail wordt aan de klant verstuurd nadat de taak is gestart
-  - Taak advies | deze mail wordt aan de adviseur verstuurd nadat de taak is gestart
+  - Taak formulierdefinitie: Aanvullende informatie | deze mail wordt aan de klant verstuurd nadat de taak is gestart
+  - Taak formulierdefinitie: Extern advies (met e-mail) | deze mail wordt aan de adviseur verstuurd nadat de taak is gestart
  
-**Zaak**
+**Zaak status update**
   - Zaak ontvankelijk | deze mail wordt aan de klant verstuurd nadat de actie ‘Intake afronden’ is uitgevoerd en de gebruiker voor ontvankelijk = ‘Ja’ heeft gekozen en ‘Verzend mail’ heeft aangevinkt
   - Zaak niet ontvankelijk | deze mail wordt aan de klant verstuurd nadat de actie ‘Intake afronden’ is uitgevoerd en de gebruiker voor ontvankelijk = ‘Nee’ heeft gekozen en ‘Verzend mail’ heeft aangevinkt
   - Zaak afgehandeld | deze mail wordt aan de klant verstuurd nadat de actie ‘Zaak afhandelen’ is uitgevoerd en de gebruiker ‘Verzend mail’ heeft aangevinkt
@@ -104,8 +104,8 @@ Er zijn drie categoriën mails die verstuurd kunnen worden tijdens de zaakbehand
   - Signalering taak verlopen | deze mail wordt verstuurd aan de gebruiker op wiens naam de taak staat
 
 ### Werking van de mailtemplates
-De mailtemplates kunnen vanuit menukeuze ‘Mailtemplates’ benaderd worden. Vanuit het overzicht kan een template ingezien en bewerkt worden. Het is ook mogelijk om zelf een template voor een  mail aan te maken.
-Het gebruiken van de mailtemplates uit de categorie taak en zaak gebeurt door deze te koppelen via de zaakafhandelparameters, zie hoofdstuk Zaakafhandelparameters voor een beschrijving hiervan.
+De mailtemplates kunnen vanuit menukeuze ‘Mailtemplates’ benaderd worden. Vanuit het overzicht kan een template ingezien en bewerkt worden. Iedere mail heeft een default template dat in het overzicht te herkennen is aan de vink in de 'default' kolom. Het is ook mogelijk om zelf een template voor een  mail aan te maken. Deze templates zijn daarna in het overzicht te herkennen door de Xin de 'default' kolom.
+Het gebruiken van de mailtemplates uit de categorie 'taak' en 'zaak status update' gebeurt door deze te koppelen via de zaakafhandelparameters, zie hoofdstuk Zaakafhandelparameters voor een beschrijving hiervan.
 De mailtemplates voor de signaleringen zijn automatisch gekoppeld en kunnen direct gebruikt worden.
 
 ### Mailtemplate bewerken

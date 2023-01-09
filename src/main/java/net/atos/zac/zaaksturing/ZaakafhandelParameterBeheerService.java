@@ -151,6 +151,7 @@ public class ZaakafhandelParameterBeheerService {
             nieuweZaakafhandelParameters.setIntakeMail(vorigeZaakafhandelparameters.getIntakeMail());
             nieuweZaakafhandelParameters.setAfrondenMail(vorigeZaakafhandelparameters.getAfrondenMail());
             nieuweZaakafhandelParameters.setProductaanvraagtype(vorigeZaakafhandelparameters.getProductaanvraagtype());
+            nieuweZaakafhandelParameters.setDomein(vorigeZaakafhandelparameters.getDomein());
 
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
