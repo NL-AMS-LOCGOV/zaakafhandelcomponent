@@ -33,7 +33,6 @@ import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterResultaat;
 import net.atos.zac.zoeken.model.FilterVeld;
@@ -56,9 +55,6 @@ public class ZoekenService {
     private static final char SOLR_ESCAPE = '\\';
 
     private static final char SOLR_QUOTE = '\"';
-
-    @Inject
-    private PolicyService policyService;
 
     private final SolrClient solrClient;
 
@@ -180,7 +176,7 @@ public class ZoekenService {
     }
 
     private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
-        final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
+        final Set<String> allowedZaaktypen = loggedInUserInstance.get().getGeautoriseerdeZaaktypen();
         if (allowedZaaktypen != null) {
             if (allowedZaaktypen.isEmpty()) {
                 query.addFilterQuery(format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, NON_EXISTING_ZAAKTYPE));

@@ -312,8 +312,8 @@ public class ZakenRESTService {
     @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
-        assertPolicy(policyService.readOverigeRechten().getStartenZaak() && policyService.isZaaktypeAllowed(
-                restZaak.zaaktype.omschrijving));
+        assertPolicy(policyService.readOverigeRechten().getStartenZaak() &&
+                             loggedInUserInstance.get().isGeautoriseerdZaaktype(restZaak.zaaktype.omschrijving));
         final Zaaktype zaaktype = ztcClientService.readZaaktype(restZaak.zaaktype.uuid);
         final Zaak zaak = zgwApiService.createZaak(zaakConverter.convert(restZaak, zaaktype));
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
@@ -359,7 +359,8 @@ public class ZakenRESTService {
             final RESTZaakOpschortGegevens opschortGegevens) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         if (opschortGegevens.indicatieOpschorting) {
-            return zaakConverter.convert(opschortenZaakHelper.opschortenZaak(zaak, opschortGegevens.duurDagen, opschortGegevens.redenOpschorting));
+            return zaakConverter.convert(opschortenZaakHelper.opschortenZaak(zaak, opschortGegevens.duurDagen,
+                                                                             opschortGegevens.redenOpschorting));
         } else {
             return zaakConverter.convert(opschortenZaakHelper.hervattenZaak(zaak, opschortGegevens.redenOpschorting));
         }
@@ -479,13 +480,11 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
-        final List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI())
-                .stream()
+        return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
+                .filter(zaaktype -> loggedInUserInstance.get().isGeautoriseerdZaaktype(zaaktype.getOmschrijving()))
                 .filter(zaaktype -> !zaaktype.getConcept())
                 .filter(Zaaktype::isNuGeldig)
                 .filter(zaaktype -> healthCheckService.controleerZaaktype(zaaktype.getUrl()).isValide())
-                .toList();
-        return policyService.filterAllowedZaaktypen(zaaktypen).stream()
                 .map(zaaktypeConverter::convert)
                 .toList();
     }
@@ -775,7 +774,8 @@ public class ZakenRESTService {
     @Path("besluittypes/{zaaktypeUUID}")
     public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
-        final List<Besluittype> besluittypen = ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()).stream()
+        final List<Besluittype> besluittypen = ztcClientService.readBesluittypen(
+                        ztcClientService.readZaaktype(zaaktypeUUID).getUrl()).stream()
                 .filter(LocalDateUtil::dateNowIsBetween)
                 .toList();
         return besluittypeConverter.convertToRESTBesluittypes(besluittypen);

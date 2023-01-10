@@ -17,6 +17,7 @@ public class UserInput {
     public UserInput(final LoggedInUser loggedInUser) {
         userData.id = loggedInUser.getId();
         userData.rollen = loggedInUser.getRoles();
+        userData.zaaktypen = loggedInUser.getGeautoriseerdeZaaktypen();
     }
 
     public UserData getUser() {

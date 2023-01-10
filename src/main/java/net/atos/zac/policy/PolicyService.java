@@ -7,9 +7,6 @@ package net.atos.zac.policy;
 
 import static net.atos.client.zgw.drc.model.InformatieobjectStatus.DEFINITIEF;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -18,7 +15,6 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.opa.model.RuleQuery;
-import net.atos.client.opa.model.RuleResponse;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -150,41 +146,9 @@ public class PolicyService {
                 .getResult();
     }
 
-    /**
-     * Get the set of allowed zaaktypen.
-     * Returns null if all zaaktypen are allowed.
-     *
-     * @return Set of allowed zaaktypen which may be empty. Or null indicating that all zaaktypen are allowed.
-     */
-    public Set<String> getAllowedZaaktypen() {
-        final Set<String> zaaktypen = readZaaktypen();
-        return zaaktypen.contains(ALLE_ZAAKTYPEN) ? null : zaaktypen;
-    }
-
-    public List<Zaaktype> filterAllowedZaaktypen(final List<Zaaktype> alleZaaktypen) {
-        final Set<String> zaaktypenAllowed = readZaaktypen();
-        if (zaaktypenAllowed.contains(ALLE_ZAAKTYPEN)) {
-            return alleZaaktypen;
-        } else {
-            return alleZaaktypen.stream().filter(zaaktype -> zaaktypenAllowed.contains(zaaktype.getOmschrijving()))
-                    .toList();
-        }
-    }
-
-    public boolean isZaaktypeAllowed(final String zaaktype) {
-        final Set<String> zaaktypenAllowed = readZaaktypen();
-        return zaaktypenAllowed.contains(ALLE_ZAAKTYPEN) || zaaktypenAllowed.contains(zaaktype);
-    }
-
     public static void assertPolicy(final boolean policy) {
         if (!policy) {
             throw new PolicyException();
         }
-    }
-
-    private Set<String> readZaaktypen() {
-        final RuleQuery<UserInput> query = new RuleQuery<>(new UserInput(loggedInUserInstance.get()));
-        final RuleResponse<List<Set<String>>> response = evaluationClient.readZaaktypen(query);
-        return response.getResult().get(0);
     }
 }
