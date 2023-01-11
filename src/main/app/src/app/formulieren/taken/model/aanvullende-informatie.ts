@@ -91,7 +91,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             [new DateFormFieldBuilder(this.humanTaskData.fataleDatum)
             .id(fields.DOORLOOPTIJD)
             .minDate(morgen)
-            .label(fields.DOORLOOPTIJD)
+            .label('fataledatum')
             .build()
             ]);
         if (this.opschortenMogelijk()) {
