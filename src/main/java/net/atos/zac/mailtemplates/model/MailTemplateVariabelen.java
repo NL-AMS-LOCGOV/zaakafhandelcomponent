@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+// Keep typescript MailtemplateVariabele in sync with this enum
 public enum MailTemplateVariabelen {
 
     DOCUMENT_TITEL(false),
