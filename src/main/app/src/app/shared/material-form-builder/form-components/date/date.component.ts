@@ -23,11 +23,11 @@ export class DateComponent extends FormComponent implements OnInit {
     getErrorMessage(): string {
         const formControl = this.data.formControl;
         if (formControl.hasError('matDatepickerParse')) {
-            return this.labeled('msg.error.invalid.formaat', {
+            return this.translate.instant('msg.error.invalid.formaat', {
+                label: this.translate.instant(this.data.label),
                 requiredPattern: this.translate.instant('msg.error.date.formaat')
             });
         }
-
         return super.getErrorMessage();
     }
 

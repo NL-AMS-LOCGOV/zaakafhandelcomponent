@@ -3,21 +3,40 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div mat-dialog-content>
+<div mat-dialog-content [formGroup]="formGroup">
     <p *ngIf="data.planItem.toelichting" class="readonly" [innerHTML]="data.planItem.toelichting"></p>
-    <mfb-form-field [field]="radioFormField"></mfb-form-field>
-    <mfb-form-field *ngIf="redenFormField.formControl.enabled" [field]="redenFormField"></mfb-form-field>
-    <mfb-form-field *ngIf="sendMailFormField.formControl.enabled" [field]="sendMailFormField"></mfb-form-field>
-    <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>
+    <div>
+        <label>{{'zaakOntvankelijk' | translate}}</label>
+        <mat-radio-group id="ontvankelijk" formControlName="ontvankelijk">
+            <mat-radio-button [value]="true">{{'actie.ja' | translate}}</mat-radio-button>
+            <mat-radio-button [value]="false">{{'actie.nee' | translate}}</mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <div>
+        <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('ontvankelijk').value === false">
+            <mat-label>{{'redenNietOntvankelijk'| translate}}</mat-label>
+            <textarea id="redenNietOntvankelijk" formControlName="reden" matInput></textarea>
+            <mat-error>{{getError(formGroup.get('reden'), 'redenNietOntvankelijk')}}</mat-error>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-checkbox *ngIf="mailBeschikbaar" id="sendMail" formControlName="sendMail">{{'sendMail' | translate}}</mat-checkbox>
+    </div>
+    <div>
+        <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('sendMail').value">
+            <mat-label>{{'ontvanger' | translate}}</mat-label>
+            <input matInput id="ontvanger" formControlName="ontvanger">
+            <mat-error>{{getError(formGroup.get('ontvanger'), 'ontvanger')}}</mat-error>
+        </mat-form-field>
+    </div>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="loading || formFieldsInvalid()"
+    <button [disabled]="loading || formGroup.invalid"
             mat-button color="primary" (click)="afronden()" id="intakeAfronden_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
         {{'planitem.INTAKE_AFRONDEN' | translate}}
     </button>
-
     <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
 </div>
