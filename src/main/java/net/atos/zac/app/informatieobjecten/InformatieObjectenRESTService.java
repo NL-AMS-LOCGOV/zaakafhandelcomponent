@@ -304,11 +304,17 @@ public class InformatieObjectenRESTService {
         return informatieobjecttypeConverter.convert(informatieObjectTypes);
     }
 
+    /**
+     * Zet een {@link RESTFileUpload} bestand in de HTTP sessie.
+     *
+     * @param documentReferentieId Zaak-UUID of taak-ID van gerelateerde zaak/taak.
+     * @return Success response
+     */
     @POST
     @Path("informatieobject/upload/{uuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
-        httpSession.get().setAttribute("FILE_" + uuid, data);
+    public Response uploadFile(@PathParam("uuid") final String documentReferentieId, @MultipartForm final RESTFileUpload data) {
+        httpSession.get().setAttribute("FILE_" + documentReferentieId, data);
         return Response.ok("\"Success\"").build();
     }
 
