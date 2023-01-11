@@ -94,15 +94,26 @@
 
         <mat-form-field class="search-field" *ngIf="this.overigeRechten.zoeken" fxHide.lt-md>
             <mat-label>Zoeken</mat-label>
-            <input (keyup.enter)="openZoeken.emit(zoekenFormControl.value)" [formControl]="zoekenFormControl" matInput type="search"
+            <input (keyup.enter)="zoekenSideNav.open()" [formControl]="zoekenFormControl" matInput type="search"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}">
-            <mat-icon (click)="openZoeken.emit(zoekenFormControl.value)" matSuffix>search</mat-icon>
+            <button *ngIf="hasSearched"
+                    [title]="'actie.zoekopdracht.wissen' | translate"
+                    (click)="resetSearch()"
+                    mat-icon-button matSuffix
+                    id="wissen-button">
+                <mat-icon fontIcon="backspace"></mat-icon>
+            </button>
+            <button mat-icon-button type="button" matSuffix id="zoeken-button"
+                    title="{{'actie.zoeken' | translate}}"
+                    (click)="zoekenSideNav.open()">
+                <mat-icon fontIcon="search"></mat-icon>
+            </button>
         </mat-form-field>
         <button *ngIf="this.overigeRechten.zoeken" mat-mini-fab fxHide.gt-sm
-                (click)="openZoeken.emit('')"
+                (click)="zoekenSideNav.open()"
                 color="primary"
                 title="{{ 'actie.zoeken' | translate }}">
-            <mat-icon>search</mat-icon>
+            <mat-icon fontIcon="search"></mat-icon>
         </button>
         <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button
                 title="{{ 'actie.admin' | translate }}">

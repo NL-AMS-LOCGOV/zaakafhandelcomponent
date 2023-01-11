@@ -214,10 +214,9 @@ public class RESTZaakConverter {
         zaak.setRegistratiedatum(LocalDate.now());
 
         if (restZaak.communicatiekanaal != null) {
-            vrlClientService.findCommunicatiekanaal(
-                            restZaak.communicatiekanaal.uuid)
+            vrlClientService.findCommunicatiekanaal(restZaak.communicatiekanaal.uuid)
                     .map(CommunicatieKanaal::getUrl)
-                    .ifPresent(communicatieKanaal -> zaak.setCommunicatiekanaal(communicatieKanaal));
+                    .ifPresent(zaak::setCommunicatiekanaal);
         }
 
         if (restZaak.vertrouwelijkheidaanduiding != null) {
@@ -244,7 +243,7 @@ public class RESTZaakConverter {
         if (restZaak.communicatiekanaal != null) {
             vrlClientService.findCommunicatiekanaal(restZaak.communicatiekanaal.uuid)
                     .map(CommunicatieKanaal::getUrl)
-                    .ifPresent(communicatieKanaal -> zaak.setCommunicatiekanaal(communicatieKanaal));
+                    .ifPresent(zaak::setCommunicatiekanaal);
         }
         zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaak;

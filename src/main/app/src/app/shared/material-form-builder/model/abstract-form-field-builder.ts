@@ -51,8 +51,8 @@ export abstract class AbstractFormFieldBuilder {
         return this;
     }
 
-    hint(hint: FormFieldHint): this {
-        this.formField.hint = hint;
+    hint(hint: string, align?: 'start' | 'end'): this {
+        this.formField.hint = new FormFieldHint(hint, align ? align : 'end');
         return this;
     }
 

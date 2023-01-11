@@ -16,6 +16,7 @@
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
+            <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
             <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <zac-static-text fxFlex="50" [label]="'zaaktype' | translate"
                                  [value]="zaak.zaaktype.omschrijving"></zac-static-text>

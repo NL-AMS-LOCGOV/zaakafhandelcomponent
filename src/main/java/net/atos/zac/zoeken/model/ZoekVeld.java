@@ -14,7 +14,10 @@ public enum ZoekVeld {
     ZAAK_INITIATOR("zaak_initiatorIdentificatie"),
 
     TAAK_ZAAK_ID("taak_zaakId"),
-    TAAK_TOELICHTING("taak_toelichting");
+    TAAK_TOELICHTING("taak_toelichting"),
+
+    DOCUMENT_TITEL("informatieobject_titel"),
+    DOCUMENT_BESCHRIJVING("informatieobject_beschrijving");
 
     private final String veld;
 

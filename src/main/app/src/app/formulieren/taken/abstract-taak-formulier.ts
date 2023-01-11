@@ -32,7 +32,7 @@ export abstract class AbstractTaakFormulier {
     taak: Taak;
     tabellen: { [key: string]: string[] };
     abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
-    dataElementen: {};
+    dataElementen: { [key: string]: string };
     readonly: boolean;
     form: AbstractFormField[][];
     disablePartialSave: boolean = false;
@@ -88,10 +88,7 @@ export abstract class AbstractTaakFormulier {
     }
 
     protected getDataElement(key: string): any {
-        if (this.dataElementen?.hasOwnProperty(key)) {
-            return this.dataElementen[key];
-        }
-        return null;
+        return key in this.dataElementen ? this.dataElementen[key] : null;
     }
 
     refreshTaakdocumenten() {

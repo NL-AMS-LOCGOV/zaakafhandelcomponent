@@ -20,6 +20,11 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         return this;
     }
 
+    optionValue(optionValue: string): this {
+        this.formField.optionValue = optionValue;
+        return this;
+    }
+
     options(options: Observable<any[]> | any[]): this {
         if (isObservable(options)) {
             this.formField.options = options;

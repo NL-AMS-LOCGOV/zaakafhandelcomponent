@@ -91,7 +91,7 @@ public class RESTPlanItemConverter {
                     }
                     restPlanItem.groepId = humanTaskParameters.getGroepID();
                     if (humanTaskParameters.getDoorlooptijd() != null) {
-                        restPlanItem.fataledatum = LocalDate.now().plusDays(humanTaskParameters.getDoorlooptijd());
+                        restPlanItem.fataleDatum = LocalDate.now().plusDays(humanTaskParameters.getDoorlooptijd());
                     }
                 });
         return restPlanItem;
