@@ -3,98 +3,64 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Validators} from '@angular/forms';
-import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {Zaak} from '../model/zaak';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
-import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {MailService} from '../../mail/mail.service';
 import {MailGegevens} from '../../mail/model/mail-gegevens';
-import {CustomValidators} from '../../shared/validators/customValidators';
-import {of, Subject} from 'rxjs';
-import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
-import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {Mail} from '../../admin/model/mail';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {CustomValidators} from '../../shared/validators/customValidators';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: 'intake-afronden-dialog.component.html',
     styleUrls: ['./intake-afronden-dialog.component.less']
 })
-export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
+export class IntakeAfrondenDialogComponent implements OnInit {
 
-    loading: boolean;
-    radioFormField: AbstractFormField;
-    redenFormField: AbstractFormField;
-    sendMailFormField: AbstractFormField;
-    ontvangerFormField: AbstractFormField;
-    private ngDestroy = new Subject<void>();
+    loading = false;
+    mailBeschikbaar = false;
+    sendMailDefault = false;
+    formGroup: FormGroup;
 
     constructor(public dialogRef: MatDialogRef<IntakeAfrondenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
+                private formBuilder: FormBuilder,
+                private translateService: TranslateService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
-                private zaakafhandelParametersService: ZaakafhandelParametersService,
                 private mailtemplateService: MailtemplateService) {
     }
 
     ngOnInit(): void {
-        this.radioFormField = new RadioFormFieldBuilder().id('ontvankelijk')
-                                                 .label('zaakOntvankelijk')
-                                                 .optionLabel('key')
-                                                 .options(of([
-                                                     {value: true, key: 'actie.ja'},
-                                                     {value: false, key: 'actie.nee'}]))
-                                                 .validators(Validators.required)
-                                                 .build();
-        this.redenFormField = new TextareaFormFieldBuilder().id('reden')
-                                                    .label('redenNietOntvankelijk')
-                                                    .validators(Validators.required)
-                                                    .maxlength(100)
-                                                    .build();
-        this.sendMailFormField = new CheckboxFormFieldBuilder().id('sendMail')
-                                                       .label('sendMail')
-                                                       .build();
-        this.ontvangerFormField = new InputFormFieldBuilder().id('ontvanger')
-                                                              .label('ontvanger')
-                                                              .validators(Validators.required, CustomValidators.email)
-                                                              .maxlength(200)
-                                                              .build();
-
-        this.redenFormField.formControl.disable();
-
-        this.radioFormField.formControl.valueChanges.subscribe(value => {
-            if (value) {
-                if (value.value) {
-                    this.redenFormField.formControl.disable();
-                } else {
-                    this.redenFormField.formControl.enable();
-                }
-            }
+        const zap = this.data.zaak.zaaktype.zaakafhandelparameters;
+        this.mailBeschikbaar = zap.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR;
+        this.sendMailDefault = zap.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN;
+        this.formGroup = this.formBuilder.group({
+            ontvankelijk: [null, [Validators.required]],
+            reden: '',
+            sendMail: this.sendMailDefault,
+            ontvanger: ['', (this.sendMailDefault ? [Validators.required, CustomValidators.email] : null)]
         });
-
-        this.sendMailFormField.formControl.valueChanges.subscribe(value => {
-            if (!value) {
-                this.ontvangerFormField.formControl.disable();
-            } else {
-                this.ontvangerFormField.formControl.enable();
-            }
+        this.formGroup.get('ontvankelijk').valueChanges.subscribe(value => {
+            this.formGroup.get('reden').setValidators(value ? null : Validators.required);
+            this.formGroup.get('reden').updateValueAndValidity();
         });
-
-        this.zaakafhandelParametersService.readZaakafhandelparameters(this.data.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
-            if (zaakafhandelParameters.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
-                this.sendMailFormField.formControl.enable();
-            }
-            this.sendMailFormField.formControl.setValue(zaakafhandelParameters.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+        this.formGroup.get('sendMail').valueChanges.subscribe(value => {
+            this.formGroup.get('ontvanger').setValidators(value ? [Validators.required, CustomValidators.email] : null);
+            this.formGroup.get('ontvanger').updateValueAndValidity();
         });
+    }
+
+    getError(fc: AbstractControl, label: string) {
+        return CustomValidators.getErrorMessage(fc, label, this.translateService);
     }
 
     close(): void {
@@ -104,12 +70,12 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
     afronden(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
+        const values = this.formGroup.value;
 
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, this.data.planItem.id, this.data.zaak.uuid);
-        userEventListenerData.zaakOntvankelijk = this.radioFormField.formControl.value.value;
-        userEventListenerData.resultaatToelichting = this.redenFormField.formControl.value;
-
-        if (this.sendMailFormField.formControl.value) {
+        userEventListenerData.zaakOntvankelijk = values.ontvankelijk;
+        userEventListenerData.resultaatToelichting = values.reden;
+        if (values.sendMail) {
             this.mailtemplateService.findMailtemplate(userEventListenerData.zaakOntvankelijk ?
                 Mail.ZAAK_ONTVANKELIJK : Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid)
                 .subscribe(mailtemplate => {
@@ -124,24 +90,14 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
                         mailObject.createDocumentFromMail = true;
                         mailObject.onderwerp = onderwerp;
                         mailObject.body = body;
-                        mailObject.ontvanger = this.ontvangerFormField.formControl.value;
+                        mailObject.ontvanger = values.ontvanger;
                         this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
                     }
-            });
+                });
         }
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)
         });
-    }
-
-    formFieldsInvalid(): boolean {
-        return this.radioFormField.formControl.invalid || this.redenFormField.formControl.invalid ||
-            (this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false);
-    }
-
-    ngOnDestroy(): void {
-        this.ngDestroy.next();
-        this.ngDestroy.complete();
     }
 }
