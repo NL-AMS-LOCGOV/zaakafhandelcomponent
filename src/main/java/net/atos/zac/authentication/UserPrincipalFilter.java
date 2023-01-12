@@ -49,27 +49,18 @@ public class UserPrincipalFilter implements Filter {
                 HttpSession httpSession = httpServletRequest.getSession(true);
                 LoggedInUser loggedInUser = SecurityUtil.getLoggedInUser(httpSession);
                 if (loggedInUser != null && !loggedInUser.getId().equals(principal.getName())) {
-                    synchronized (httpSession) {
-                        if (SecurityUtil.getLoggedInUser(httpSession) != null) {
-                            LOG.info(String.format("HTTP session of user '%s' on context path %s is invalidated",
-                                    loggedInUser.getId(),
-                                    httpServletRequest.getServletContext().getContextPath()));
-                            httpSession.invalidate();
-                            loggedInUser = null;
-                            httpSession = httpServletRequest.getSession(true);
-                        }
-                    }
+                    LOG.info(String.format("HTTP session of user '%s' on context path %s is invalidated",
+                            loggedInUser.getId(), httpServletRequest.getServletContext().getContextPath()));
+                    httpSession.invalidate();
+                    loggedInUser = null;
+                    httpSession = httpServletRequest.getSession(true);
                 }
 
                 if (loggedInUser == null) {
-                    synchronized (httpSession) {
-                        if (SecurityUtil.getLoggedInUser(httpSession) == null) {
-                            loggedInUser = createLoggedInUser(principal.getOidcSecurityContext());
-                            SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
-                            LOG.info(String.format("User logged in: '%s' with roles: %s and groups: %s", loggedInUser.getId(),
-                                    loggedInUser.getRoles(), loggedInUser.getGroupIds()));
-                        }
-                    }
+                    loggedInUser = createLoggedInUser(principal.getOidcSecurityContext());
+                    SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
+                    LOG.info(String.format("User logged in: '%s' with roles: %s and groups: %s", loggedInUser.getId(),
+                            loggedInUser.getRoles(), loggedInUser.getGroupIds()));
                 }
             }
         }
