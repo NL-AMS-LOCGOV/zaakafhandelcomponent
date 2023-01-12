@@ -170,6 +170,14 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         if (!this.laatsteVersieInfoObject.ondertekening && this.laatsteVersieInfoObject.rechten.ondertekenen) {
             this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
         }
+
+        if (this.laatsteVersieInfoObject.rechten.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+            this.menu.push(new ButtonMenuItem('actie.converteren', () => {
+                this.informatieObjectenService.convertInformatieObjectToPDF(this.infoObject.uuid, this.zaak?.uuid)
+                    .subscribe(() => {
+                    });
+            }, 'picture_as_pdf'));
+        }
     }
 
     private loadZaakInformatieobjecten(): void {
