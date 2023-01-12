@@ -5,9 +5,9 @@
 
 package net.atos.zac.policy.input;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import net.atos.zac.authentication.LoggedInUser;
+
+import javax.json.bind.annotation.JsonbProperty;
 
 public class UserInput {
 
@@ -17,7 +17,7 @@ public class UserInput {
     public UserInput(final LoggedInUser loggedInUser) {
         userData.id = loggedInUser.getId();
         userData.rollen = loggedInUser.getRoles();
-        userData.zaaktypen = loggedInUser.getGeautoriseerdeZaaktypen();
+        userData.zaaktypen = loggedInUser.isGeautoriseerdVoorAlleZaaktypen() ? null : loggedInUser.getGeautoriseerdeZaaktypen();
     }
 
     public UserData getUser() {
