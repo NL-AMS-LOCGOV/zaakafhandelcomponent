@@ -33,7 +33,8 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnCh
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.zaak = changes.zaak.currentValue;
+        this.zaak = changes.zaak?.currentValue;
+        this.zaakZoekObject = changes.zaakZoekObject?.currentValue;
         this.loadIndicaties();
     }
 
