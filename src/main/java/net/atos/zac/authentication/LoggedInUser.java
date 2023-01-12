@@ -42,7 +42,11 @@ public class LoggedInUser extends User {
     }
 
     public Set<String> getGeautoriseerdeZaaktypen() {
-        return geautoriseerdeZaaktypen != null ? geautoriseerdeZaaktypen : Collections.emptySet();
+        if (geautoriseerdeZaaktypen != null) {
+            return geautoriseerdeZaaktypen;
+        } else {
+            throw new IllegalStateException("Ingelogde gebruiker is geautoriseerd voor alle zaaktypen. Deze kunnen echter niet worden opgevraagd.");
+        }
     }
 
     public boolean isGeautoriseerdVoorAlleZaaktypen() {
