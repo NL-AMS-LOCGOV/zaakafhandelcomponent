@@ -5,14 +5,13 @@
 
 package net.atos.zac.authentication;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Set;
 
 public class SecurityUtil implements Serializable {
 
@@ -23,8 +22,9 @@ public class SecurityUtil implements Serializable {
      */
     public static final String LOGGED_IN_USER_SESSION_ATTRIBUTE = "logged-in-user";
 
-    public static final LoggedInUser FUNCTIONEEL_GEBRUIKER = new LoggedInUser("FG", "", "Functionele gebruiker", "Functionele gebruiker", null,
-                                                                              Collections.emptyList(), List.of("functionele_gebruiker"));
+    public static final LoggedInUser FUNCTIONEEL_GEBRUIKER =
+            new LoggedInUser("FG", "", "Functionele gebruiker", "Functionele gebruiker", null,
+                    Set.of("functionele_gebruiker"), Collections.emptySet());
 
     @Inject
     @ActiveSession

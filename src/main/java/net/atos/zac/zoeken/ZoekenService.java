@@ -5,23 +5,10 @@
 
 package net.atos.zac.zoeken;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
-import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
-import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
-
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
+import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.model.*;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -32,17 +19,20 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.policy.PolicyService;
-import net.atos.zac.shared.model.SorteerRichting;
-import net.atos.zac.zoeken.model.FilterResultaat;
-import net.atos.zac.zoeken.model.FilterVeld;
-import net.atos.zac.zoeken.model.SorteerVeld;
-import net.atos.zac.zoeken.model.ZoekObject;
-import net.atos.zac.zoeken.model.ZoekParameters;
-import net.atos.zac.zoeken.model.ZoekResultaat;
-import net.atos.zac.zoeken.model.ZoekVeld;
-import net.atos.zac.zoeken.model.index.ZoekObjectType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
+import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
+import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
 
 @ApplicationScoped
 public class ZoekenService {
@@ -56,9 +46,6 @@ public class ZoekenService {
     private static final char SOLR_ESCAPE = '\\';
 
     private static final char SOLR_QUOTE = '\"';
-
-    @Inject
-    private PolicyService policyService;
 
     private final SolrClient solrClient;
 
@@ -96,10 +83,10 @@ public class ZoekenService {
             if (datum != null) {
                 query.addFilterQuery(
                         format("%s:[%s TO %s]", datumVeld.getVeld(),
-                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(
-                                       datum.van().atStartOfDay(ZoneId.systemDefault())),
-                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(
-                                       datum.tot().atStartOfDay(ZoneId.systemDefault()))));
+                                datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(
+                                        datum.van().atStartOfDay(ZoneId.systemDefault())),
+                                datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(
+                                        datum.tot().atStartOfDay(ZoneId.systemDefault()))));
             }
         });
 
@@ -113,19 +100,19 @@ public class ZoekenService {
                         .get(0) : null;
                 if (LEEG.is(special)) {
                     query.addFilterQuery(format("{!tag=%s}!%s:(*)",
-                                                filter,
-                                                filter.getVeld()));
+                            filter,
+                            filter.getVeld()));
                 } else if (NIET_LEEG.is(special)) {
                     query.addFilterQuery(format("{!tag=%s}%s:(*)",
-                                                filter,
-                                                filter.getVeld()));
+                            filter,
+                            filter.getVeld()));
                 } else {
                     query.addFilterQuery(format("{!tag=%s}%s%s:(%s)", filter,
-                                                filterParameters.inverse() ? "-" : StringUtils.EMPTY,
-                                                filter.getVeld(),
-                                                filterParameters.waarden().stream()
-                                                        .map(ZoekenService::quoted)
-                                                        .collect(Collectors.joining(" OR "))));
+                            filterParameters.inverse() ? "-" : StringUtils.EMPTY,
+                            filter.getVeld(),
+                            filterParameters.waarden().stream()
+                                    .map(ZoekenService::quoted)
+                                    .collect(Collectors.joining(" OR "))));
                 }
             }
         });
@@ -140,8 +127,8 @@ public class ZoekenService {
         query.setRows(zoekParameters.getRows());
         query.setStart(zoekParameters.getStart());
         query.addSort(zoekParameters.getSortering().sorteerVeld().getVeld(),
-                      zoekParameters.getSortering()
-                              .richting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+                zoekParameters.getSortering()
+                        .richting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
 
         if (zoekParameters.getSortering().sorteerVeld() != SorteerVeld.CREATED) {
             query.addSort(SorteerVeld.CREATED.getVeld(), SolrQuery.ORDER.desc);
@@ -150,7 +137,7 @@ public class ZoekenService {
             query.addSort(SorteerVeld.ZAAK_IDENTIFICATIE.getVeld(), SolrQuery.ORDER.desc);
         }
         query.addSort("id",
-                      SolrQuery.ORDER.desc); // uniek veld, zodat resultaten (van dezelfde query) altijd in dezelfde volgorde staan
+                SolrQuery.ORDER.desc); // uniek veld, zodat resultaten (van dezelfde query) altijd in dezelfde volgorde staan
 
         try {
             final QueryResponse response = solrClient.query(query);
@@ -161,8 +148,8 @@ public class ZoekenService {
             }).collect(Collectors.toList());
 
             final ZoekResultaat<? extends ZoekObject> zoekResultaat = new ZoekResultaat<>(zoekObjecten,
-                                                                                          response.getResults()
-                                                                                                  .getNumFound());
+                    response.getResults()
+                            .getNumFound());
             response.getFacetFields().forEach(facetField -> {
                 final FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
                 final List<FilterResultaat> waardes = new ArrayList<>();
@@ -170,7 +157,7 @@ public class ZoekenService {
                         .filter(facet -> facet.getCount() > 0)
                         .forEach(facet -> waardes.add(
                                 new FilterResultaat(facet.getName() == null ? LEEG.toString() : facet.getName(),
-                                                    facet.getCount())));
+                                        facet.getCount())));
                 zoekResultaat.addFilter(facetVeld, waardes);
             });
             return zoekResultaat;
@@ -180,15 +167,15 @@ public class ZoekenService {
     }
 
     private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
-        final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
-        if (allowedZaaktypen != null) {
-            if (allowedZaaktypen.isEmpty()) {
+        final LoggedInUser loggedInUser = loggedInUserInstance.get();
+        if (!loggedInUser.isGeautoriseerdVoorAlleZaaktypen()) {
+            if (loggedInUser.getGeautoriseerdeZaaktypen().isEmpty()) {
                 query.addFilterQuery(format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, NON_EXISTING_ZAAKTYPE));
             } else {
-                query.addFilterQuery(allowedZaaktypen.stream()
-                                             .map(ZoekenService::quoted)
-                                             .map(zaaktype -> format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktype))
-                                             .collect(joining(" OR ")));
+                query.addFilterQuery(loggedInUser.getGeautoriseerdeZaaktypen().stream()
+                        .map(ZoekenService::quoted)
+                        .map(zaaktype -> format("%s:%s", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktype))
+                        .collect(joining(" OR ")));
             }
         }
     }

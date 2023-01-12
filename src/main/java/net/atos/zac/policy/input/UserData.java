@@ -12,4 +12,8 @@ class UserData {
     public String id;
 
     public Set<String> rollen;
+
+    // Lijst van zaaktype.omschrijving waarvoor de ingelogde gebruiker geautoriseerd is.
+    // De waarde null betekend dat de gebruiker geautoriseerd is voor elk zaaktype.
+    public Set<String> zaaktypen;
 }
