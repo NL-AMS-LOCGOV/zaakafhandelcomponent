@@ -345,6 +345,7 @@
   "mailtemplate.variabele.DOCUMENT_URL": "The zaakafhandelcomponent-URL of the document.",
   "mailtemplate.variabele.TAAK_BEHANDELAAR_GROEP": "The group the task has been assigned to.",
   "mailtemplate.variabele.TAAK_BEHANDELAAR_MEDEWERKER": "The employee the task has been assigned to.",
+  "mailtemplate.variabele.TAAK_FATALEDATUM": "The task's fatal date.",
   "mailtemplate.variabele.TAAK_LINK": "A clickable link to the task in the zaakafhandelcomponent.",
   "mailtemplate.variabele.TAAK_URL": "The zaakafhandelcomponent-URL of the task.",
   "mailtemplate.variabele.ZAAK_BEHANDELAAR_GROEP": "The group the case has been assigned to.",

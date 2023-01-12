@@ -5,6 +5,7 @@ import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_T
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_URL;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_GROEP;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_MEDEWERKER;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_FATALEDATUM;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_LINK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_URL;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_BEHANDELAAR_GROEP;
@@ -61,6 +62,7 @@ import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.mailtemplates.model.MailLink;
 import net.atos.zac.mailtemplates.model.MailTemplateVariabelen;
+import net.atos.zac.util.DateTimeConverterUtil;
 
 public class MailTemplateHelper {
 
@@ -161,6 +163,10 @@ public class MailTemplateHelper {
             final MailLink link = getLink(taskInfo);
             resolvedTekst = replaceVariabele(resolvedTekst, TAAK_URL, link.url);
             resolvedTekst = replaceVariabeleHtml(resolvedTekst, TAAK_LINK, link.toHtml());
+
+            resolvedTekst = replaceVariabele(resolvedTekst, TAAK_FATALEDATUM,
+                                             DateTimeConverterUtil.convertToLocalDate(taskInfo.getDueDate())
+                                                     .format(DATE_FORMATTER));
 
             if (resolvedTekst.contains(TAAK_BEHANDELAAR_GROEP.getVariabele())) {
                 resolvedTekst = replaceVariabele(resolvedTekst, TAAK_BEHANDELAAR_GROEP,
