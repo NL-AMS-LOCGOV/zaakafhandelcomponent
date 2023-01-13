@@ -205,6 +205,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             this.laatsteVersieInfoObject = infoObject;
             this.toevoegenActies();
             this.updateVersieInformatie();
+            this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
         });
     }
 
