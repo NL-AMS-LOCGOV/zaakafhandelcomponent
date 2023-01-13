@@ -198,6 +198,14 @@ export class InformatieObjectenService {
         );
     }
 
+    convertInformatieObjectToPDF(uuid: string, zaakUuid: string) {
+        return this.http.post<void>(
+            InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/convert`, zaakUuid),
+            null).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     private static addZaakParameter(url: string, zaakUuid: string): string {
         if (zaakUuid) {
             return url.concat(`?zaak=${zaakUuid}`);

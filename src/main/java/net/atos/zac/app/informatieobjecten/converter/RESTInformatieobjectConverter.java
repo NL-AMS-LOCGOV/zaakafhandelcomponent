@@ -124,7 +124,7 @@ public class RESTInformatieobjectConverter {
             }
             restEnkelvoudigInformatieobject.auteur = enkelvoudigInformatieObject.getAuteur();
             if (enkelvoudigInformatieObject.getStatus() != null) {
-                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus().toString();
+                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus();
             }
             restEnkelvoudigInformatieobject.formaat = enkelvoudigInformatieObject.getFormaat();
 
@@ -175,8 +175,7 @@ public class RESTInformatieobjectConverter {
         enkelvoudigInformatieobjectWithInhoud.setFormaat(bestand.type);
         enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
         enkelvoudigInformatieobjectWithInhoud.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
-        enkelvoudigInformatieobjectWithInhoud.setStatus(
-                InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
+        enkelvoudigInformatieobjectWithInhoud.setStatus(restEnkelvoudigInformatieobject.status);
         enkelvoudigInformatieobjectWithInhoud.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
         enkelvoudigInformatieobjectWithInhoud.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(
@@ -233,7 +232,7 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieObjectVersieGegevens.uuid = UriUtil.uuidFromURI(informatieobject.getUrl());
 
         if (informatieobject.getStatus() != null) {
-            restEnkelvoudigInformatieObjectVersieGegevens.status = informatieobject.getStatus().toValue();
+            restEnkelvoudigInformatieObjectVersieGegevens.status = informatieobject.getStatus();
         }
         if (informatieobject.getVertrouwelijkheidaanduiding() != null) {
             restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding = informatieobject.getVertrouwelijkheidaanduiding()
@@ -261,7 +260,7 @@ public class RESTInformatieobjectConverter {
 
         if (restEnkelvoudigInformatieObjectVersieGegevens.status != null) {
             enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(
-                    InformatieobjectStatus.valueOf(restEnkelvoudigInformatieObjectVersieGegevens.status));
+                    restEnkelvoudigInformatieObjectVersieGegevens.status);
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding != null) {
             enkelvoudigInformatieobjectWithInhoudAndLock.setVertrouwelijkheidaanduiding(
@@ -334,7 +333,7 @@ public class RESTInformatieobjectConverter {
             }
             restEnkelvoudigInformatieobject.auteur = enkelvoudigInformatieObject.getAuteur();
             if (enkelvoudigInformatieObject.getStatus() != null) {
-                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus().toString();
+                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus();
             }
             restEnkelvoudigInformatieobject.formaat = enkelvoudigInformatieObject.getFormaat();
             configuratieService.findTaal(enkelvoudigInformatieObject.getTaal())
