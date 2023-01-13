@@ -4,6 +4,7 @@
  */
 
 import {Taal} from '../../configuratie/model/taal';
+import {InformatieobjectStatus} from './informatieobject-status.enum';
 
 export class EnkelvoudigInformatieObjectVersieGegevens {
     uuid: string;
@@ -12,7 +13,7 @@ export class EnkelvoudigInformatieObjectVersieGegevens {
     beschrijving: string;
     vertrouwelijkheidaanduiding: string;
     auteur: string;
-    status: string;
+    status: InformatieobjectStatus;
     taal: Taal;
     bestandsnaam: string;
     verzenddatum: string;

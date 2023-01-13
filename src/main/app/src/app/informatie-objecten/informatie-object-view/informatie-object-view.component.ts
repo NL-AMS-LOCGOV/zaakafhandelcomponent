@@ -38,6 +38,7 @@ import {tap} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Observable} from 'rxjs';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
+import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -164,14 +165,17 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         }
 
         if (this.laatsteVersieInfoObject.rechten.verwijderen && !this.laatsteVersieInfoObject.isBesluitDocument) {
-            this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
+            this.menu.push(
+                new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
 
         if (!this.laatsteVersieInfoObject.ondertekening && this.laatsteVersieInfoObject.rechten.ondertekenen) {
-            this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
+            this.menu.push(
+                new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
         }
 
-        if (this.laatsteVersieInfoObject.rechten.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+        if (this.infoObject.status === InformatieobjectStatus.DEFINITIEF && this.laatsteVersieInfoObject.rechten.wijzigen
+            && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.converteren', () => {
                 this.informatieObjectenService.convertInformatieObjectToPDF(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {

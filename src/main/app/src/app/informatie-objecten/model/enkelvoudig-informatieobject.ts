@@ -8,6 +8,7 @@ import {User} from '../../identity/model/user';
 import {DocumentRechten} from '../../policy/model/document-rechten';
 import {EnkelvoudigInformatieobjectOndertekening} from './enkelvoudig-informatieobject-ondertekening';
 import {InformatieobjectIndicatie} from '../../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
+import {InformatieobjectStatus} from './informatieobject-status.enum';
 
 export class EnkelvoudigInformatieobject {
     uuid: string;
@@ -21,7 +22,7 @@ export class EnkelvoudigInformatieobject {
     bronorganisatie: string;
     vertrouwelijkheidaanduiding: string;
     auteur: string;
-    status: string;
+    status: InformatieobjectStatus;
     formaat: FileFormat;
     taal: string;
     versie: number;

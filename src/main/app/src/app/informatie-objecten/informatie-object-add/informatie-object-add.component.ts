@@ -66,8 +66,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status',
-            InformatieobjectStatus);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectListAcceptFor('informatieobject.status',
+            InformatieobjectStatus, [InformatieobjectStatus.GEARCHIVEERD]);
 
         const titel = new InputFormFieldBuilder()
         .id('titel')
@@ -220,7 +220,9 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                     infoObject[key] = value.uuid;
                 } else if (key === 'taal') {
                     infoObject[key] = value.code;
-                } else if (key === 'status' || key === 'vertrouwelijkheidaanduiding') {
+                } else if (key === 'status') {
+                    infoObject[key] = InformatieobjectStatus[value.value];
+                } else if (key === 'vertrouwelijkheidaanduiding') {
                     infoObject[key] = value.value;
                 } else {
                     infoObject[key] = value;
