@@ -34,3 +34,4 @@ data:
   TZ: Europe/Amsterdam
   MP_HEALTH_EMPTY_LIVENESS_CHECKS_STATUS: DOWN
   MP_HEALTH_EMPTY_READINESS_CHECKS_STATUS: DOWN
+  OFFICE_CONVERTER_CLIENT_MP_REST_URL: {{ printf "http://%s-office-converter.%s" (include "zaakafhandelcomponent.fullname" .) .Release.Namespace }}
