@@ -121,8 +121,8 @@ public enum ScreenEventType {
         return instance(opcode, type, zaak.getUuid(), null);
     }
 
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taak) {
-        return instance(opcode, type, taak.getId(), null);
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taskinfo) {
+        return instance(opcode, type, taskinfo.getId(), null);
     }
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Besluit besluit) {
@@ -284,11 +284,11 @@ public enum ScreenEventType {
     /**
      * Factory method for ScreenEvent (with identification of a task).
      *
-     * @param taak deleted task.
+     * @param taskinfo deleted task.
      * @return instance of the event
      */
-    public final ScreenEvent deleted(final TaskInfo taak) {
-        return event(DELETED, taak);
+    public final ScreenEvent deleted(final TaskInfo taskinfo) {
+        return event(DELETED, taskinfo);
     }
 
     /**
