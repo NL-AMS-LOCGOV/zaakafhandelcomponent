@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public enum Mail {
-
+    ZAAK_ALGEMEEN(MailTemplateVariabelen.ZAAK_VOORTGANG_VARIABELEN),
     ZAAK_ONTVANKELIJK(MailTemplateVariabelen.ZAAK_VOORTGANG_VARIABELEN),
     ZAAK_NIET_ONTVANKELIJK(MailTemplateVariabelen.ZAAK_VOORTGANG_VARIABELEN),
     ZAAK_AFGEHANDELD(MailTemplateVariabelen.ZAAK_VOORTGANG_VARIABELEN),
