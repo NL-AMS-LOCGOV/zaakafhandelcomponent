@@ -144,8 +144,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService,
-                private mailService: MailService) {
+                private bagService: BAGService) {
         super();
     }
 
@@ -892,9 +891,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
     }
 
-    mailVerstuurd(): void {
+    mailVerstuurd(mailVerstuurd: boolean): void {
         this.sluitSidenav();
-        this.updateZaak();
+        if (mailVerstuurd) {
+            this.updateZaak();
+        }
     }
 
     ontvangstBevestigd(): void {

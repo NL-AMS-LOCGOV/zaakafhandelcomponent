@@ -9,7 +9,8 @@ import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAA
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,17 +20,28 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 
 import com.fasterxml.uuid.impl.UUIDUtil;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
@@ -71,6 +83,12 @@ public class MailService {
     private static final int SUBJECT_MAXWIDTH = 78;
 
     private static final Logger LOG = Logger.getLogger(MailService.class.getName());
+
+    private static final String MEDIA_TYPE_PDF = "application/pdf";
+    private static final String MAIL_ONTVANGER = "Ontvanger";
+    private static final String MAIL_BIJLAGE = "Bijlage";
+    private static final String MAIL_ONDERWERP = "Onderwerp";
+    private static final String MAIL_BERICHT = "Bericht";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -116,7 +134,7 @@ public class MailService {
             final int status = mailjetClient.post(request).getStatus();
             if (status < 300) {
                 if (mailGegevens.isCreateDocumentFromMail()) {
-                    createZaakDocumentFromMail(body, subject, bronnen.zaak);
+                    createZaakDocumentFromMail(mailGegevens, attachments, bronnen.zaak);
                 }
             } else {
                 LOG.log(Level.WARNING,
@@ -130,31 +148,71 @@ public class MailService {
         return body;
     }
 
-    private void createZaakDocumentFromMail(final String body, final String onderwerp, final Zaak zaak) {
+    private void createZaakDocumentFromMail(final MailGegevens mailGegevens, final List<Attachment> attachments,
+            final Zaak zaak) {
         final EnkelvoudigInformatieobjectWithInhoud informatieObject =
-                createDocumentInformatieObject(zaak, onderwerp, body);
-        zgwApiService.createZaakInformatieobjectForZaak(zaak, informatieObject, onderwerp, onderwerp,
-                                                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                createDocumentInformatieObject(zaak, mailGegevens, attachments);
+        zgwApiService.createZaakInformatieobjectForZaak(zaak, informatieObject, mailGegevens.getOnderwerp(),
+                mailGegevens.getOnderwerp(), OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
 
     private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
-            final String onderwerp, final String body) {
+            final MailGegevens mailGegevens, final List<Attachment> attachments) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
+        final byte[] pdfDocument = createPdfDocument(mailGegevens, attachments);
+
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
         enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
         enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(LocalDate.now());
-        enkelvoudigInformatieobjectWithInhoud.setTitel(onderwerp);
+        enkelvoudigInformatieobjectWithInhoud.setTitel(mailGegevens.getOnderwerp());
         enkelvoudigInformatieobjectWithInhoud.setAuteur(loggedInUserInstance.get().getFullName());
         enkelvoudigInformatieobjectWithInhoud.setTaal(ConfiguratieService.TAAL_NEDERLANDS);
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(eMailObjectType.getUrl());
-        enkelvoudigInformatieobjectWithInhoud.setInhoud(body.getBytes(StandardCharsets.UTF_8));
+        enkelvoudigInformatieobjectWithInhoud.setInhoud(pdfDocument);
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
-        enkelvoudigInformatieobjectWithInhoud.setFormaat(MediaType.TEXT_HTML);
-        enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.html", onderwerp));
+        enkelvoudigInformatieobjectWithInhoud.setFormaat(MEDIA_TYPE_PDF);
+        enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.pdf", mailGegevens.getOnderwerp()));
         enkelvoudigInformatieobjectWithInhoud.setStatus(InformatieobjectStatus.DEFINITIEF);
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         enkelvoudigInformatieobjectWithInhoud.setVerzenddatum(LocalDate.now());
         return enkelvoudigInformatieobjectWithInhoud;
+    }
+
+    private byte[] createPdfDocument(final MailGegevens mailGegevens, final List<Attachment> attachments) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+            document.open();
+            document.addTitle(mailGegevens.getOnderwerp());
+            final Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+            final Paragraph paragraph = new Paragraph(StringUtils.EMPTY, font);
+            addToParagraph(paragraph, MAIL_ONTVANGER, mailGegevens.getOntvanger().getEmail());
+            if (!attachments.isEmpty()) {
+                addToParagraph(paragraph, MAIL_BIJLAGE,
+                               attachments.stream().map(attachment -> String.valueOf(attachment.getFilename()))
+                                       .collect(Collectors.joining(", ")));
+            }
+            addToParagraph(paragraph, MAIL_ONDERWERP, mailGegevens.getOnderwerp());
+            paragraph.add(MAIL_BERICHT);
+            final HtmlCleaner htmlCleaner = new HtmlCleaner();
+            final TagNode root = htmlCleaner.clean(mailGegevens.getBody());
+            final String bodyHtml = String.format("<%s>%s</%s>", root.getName(), htmlCleaner.getInnerHtml(root),
+                                                  root.getName());
+            paragraph.addAll(XMLWorkerHelper.parseToElementList(bodyHtml, null));
+            document.add(paragraph);
+            document.close();
+        } catch (final DocumentException | IOException e) {
+            LOG.log(Level.SEVERE, "Failed to create pdf document", e);
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private void addToParagraph(final Paragraph paragraph, final String propertie, final String inhoud) {
+        paragraph.add(String.format("%s: %s", propertie, inhoud));
+        paragraph.add(Chunk.NEWLINE);
+        paragraph.add(Chunk.NEWLINE);
     }
 
     private Informatieobjecttype getEmailInformatieObjectType(final Zaak zaak) {

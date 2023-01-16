@@ -36,7 +36,7 @@
                              (done)="processGestart()"
                              [planItem]="actiefPlanItem"></zac-process-task-do>
         <zac-mail-create *ngSwitchCase="sideNavAction.MAIL_VERSTUREN"
-                         (mailVerstuurd)="mailVerstuurd()"
+                         (mailVerstuurd)="mailVerstuurd($event)"
                          [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="sideNavAction.ONTVANGSTBEVESTIGING"
                                   (ontvangstBevestigd)="ontvangstBevestigd()"
