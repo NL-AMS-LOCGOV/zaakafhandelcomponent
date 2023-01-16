@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.EnumSet;
 import java.util.UUID;
 
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.policy.model.RESTDocumentRechten;
 import net.atos.zac.zoeken.model.DocumentIndicatie;
@@ -41,7 +42,7 @@ public class RESTEnkelvoudigInformatieobject {
 
     public String auteur;
 
-    public String status;
+    public InformatieobjectStatus status;
 
     public String formaat;
 

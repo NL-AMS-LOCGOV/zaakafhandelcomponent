@@ -27,7 +27,6 @@ import {User} from '../../identity/model/user';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
-import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -98,8 +97,8 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         const status = new SelectFormFieldBuilder(this.infoObject.status ? {
             label: this.translateService.instant(
-                'informatieobject.status.' + this.infoObject.status.toUpperCase()),
-            value: this.infoObject.status.toUpperCase()
+                'informatieobject.status.' + this.infoObject.status),
+            value: this.infoObject.status
         } : null).id('status').label('status')
                  .validators(Validators.required)
                  .optionLabel('label').options(informatieobjectStatussen)
@@ -111,8 +110,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         const ontvangstDatum = new DateFormFieldBuilder(this.infoObject.ontvangstdatum).id('ontvangstdatum')
                                                                                        .label('ontvangstdatum')
-                                                                                       .hint(new FormFieldHint(this.translateService.instant(
-                                                                                           'msg.document.ontvangstdatum.hint')))
+                                                                                       .hint('msg.document.ontvangstdatum.hint')
                                                                                        .build();
 
         const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')

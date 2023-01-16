@@ -270,7 +270,7 @@ public class DocumentZoekObject implements ZoekObject {
     }
 
     public InformatieobjectStatus getStatus() {
-        return InformatieobjectStatus.valueOf(status);
+        return status != null ? InformatieobjectStatus.valueOf(status) : null;
     }
 
     public void setStatus(final InformatieobjectStatus status) {

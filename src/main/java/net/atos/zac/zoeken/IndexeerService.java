@@ -8,6 +8,7 @@ package net.atos.zac.zoeken;
 import static java.util.logging.Level.WARNING;
 import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
 import static net.atos.client.zgw.shared.model.Results.NUM_ITEMS_PER_PAGE;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.zoeken.model.index.IndexStatus.ADD;
 import static net.atos.zac.zoeken.model.index.IndexStatus.REMOVE;
 import static net.atos.zac.zoeken.model.index.IndexStatus.UPDATE;
@@ -46,12 +47,12 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.shared.model.Results;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
@@ -300,8 +301,10 @@ public class IndexeerService {
     private void markItemForAddOrUpdateInSolrIndex(final String objectId, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(objectId);
         if (entity != null) {
-            entity.setStatus(IndexStatus.UPDATE);
-            entityManager.merge(entity);
+            if (entity.getStatus() == ADD) {
+                entity.setStatus(UPDATE);
+                entityManager.merge(entity);
+            }
         } else {
             entityManager.persist(new ZoekIndexEntity(objectId, type, ADD));
         }
@@ -310,10 +313,10 @@ public class IndexeerService {
     private void markItemForRemovalFromSolrIndex(final String id, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(id);
         if (entity != null) {
-            entity.setStatus(IndexStatus.REMOVE);
+            entity.setStatus(REMOVE);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(id, type, IndexStatus.REMOVE));
+            entityManager.persist(new ZoekIndexEntity(id, type, REMOVE));
         }
     }
 
@@ -379,12 +382,12 @@ public class IndexeerService {
         throw new RuntimeException("No converter found for '%s'".formatted(type));
     }
 
-    public void addZaak(final UUID zaakUUID, boolean inclusieTaken) {
+    public void addZaak(final UUID zaakUUID, boolean inclusiefTaken) {
         markItemForAddOrUpdateInSolrIndex(zaakUUID.toString(), ZAAK);
-        if (inclusieTaken) {
-            takenService.listTasksForZaak(zaakUUID).forEach(taskInfo -> {
-                addTaak(taskInfo.getId());
-            });
+        if (inclusiefTaken) {
+            takenService.listTasksForZaak(zaakUUID).stream()
+                    .map(TaskInfo::getId)
+                    .forEach(this::addTaak);
         }
     }
 
@@ -399,8 +402,7 @@ public class IndexeerService {
     public void addInformatieobjectByZaakinformatieobject(final UUID zaakinformatieobjectUUID) {
         final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(
                 zaakinformatieobjectUUID);
-        markItemForAddOrUpdateInSolrIndex(
-                URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()).toString(), DOCUMENT);
+        markItemForAddOrUpdateInSolrIndex(uuidFromURI(zaakInformatieobject.getInformatieobject()).toString(), DOCUMENT);
     }
 
 

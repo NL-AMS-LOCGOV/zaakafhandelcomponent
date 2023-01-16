@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+// Keep typescript MailtemplateVariabele in sync with this enum
 public enum MailTemplateVariabelen {
 
     DOCUMENT_TITEL(false),
@@ -18,6 +19,7 @@ public enum MailTemplateVariabelen {
     DOCUMENT_URL(false),
     TAAK_BEHANDELAAR_GROEP(false),
     TAAK_BEHANDELAAR_MEDEWERKER(true),
+    TAAK_FATALEDATUM(false),
     TAAK_LINK(false),
     TAAK_URL(false),
     ZAAK_BEHANDELAAR_GROEP(false),
@@ -53,7 +55,7 @@ public enum MailTemplateVariabelen {
                   ZAAK_OMSCHRIJVING, ZAAK_TOELICHTING);
 
     private static final Set<MailTemplateVariabelen> TAAK_VARIABELEN =
-            toSet();
+            toSet(TAAK_FATALEDATUM);
 
     private static final Set<MailTemplateVariabelen> DOCUMENT_VARIABELEN =
             toSet(DOCUMENT_TITEL);

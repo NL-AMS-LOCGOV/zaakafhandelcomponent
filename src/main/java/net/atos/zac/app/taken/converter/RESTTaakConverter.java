@@ -114,11 +114,12 @@ public class RESTTaakConverter {
     private void verwerkZaakafhandelParameters(final RESTTaak restTaak,
             final HumanTaskParameters humanTaskParameters) {
         restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
-        humanTaskParameters.getReferentieTabellen().forEach(referentieTabel -> {
-            restTaak.tabellen.put(referentieTabel.getVeld(),
-                                  referentieTabel.getTabel().getWaarden().stream()
-                                          .map(ReferentieTabelWaarde::getNaam)
-                                          .toList());
-        });
+        humanTaskParameters.getReferentieTabellen()
+                .forEach(referentieTabel -> {
+                    restTaak.tabellen.put(referentieTabel.getVeld(),
+                                          referentieTabel.getTabel().getWaarden().stream()
+                                                  .map(ReferentieTabelWaarde::getNaam)
+                                                  .toList());
+                });
     }
 }

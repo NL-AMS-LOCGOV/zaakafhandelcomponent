@@ -31,11 +31,11 @@ import javax.validation.constraints.NotNull;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.util.UriUtil;
 
 /* Construction is easiest with the factory method in SignaleringService. */
 @Entity
@@ -130,7 +130,7 @@ public class Signalering {
 
     public void setSubject(final EnkelvoudigInformatieobject subject) {
         validSubjecttype(DOCUMENT);
-        this.subject = URIUtil.parseUUIDFromResourceURI(subject.getUrl()).toString();
+        this.subject = UriUtil.uuidFromURI(subject.getUrl()).toString();
     }
 
     private void validSubjecttype(final SignaleringSubject subjecttype) {
@@ -149,7 +149,7 @@ public class Signalering {
     }
 
     public void setDetail(final ZaakInformatieobject detail) {
-        this.detail = URIUtil.parseUUIDFromResourceURI(detail.getInformatieobject()).toString();
+        this.detail = UriUtil.uuidFromURI(detail.getInformatieobject()).toString();
     }
 
     public ZonedDateTime getTijdstip() {

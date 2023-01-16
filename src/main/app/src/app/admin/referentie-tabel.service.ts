@@ -50,7 +50,7 @@ export class ReferentieTabelService {
         );
     }
 
-    readDomeinen(): Observable<string[]> {
+    listDomeinen(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/domein`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

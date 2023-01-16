@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {DocumentZoekObject} from '../../../zoeken/model/documenten/document-zoek-object';
 import {TranslateService} from '@ngx-translate/core';
@@ -23,7 +23,8 @@ export enum InformatieobjectIndicatie {
     templateUrl: '../indicaties.component.html',
     styleUrls: ['../indicaties.component.less']
 })
-export class InformatieObjectIndicatiesComponent extends IndicatiesComponent implements OnInit {
+export class InformatieObjectIndicatiesComponent extends IndicatiesComponent implements OnChanges {
+
     datumPipe = new DatumPipe('nl');
 
     @Input() document: EnkelvoudigInformatieobject;
@@ -33,7 +34,14 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
         super();
     }
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges): void {
+        this.document = changes.document?.currentValue;
+        this.documentZoekObject = changes.documentZoekObject?.currentValue;
+        this.loadIndicaties();
+    }
+
+    private loadIndicaties(): void {
+        this.indicaties = [];
         const indicaties = this.documentZoekObject ? this.documentZoekObject.indicaties : this.document.indicaties;
         indicaties.forEach(indicatie => {
             switch (indicatie) {

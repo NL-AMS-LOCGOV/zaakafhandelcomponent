@@ -5,11 +5,11 @@
 
 
 <mat-sidenav-container class="container" autosize>
-    <mat-sidenav #sideNav position="end" mode="over">
-        <zac-zoeken #zoekComponent [sideNav]="sideNav"></zac-zoeken>
+    <mat-sidenav #zoekenSideNav position="end" mode="over">
+        <zac-zoeken [zoekenSideNav]="zoekenSideNav"></zac-zoeken>
     </mat-sidenav>
     <mat-sidenav-content>
-        <zac-toolbar (openZoeken)="zoekComponent.keywords = $event; sideNav.open()"></zac-toolbar>
+        <zac-toolbar [zoekenSideNav]="zoekenSideNav"></zac-toolbar>
         <zac-loading></zac-loading>
         <zac-action-bar></zac-action-bar>
         <router-outlet></router-outlet>

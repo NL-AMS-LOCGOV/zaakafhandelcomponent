@@ -20,10 +20,10 @@ import java.util.UUID;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.util.UriUtil;
 
 public class SignaleringVerzondenZoekParameters {
     private final SignaleringTarget targettype;
@@ -95,7 +95,7 @@ public class SignaleringVerzondenZoekParameters {
     }
 
     public SignaleringVerzondenZoekParameters subject(final EnkelvoudigInformatieobject subject) {
-        return subjectInformatieobject(URIUtil.parseUUIDFromResourceURI(subject.getUrl()));
+        return subjectInformatieobject(UriUtil.uuidFromURI(subject.getUrl()));
     }
 
     public SignaleringVerzondenZoekParameters subjectZaak(final UUID zaakId) {

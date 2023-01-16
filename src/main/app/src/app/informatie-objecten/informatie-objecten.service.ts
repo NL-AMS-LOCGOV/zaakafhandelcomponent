@@ -155,8 +155,8 @@ export class InformatieObjectenService {
         );
     }
 
-    getUploadURL(uuid: string): string {
-        return `${this.basepath}/informatieobject/upload/${uuid}`;
+    getUploadURL(documentReferentieId: string): string {
+        return `${this.basepath}/informatieobject/upload/${documentReferentieId}`;
     }
 
     getPreviewDocument(uuid: string, versie?: number): Observable<Blob> {
@@ -194,6 +194,14 @@ export class InformatieObjectenService {
 
     listZaakIdentificatiesForInformatieobject(documentUUID: string): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaakidentificaties`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    convertInformatieObjectToPDF(uuid: string, zaakUuid: string) {
+        return this.http.post<void>(
+            InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/convert`, zaakUuid),
+            null).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

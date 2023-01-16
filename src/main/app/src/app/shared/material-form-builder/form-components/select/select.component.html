@@ -8,7 +8,7 @@
     <mat-select placeholder="{{(data.required ? data.label+'.-kies-' : data.label+'.-geen-') | translate}}"
                 [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'" [required]="data.required">
         <mat-option [value]="" *ngIf="!data.required">{{data.label + '.-geen-' | translate}}</mat-option>
-        <mat-option *ngFor="let option of data.options | async" [value]="option">
+        <mat-option *ngFor="let option of data.options | async" [value]="data.optionValue ? option[data.optionValue] : option">
             {{(data.optionLabel ? option[data.optionLabel] : option) | empty | translate}}
         </mat-option>
     </mat-select>

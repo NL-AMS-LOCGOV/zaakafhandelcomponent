@@ -9,6 +9,7 @@ export enum MailtemplateVariabele {
     DOCUMENT_URL = 'DOCUMENT_URL',
     TAAK_BEHANDELAAR_GROEP = 'TAAK_BEHANDELAAR_GROEP',
     TAAK_BEHANDELAAR_MEDEWERKER = 'TAAK_BEHANDELAAR_MEDEWERKER',
+    TAAK_FATALEDATUM = 'TAAK_FATALEDATUM',
     TAAK_LINK = 'TAAK_LINK',
     TAAK_URL = 'TAAK_URL',
     ZAAK_BEHANDELAAR_GROEP = 'ZAAK_BEHANDELAAR_GROEP',
@@ -28,6 +29,7 @@ export enum MailtemplateVariabele {
 }
 
 export class MailtemplateVariabeleUtil {
+    // Keep this set equal to MailTemplateVariabelen.ZAAK_VARIABELEN
     static getDefaultVariabelen(): MailtemplateVariabele[] {
         return [MailtemplateVariabele.ZAAK_NUMMER, MailtemplateVariabele.ZAAK_TYPE, MailtemplateVariabele.ZAAK_STATUS,
             MailtemplateVariabele.ZAAK_REGISTRATIEDATUM, MailtemplateVariabele.ZAAK_STARTDATUM,

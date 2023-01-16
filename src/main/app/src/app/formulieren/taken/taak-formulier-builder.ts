@@ -23,14 +23,13 @@ export class TaakFormulierBuilder {
     }
 
     startForm(planItem: PlanItem, zaak: Zaak): TaakFormulierBuilder {
-        console.log(planItem);
         this._formulier.tabellen = planItem.tabellen;
         this._formulier.zaak = zaak;
         this._formulier.taakNaam = planItem.naam;
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
-        if (planItem.fataledatum) {
-            this._formulier.humanTaskData.fataleDatum = moment(planItem.fataledatum, moment.ISO_8601);
+        if (planItem.fataleDatum) {
+            this._formulier.humanTaskData.fataleDatum = moment(planItem.fataleDatum, moment.ISO_8601);
         }
         this._formulier.initStartForm();
         let groep = null;
