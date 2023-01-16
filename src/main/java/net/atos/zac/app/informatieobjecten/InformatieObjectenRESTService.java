@@ -5,6 +5,42 @@
 
 package net.atos.zac.app.informatieobjecten;
 
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
+import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.commons.lang3.StringUtils;
+import org.flowable.task.api.Task;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+
 import net.atos.client.officeconverter.OfficeConverterClientService;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -24,7 +60,17 @@ import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
-import net.atos.zac.app.informatieobjecten.model.*;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieResponse;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerwijderenGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
+import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
+import net.atos.zac.app.informatieobjecten.model.RESTGekoppeldeZaakEnkelvoudigInformatieObject;
+import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjectZoekParameters;
+import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
+import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.app.zaken.converter.RESTGerelateerdeZaakConverter;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.authentication.ActiveSession;
@@ -46,28 +92,6 @@ import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.webdav.WebdavHelper;
 import net.atos.zac.zoeken.IndexeerService;
-import org.apache.commons.lang3.StringUtils;
-import org.flowable.task.api.Task;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
-import static net.atos.zac.policy.PolicyService.assertPolicy;
-import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
-import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
 @Singleton
 @Path("informatieobjecten")
@@ -155,14 +179,14 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}")
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid,
-                                                                           @QueryParam("zaak") final UUID zaakUUID) {
+            @QueryParam("zaak") final UUID zaakUUID) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
                 uuid);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (zaakUUID != null) {
             restEnkelvoudigInformatieobject = informatieobjectConverter.convertToREST(enkelvoudigInformatieObject,
-                    zrcClientService.readZaak(
-                            zaakUUID));
+                                                                                      zrcClientService.readZaak(
+                                                                                              zaakUUID));
         } else {
             restEnkelvoudigInformatieobject = informatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
         }
@@ -172,7 +196,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/versie/{uuid}/{versie}")
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid,
-                                                                           @PathParam("versie") final int versie) {
+            @PathParam("versie") final int versie) {
         final EnkelvoudigInformatieobject huidigeVersie = drcClientService.readEnkelvoudigInformatieobject(uuid);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (versie < huidigeVersie.getVersie()) {
@@ -231,9 +255,9 @@ public class InformatieObjectenRESTService {
 
         final ZaakInformatieobject zaakInformatieobject =
                 zgwApiService.createZaakInformatieobjectForZaak(zaak, enkelvoudigInformatieobjectWithInhoud,
-                        enkelvoudigInformatieobjectWithInhoud.getTitel(),
-                        enkelvoudigInformatieobjectWithInhoud.getBeschrijving(),
-                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                                enkelvoudigInformatieobjectWithInhoud.getTitel(),
+                                                                enkelvoudigInformatieobjectWithInhoud.getBeschrijving(),
+                                                                OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
             final Task task = takenService.readOpenTask(documentReferentieId);
             final List<UUID> taakdocumenten = taakVariabelenService.readTaakdocumenten(task);
@@ -251,9 +275,9 @@ public class InformatieObjectenRESTService {
                 enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
         assertPolicy(policyService.readDocumentRechten(informatieobject).getWijzigen() &&
-                policyService.readZaakRechten(nieuweZaak).getWijzigen());
+                             policyService.readZaakRechten(nieuweZaak).getWijzigen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron,
-                nieuweZaak.getIdentificatie());
+                                                                    nieuweZaak.getIdentificatie());
         if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
             final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(
                     enkelvoudigInformatieobjectUUID);
@@ -295,9 +319,9 @@ public class InformatieObjectenRESTService {
      * @return Success response
      */
     @POST
-    @Path("informatieobject/upload/{uuid}")
+    @Path("informatieobject/upload/{documentReferentieId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("uuid") final String documentReferentieId, @MultipartForm final RESTFileUpload data) {
+    public Response uploadFile(@PathParam("documentReferentieId") final String documentReferentieId, @MultipartForm final RESTFileUpload data) {
         httpSession.get().setAttribute("FILE_" + documentReferentieId, data);
         return Response.ok("\"Success\"").build();
     }
@@ -325,11 +349,11 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/edit")
     public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid,
-                                                          @QueryParam("zaak") final UUID zaakUUID,
-                                                          @Context final UriInfo uriInfo) {
+            @QueryParam("zaak") final UUID zaakUUID,
+            @Context final UriInfo uriInfo) {
         assertPolicy(
                 policyService.readDocumentRechten(drcClientService.readEnkelvoudigInformatieobject(uuid),
-                        zrcClientService.readZaak(zaakUUID)).getWijzigen());
+                                                  zrcClientService.readZaak(zaakUUID)).getWijzigen());
         final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
         return Response.ok(redirectURI).build();
     }
@@ -345,15 +369,15 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid,
-                                                      final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
+            final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 uuid);
         final Zaak zaak = documentVerwijderenGegevens.zaakUuid != null ?
                 zrcClientService.readZaak(documentVerwijderenGegevens.zaakUuid) : null;
         assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieobject, zaak).getVerwijderen());
         zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(enkelvoudigInformatieobject,
-                documentVerwijderenGegevens.zaakUuid,
-                documentVerwijderenGegevens.reden);
+                                                                documentVerwijderenGegevens.zaakUuid,
+                                                                documentVerwijderenGegevens.reden);
 
         // In geval van een ontkoppeld document
         if (documentVerwijderenGegevens.zaakUuid == null) {
@@ -438,7 +462,7 @@ public class InformatieObjectenRESTService {
                             "Document kan niet worden aangepast omdat het is gelocked met onbekende lock."));
         } else {
             return enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
-                    loggedInUserInstance.get().getId()).getLock();
+                                                                     loggedInUserInstance.get().getId()).getLock();
         }
     }
 
@@ -483,13 +507,13 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClientService.readZaak(restDocumentCreatieGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(zaak,
-                restDocumentCreatieGegevens.informatieobjecttypeUUID,
-                restDocumentCreatieGegevens.taskId);
+                                                                                            restDocumentCreatieGegevens.informatieobjecttypeUUID,
+                                                                                            restDocumentCreatieGegevens.taskId);
         documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
         final DocumentCreatieResponse documentCreatieResponse = documentCreatieService.creeerDocumentAttendedSD(
                 documentCreatieGegevens);
         return new RESTDocumentCreatieResponse(documentCreatieResponse.getRedirectUrl(),
-                documentCreatieResponse.getMessage());
+                                               documentCreatieResponse.getMessage());
     }
 
     @GET
@@ -509,12 +533,12 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/onderteken")
     public Response ondertekenInformatieObject(@PathParam("uuid") final UUID uuid,
-                                               @QueryParam("zaak") final UUID zaakUUID) {
+            @QueryParam("zaak") final UUID zaakUUID) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 uuid);
         assertPolicy(enkelvoudigInformatieobject.getOndertekening() == null &&
-                policyService.readDocumentRechten(enkelvoudigInformatieobject,
-                        zrcClientService.readZaak(zaakUUID)).getOndertekenen());
+                             policyService.readDocumentRechten(enkelvoudigInformatieobject,
+                                                               zrcClientService.readZaak(zaakUUID)).getOndertekenen());
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
 
         // Hiervoor wordt door open zaak geen notificatie verstuurd. Dus zelf het ScreenEvent versturen!
@@ -526,7 +550,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/convert")
     public Response convertInformatieObjectToPDF(@PathParam("uuid") final UUID enkelvoudigInformatieobjectUUID,
-                                                 @QueryParam("zaak") final UUID zaakUUID) throws IOException {
+            @QueryParam("zaak") final UUID zaakUUID) throws IOException {
         final EnkelvoudigInformatieobject document =
                 drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
         assertPolicy(policyService.readDocumentRechten(document, zrcClientService.readZaak(zaakUUID)).getWijzigen());
@@ -558,7 +582,7 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
         return zrcClientService.listZaakinformatieobjecten(zaak).stream()
                 .map(zaakInformatieobject -> informatieobjectConverter.convertToREST(zaakInformatieobject, relatieType,
-                        zaak))
+                                                                                     zaak))
                 .toList();
     }
 
@@ -572,13 +596,13 @@ public class InformatieObjectenRESTService {
         if (zaak.getHoofdzaak() != null) {
             enkelvoudigInformatieobjectList.addAll(
                     listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(zaak.getHoofdzaak(),
-                            RelatieType.HOOFDZAAK));
+                                                                            RelatieType.HOOFDZAAK));
         }
         zaak.getRelevanteAndereZaken().forEach(relevanteAndereZaak -> {
             enkelvoudigInformatieobjectList.addAll(
                     listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(relevanteAndereZaak.getUrl(),
-                            gerelateerdeZaakConverter.convertToRelatieType(
-                                    relevanteAndereZaak.getAardRelatie())));
+                                                                            gerelateerdeZaakConverter.convertToRelatieType(
+                                                                                    relevanteAndereZaak.getAardRelatie())));
         });
         return enkelvoudigInformatieobjectList;
     }
