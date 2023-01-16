@@ -7,9 +7,6 @@ package net.atos.zac.policy;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,10 +29,6 @@ import net.atos.zac.policy.output.ZaakRechten;
 @Path("v1/data/net/atos/zac")
 @Produces(APPLICATION_JSON)
 public interface OPAEvaluationClient {
-
-    @POST
-    @Path("zaaktype/zaaktypen")
-    RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
 
     @POST
     @Path("zaak/zaak_rechten")

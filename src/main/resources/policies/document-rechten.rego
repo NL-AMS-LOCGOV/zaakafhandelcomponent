@@ -4,8 +4,6 @@ import future.keywords
 import data.net.atos.zac.rol.behandelaar
 import data.net.atos.zac.rol.coordinator
 import data.net.atos.zac.rol.recordmanager
-import data.net.atos.zac.domein.domeinen
-import data.net.atos.zac.domein.domein_elk_zaaktype
 import input.user
 import input.document
 
@@ -23,12 +21,10 @@ zaaktype_allowed {
     not document.zaaktype
 }
 zaaktype_allowed {
-    domein_elk_zaaktype.rol in user.rollen
+    not user.zaaktypen
 }
 zaaktype_allowed {
-    some domein
-    domeinen[domein].rol in user.rollen
-    document.zaaktype in domeinen[domein].zaaktypen
+    document.zaaktype in user.zaaktypen
 }
 
 default onvergrendeld_of_vergrendeld_door_user := false

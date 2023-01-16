@@ -4,7 +4,9 @@
  */
 
 export enum InformatieobjectStatus {
-    'DEFINITIEF' = 'DEFINITIEF',
-    'IN_BEWERKING' = 'IN_BEWERKING',
-    'TER_VASTSTELLING' = 'TER_VASTSTELLING'
+    'IN_BEWERKING' = 'in_bewerking',
+    'TER_VASTSTELLING' = 'ter_vaststelling',
+    'DEFINITIEF' = 'definitief',
+    'GEARCHIVEERD' = 'gearchiveerd'
+
 }
