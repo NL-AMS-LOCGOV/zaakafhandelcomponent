@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Zaak} from '../model/zaak';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
@@ -18,17 +18,20 @@ import {Mail} from '../../admin/model/mail';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {TranslateService} from '@ngx-translate/core';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     templateUrl: 'intake-afronden-dialog.component.html',
     styleUrls: ['./intake-afronden-dialog.component.less']
 })
-export class IntakeAfrondenDialogComponent implements OnInit {
+export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
 
     loading = false;
     mailBeschikbaar = false;
     sendMailDefault = false;
     formGroup: FormGroup;
+    private ngDestroy = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<IntakeAfrondenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
@@ -49,11 +52,11 @@ export class IntakeAfrondenDialogComponent implements OnInit {
             sendMail: this.sendMailDefault,
             ontvanger: ['', (this.sendMailDefault ? [Validators.required, CustomValidators.email] : null)]
         });
-        this.formGroup.get('ontvankelijk').valueChanges.subscribe(value => {
+        this.formGroup.get('ontvankelijk').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             this.formGroup.get('reden').setValidators(value ? null : Validators.required);
             this.formGroup.get('reden').updateValueAndValidity();
         });
-        this.formGroup.get('sendMail').valueChanges.subscribe(value => {
+        this.formGroup.get('sendMail').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             this.formGroup.get('ontvanger').setValidators(value ? [Validators.required, CustomValidators.email] : null);
             this.formGroup.get('ontvanger').updateValueAndValidity();
         });
@@ -99,5 +102,10 @@ export class IntakeAfrondenDialogComponent implements OnInit {
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)
         });
+    }
+
+    ngOnDestroy(): void {
+        this.ngDestroy.next();
+        this.ngDestroy.complete();
     }
 }
