@@ -99,6 +99,18 @@ export class UtilService {
         return list;
     }
 
+    getEnumAsSelectListAcceptFor(prefix: string, enumValue: any, acceptEnumValues: [string]): { label: string, value: string }[] {
+        const list: { label: string, value: string }[] = [];
+        Object.keys(enumValue)
+              .filter(value => !acceptEnumValues.some(acceptEnumValue => acceptEnumValue === enumValue[value]))
+              .forEach(value => {
+                  this.translate.get(`${prefix}.${enumValue[value]}`).subscribe(result => {
+                      list.push({label: result, value: value});
+                  });
+              });
+        return list;
+    }
+
     openSnackbarError(message: string, params?: {}) {
         this.openSnackbar(message, params, null);
     }

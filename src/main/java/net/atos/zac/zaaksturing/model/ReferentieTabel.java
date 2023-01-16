@@ -30,6 +30,7 @@ import javax.validation.constraints.NotBlank;
 @Table(schema = SCHEMA, name = "referentie_tabel")
 @SequenceGenerator(schema = SCHEMA, name = "sq_referentie_tabel", sequenceName = "sq_referentie_tabel", allocationSize = 1)
 public class ReferentieTabel {
+
     public enum Systeem {
         ADVIES,
         DOMEIN

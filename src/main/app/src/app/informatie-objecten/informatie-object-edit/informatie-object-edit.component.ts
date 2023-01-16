@@ -97,8 +97,8 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         const status = new SelectFormFieldBuilder(this.infoObject.status ? {
             label: this.translateService.instant(
-                'informatieobject.status.' + this.infoObject.status.toUpperCase()),
-            value: this.infoObject.status.toUpperCase()
+                'informatieobject.status.' + this.infoObject.status),
+            value: this.infoObject.status
         } : null).id('status').label('status')
                  .validators(Validators.required)
                  .optionLabel('label').options(informatieobjectStatussen)
