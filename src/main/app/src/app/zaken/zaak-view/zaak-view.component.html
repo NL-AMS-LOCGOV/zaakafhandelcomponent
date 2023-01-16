@@ -42,10 +42,10 @@
                                   (ontvangstBevestigd)="ontvangstBevestigd()"
                                   [zaak]="zaak"></zac-ontvangstbevestiging>
         <zac-besluit-create *ngSwitchCase="sideNavAction.BESLUIT_VASTLEGGEN"
-                            (besluitVastgelegd)="besluitVastgelegd($event)"
+                            (besluitVastgelegd)="besluitVastgelegd()"
                             [zaak]="zaak"></zac-besluit-create>
         <zac-besluit-edit *ngSwitchCase="sideNavAction.BESLUIT_WIJZIGEN"
-                          (besluitGewijzigd)="besluitVastgelegd($event)"
+                          (besluitGewijzigd)="besluitVastgelegd()"
                           [besluit]="teWijzigenBesluit"
                           [zaak]="zaak"></zac-besluit-edit>
         <zac-zaakdata *ngSwitchCase="sideNavAction.ZAAKDATA_WIJZIGEN"

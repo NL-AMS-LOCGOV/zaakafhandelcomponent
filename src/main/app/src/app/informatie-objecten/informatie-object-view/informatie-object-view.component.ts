@@ -20,7 +20,6 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
-import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {FileFormatUtil} from '../model/file-format';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
@@ -79,18 +78,20 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
             this.zaak = data['zaak'];
-            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid).subscribe(infoObject => {
-                this.laatsteVersieInfoObject = infoObject;
-                this.toevoegenActies();
-                this.updateVersieInformatie();
-                this.loadZaakInformatieobjecten();
-            });
+            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid)
+                .subscribe(infoObject => {
+                    this.laatsteVersieInfoObject = infoObject;
+                    this.toevoegenActies();
+                    this.updateVersieInformatie();
+                    this.loadZaakInformatieobjecten();
+                });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.documentListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
-                (event) => {
-                    this.loadInformatieObject(event);
+            this.documentListener = this.websocketService.addListener(
+                Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+                () => {
+                    this.loadInformatieObject();
                     this.toevoegenActies();
                     this.loadZaakInformatieobjecten();
                     this.loadHistorie();
@@ -196,17 +197,15 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         });
     }
 
-    private loadInformatieObject(event?: ScreenEvent) {
-        if (event) {
-            console.debug('callback loadInformatieObject: ' + event.key);
-        }
-        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid).subscribe(infoObject => {
-            this.infoObject = infoObject;
-            this.laatsteVersieInfoObject = infoObject;
-            this.toevoegenActies();
-            this.updateVersieInformatie();
-            this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
-        });
+    private loadInformatieObject() {
+        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid)
+            .subscribe(infoObject => {
+                this.infoObject = infoObject;
+                this.laatsteVersieInfoObject = infoObject;
+                this.toevoegenActies();
+                this.updateVersieInformatie();
+                this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
+            });
     }
 
     haalVersieOp(versie: number) {
