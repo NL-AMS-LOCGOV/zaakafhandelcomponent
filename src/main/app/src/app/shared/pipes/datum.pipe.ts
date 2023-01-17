@@ -15,7 +15,8 @@ export class DatumPipe implements PipeTransform {
         if (value) {
             const m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
             if (m.isValid()) {
-                return m.format(this.getFormat(dateFormat));
+                return m.format(this.getFormat(dateFormat))
+                        .replace(/-/g, '\u2011'); // non breaking hyphen
             }
         }
         return value;

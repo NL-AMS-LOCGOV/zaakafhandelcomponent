@@ -7,7 +7,6 @@ package net.atos.zac.app.klanten.converter;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
+import net.atos.zac.app.klanten.KlantenUtil;
 import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 
@@ -58,7 +58,7 @@ public class RESTBedrijfConverter {
         final RESTBedrijf restBedrijf = new RESTBedrijf();
         restBedrijf.kvkNummer = bedrijf.getKvkNummer();
         restBedrijf.vestigingsnummer = bedrijf.getVestigingsnummer();
-        restBedrijf.handelsnaam = bedrijf.getHandelsnaam();
+        restBedrijf.handelsnaam = convertToNaam(bedrijf);
         restBedrijf.postcode = bedrijf.getPostcode();
         restBedrijf.rsin = bedrijf.getRsin();
         restBedrijf.type = bedrijf.getType().toUpperCase(Locale.getDefault());
@@ -66,13 +66,18 @@ public class RESTBedrijfConverter {
         return restBedrijf;
     }
 
+    private String convertToNaam(final ResultaatItem bedrijf) {
+        return KlantenUtil.hard(bedrijf.getHandelsnaam());
+    }
+
     private String convertAdres(final ResultaatItem bedrijf) {
-        final String adres = Stream.of(bedrijf.getStraatnaam(),
-                                       Objects.toString(bedrijf.getHuisnummer(), null),
-                                       bedrijf.getHuisnummerToevoeging())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(" "));
-        return StringUtils.isNotBlank(adres) && StringUtils.isNotBlank(bedrijf.getPlaats()) ? "%s, %s".formatted(adres,
-                                                                                                                 bedrijf.getPlaats()) : bedrijf.getPlaats();
+        final String adres = KlantenUtil.hard(bedrijf.getStraatnaam(),
+                                              Objects.toString(bedrijf.getHuisnummer(), null),
+                                              bedrijf.getHuisnummerToevoeging());
+        final String postcode = KlantenUtil.hard(bedrijf.getPostcode());
+        final String woonplaats = KlantenUtil.hard(bedrijf.getPlaats());
+        return KlantenUtil.soft(adres,
+                                postcode,
+                                woonplaats);
     }
 }
