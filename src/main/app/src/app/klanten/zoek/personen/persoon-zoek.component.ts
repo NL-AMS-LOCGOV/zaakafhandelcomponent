@@ -54,7 +54,7 @@ export class PersoonZoekComponent implements OnInit {
         .label('voornamen')
         .maxlength(50)
         .build();
-        this.geslachtsnaamFormField = new InputFormFieldBuilder('Me*')
+        this.geslachtsnaamFormField = new InputFormFieldBuilder()
         .id('achternaam')
         .label('achternaam')
         .maxlength(50)
