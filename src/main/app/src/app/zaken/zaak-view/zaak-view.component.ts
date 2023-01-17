@@ -79,6 +79,7 @@ import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
+import {DatumPipe} from '../../shared/pipes/datum.pipe';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -146,7 +147,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService) {
+                private bagService: BAGService,
+                private datumPipe: DatumPipe) {
         super();
     }
 
@@ -899,9 +901,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
     }
 
-    mailVerstuurd(): void {
+    mailVerstuurd(mailVerstuurd: boolean): void {
         this.sluitSidenav();
-        this.updateZaak();
+        if (mailVerstuurd) {
+            this.updateZaak();
+        }
     }
 
     ontvangstBevestigd(): void {
@@ -955,7 +959,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.klantenService.readPersoon(betrokkene.identificatie).subscribe(persoon => {
                     betrokkene['gegevens'] = persoon.naam;
                     if (persoon.geboortedatum) {
-                        betrokkene['gegevens'] += ` (${persoon.geboortedatum})`;
+                        betrokkene['gegevens'] += ` (${this.datumPipe.transform(persoon.geboortedatum)})`;
                     }
                     if (persoon.inschrijfadres) {
                         betrokkene['gegevens'] += ` \n${persoon.inschrijfadres}`;

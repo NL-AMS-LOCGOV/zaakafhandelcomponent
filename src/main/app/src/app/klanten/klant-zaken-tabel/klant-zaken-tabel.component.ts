@@ -4,16 +4,7 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    SimpleChanges,
-    ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {merge, Observable} from 'rxjs';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -44,6 +35,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     zoekParameters = new ZoekParameters();
     zoekResultaat: ZoekResultaat<ZaakZoekObject> = new ZoekResultaat<ZaakZoekObject>();
     init: boolean;
+    inclusiefAfgerondeZaken = false;
 
     constructor(private utilService: UtilService, private zoekenService: ZoekenService) {}
 
@@ -57,6 +49,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
         this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = SorteerVeld[this.sort.active];
         this.zoekParameters.rows = this.paginator.pageSize;
+        this.zoekParameters.alleenOpenstaandeZaken = !this.inclusiefAfgerondeZaken;
         return this.zoekenService.list(this.zoekParameters) as Observable<ZoekResultaat<ZaakZoekObject>>;
     }
 
