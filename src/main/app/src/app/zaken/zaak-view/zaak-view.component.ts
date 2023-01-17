@@ -429,7 +429,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
                 }, 'folder_copy'));
             }
-            this.createKoppelingenMenuItems();
             if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
@@ -442,7 +441,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     processTaskPlanItems.map(
                         processTaskPlanItem => this.createProcessTaskPlanItemMenuItem(processTaskPlanItem)));
             }
-
+            this.createKoppelingenMenuItems();
             this.updateMargins();
         });
     }
