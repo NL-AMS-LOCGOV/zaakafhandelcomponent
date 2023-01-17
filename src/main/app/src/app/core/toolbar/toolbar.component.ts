@@ -64,8 +64,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
             this.medewerkerNaamToolbar = medewerker.naam.split(' ').map(n => n[0]).join('');
-            this.signaleringListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN,
-                medewerker.id,
+
+            this.signaleringListener = this.websocketService.addListener(
+                Opcode.UPDATED, ObjectType.SIGNALERINGEN, medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
         });
         this.policyService.readOverigeRechten().subscribe(rechten => this.overigeRechten = rechten);

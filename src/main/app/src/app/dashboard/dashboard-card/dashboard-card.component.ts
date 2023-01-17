@@ -73,7 +73,9 @@ export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit
     protected refreshOnSignalering(signaleringType: SignaleringType): Observable<void> {
         const reload$: Subject<void> = new Subject<void>();
         this.identityService.readLoggedInUser().subscribe(medewerker => {
-            this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN, medewerker.id,
+
+            this.websocketService.addListener(
+                Opcode.UPDATED, ObjectType.SIGNALERINGEN, medewerker.id,
                 (event: ScreenEvent) => {
                     if (event.objectId.detail === signaleringType) {
                         reload$.next();
