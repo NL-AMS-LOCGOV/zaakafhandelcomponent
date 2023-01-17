@@ -26,6 +26,9 @@ import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/in
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
 import {Mail} from '../../admin/model/mail';
+import {KlantenService} from '../../klanten/klanten.service';
+import {ActionIcon} from '../../shared/edit/action-icon';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -36,6 +39,7 @@ export class OntvangstbevestigingComponent implements OnInit {
 
     formConfig: FormConfig;
     fields: Array<AbstractFormField[]>;
+    loadingInitator: boolean = false;
 
     @Input() zaak: Zaak;
     @Output() ontvangstBevestigd = new EventEmitter<boolean>();
@@ -50,7 +54,8 @@ export class OntvangstbevestigingComponent implements OnInit {
                 private mailtemplateService: MailtemplateService,
                 public takenService: TakenService,
                 public utilService: UtilService,
-                public translateService: TranslateService) { }
+                public translateService: TranslateService,
+                private klantenService: KlantenService) { }
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
@@ -58,8 +63,16 @@ export class OntvangstbevestigingComponent implements OnInit {
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
-
         const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ONTVANGSTBEVESTIGING, this.zaak.uuid);
+
+        let initiator;
+        if (this.zaak.initiatorIdentificatieType==='BSN') {
+            initiator = this.klantenService.readPersoon(this.zaak.initiatorIdentificatie);
+        } else if (this.zaak.initiatorIdentificatieType==='VN') {
+            initiator = this.klantenService.readVestiging(this.zaak.initiatorIdentificatie);
+        } else if (this.zaak.initiatorIdentificatieType==='RSIN') {
+            initiator = this.klantenService.readRechtspersoon(this.zaak.initiatorIdentificatie);
+        }
 
         const ontvanger = new InputFormFieldBuilder()
         .id('ontvanger')
@@ -86,6 +99,25 @@ export class OntvangstbevestigingComponent implements OnInit {
         .label('bijlagen')
         .documenten(documenten)
         .build();
+
+        if (initiator) {
+            this.loadingInitator = true;
+            const loadingIcon = new ActionIcon('hourglass_empty', 'msg.loading', new Subject<void>());
+            ontvanger.icons ? ontvanger.icons.push(loadingIcon) : ontvanger.icons = [loadingIcon];
+            initiator.subscribe(klant => {
+                this.loadingInitator = false;
+                ontvanger.icons.pop();
+                if (klant.emailadres) {
+                    const initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
+                        new Subject<void>());
+                    ontvanger.icons ? ontvanger.icons.push(initiatorToevoegenIcon) :
+                        ontvanger.icons = [initiatorToevoegenIcon];
+                    initiatorToevoegenIcon.iconClicked.subscribe(() => {
+                        ontvanger.value(klant.emailadres);
+                    });
+                }
+            });
+        }
 
         this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
 

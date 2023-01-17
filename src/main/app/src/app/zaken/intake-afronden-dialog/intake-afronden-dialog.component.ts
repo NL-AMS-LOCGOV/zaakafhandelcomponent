@@ -18,6 +18,10 @@ import {Mail} from '../../admin/model/mail';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {TranslateService} from '@ngx-translate/core';
+import {KlantenService} from '../../klanten/klanten.service';
+import {ActionIcon} from '../../shared/edit/action-icon';
+import {Observable, Subject} from 'rxjs';
+import {Klant} from '../../klanten/model/klanten/klant';
 
 @Component({
     templateUrl: 'intake-afronden-dialog.component.html',
@@ -28,7 +32,13 @@ export class IntakeAfrondenDialogComponent implements OnInit {
     loading = false;
     mailBeschikbaar = false;
     sendMailDefault = false;
+    defaultEmail: string;
+    initiatorToevoegenIcon: ActionIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
+        new Subject<void>());
+    loadingIcon = new ActionIcon('hourglass_empty', 'msg.loading', new Subject<void>());
     formGroup: FormGroup;
+    initiator: Observable<Klant>;
+    loadingInitator: boolean = false;
 
     constructor(public dialogRef: MatDialogRef<IntakeAfrondenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
@@ -36,13 +46,35 @@ export class IntakeAfrondenDialogComponent implements OnInit {
                 private translateService: TranslateService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
-                private mailtemplateService: MailtemplateService) {
+                private mailtemplateService: MailtemplateService,
+                private klantenService: KlantenService) {
     }
 
     ngOnInit(): void {
         const zap = this.data.zaak.zaaktype.zaakafhandelparameters;
         this.mailBeschikbaar = zap.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR;
         this.sendMailDefault = zap.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN;
+
+        if (this.data.zaak.initiatorIdentificatieType==='BSN') {
+            this.initiator = this.klantenService.readPersoon(this.data.zaak.initiatorIdentificatie);
+        } else if (this.data.zaak.initiatorIdentificatieType==='VN') {
+            this.initiator = this.klantenService.readVestiging(this.data.zaak.initiatorIdentificatie);
+        } else if (this.data.zaak.initiatorIdentificatieType==='RSIN') {
+            this.initiator = this.klantenService.readRechtspersoon(this.data.zaak.initiatorIdentificatie);
+        }
+
+        if (this.initiator) {
+            this.loadingInitator = true;
+            this.initiator.subscribe(klant => {
+                this.loadingInitator = false;
+                if (klant.emailadres) {
+                    this.defaultEmail = klant.emailadres;
+                } else {
+                    this.initiator = null;
+                }
+            });
+        }
+
         this.formGroup = this.formBuilder.group({
             ontvankelijk: [null, [Validators.required]],
             reden: '',
@@ -63,6 +95,10 @@ export class IntakeAfrondenDialogComponent implements OnInit {
         return CustomValidators.getErrorMessage(fc, label, this.translateService);
     }
 
+    setInitatorEmail() {
+        this.formGroup.get('ontvanger').setValue(this.defaultEmail);
+    }
+
     close(): void {
         this.dialogRef.close();
     }
@@ -80,16 +116,10 @@ export class IntakeAfrondenDialogComponent implements OnInit {
                 Mail.ZAAK_ONTVANKELIJK : Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid)
                 .subscribe(mailtemplate => {
                     if (mailtemplate) {
-                        let onderwerp = mailtemplate.onderwerp;
-                        onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-                        let body = mailtemplate.body;
-                        body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
-                                   .replace('{zaaknr}', this.data.zaak.identificatie);
-
                         const mailObject: MailGegevens = new MailGegevens();
                         mailObject.createDocumentFromMail = true;
-                        mailObject.onderwerp = onderwerp;
-                        mailObject.body = body;
+                        mailObject.onderwerp = mailtemplate.onderwerp;
+                        mailObject.body = mailtemplate.body;
                         mailObject.ontvanger = values.ontvanger;
                         this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
                     }

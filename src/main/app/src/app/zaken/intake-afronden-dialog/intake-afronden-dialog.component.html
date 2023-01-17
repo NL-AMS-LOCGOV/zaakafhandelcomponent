@@ -24,6 +24,12 @@
     </div>
     <div>
         <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('sendMail').value">
+            <button *ngIf="initiator" mat-icon-button type="button" matSuffix
+                    title="{{loadingInitator ? loadingIcon.title : initiatorToevoegenIcon.title | translate}}"
+                    (click)="loadingInitator ? null : setInitatorEmail()">
+                <mat-icon>{{loadingInitator ? loadingIcon.icon : initiatorToevoegenIcon.icon}}</mat-icon>
+            </button>
+
             <mat-label>{{'ontvanger' | translate}}</mat-label>
             <input matInput id="ontvanger" formControlName="ontvanger">
             <mat-error>{{getError(formGroup.get('ontvanger'), 'ontvanger')}}</mat-error>
