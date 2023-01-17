@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
@@ -14,7 +14,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Subject, Subscription} from 'rxjs';
+import {Subject} from 'rxjs';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -38,12 +38,13 @@ import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
+import {filter, takeUntil} from 'rxjs/operators';
 
 @Component({
     templateUrl: './zaak-create.component.html',
     styleUrls: ['./zaak-create.component.less']
 })
-export class ZaakCreateComponent implements OnInit {
+export class ZaakCreateComponent implements OnInit, OnDestroy {
 
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
@@ -55,7 +56,7 @@ export class ZaakCreateComponent implements OnInit {
     private medewerkerGroepFormField: MedewerkerGroepFormField;
     private vertrouwelijkheidaanduidingField: SelectFormField;
     private vertrouwelijkheidaanduidingen: { label: string, value: string }[];
-    private subscription$: Subscription;
+    private ngDestroy = new Subject<void>();
 
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', 'actie.locatie.toevoegen', new Subject<void>());
@@ -96,7 +97,9 @@ export class ZaakCreateComponent implements OnInit {
                                                            .options(this.zakenService.listZaaktypes())
                                                            .build();
 
-        this.subscription$ = zaaktype.formControl.valueChanges.subscribe(v => this.zaaktypeGeselecteerd(v));
+        zaaktype.formControl.valueChanges
+                .pipe(filter(zt => typeof zt !== 'string'), takeUntil(this.ngDestroy))
+                .subscribe(v => this.zaaktypeGeselecteerd(v));
 
         const startdatum = new DateFormFieldBuilder(moment()).id('startdatum').label('startdatum')
                                                              .validators(Validators.required)
@@ -147,6 +150,11 @@ export class ZaakCreateComponent implements OnInit {
             [omschrijving],
             [toelichting]
         ];
+    }
+
+    ngOnDestroy(): void {
+        this.ngDestroy.next();
+        this.ngDestroy.complete();
     }
 
     onFormSubmit(formGroup: FormGroup): void {
