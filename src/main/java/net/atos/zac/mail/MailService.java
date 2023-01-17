@@ -29,8 +29,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.PrettyXmlSerializer;
 import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XmlSerializer;
 
 import com.fasterxml.uuid.impl.UUIDUtil;
 import com.itextpdf.text.BaseColor;
@@ -195,11 +198,16 @@ public class MailService {
             }
             addToParagraph(paragraph, MAIL_ONDERWERP, mailGegevens.getOnderwerp());
             paragraph.add(MAIL_BERICHT);
-            final HtmlCleaner htmlCleaner = new HtmlCleaner();
-            final TagNode root = htmlCleaner.clean(mailGegevens.getBody());
-            final String bodyHtml = String.format("<%s>%s</%s>", root.getName(), htmlCleaner.getInnerHtml(root),
-                                                  root.getName());
-            paragraph.addAll(XMLWorkerHelper.parseToElementList(bodyHtml, null));
+
+            final HtmlCleaner cleaner = new HtmlCleaner();
+            final TagNode rootTagNode = cleaner.clean(mailGegevens.getBody());
+            final CleanerProperties cleanerProperties = cleaner.getProperties();
+            cleanerProperties.setOmitXmlDeclaration(true);
+
+            final XmlSerializer xmlSerializer = new PrettyXmlSerializer(cleanerProperties);
+            final String html = xmlSerializer.getAsString(rootTagNode);
+
+            paragraph.addAll(XMLWorkerHelper.parseToElementList(html, null));
             document.add(paragraph);
             document.close();
         } catch (final DocumentException | IOException e) {
