@@ -18,6 +18,7 @@ import {Mail} from '../../admin/model/mail';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {TranslateService} from '@ngx-translate/core';
+import {Mailtemplate} from '../../admin/model/mailtemplate';
 
 @Component({
     templateUrl: 'intake-afronden-dialog.component.html',
@@ -26,6 +27,8 @@ import {TranslateService} from '@ngx-translate/core';
 export class IntakeAfrondenDialogComponent implements OnInit {
 
     loading = false;
+    zaakOntvankelijkMail: Mailtemplate;
+    zaakNietOntvankelijkMail: Mailtemplate;
     mailBeschikbaar = false;
     sendMailDefault = false;
     formGroup: FormGroup;
@@ -37,6 +40,12 @@ export class IntakeAfrondenDialogComponent implements OnInit {
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
                 private mailtemplateService: MailtemplateService) {
+        this.mailtemplateService.findMailtemplate(Mail.ZAAK_ONTVANKELIJK, this.data.zaak.uuid).subscribe(mailtemplate => {
+            this.zaakOntvankelijkMail = mailtemplate;
+        });
+        this.mailtemplateService.findMailtemplate(Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid).subscribe(mailtemplate => {
+            this.zaakNietOntvankelijkMail = mailtemplate;
+        });
     }
 
     ngOnInit(): void {
@@ -71,29 +80,18 @@ export class IntakeAfrondenDialogComponent implements OnInit {
         this.dialogRef.disableClose = true;
         this.loading = true;
         const values = this.formGroup.value;
+        const mailtemplate = values.ontvankelijk ? this.zaakOntvankelijkMail : this.zaakNietOntvankelijkMail;
 
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, this.data.planItem.id, this.data.zaak.uuid);
         userEventListenerData.zaakOntvankelijk = values.ontvankelijk;
         userEventListenerData.resultaatToelichting = values.reden;
-        if (values.sendMail) {
-            this.mailtemplateService.findMailtemplate(userEventListenerData.zaakOntvankelijk ?
-                Mail.ZAAK_ONTVANKELIJK : Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid)
-                .subscribe(mailtemplate => {
-                    if (mailtemplate) {
-                        let onderwerp = mailtemplate.onderwerp;
-                        onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-                        let body = mailtemplate.body;
-                        body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
-                                   .replace('{zaaknr}', this.data.zaak.identificatie);
-
-                        const mailObject: MailGegevens = new MailGegevens();
-                        mailObject.createDocumentFromMail = true;
-                        mailObject.onderwerp = onderwerp;
-                        mailObject.body = body;
-                        mailObject.ontvanger = values.ontvanger;
-                        this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
-                    }
-                });
+        if (values.sendMail && mailtemplate) {
+            const mailObject: MailGegevens = new MailGegevens();
+            mailObject.createDocumentFromMail = true;
+            mailObject.onderwerp = mailtemplate.onderwerp;
+            mailObject.body = mailtemplate.body;
+            mailObject.ontvanger = values.ontvanger;
+            this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
         }
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
             next: () => this.dialogRef.close(true),
