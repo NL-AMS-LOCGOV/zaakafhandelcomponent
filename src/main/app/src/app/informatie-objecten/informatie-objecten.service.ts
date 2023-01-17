@@ -155,8 +155,8 @@ export class InformatieObjectenService {
         );
     }
 
-    getUploadURL(uuid: string): string {
-        return `${this.basepath}/informatieobject/upload/${uuid}`;
+    getUploadURL(documentReferentieId: string): string {
+        return `${this.basepath}/informatieobject/upload/${documentReferentieId}`;
     }
 
     getPreviewDocument(uuid: string, versie?: number): Observable<Blob> {

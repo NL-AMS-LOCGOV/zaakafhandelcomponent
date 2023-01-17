@@ -372,10 +372,9 @@
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
                                   (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
                 <mat-card class="taken-card">
-                    <mat-card-header fxLayout="row">
-                        <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>
-                        <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" fxLayout="row"
-                                          id="takenAfgerondeToon_toggle"
+                    <mat-card-header>
+                        <mat-card-title>{{'taken'| translate}}</mat-card-title>
+                        <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" id="takenAfgerondeToon_toggle"
                                           (change)="filterTakenOpStatus()">{{ 'toonAfgerondeTaken' | translate }}</mat-slide-toggle>
                     </mat-card-header>
                     <mat-card-content>

@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.Opcode;
@@ -30,6 +31,13 @@ import net.atos.zac.signalering.model.Signalering;
  * Maps to object-type.ts
  */
 public enum ScreenEventType {
+
+    BESLUIT_INFORMATIEOBJECTEN {
+        @Override
+        public ScreenEvent event(final Opcode opcode, final Besluit besluit) {
+            return instance(opcode, this, besluit);
+        }
+    },
 
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
@@ -108,17 +116,22 @@ public enum ScreenEventType {
     }
 
     // These methods determine what is used as an id, so that it is the same everywhere
+
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Zaak zaak) {
         return instance(opcode, type, zaak.getUuid(), null);
+    }
+
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taskinfo) {
+        return instance(opcode, type, taskinfo.getId(), null);
+    }
+
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Besluit besluit) {
+        return instance(opcode, type, besluit.getUrl(), null);
     }
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
             final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return instance(opcode, type, enkelvoudigInformatieobject.getUrl(), null);
-    }
-
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taak) {
-        return instance(opcode, type, taak.getId(), null);
     }
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
@@ -147,6 +160,14 @@ public enum ScreenEventType {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
+    public ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
+    }
+
+    public ScreenEvent event(final Opcode opcode, final Besluit besluit) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
+    }
+
     public ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
@@ -155,15 +176,12 @@ public enum ScreenEventType {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    public ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
-        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
-    }
-
     // These are factory methods to create handy and unambiguous ScreenEvents for an object type
     // Note that there are no "created" factory methods as there will never be a listener for those (the new objectId is unknown client side).
 
     /**
-     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other modification methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct UUID.
+     * Preferably use the other factory methods.
      *
      * @param uuid identification of the modified object.
      * @return instance of the event
@@ -173,7 +191,8 @@ public enum ScreenEventType {
     }
 
     /**
-     * Pay attention! If you use this method, you are responsible for providing the correct URI. Preferably use the other creation methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct URI.
+     * Preferably use the other factory methods.
      *
      * @param url identification of the modified object.
      * @return instance of the event
@@ -190,6 +209,26 @@ public enum ScreenEventType {
      */
     public final ScreenEvent updated(final Zaak zaak) {
         return event(UPDATED, zaak);
+    }
+
+    /**
+     * Factory method for ScreenEvent (with identification of a task).
+     *
+     * @param taskInfo modified task
+     * @return instance of the event
+     */
+    public final ScreenEvent updated(final TaskInfo taskInfo) {
+        return event(UPDATED, taskInfo);
+    }
+
+    /**
+     * Factory method for ScreenEvent (with besluit identification).
+     *
+     * @param besluit modified besluit.
+     * @return instance of the event
+     */
+    public final ScreenEvent updated(final Besluit besluit) {
+        return event(UPDATED, besluit);
     }
 
     /**
@@ -210,16 +249,6 @@ public enum ScreenEventType {
      */
     public final ScreenEvent updated(final Signalering signalering) {
         return event(UPDATED, signalering);
-    }
-
-    /**
-     * Factory method for ScreenEvent (with identification of a task).
-     *
-     * @param taskInfo modified task
-     * @return instance of the event
-     */
-    public final ScreenEvent updated(final TaskInfo taskInfo) {
-        return event(UPDATED, taskInfo);
     }
 
     /**
@@ -253,6 +282,26 @@ public enum ScreenEventType {
     }
 
     /**
+     * Factory method for ScreenEvent (with identification of a task).
+     *
+     * @param taskinfo deleted task.
+     * @return instance of the event
+     */
+    public final ScreenEvent deleted(final TaskInfo taskinfo) {
+        return event(DELETED, taskinfo);
+    }
+
+    /**
+     * Factory method for ScreenEvent (with identification of a besluit).
+     *
+     * @param besluit deleted besluit.
+     * @return instance of the event
+     */
+    public final ScreenEvent deleted(final Besluit besluit) {
+        return event(DELETED, besluit);
+    }
+
+    /**
      * Factory method for ScreenEvent (with case identification).
      *
      * @param enkelvoudigInformatieobject deleted enkelvoudigInformatieobject.
@@ -260,16 +309,6 @@ public enum ScreenEventType {
      */
     public final ScreenEvent deleted(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(DELETED, enkelvoudigInformatieobject);
-    }
-
-    /**
-     * Factory method for ScreenEvent (with identification of a task).
-     *
-     * @param taak deleted task.
-     * @return instance of the event
-     */
-    public final ScreenEvent deleted(final TaskInfo taak) {
-        return event(DELETED, taak);
     }
 
     private void addEvent(final Set<ScreenEvent> events, final Notificatie.ResourceInfo resource,
@@ -302,6 +341,13 @@ public enum ScreenEventType {
             final Notificatie.ResourceInfo resource) {
         final Set<ScreenEvent> events = new HashSet<>();
         switch (channel) {
+            case BESLUITEN:
+                switch (resource.getType()) {
+                    case BESLUITINFORMATIEOBJECT:
+                        ScreenEventType.BESLUIT_INFORMATIEOBJECTEN.addEvent(events, mainResource, resource);
+                        break;
+                }
+                break;
             case INFORMATIEOBJECTEN:
                 switch (resource.getType()) {
                     case INFORMATIEOBJECT:

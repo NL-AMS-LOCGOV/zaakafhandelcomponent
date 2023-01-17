@@ -115,8 +115,4 @@ export class TakenService {
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
-
-    getUploadURL(uuid: string, field: string): string {
-        return `${this.basepath}/upload/${uuid}/${field}`;
-    }
 }
