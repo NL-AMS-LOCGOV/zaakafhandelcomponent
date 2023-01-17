@@ -23,7 +23,7 @@ export class Goedkeuren extends AbstractTaakFormulier {
     private readonly GOEDKEUREN_ENUM_PREFIX: string = 'goedkeuren.';
 
     fields = {
-        TOELICHTING: 'toelichtingGoedkeuring',
+        TOELICHTING: 'toelichting',
         VRAAG: 'vraag',
         GOEDKEUREN: 'goedkeuren',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten',
