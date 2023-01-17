@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
@@ -41,7 +41,7 @@ import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
     styleUrls: ['./zaak-documenten.component.less'],
     animations: [detailExpand]
 })
-export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
     readonly indicatiesLayout = IndicatiesLayout;
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
@@ -84,6 +84,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     ngAfterViewInit(): void {
         this.enkelvoudigInformatieObjecten.sort = this.docSort;
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.loadInformatieObjecten();
     }
 
     ngOnDestroy(): void {
