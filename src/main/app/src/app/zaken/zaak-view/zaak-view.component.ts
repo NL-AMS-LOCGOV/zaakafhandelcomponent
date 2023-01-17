@@ -57,10 +57,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -125,6 +122,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakTakenListener: WebsocketListener;
     private ingelogdeMedewerker: User;
     private dialogSubscriptions: Subscription[] = [];
+    private datumPipe = new DatumPipe('nl');
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -147,8 +145,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService,
-                private datumPipe: DatumPipe) {
+                private bagService: BAGService) {
         super();
     }
 
