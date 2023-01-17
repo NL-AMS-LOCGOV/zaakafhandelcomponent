@@ -8,7 +8,6 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
-import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     selector: 'zac-document-viewer',
@@ -35,15 +34,16 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
             this.loadDocument();
         }
 
-        this.documentListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
-            (event) => {
-            this.loadInformatieObject(event);
+        this.documentListener = this.websocketService.addListener(
+            Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
+            () => {
+                this.loadInformatieObject();
 
-            if (FileFormatUtil.isPreviewAvailable(this.document.formaat)) {
-                this.showDocumentViewer = true;
-                this.loadDocument();
-            }
-        });
+                if (FileFormatUtil.isPreviewAvailable(this.document.formaat)) {
+                    this.showDocumentViewer = true;
+                    this.loadDocument();
+                }
+            });
     }
 
     ngOnDestroy() {
@@ -69,10 +69,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
         });
     }
 
-    private loadInformatieObject(event?: ScreenEvent) {
-        if (event) {
-            console.debug('callback loadInformatieObject: ' + event.key);
-        }
+    private loadInformatieObject() {
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.document.uuid)
             .subscribe(informatieObject => {
                 this.document = informatieObject;
