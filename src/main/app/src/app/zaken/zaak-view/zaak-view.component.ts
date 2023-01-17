@@ -71,7 +71,6 @@ import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {MailService} from '../../mail/mail.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
@@ -123,6 +122,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakTakenListener: WebsocketListener;
     private ingelogdeMedewerker: User;
     private dialogSubscriptions: Subscription[] = [];
+    private datumPipe = new DatumPipe('nl');
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -145,9 +145,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService,
-                private mailService: MailService,
-                private datumPipe: DatumPipe) {
+                private bagService: BAGService) {
         super();
     }
 
@@ -894,9 +892,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
     }
 
-    mailVerstuurd(): void {
+    mailVerstuurd(mailVerstuurd: boolean): void {
         this.sluitSidenav();
-        this.updateZaak();
+        if (mailVerstuurd) {
+            this.updateZaak();
+        }
     }
 
     ontvangstBevestigd(): void {
