@@ -32,7 +32,7 @@ export class IntakeAfrondenDialogComponent implements OnInit {
     loading = false;
     mailBeschikbaar = false;
     sendMailDefault = false;
-    defaultEmail: string;
+    initiatorEmail: string;
     initiatorToevoegenIcon: ActionIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
         new Subject<void>());
     loadingIcon = new ActionIcon('hourglass_empty', 'msg.loading', new Subject<void>());
@@ -68,7 +68,7 @@ export class IntakeAfrondenDialogComponent implements OnInit {
             this.initiator.subscribe(klant => {
                 this.loadingInitator = false;
                 if (klant.emailadres) {
-                    this.defaultEmail = klant.emailadres;
+                    this.initiatorEmail = klant.emailadres;
                 } else {
                     this.initiator = null;
                 }
@@ -96,7 +96,7 @@ export class IntakeAfrondenDialogComponent implements OnInit {
     }
 
     setInitatorEmail() {
-        this.formGroup.get('ontvanger').setValue(this.defaultEmail);
+        this.formGroup.get('ontvanger').setValue(this.initiatorEmail);
     }
 
     close(): void {
