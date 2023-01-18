@@ -6,11 +6,9 @@
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {FormGroup} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
-import {Group} from '../../identity/model/group';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
-import {User} from '../../identity/model/user';
 import {Taakinformatie} from '../../taken/model/taakinformatie';
 import {HumanTaskData} from '../../plan-items/model/human-task-data';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
@@ -23,7 +21,8 @@ import {Zaak} from '../../zaken/model/zaak';
 
 export abstract class AbstractTaakFormulier {
 
-    public static TOEKENNING_FIELD: string = 'toekenning-field';
+    public static TAAK_FATALEDATUM: string = 'taakFataledatum';
+    public static TAAK_TOEKENNING: string = 'taakToekenning';
     public static BIJLAGEN_FIELD: string = 'bijlagen';
 
     zaak: Zaak;
@@ -32,7 +31,7 @@ export abstract class AbstractTaakFormulier {
     taak: Taak;
     tabellen: { [key: string]: string[] };
     abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
-    dataElementen: { [key: string]: string };
+    dataElementen: { [key: string]: string } = {};
     readonly: boolean;
     form: AbstractFormField[][];
     disablePartialSave: boolean = false;
@@ -74,9 +73,12 @@ export abstract class AbstractTaakFormulier {
     }
 
     getHumanTaskData(formGroup: FormGroup): HumanTaskData {
-        const toekenning: { groep: Group, medewerker?: User } = formGroup.controls[AbstractTaakFormulier.TOEKENNING_FIELD].value;
+        const values = formGroup.value;
+        const toekenning = values[AbstractTaakFormulier.TAAK_TOEKENNING];
+        const fataledatum = values[AbstractTaakFormulier.TAAK_FATALEDATUM];
         this.humanTaskData.medewerker = toekenning.medewerker;
         this.humanTaskData.groep = toekenning.groep;
+        this.humanTaskData.fataledatum = fataledatum;
         this.humanTaskData.taakdata = this.getDataElementen(formGroup);
         return this.humanTaskData;
     }
@@ -137,17 +139,16 @@ export abstract class AbstractTaakFormulier {
     }
 
     private getDataElementen(formGroup: FormGroup): {} {
-        if (!this.dataElementen) {
-            this.dataElementen = {};
-        }
-        Object.keys(formGroup.controls).forEach((key) => {
-            if (key !== AbstractTaakFormulier.TOEKENNING_FIELD && !this.isReadonlyFormField(key)) {
-                this.dataElementen[key] = formGroup.controls[key]?.value;
-            }
-            if (typeof this.dataElementen[key] === 'boolean') {
-                this.dataElementen[key] = `${this.dataElementen[key]}`; // convert to string, boolean not allowed in string map (yasson/jsonb exception)
-            }
-        });
+        Object.entries(formGroup.value)
+              .filter(([key]) => key !== AbstractTaakFormulier.TAAK_TOEKENNING)
+              .filter(([key]) => key !== AbstractTaakFormulier.TAAK_FATALEDATUM)
+              .filter(([key]) => !this.isReadonlyFormField(key))
+              .map(([key, value]) => {
+                  this.dataElementen[key] = value as any;
+                  if (typeof this.dataElementen[key] === 'boolean') {
+                      this.dataElementen[key] = `${this.dataElementen[key]}`; // convert to string, boolean not allowed in string map (yasson/jsonb exception)
+                  }
+              });
         return this.dataElementen;
     }
 

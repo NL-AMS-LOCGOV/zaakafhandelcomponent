@@ -9,9 +9,9 @@ import {ObjectType} from './model/object-type';
 import {WebsocketListener} from './model/websocket-listener';
 
 describe('WebsocketService', () => {
-    var service: WebsocketService;
-    var listeners: WebsocketListener[] = [];
-    var received: number = 0;
+    const listeners: WebsocketListener[] = [];
+    let service: WebsocketService;
+    let received: number = 0;
 
     beforeEach(() => {
         // Gebruik de mock. N.B. daarmee kan ALLEEN de listeners-logica getest worden.
@@ -27,7 +27,7 @@ describe('WebsocketService', () => {
         const EVENTS = 10000;
         const EXPECTED = EVENTS;
         reset();
-        for (var i = 0; i < EVENTS; i++) {
+        for (let i = 0; i < EVENTS; i++) {
             listeners.push(addRandomListener(EXPECTED, done));
         }
     });
@@ -36,10 +36,10 @@ describe('WebsocketService', () => {
         const EVENTS = 1000;
         const EXPECTED = EVENTS / 2;
         reset();
-        for (var i = 0; i < EVENTS; i++) {
-            var listener: WebsocketListener = addRandomListener(EXPECTED, done);
+        for (let i = 0; i < EVENTS; i++) {
+            const listener: WebsocketListener = addRandomListener(EXPECTED, done);
             listeners.push(listener);
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 service.suspendListener(listener);
             }
         }
@@ -59,9 +59,9 @@ describe('WebsocketService', () => {
             ObjectType.ZAAK_TAKEN];
         const MAX_DELAY = 512; // ms
 
-        var opcode: Opcode = OPCODES[Math.floor(Math.random() * OPCODES.length)];
-        var objectType: ObjectType = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
-        var delay: string = Math.floor(Math.random() * MAX_DELAY).toString();
+        const opcode: Opcode = OPCODES[Math.floor(Math.random() * OPCODES.length)];
+        const objectType: ObjectType = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
+        const delay: string = Math.floor(Math.random() * MAX_DELAY).toString();
         return service.addListener(opcode, objectType, delay, callback(opcode, objectType, delay, expected, done));
     }
 
@@ -72,18 +72,16 @@ describe('WebsocketService', () => {
             expect(event.objectType).toEqual(objectType);
             expect(event.objectId).toEqual(objectId);
             expect(event.key).toEqual(opcode + ';' + objectType + ';' + objectId);
-            if (++received == expected) {
+            if (++received === expected) {
                 done();
                 reset();
             }
         };
     }
 
-    // This depends on listeners (do make sure it to keep it consistent with what is registered with the service)
+    // This depends on listeners (do make sure to keep it consistent with what is registered with the service)
     function reset() {
-        for (var i = 0; i < listeners.length; i++) {
-            service.removeListener(listeners[i]);
-        }
+        service.removeListeners(listeners);
         listeners.length = 0;
         received = 0;
     }

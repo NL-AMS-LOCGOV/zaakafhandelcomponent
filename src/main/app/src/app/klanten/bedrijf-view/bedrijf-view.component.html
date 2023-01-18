@@ -16,7 +16,6 @@
                         <div id="bedrijfsgegevens" class="content" fxLayout="column wrap">
                             <zac-static-text [label]="'handelsnaam' | translate"
                                              [value]="bedrijf?.naam"></zac-static-text>
-                            <zac-static-text [label]="'adres' | translate" [value]="bedrijf?.adres"></zac-static-text>
                             <zac-static-text [label]="'kvknummer' | translate"
                                              [value]="bedrijf?.kvkNummer"></zac-static-text>
                             <zac-static-text *ngIf="vestigingsnummer" [label]="'vestigingsnummer' | translate"
@@ -25,10 +24,12 @@
                                              [value]="bedrijf?.rsin"></zac-static-text>
                             <zac-static-text [label]="'type' | translate"
                                              [value]="bedrijf?.type | translate"></zac-static-text>
+                            <zac-static-text [label]="'adres' | translate"
+                                             [value]="bedrijf?.adres | empty"></zac-static-text>
                             <zac-static-text [label]="'telefoonnummer' | translate"
-                                             [value]="bedrijf?.telefoonnummer"></zac-static-text>
+                                             [value]="bedrijf?.telefoonnummer | empty"></zac-static-text>
                             <zac-static-text [label]="'emailadres' | translate"
-                                             [value]="bedrijf?.emailadres"></zac-static-text>
+                                             [value]="bedrijf?.emailadres | empty"></zac-static-text>
                         </div>
                     </zac-skeleton-loader>
                 </mat-card-content>

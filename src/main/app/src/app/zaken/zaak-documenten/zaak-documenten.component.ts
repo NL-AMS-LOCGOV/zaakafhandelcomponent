@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
@@ -41,7 +41,7 @@ import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
     styleUrls: ['./zaak-documenten.component.less'],
     animations: [detailExpand]
 })
-export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
     readonly indicatiesLayout = IndicatiesLayout;
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
@@ -61,7 +61,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     documentPreviewRow: EnkelvoudigInformatieobject | null;
     downloadAlsZipSelection = new SelectionModel<GekoppeldeZaakEnkelvoudigInformatieobject>(true, []);
 
-    private zaakDocumentenListener: WebsocketListener;
+    private websocketListeners: WebsocketListener[] = [];
 
     constructor(private informatieObjectenService: InformatieObjectenService,
                 private websocketService: WebsocketService,
@@ -75,9 +75,13 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     ngOnInit(): void {
         this.taakModus = !!this.zaakUUID;
 
-        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED,
-            ObjectType.ZAAK_INFORMATIEOBJECTEN, this.getZaakUuid(),
-            (event) => this.loadInformatieObjecten(event));
+        this.websocketListeners.push(this.websocketService.addListener(
+            Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.getZaakUuid(),
+            (event) => this.loadInformatieObjecten(event)));
+
+        this.websocketListeners.push(this.websocketService.addListener(
+            Opcode.UPDATED, ObjectType.ZAAK_BESLUITEN, this.getZaakUuid(),
+            () => this.loadInformatieObjecten()));
 
         this.loadInformatieObjecten();
     }
@@ -86,13 +90,16 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         this.enkelvoudigInformatieObjecten.sort = this.docSort;
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        this.loadInformatieObjecten();
+    }
+
     ngOnDestroy(): void {
-        this.websocketService.removeListener(this.zaakDocumentenListener);
+        this.websocketService.removeListeners(this.websocketListeners);
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
         if (event) {
-            console.debug('callback loadInformatieObjecten: ' + event.key);
             this.informatieObjectenService.readEnkelvoudigInformatieobjectByZaakInformatieobjectUUID(
                 event.objectId.detail)
                 .subscribe(enkelvoudigInformatieobject => {
@@ -156,8 +163,6 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                     if (result) {
                         this.utilService.openSnackbar('msg.document.ontkoppelen.uitgevoerd',
                             {document: informatieobject.titel});
-                        this.websocketService.suspendListener(this.zaakDocumentenListener);
-                        this.loadInformatieObjecten();
                     }
                 });
             });

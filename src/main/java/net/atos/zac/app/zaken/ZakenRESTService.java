@@ -135,6 +135,7 @@ import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.LocalDateUtil;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
@@ -712,6 +713,9 @@ public class ZakenRESTService {
                                                                                                 informatieobject.getUrl());
             brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT_TOELICHTING);
         });
+        // This event should result from a ZAAKBESLUIT CREATED notification on the ZAKEN channel
+        // but open_zaak does not send that one, so emulate it here.
+        eventingService.send(ScreenEventType.ZAAK_BESLUITEN.updated(zaak));
         return resultaat;
     }
 
@@ -735,6 +739,9 @@ public class ZakenRESTService {
             }
         }
         updateBesluitInformatieobjecten(besluit, restBesluitWijzgenGegevens.informatieobjecten);
+        // This event should result from a ZAAKBESLUIT CREATED notification on the ZAKEN channel
+        // but open_zaak does not send that one, so emulate it here.
+        eventingService.send(ScreenEventType.ZAAK_BESLUITEN.updated(zaak));
         return besluitConverter.convertToRESTBesluit(besluit);
     }
 

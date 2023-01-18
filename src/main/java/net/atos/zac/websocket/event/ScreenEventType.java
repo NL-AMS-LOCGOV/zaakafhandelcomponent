@@ -32,6 +32,13 @@ import net.atos.zac.signalering.model.Signalering;
  */
 public enum ScreenEventType {
 
+    BESLUIT {
+        @Override
+        public ScreenEvent event(final Opcode opcode, final Besluit besluit) {
+            return instance(opcode, this, besluit);
+        }
+    },
+
     BESLUIT_INFORMATIEOBJECTEN {
         @Override
         public ScreenEvent event(final Opcode opcode, final Besluit besluit) {
@@ -63,6 +70,13 @@ public enum ScreenEventType {
     },
 
     ZAAK {
+        @Override
+        public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+            return instance(opcode, this, zaak);
+        }
+    },
+
+    ZAAK_BESLUITEN {
         @Override
         public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
@@ -343,6 +357,9 @@ public enum ScreenEventType {
         switch (channel) {
             case BESLUITEN:
                 switch (resource.getType()) {
+                    case BESLUIT:
+                        ScreenEventType.BESLUIT.addEvent(events, resource, null);
+                        break;
                     case BESLUITINFORMATIEOBJECT:
                         ScreenEventType.BESLUIT_INFORMATIEOBJECTEN.addEvent(events, mainResource, resource);
                         break;
@@ -385,7 +402,7 @@ public enum ScreenEventType {
                         ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case ZAAKBESLUIT:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
+                        ScreenEventType.ZAAK_BESLUITEN.addEvent(events, mainResource, resource);
                         break;
                 }
                 break;

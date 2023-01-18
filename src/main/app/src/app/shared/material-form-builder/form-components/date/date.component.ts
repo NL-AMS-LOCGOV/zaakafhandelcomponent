@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
 import {DateFormField} from './date-form-field';
 import {TranslateService} from '@ngx-translate/core';
+import * as moment from 'moment';
 
 @Component({
     templateUrl: './date.component.html',
@@ -32,6 +33,10 @@ export class DateComponent extends FormComponent implements OnInit {
     }
 
     ngOnInit(): void {
+    }
+
+    days() {
+        return moment(this.data.formControl.value).diff(moment().startOf('day'), 'days');
     }
 
 }

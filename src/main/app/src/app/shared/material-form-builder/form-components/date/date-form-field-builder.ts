@@ -28,4 +28,9 @@ export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    showDays() {
+        this.formField.showDays = true;
+        return this;
+    }
+
 }

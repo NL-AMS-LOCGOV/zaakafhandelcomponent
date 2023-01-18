@@ -5,30 +5,24 @@
 
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
-import {Validators} from '@angular/forms';
-import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Zaak} from '../model/zaak';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
-import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {MailService} from '../../mail/mail.service';
 import {MailGegevens} from '../../mail/model/mail-gegevens';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ZakenService} from '../zaken.service';
-import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {takeUntil} from 'rxjs/operators';
 import {Resultaattype} from '../model/resultaattype';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {Mail} from '../../admin/model/mail';
 import {Mailtemplate} from '../../admin/model/mailtemplate';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -36,80 +30,61 @@ import {Mailtemplate} from '../../admin/model/mailtemplate';
 })
 export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
-    loading: boolean;
-    toelichtingFormField: AbstractFormField;
-    resultaatFormField: SelectFormField | ReadonlyFormField;
-    besluitenFormField: ReadonlyFormField[];
-    sendMailFormField: AbstractFormField;
-    ontvangerFormField: AbstractFormField;
-    private ngDestroy = new Subject<void>();
+    loading = false;
+    mailBeschikbaar = false;
+    sendMailDefault = false;
+    formGroup: FormGroup;
     besluitVastleggen = false;
     mailtemplate: Mailtemplate;
+    zaak: Zaak;
+    planItem: PlanItem;
+    resultaattypes: Observable<Resultaattype[]>;
+    private ngDestroy = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<ZaakAfhandelenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
+                private formBuilder: FormBuilder,
+                private translateService: TranslateService,
                 private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
                 private mailtemplateService: MailtemplateService) {
-    }
-
-    ngOnInit(): void {
-        const zaakafhandelParameters = this.data.zaak.zaaktype.zaakafhandelparameters;
+        this.zaak = data.zaak;
+        this.planItem = data.planItem;
+        this.resultaattypes = this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid);
         this.mailtemplateService.findMailtemplate(Mail.ZAAK_AFGEHANDELD, this.data.zaak.uuid).subscribe(mailtemplate => {
             this.mailtemplate = mailtemplate;
         });
+    }
 
-        if (this.data.zaak.besluiten) {
-            this.resultaatFormField = new ReadonlyFormFieldBuilder(this.data.zaak.resultaat.resultaattype.naam).id('resultaattype')
-                                                                                                               .label('resultaat')
-                                                                                                               .build();
+    ngOnInit(): void {
+        const zap = this.zaak.zaaktype.zaakafhandelparameters;
+        this.mailBeschikbaar = zap.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR;
+        this.sendMailDefault = zap.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN;
 
-            this.besluitenFormField = [];
-            this.data.zaak.besluiten.forEach(besluit =>
-                this.besluitenFormField.push(new ReadonlyFormFieldBuilder(besluit.besluittype.naam).id('besluit')
-                                                                                                   .label(besluit.identificatie)
-                                                                                                   .build()));
-        } else {
-            this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
-                                                                  .label('resultaat')
-                                                                  .optionLabel('naam')
-                                                                  .options(this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid))
-                                                                  .validators(Validators.required)
-                                                                  .build();
-        }
-        this.toelichtingFormField = new InputFormFieldBuilder().id('toelichting')
-                                                               .label('toelichting')
-                                                               .maxlength(80)
-                                                               .build();
-        this.sendMailFormField = new CheckboxFormFieldBuilder().id('sendMail')
-                                                               .label('sendMail')
-                                                               .build();
-        this.ontvangerFormField = new InputFormFieldBuilder().id('ontvanger')
-                                                             .label('ontvanger')
-                                                             .validators(Validators.required, CustomValidators.email)
-                                                             .maxlength(200)
-                                                             .build();
-        this.sendMailFormField.formControl.disable();
+        this.formGroup = this.formBuilder.group({
+            resultaattype: [null, this.zaak.resultaat ? null : [Validators.required]],
+            toelichting: '',
+            sendMail: this.sendMailDefault,
+            ontvanger: ['', (this.sendMailDefault ? [Validators.required, CustomValidators.email] : null)]
+        });
 
-        if (!this.data.zaak.besluiten) {
-            this.resultaatFormField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-                this.besluitVastleggen = (value as Resultaattype).besluitVerplicht;
-
-                if (this.besluitVastleggen) {
-                    this.toelichtingFormField.formControl.disable();
-                    this.sendMailFormField.formControl.disable();
-                } else {
-                    this.toelichtingFormField.formControl.enable();
-                    this.sendMailFormField.formControl.enable();
-                }
-            });
-        }
-        this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
-        if (zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
-            this.sendMailFormField.formControl.enable();
-        }
-
+        this.formGroup.get('sendMail').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
+            this.formGroup.get('ontvanger').setValidators(value ? [Validators.required, CustomValidators.email] : null);
+            this.formGroup.get('ontvanger').updateValueAndValidity();
+        });
+        this.formGroup.get('resultaattype').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe((value: Resultaattype) => {
+            this.besluitVastleggen = value.besluitVerplicht;
+            if (this.besluitVastleggen) {
+                this.formGroup.get('toelichting').disable();
+                this.formGroup.get('sendMail').disable();
+                this.formGroup.get('ontvanger').disable();
+            } else {
+                this.formGroup.get('toelichting').enable();
+                this.formGroup.get('sendMail').enable();
+                this.formGroup.get('ontvanger').enable();
+            }
+        });
     }
 
     close(): void {
@@ -119,28 +94,28 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     afhandelen(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
+        const values = this.formGroup.value;
 
-        if (this.sendMailFormField.formControl.value && this.mailtemplate) {
+        if (values.sendMail && this.mailtemplate) {
             const mailGegevens: MailGegevens = new MailGegevens();
             mailGegevens.createDocumentFromMail = true;
             mailGegevens.onderwerp = this.mailtemplate.onderwerp;
             mailGegevens.body = this.mailtemplate.body;
-            mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
-            this.mailService.sendMail(this.data.zaak.uuid, mailGegevens).subscribe(() => {});
+            mailGegevens.ontvanger = values.ontvanger;
+            this.mailService.sendMail(this.zaak.uuid, mailGegevens).subscribe(() => {});
         }
 
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.data.planItem.id, this.data.zaak.uuid);
-        userEventListenerData.resultaattypeUuid = this.resultaatFormField.formControl.value.id;
-        userEventListenerData.resultaatToelichting = this.toelichtingFormField.formControl.value;
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.planItem.id, this.zaak.uuid);
+        userEventListenerData.resultaattypeUuid = this.zaak.resultaat ? this.zaak.resultaat.resultaattype.id : values.resultaattype.id;
+        userEventListenerData.resultaatToelichting = values.toelichting;
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)
         });
     }
 
-    formFieldsInvalid(): boolean {
-        return this.resultaatFormField.formControl.invalid || this.toelichtingFormField.formControl.invalid ||
-            (this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false);
+    getError(fc: AbstractControl, label: string) {
+        return CustomValidators.getErrorMessage(fc, label, this.translateService);
     }
 
     ngOnDestroy(): void {
@@ -150,6 +125,5 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
     openBesluitVastleggen(): void {
         this.dialogRef.close('openBesluitVastleggen');
-
     }
 }

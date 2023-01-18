@@ -27,7 +27,6 @@ import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
-import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
@@ -58,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -71,13 +73,13 @@ import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {MailService} from '../../mail/mail.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
+import {DatumPipe} from '../../shared/pipes/datum.pipe';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -119,9 +121,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
+    private zaakBesluitenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
     private ingelogdeMedewerker: User;
     private dialogSubscriptions: Subscription[] = [];
+    private datumPipe = new DatumPipe('nl');
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -144,8 +148,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService,
-                private mailService: MailService) {
+                private bagService: BAGService) {
         super();
     }
 
@@ -153,15 +156,22 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
-            this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK,
-                this.zaak.uuid,
-                (event) => this.updateZaak(event));
-            this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED,
-                ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
-                (event) => this.updateZaak(event));
-            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN,
-                this.zaak.uuid,
-                (event) => this.loadTaken(event));
+
+            this.zaakListener = this.websocketService.addListenerWithSnackbar(
+                Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
+                () => this.updateZaak());
+
+            this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(
+                Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+                () => this.updateZaak());
+
+            this.zaakBesluitenListener = this.websocketService.addListenerWithSnackbar(
+                Opcode.UPDATED, ObjectType.ZAAK_BESLUITEN, this.zaak.uuid,
+                () => this.loadBesluiten());
+
+            this.zaakTakenListener = this.websocketService.addListener(
+                Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+                () => this.loadTaken());
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
@@ -233,6 +243,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setPaginaLocatieInformatie(null);
         this.utilService.disableActionBar(false);
         this.websocketService.removeListener(this.zaakListener);
+        this.websocketService.removeListener(this.zaakBesluitenListener);
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakTakenListener);
     }
@@ -421,7 +432,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
                 }, 'folder_copy'));
             }
-            this.createKoppelingenMenuItems();
             if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
@@ -434,7 +444,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     processTaskPlanItems.map(
                         processTaskPlanItem => this.createProcessTaskPlanItemMenuItem(processTaskPlanItem)));
             }
-
+            this.createKoppelingenMenuItems();
             this.updateMargins();
         });
     }
@@ -668,10 +678,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private updateZaak(event?: ScreenEvent): void {
-        if (event) {
-            console.debug('callback updateZaak: ' + event.key);
-        }
+    private updateZaak(): void {
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
@@ -713,11 +720,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    private loadTaken(event?: ScreenEvent): void {
-        if (event) {
-            console.debug('callback loadTaken: ' + event.key);
-        }
+    private loadBesluiten(): void {
+        this.zakenService.listBesluitenForZaak(this.zaak.uuid)
+            .subscribe(besluiten => this.zaak.besluiten = besluiten);
+    }
 
+    private loadTaken(): void {
         this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid)
                           .pipe(
                               share(),
@@ -892,9 +900,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
     }
 
-    mailVerstuurd(): void {
+    mailVerstuurd(mailVerstuurd: boolean): void {
         this.sluitSidenav();
-        this.updateZaak();
+        if (mailVerstuurd) {
+            this.updateZaak();
+        }
     }
 
     ontvangstBevestigd(): void {
@@ -931,10 +941,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    besluitVastgelegd(besluitVastgelegd: boolean): void {
-        if (besluitVastgelegd) {
-            this.zakenService.listBesluitenForZaak(this.zaak.uuid).subscribe(besluiten => this.zaak.besluiten = besluiten);
-        }
+    besluitVastgelegd(): void {
         this.sluitSidenav();
     }
 
@@ -951,10 +958,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.klantenService.readPersoon(betrokkene.identificatie).subscribe(persoon => {
                     betrokkene['gegevens'] = persoon.naam;
                     if (persoon.geboortedatum) {
-                        betrokkene['gegevens'] += ` (${persoon.geboortedatum})`;
+                        betrokkene['gegevens'] += `, ${this.datumPipe.transform(persoon.geboortedatum)}`;
                     }
                     if (persoon.inschrijfadres) {
-                        betrokkene['gegevens'] += ` \n${persoon.inschrijfadres}`;
+                        betrokkene['gegevens'] += `,\n${persoon.inschrijfadres}`;
                     }
                 });
                 break;
@@ -963,7 +970,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.klantenService.readBedrijf(betrokkene.identificatie).subscribe(bedrijf => {
                     betrokkene['gegevens'] = bedrijf.naam;
                     if (bedrijf.adres) {
-                        betrokkene['gegevens'] += ` \n${bedrijf.adres}`;
+                        betrokkene['gegevens'] += `,\n${bedrijf.adres}`;
                     }
                 });
                 break;

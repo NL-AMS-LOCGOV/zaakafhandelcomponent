@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.klanten;
 
+import static net.atos.zac.app.klanten.KlantenUtil.ONBEKEND;
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
-import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.ONBEKEND;
 
 import java.util.Comparator;
 import java.util.EnumSet;

@@ -15,7 +15,8 @@
     <div>
         <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('ontvankelijk').value === false">
             <mat-label>{{'redenNietOntvankelijk'| translate}}</mat-label>
-            <textarea id="redenNietOntvankelijk" formControlName="reden" matInput></textarea>
+            <textarea id="redenNietOntvankelijk" formControlName="reden" maxlength="100" matInput></textarea>
+            <mat-hint align="end">{{formGroup.get('reden').value.length}}/100</mat-hint>
             <mat-error>{{getError(formGroup.get('reden'), 'redenNietOntvankelijk')}}</mat-error>
         </mat-form-field>
     </div>
@@ -31,10 +32,17 @@
             </button>
 
             <mat-label>{{'ontvanger' | translate}}</mat-label>
-            <input matInput id="ontvanger" formControlName="ontvanger">
+            <input matInput id="ontvanger" maxlength="200" formControlName="ontvanger">
+            <mat-hint align="end">{{formGroup.get('ontvanger').value.length}}/200</mat-hint>
             <mat-error>{{getError(formGroup.get('ontvanger'), 'ontvanger')}}</mat-error>
         </mat-form-field>
     </div>
+    <mat-expansion-panel class="mat-elevation-z0" *ngIf="formGroup.get('sendMail').value">
+        <mat-expansion-panel-header>
+            {{'body' | translate }}
+        </mat-expansion-panel-header>
+        <p class="readonly" [innerHTML]="formGroup.get('ontvankelijk').value ? zaakOntvankelijkMail?.body : zaakNietOntvankelijkMail?.body"></p>
+    </mat-expansion-panel>
 </div>
 <div mat-dialog-actions>
     <button [disabled]="loading || formGroup.invalid"

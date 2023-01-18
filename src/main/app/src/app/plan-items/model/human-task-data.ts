@@ -6,13 +6,12 @@
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {TaakStuurGegevens} from './taak-stuur-gegevens';
-import {Moment} from 'moment/moment';
 
 export class HumanTaskData {
     planItemInstanceId: string;
     groep: Group;
     medewerker: User;
-    fataleDatum: Moment;
+    fataledatum: string;
     taakdata: {};
     taakStuurGegevens: TaakStuurGegevens;
 }

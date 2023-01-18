@@ -22,7 +22,6 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {User} from '../../identity/model/user';
-import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
@@ -85,8 +84,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     ngAfterViewInit(): void {
         super.ngAfterViewInit();
-        this.taakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
-            (event) => this.ophalenTaak(event));
+
+        this.taakListener = this.websocketService.addListenerWithSnackbar(
+            Opcode.ANY, ObjectType.TAAK, this.taak.id,
+            () => this.ophalenTaak());
 
         this.historieSrc.sortingDataAccessor = (item, property) => {
             switch (property) {
@@ -228,10 +229,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private ophalenTaak(event?: ScreenEvent) {
-        if (event) {
-            console.debug('callback ophalenTaak: ' + event.key);
-        }
+    private ophalenTaak() {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);
