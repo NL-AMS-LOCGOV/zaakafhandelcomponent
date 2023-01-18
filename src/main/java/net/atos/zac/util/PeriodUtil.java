@@ -5,7 +5,9 @@
 
 package net.atos.zac.util;
 
+import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 public final class PeriodUtil {
 
@@ -51,5 +53,13 @@ public final class PeriodUtil {
             }
             return buf.toString();
         }
+    }
+
+    public static int aantalDagenVanafHeden(Period period) {
+        if (period == null) {
+            return 0;
+        }
+        LocalDateTime start = LocalDateTime.now();
+        return Long.valueOf(start.until(start.plus(period), ChronoUnit.DAYS)).intValue();
     }
 }
