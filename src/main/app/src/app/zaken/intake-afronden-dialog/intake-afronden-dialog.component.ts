@@ -35,10 +35,7 @@ export class IntakeAfrondenDialogComponent implements OnInit {
     initiatorEmail: string;
     initiatorToevoegenIcon: ActionIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
         new Subject<void>());
-    loadingIcon = new ActionIcon('hourglass_empty', 'msg.loading', new Subject<void>());
     formGroup: FormGroup;
-    initiator: Observable<Klant>;
-    loadingInitator: boolean = false;
 
     constructor(public dialogRef: MatDialogRef<IntakeAfrondenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
@@ -55,22 +52,12 @@ export class IntakeAfrondenDialogComponent implements OnInit {
         this.mailBeschikbaar = zap.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR;
         this.sendMailDefault = zap.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN;
 
-        if (this.data.zaak.initiatorIdentificatieType==='BSN') {
-            this.initiator = this.klantenService.readPersoon(this.data.zaak.initiatorIdentificatie);
-        } else if (this.data.zaak.initiatorIdentificatieType==='VN') {
-            this.initiator = this.klantenService.readVestiging(this.data.zaak.initiatorIdentificatie);
-        } else if (this.data.zaak.initiatorIdentificatieType==='RSIN') {
-            this.initiator = this.klantenService.readRechtspersoon(this.data.zaak.initiatorIdentificatie);
-        }
 
-        if (this.initiator) {
-            this.loadingInitator = true;
-            this.initiator.subscribe(klant => {
-                this.loadingInitator = false;
-                if (klant.emailadres) {
-                    this.initiatorEmail = klant.emailadres;
-                } else {
-                    this.initiator = null;
+        if (this.data.zaak.initiatorIdentificatieType && this.data.zaak.initiatorIdentificatie) {
+            this.klantenService.ophalenContactGegevens(this.data.zaak.initiatorIdentificatieType,
+                this.data.zaak.initiatorIdentificatie).subscribe(gegevens => {
+                if (gegevens.emailadres) {
+                    this.initiatorEmail = gegevens.emailadres;
                 }
             });
         }
