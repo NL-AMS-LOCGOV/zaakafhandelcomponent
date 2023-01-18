@@ -5,14 +5,12 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.converter.RESTZaakafhandelParametersConverter;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
+import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -40,8 +38,7 @@ public class RESTZaaktypeConverter {
         restZaaktype.opschortingMogelijk = zaaktype.getOpschortingEnAanhoudingMogelijk();
         restZaaktype.verlengingMogelijk = zaaktype.getVerlengingMogelijk();
         if (restZaaktype.verlengingMogelijk) {
-            LocalDateTime start = LocalDateTime.now();
-            restZaaktype.verlengingstermijn = Long.valueOf(start.until(start.plus(zaaktype.getVerlengingstermijn()), ChronoUnit.DAYS)).intValue();
+            restZaaktype.verlengingstermijn = PeriodUtil.aantalDagenVanafHeden(zaaktype.getVerlengingstermijn());
         }
 
         if (zaaktype.getReferentieproces() != null) {
