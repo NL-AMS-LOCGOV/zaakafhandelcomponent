@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.klanten;
 
+import static net.atos.zac.app.klanten.KlantenUtil.ONBEKEND;
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
-import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.ONBEKEND;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -44,6 +44,8 @@ import net.atos.zac.app.klanten.converter.RESTPersoonConverter;
 import net.atos.zac.app.klanten.converter.RESTRoltypeConverter;
 import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
+import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.klanten.model.klant.RESTContactGegevens;
 import net.atos.zac.app.klanten.model.klant.RESTKlant;
 import net.atos.zac.app.klanten.model.klant.RESTRoltype;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
@@ -171,5 +173,29 @@ public class KlantenRESTService {
                 ztcClientService.listRoltypen(ztcClientService.readZaaktype(zaaktype).getUrl()).stream()
                         .filter(roltype -> betrokkenen.contains(roltype.getOmschrijvingGeneriek()))
                         .sorted(Comparator.comparing(Roltype::getOmschrijving)));
+    }
+
+    @GET
+    @Path("contactgegevens/{identificatieType}/{initiatorIdentificatie}")
+    public RESTContactGegevens ophalenContactGegevens(@PathParam("identificatieType") final IdentificatieType identificatieType,
+            @PathParam("initiatorIdentificatie") final String initiatorIdentificatie) {
+        final RESTContactGegevens restContactGegevens = new RESTContactGegevens();
+        if (identificatieType == null) {
+            return restContactGegevens;
+        }
+
+        final Optional<Klant> klantOptional;
+        switch (identificatieType) {
+            case VN -> klantOptional = klantenClientService.findVestiging(initiatorIdentificatie);
+            case BSN -> klantOptional = klantenClientService.findPersoon(initiatorIdentificatie);
+            default -> klantOptional = Optional.empty();
+        }
+
+        klantOptional.ifPresent(klant -> {
+            restContactGegevens.telefoonnummer = klant.getTelefoonnummer();
+            restContactGegevens.emailadres = klant.getEmailadres();
+        });
+
+         return restContactGegevens;
     }
 }

@@ -14,6 +14,8 @@ import {ListBedrijvenParameters} from './model/bedrijven/list-bedrijven-paramete
 import {Bedrijf} from './model/bedrijven/bedrijf';
 import {Resultaat} from '../shared/model/resultaat';
 import {Roltype} from './model/klanten/roltype';
+import {IdentificatieType} from './model/klanten/identificatieType';
+import {ContactGegevens} from './model/klanten/contact-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -61,6 +63,12 @@ export class KlantenService {
 
     listBetrokkeneRoltypen(zaaktypeUuid: string): Observable<Roltype[]> {
         return this.http.get<Roltype[]>(`${this.basepath}/roltype/${zaaktypeUuid}/betrokkene`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    ophalenContactGegevens(identificatieType: IdentificatieType, initiatorIdentificatie: string): Observable<ContactGegevens> {
+        return this.http.get<ContactGegevens>(`${this.basepath}/contactgegevens/${identificatieType}/${initiatorIdentificatie}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

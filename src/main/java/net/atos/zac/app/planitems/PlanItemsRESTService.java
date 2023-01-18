@@ -7,13 +7,10 @@ package net.atos.zac.app.planitems;
 
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +24,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.brc.BRCClientService;
@@ -168,20 +164,18 @@ public class PlanItemsRESTService {
         final Optional<HumanTaskParameters> humanTaskParameters = zaakafhandelParameters
                 .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
 
-        final Date fataleDatum;
-        final Optional<String> doorlooptijd = taakVariabelenService.readDoorlooptijd(taakdata);
-        if (doorlooptijd.isPresent()) {
-            fataleDatum = DateTimeConverterUtil.convertToDate(doorlooptijd.get());
-            if (taakVariabelenService.isZaakOpschorten(taakdata)) {
-                final long aantalDagen = ChronoUnit.DAYS.between(
-                        ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS),
-                        Objects.requireNonNull(DateTimeConverterUtil.convertToZonedDateTime(fataleDatum)).truncatedTo(ChronoUnit.DAYS));
-                opschortenZaakHelper.opschortenZaak(zaak, aantalDagen, REDEN_OPSCHORTING);
-            }
+        final LocalDate fataleDatum;
+        if (humanTaskData.fataledatum != null) {
+            fataleDatum = humanTaskData.fataledatum;
         } else {
             fataleDatum = humanTaskParameters.isPresent() && humanTaskParameters.get().getDoorlooptijd() != null ?
-                    DateUtils.addDays(new Date(), humanTaskParameters.get().getDoorlooptijd()) : null;
+                    LocalDate.now().plusDays(humanTaskParameters.get().getDoorlooptijd()) : null;
         }
+        if (fataleDatum != null && taakVariabelenService.isZaakOpschorten(taakdata)) {
+            final long aantalDagen = ChronoUnit.DAYS.between(LocalDate.now(), fataleDatum);
+            opschortenZaakHelper.opschortenZaak(zaak, aantalDagen, REDEN_OPSCHORTING);
+        }
+
         if (humanTaskData.taakStuurGegevens.sendMail) {
             final Mail mail = Mail.valueOf(humanTaskData.taakStuurGegevens.mail);
 
@@ -201,7 +195,7 @@ public class PlanItemsRESTService {
         }
         cmmnService.startHumanTaskPlanItem(humanTaskData.planItemInstanceId, humanTaskData.groep.id,
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
-                                           fataleDatum,
+                                           DateTimeConverterUtil.convertToDate(fataleDatum),
                                            taakdata, zaakUUID);
         indexeerService.addZaak(zaakUUID, false);
     }
