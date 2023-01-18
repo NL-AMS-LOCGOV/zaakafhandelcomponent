@@ -14,16 +14,18 @@
                     <zac-skeleton-loader [loading$]="persoon$"
                                          [options]="{layout: skeletonLayout.FIELDS, fields:6, fieldsPerRow:1}">
                         <div id="persoonsgegevens" class="content" fxLayout="column wrap">
-                            <zac-static-text fxFlex="" [label]="'naam' | translate" [value]="persoon?.naam"></zac-static-text>
-                            <zac-static-text fxFlex="" [label]="'inschrijfadres' | translate"
-                                             [value]="persoon?.inschrijfadres"></zac-static-text>
+                            <zac-static-text fxFlex="" [label]="'naam' | translate"
+                                             [value]="persoon?.naam"></zac-static-text>
+                            <zac-static-text fxFlex="" [label]="'burgerservicenummer' | translate"
+                                             [value]="bsn"></zac-static-text>
                             <zac-static-text fxFlex="" [label]="'geboortedatum' | translate"
                                              [value]="persoon?.geboortedatum | datum"></zac-static-text>
-                            <zac-static-text fxFlex="" [label]="'burgerservicenummer' | translate" [value]="bsn"></zac-static-text>
+                            <zac-static-text fxFlex="" [label]="'inschrijfadres' | translate"
+                                             [value]="persoon?.inschrijfadres | empty"></zac-static-text>
                             <zac-static-text fxFlex="" [label]="'telefoonnummer' | translate"
-                                             [value]="persoon?.telefoonnummer"></zac-static-text>
+                                             [value]="persoon?.telefoonnummer | empty"></zac-static-text>
                             <zac-static-text fxFlex="" [label]="'emailadres' | translate"
-                                             [value]="persoon?.emailadres"></zac-static-text>
+                                             [value]="persoon?.emailadres | empty"></zac-static-text>
                         </div>
                     </zac-skeleton-loader>
                 </mat-card-content>

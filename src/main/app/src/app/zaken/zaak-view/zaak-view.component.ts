@@ -57,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -955,10 +958,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.klantenService.readPersoon(betrokkene.identificatie).subscribe(persoon => {
                     betrokkene['gegevens'] = persoon.naam;
                     if (persoon.geboortedatum) {
-                        betrokkene['gegevens'] += ` (${this.datumPipe.transform(persoon.geboortedatum)})`;
+                        betrokkene['gegevens'] += `, ${this.datumPipe.transform(persoon.geboortedatum)}`;
                     }
                     if (persoon.inschrijfadres) {
-                        betrokkene['gegevens'] += ` \n${persoon.inschrijfadres}`;
+                        betrokkene['gegevens'] += `,\n${persoon.inschrijfadres}`;
                     }
                 });
                 break;
@@ -967,7 +970,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.klantenService.readBedrijf(betrokkene.identificatie).subscribe(bedrijf => {
                     betrokkene['gegevens'] = bedrijf.naam;
                     if (bedrijf.adres) {
-                        betrokkene['gegevens'] += ` \n${bedrijf.adres}`;
+                        betrokkene['gegevens'] += `,\n${bedrijf.adres}`;
                     }
                 });
                 break;
