@@ -7,7 +7,8 @@
     <mat-card fxFlex="calc(100%-20px)">
         <mat-card-header fxLayout="row">
             <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
-            <mat-slide-toggle [(ngModel)]="toonGekoppeldeZaakDocumenten" color="primary" fxLayout="row"
+            <mat-slide-toggle *ngIf="heeftGerelateerdeZaken"
+                              [(ngModel)]="toonGekoppeldeZaakDocumenten" color="primary" fxLayout="row"
                               id="gekoppeldeZaakDocumentenToon_toggle"
                               (change)="toggleGekoppeldeZaakDocumenten()">{{ 'toonGekoppeldeZaakDocumenten' | translate }}</mat-slide-toggle>
         </mat-card-header>
