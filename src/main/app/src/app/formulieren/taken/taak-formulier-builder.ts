@@ -11,7 +11,6 @@ import {DividerFormFieldBuilder} from '../../shared/material-form-builder/form-c
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {Group} from '../../identity/model/group';
 import {AbstractTaakFormulier} from './abstract-taak-formulier';
-import * as moment from 'moment/moment';
 import {Zaak} from '../../zaken/model/zaak';
 
 export class TaakFormulierBuilder {
@@ -29,7 +28,7 @@ export class TaakFormulierBuilder {
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
         if (planItem.fataleDatum) {
-            this._formulier.humanTaskData.fataleDatum = moment(planItem.fataleDatum, moment.ISO_8601);
+            this._formulier.humanTaskData.fataledatum = planItem.fataleDatum;
         }
         this._formulier.initStartForm();
         let groep = null;
@@ -39,7 +38,7 @@ export class TaakFormulierBuilder {
         }
         this._formulier.form.push(
             [new DividerFormFieldBuilder().build()],
-            [new MedewerkerGroepFieldBuilder(groep).id(AbstractTaakFormulier.TOEKENNING_FIELD)
+            [new MedewerkerGroepFieldBuilder(groep).id(AbstractTaakFormulier.TAAK_TOEKENNING)
                                                    .label('actie.taak.toewijzing')
                                                    .groepLabel('actie.taak.toekennen.groep')
                                                    .groepRequired()

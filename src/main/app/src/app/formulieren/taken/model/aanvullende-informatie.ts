@@ -38,7 +38,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         BIJLAGEN: 'bijlagen',
         ZAAK_OPSCHORTEN: 'zaakOpschorten',
         ZAAK_HERVATTEN: 'zaakHervatten',
-        DOORLOOPTIJD: 'doorlooptijd'
     };
 
     taakinformatieMapping = {
@@ -88,10 +87,11 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
             .documenten(documenten).build()],
-            [new DateFormFieldBuilder(this.humanTaskData.fataleDatum)
-            .id(fields.DOORLOOPTIJD)
+            [new DateFormFieldBuilder(this.humanTaskData.fataledatum)
+            .id(AbstractTaakFormulier.TAAK_FATALEDATUM)
             .minDate(morgen)
             .label('fataledatum')
+            .showDays()
             .build()
             ]);
         if (this.opschortenMogelijk()) {
@@ -102,7 +102,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
                 .build()]
             );
             this.getFormField(fields.ZAAK_OPSCHORTEN).formControl.valueChanges.subscribe(opschorten => {
-                this.getFormField(this.fields.DOORLOOPTIJD).required = opschorten;
+                this.getFormField(AbstractTaakFormulier.TAAK_FATALEDATUM).required = opschorten;
             });
 
         }

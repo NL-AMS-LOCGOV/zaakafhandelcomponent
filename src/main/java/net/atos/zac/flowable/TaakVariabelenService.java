@@ -33,8 +33,6 @@ public class TaakVariabelenService {
 
     private static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
 
-    private static final String TAAK_DATA_DOORLOPTIJD = "doorlooptijd";
-
     private static final String TAAK_DATA_ZAAK_HERVATTEN = "zaakHervatten";
 
     private final static String TAAK_DATA_MAIL_BODY = "body";
@@ -73,10 +71,6 @@ public class TaakVariabelenService {
 
     public List<UUID> readTaakdocumenten(final TaskInfo taskInfo) {
         return (List<UUID>) findTaskVariable(taskInfo, VAR_TASK_TAAKDOCUMENTEN).orElse(Collections.emptyList());
-    }
-
-    public Optional<String> readDoorlooptijd(Map<String, String> taakData) {
-        return findTaskDataElement(taakData, TAAK_DATA_DOORLOPTIJD);
     }
 
     public Optional<String> readBijlagen(Map<String, String> taakData) {

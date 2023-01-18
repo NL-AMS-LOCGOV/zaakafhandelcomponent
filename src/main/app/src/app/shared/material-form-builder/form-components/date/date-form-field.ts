@@ -11,6 +11,7 @@ export class DateFormField extends AbstractFormControlField {
     fieldType = FieldType.DATE;
     public minDate: Date;
     public maxDate: Date;
+    public showDays: boolean;
 
     constructor() {
         super();

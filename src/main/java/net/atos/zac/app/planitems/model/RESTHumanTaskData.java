@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.planitems.model;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import net.atos.zac.app.identity.model.RESTGroup;
@@ -17,6 +18,8 @@ public class RESTHumanTaskData {
     public RESTGroup groep;
 
     public RESTUser medewerker;
+
+    public LocalDate fataledatum;
 
     public Map<String, String> taakdata;
 
