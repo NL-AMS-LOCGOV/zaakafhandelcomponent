@@ -31,6 +31,12 @@
             <mat-error>{{getError(formGroup.get('ontvanger'), 'ontvanger')}}</mat-error>
         </mat-form-field>
     </div>
+    <mat-expansion-panel class="mat-elevation-z0" *ngIf="formGroup.get('sendMail').value">
+        <mat-expansion-panel-header>
+            {{'body' | translate }}
+        </mat-expansion-panel-header>
+        <p class="readonly" [innerHTML]="formGroup.get('ontvankelijk').value ? zaakOntvankelijkMail?.body : zaakNietOntvankelijkMail?.body"></p>
+    </mat-expansion-panel>
 </div>
 <div mat-dialog-actions>
     <button [disabled]="loading || formGroup.invalid"
