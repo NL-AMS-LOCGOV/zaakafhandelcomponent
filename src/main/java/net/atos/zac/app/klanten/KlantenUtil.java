@@ -12,17 +12,17 @@ public final class KlantenUtil {
 
     private KlantenUtil() {}
 
-    public static String hard(final String part) {
+    public static String nonBreaking(final String part) {
         return part == null ? null : part.replace(' ', NBSP);
     }
 
-    public static String hard(final String... parts) {
-        return hard(Arrays.stream(parts)
-                            .filter(StringUtils::isNotBlank)
-                            .collect(Collectors.joining(" ")));
+    public static String nonBreaking(final String... parts) {
+        return nonBreaking(Arrays.stream(parts)
+                                   .filter(StringUtils::isNotBlank)
+                                   .collect(Collectors.joining(" ")));
     }
 
-    public static String soft(final String... parts) {
+    public static String breakingAfterCommas(final String... parts) {
         return Arrays.stream(parts)
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(", "));

@@ -91,9 +91,9 @@ public class RESTPersoonConverter {
 
     private String convertToNaam(final NaamPersoon naam) {
         if (naam != null) {
-            return KlantenUtil.hard(naam.getVoornamen(),
-                                    naam.getVoorvoegsel(),
-                                    naam.getGeslachtsnaam());
+            return KlantenUtil.nonBreaking(naam.getVoornamen(),
+                                           naam.getVoorvoegsel(),
+                                           naam.getGeslachtsnaam());
         } else {
             return ONBEKEND;
         }
@@ -109,15 +109,15 @@ public class RESTPersoonConverter {
 
     private String convertToInschrijfadres(final Verblijfplaats verblijfplaats) {
         if (verblijfplaats != null) {
-            final String adres = KlantenUtil.hard(verblijfplaats.getStraat(),
-                                                  Objects.toString(verblijfplaats.getHuisnummer(), null),
-                                                  verblijfplaats.getHuisnummertoevoeging(),
-                                                  verblijfplaats.getHuisletter());
-            final String postcode = KlantenUtil.hard(verblijfplaats.getPostcode());
-            final String woonplaats = KlantenUtil.hard(verblijfplaats.getWoonplaats());
-            return KlantenUtil.soft(adres,
-                                    postcode,
-                                    woonplaats);
+            final String adres = KlantenUtil.nonBreaking(verblijfplaats.getStraat(),
+                                                         Objects.toString(verblijfplaats.getHuisnummer(), null),
+                                                         verblijfplaats.getHuisnummertoevoeging(),
+                                                         verblijfplaats.getHuisletter());
+            final String postcode = KlantenUtil.nonBreaking(verblijfplaats.getPostcode());
+            final String woonplaats = KlantenUtil.nonBreaking(verblijfplaats.getWoonplaats());
+            return KlantenUtil.breakingAfterCommas(adres,
+                                                   postcode,
+                                                   woonplaats);
         } else {
             return ONBEKEND;
         }

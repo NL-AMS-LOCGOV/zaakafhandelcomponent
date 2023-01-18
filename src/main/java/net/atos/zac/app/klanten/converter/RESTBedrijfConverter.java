@@ -67,17 +67,17 @@ public class RESTBedrijfConverter {
     }
 
     private String convertToNaam(final ResultaatItem bedrijf) {
-        return KlantenUtil.hard(bedrijf.getHandelsnaam());
+        return KlantenUtil.nonBreaking(bedrijf.getHandelsnaam());
     }
 
     private String convertAdres(final ResultaatItem bedrijf) {
-        final String adres = KlantenUtil.hard(bedrijf.getStraatnaam(),
-                                              Objects.toString(bedrijf.getHuisnummer(), null),
-                                              bedrijf.getHuisnummerToevoeging());
-        final String postcode = KlantenUtil.hard(bedrijf.getPostcode());
-        final String woonplaats = KlantenUtil.hard(bedrijf.getPlaats());
-        return KlantenUtil.soft(adres,
-                                postcode,
-                                woonplaats);
+        final String adres = KlantenUtil.nonBreaking(bedrijf.getStraatnaam(),
+                                                     Objects.toString(bedrijf.getHuisnummer(), null),
+                                                     bedrijf.getHuisnummerToevoeging());
+        final String postcode = KlantenUtil.nonBreaking(bedrijf.getPostcode());
+        final String woonplaats = KlantenUtil.nonBreaking(bedrijf.getPlaats());
+        return KlantenUtil.breakingAfterCommas(adres,
+                                               postcode,
+                                               woonplaats);
     }
 }
