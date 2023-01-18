@@ -5,21 +5,28 @@
 
 package net.atos.zac.authentication;
 
-import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
-import org.wildfly.security.http.oidc.IDToken;
-import org.wildfly.security.http.oidc.OidcPrincipal;
-import org.wildfly.security.http.oidc.OidcSecurityContext;
-
-import javax.inject.Inject;
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.wildfly.security.http.oidc.IDToken;
+import org.wildfly.security.http.oidc.OidcPrincipal;
+import org.wildfly.security.http.oidc.OidcSecurityContext;
+
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
@@ -59,8 +66,11 @@ public class UserPrincipalFilter implements Filter {
                 if (loggedInUser == null) {
                     loggedInUser = createLoggedInUser(principal.getOidcSecurityContext());
                     SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
-                    LOG.info(String.format("User logged in: '%s' with roles: %s and groups: %s", loggedInUser.getId(),
-                            loggedInUser.getRoles(), loggedInUser.getGroupIds()));
+                    LOG.info(String.format("User logged in: '%s' with roles: %s, groups: %s en zaaktypen: %s",
+                                           loggedInUser.getId(),
+                                           loggedInUser.getRoles(), loggedInUser.getGroupIds(),
+                                           loggedInUser.isGeautoriseerdVoorAlleZaaktypen() ? "ELK-ZAAKTYPE" :
+                                                   loggedInUser.getGeautoriseerdeZaaktypen()));
                 }
             }
         }
