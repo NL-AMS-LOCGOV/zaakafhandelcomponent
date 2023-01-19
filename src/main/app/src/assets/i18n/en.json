@@ -329,6 +329,7 @@
   "informatieobject.documentType.bijlage": "Appendix",
   "informatieobject.documentType.e-mail": "E-mail",
   "mail.-kies-": "- Select a mailtemplate type -",
+  "mail.ZAAK_ALGEMEEN": "General e-mail",
   "mail.ZAAK_ONTVANKELIJK": "Case admissible",
   "mail.ZAAK_NIET_ONTVANKELIJK": "Case not admissible",
   "mail.ZAAK_AFGEHANDELD": "Case closed",

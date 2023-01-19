@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AdminComponent} from '../admin/admin.component';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {Mailtemplate} from '../model/mailtemplate';
@@ -19,15 +19,15 @@ import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/for
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
 import {Mail} from '../model/mail';
-import {MailtemplateVariabeleUtil} from '../model/mailtemplate-variabele';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
+import {HtmlEditorFormField} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field';
 
 @Component({
     templateUrl: './mailtemplate.component.html',
     styleUrls: ['./mailtemplate.component.less']
 })
-export class MailtemplateComponent extends AdminComponent implements OnInit, AfterViewInit {
+export class MailtemplateComponent extends AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
 
@@ -41,8 +41,8 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
 
     naamFormField: AbstractFormControlField;
     mailFormField: AbstractFormControlField;
-    onderwerpFormField: AbstractFormControlField;
-    bodyFormField: AbstractFormControlField;
+    onderwerpFormField: HtmlEditorFormField;
+    bodyFormField: HtmlEditorFormField;
     defaultMailtemplateFormField: AbstractFormControlField;
 
     template: Mailtemplate;
@@ -95,8 +95,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         this.onderwerpFormField = new HtmlEditorFormFieldBuilder(this.template.onderwerp)
         .id(this.fields.ONDERWERP)
         .label(this.fields.ONDERWERP)
-        .variabelen(this.template.variabelen ? this.template.variabelen :
-            MailtemplateVariabeleUtil.getDefaultVariabelen())
+        .variabelen(this.template.variabelen)
         .emptyToolbar()
         .validators(Validators.required)
         .maxlength(100)
@@ -104,14 +103,28 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         this.bodyFormField = new HtmlEditorFormFieldBuilder(this.template.body)
         .id(this.fields.BODY)
         .label(this.fields.BODY)
-        .variabelen(this.template.variabelen ? this.template.variabelen :
-            MailtemplateVariabeleUtil.getDefaultVariabelen())
+        .variabelen(this.template.variabelen)
         .validators(Validators.required)
         .build();
         this.defaultMailtemplateFormField = new InputFormFieldBuilder(this.template.defaultMailtemplate)
         .id(this.fields.DEFAULT_MAILTEMPLATE)
         .label(this.fields.DEFAULT_MAILTEMPLATE)
         .build();
+
+        this.subscriptions$.push(this.mailFormField.formControl.valueChanges.subscribe(value => {
+            if (value) {
+                this.service.ophalenVariabelenVoorMail(value.value).subscribe(variabelen => {
+                    this.onderwerpFormField.variabelen = variabelen;
+                    this.bodyFormField.variabelen = variabelen;
+                });
+            }
+        }));
+    }
+
+    ngOnDestroy(): void {
+        for (const subscription of this.subscriptions$) {
+            subscription.unsubscribe();
+        }
     }
 
     saveMailtemplate(): void {
