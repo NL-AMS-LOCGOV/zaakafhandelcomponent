@@ -7,7 +7,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, Sort} from '@angular/material/sort';
 import {AdminComponent} from '../admin/admin.component';
 import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter/toggle-switch-options';
 import {HealthCheckService} from '../health-check.service';
@@ -116,5 +116,31 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
             this.applyFilter();
         });
 
+    }
+
+    sortData(sort: Sort) {
+        if (!sort.active || sort.direction === '') {
+            return;
+        }
+
+        this.dataSource.data = this.dataSource.data.slice().sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'zaaktypeOmschrijving':
+                    return this.compare(a.zaaktype.omschrijving, b.zaaktype.omschrijving, isAsc);
+                case 'doel':
+                    return this.compare(a.zaaktype.doel, b.zaaktype.doel, isAsc);
+                case 'beginGeldigheid':
+                    return this.compare(a.zaaktype.beginGeldigheid, b.zaaktype.beginGeldigheid, isAsc);
+                case 'valide':
+                    return this.compare(a.valide, b.valide, isAsc);
+                default:
+                    return 0;
+            }
+        });
+    }
+
+    compare(a: number | string | boolean, b: number | string | boolean, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 }
