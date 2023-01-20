@@ -25,10 +25,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.client.bag.BAGClientService;
-import net.atos.client.bag.model.AdresHal;
-import net.atos.client.bag.model.AdresHalCollectie;
-import net.atos.client.bag.model.AdresHalCollectieEmbedded;
-import net.atos.client.bag.model.RaadpleegAdressenParameters;
+import net.atos.client.bag.model.AdresIOHal;
+import net.atos.client.bag.model.BevraagAdressenParameters;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -59,18 +57,12 @@ public class BAGRESTService {
     @PUT
     @Path("adres")
     public RESTResultaat<RESTAdres> listAdressen(final RESTListAdressenParameters listAdressenParameters) {
-        final RaadpleegAdressenParameters raadpleegAdressenParameters = new RaadpleegAdressenParameters();
-        raadpleegAdressenParameters.setPostcode(listAdressenParameters.postcode);
-        raadpleegAdressenParameters.setHuisnummer(listAdressenParameters.huisnummer);
-        final AdresHalCollectie adresHalCollectie = bagClientService.raadpleegAdressen(raadpleegAdressenParameters);
-        final AdresHalCollectieEmbedded embedded = adresHalCollectie.getEmbedded();
-        if (embedded.getAdressen() != null) {
-            return new RESTResultaat<>(embedded.getAdressen().stream()
-                                               .map(this::convertToREST)
-                                               .toList());
-        } else {
-            return new RESTResultaat<>();
-        }
+        final BevraagAdressenParameters bevraagAdressenParameters = new BevraagAdressenParameters();
+        bevraagAdressenParameters.setPostcode(listAdressenParameters.postcode);
+        bevraagAdressenParameters.setHuisnummer(listAdressenParameters.huisnummer);
+        return new RESTResultaat<>(bagClientService.listAdressen(bevraagAdressenParameters).stream()
+                                           .map(this::convertToREST)
+                                           .toList());
     }
 
     @POST
@@ -110,17 +102,17 @@ public class BAGRESTService {
         }
     }
 
-    private RESTAdres convertToREST(final AdresHal adresHal) {
+    private RESTAdres convertToREST(final AdresIOHal adresHal) {
         final RESTAdres restAdres = new RESTAdres();
         restAdres.url = URI.create(adresHal.getLinks().getSelf().getHref());
         restAdres.postcode = adresHal.getPostcode();
         restAdres.huisnummer = convertToVolledigHuisnummer(adresHal);
-        restAdres.straat = adresHal.getStraat();
-        restAdres.woonplaats = adresHal.getWoonplaats();
+        restAdres.straat = adresHal.getOpenbareRuimteNaam();
+        restAdres.woonplaats = adresHal.getWoonplaatsNaam();
         return restAdres;
     }
 
-    private String convertToVolledigHuisnummer(final AdresHal adresHal) {
+    private String convertToVolledigHuisnummer(final AdresIOHal adresHal) {
         final StringBuilder volledigHuisnummer = new StringBuilder();
         if (adresHal.getHuisnummer() != null) {
             volledigHuisnummer.append(adresHal.getHuisnummer());

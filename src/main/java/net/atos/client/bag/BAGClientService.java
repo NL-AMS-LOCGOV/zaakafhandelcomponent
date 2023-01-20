@@ -9,6 +9,8 @@ import static net.atos.client.bag.util.BAGClientHeadersFactory.API_KEY;
 import static net.atos.client.bag.util.BAGClientHeadersFactory.X_API_KEY;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,9 +18,10 @@ import javax.ws.rs.client.Invocation;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.bag.model.AdresHal;
-import net.atos.client.bag.model.AdresHalCollectie;
-import net.atos.client.bag.model.RaadpleegAdressenParameters;
+import net.atos.client.bag.api.AdresApi;
+import net.atos.client.bag.model.AdresIOHal;
+import net.atos.client.bag.model.AdresIOHalCollectionEmbedded;
+import net.atos.client.bag.model.BevraagAdressenParameters;
 import net.atos.client.util.ClientFactory;
 
 @ApplicationScoped
@@ -26,14 +29,19 @@ public class BAGClientService {
 
     @Inject
     @RestClient
-    private AdresApiClient adresApiClient;
+    private AdresApi adresApi;
 
-    public AdresHalCollectie raadpleegAdressen(final RaadpleegAdressenParameters raadpleegAdressenParameters) {
-        return adresApiClient.raadpleegAdressen(raadpleegAdressenParameters);
+    public List<AdresIOHal> listAdressen(final BevraagAdressenParameters parameters) {
+        final AdresIOHalCollectionEmbedded embedded = adresApi.bevraagAdressen(parameters).getEmbedded();
+        if (embedded.getAdressen() != null) {
+            return embedded.getAdressen();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
-    public AdresHal readAdres(final URI adresURI) {
-        return createInvocationBuilder(adresURI).get(AdresHal.class);
+    public AdresIOHal readAdres(final URI adresURI) {
+        return createInvocationBuilder(adresURI).get(AdresIOHal.class);
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
