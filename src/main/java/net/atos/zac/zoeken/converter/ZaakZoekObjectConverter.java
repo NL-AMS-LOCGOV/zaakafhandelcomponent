@@ -13,12 +13,15 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
+import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.klanten.KlantenRESTService;
 import net.atos.zac.flowable.TakenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -71,6 +74,8 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
         zgwApiService.findInitiatorForZaak(zaak).ifPresent(zaakZoekObject::setInitiator);
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
+
+        addBetrokkenen(zaak, zaakZoekObject);
 
         if (zaak.getCommunicatiekanaal() != null) {
             vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()))
@@ -138,6 +143,15 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     private String convertToLocatie(final Geometry zaakgeometrie) {
         //todo
         return null;
+    }
+
+    private void addBetrokkenen(final Zaak zaak, final ZaakZoekObject zaakZoekObject) {
+        for (Rol<?> rol : zrcClientService.listRollen(zaak)) {
+            final AardVanRol aardVanRol = AardVanRol.fromValue(rol.getOmschrijvingGeneriek());
+            if (KlantenRESTService.betrokkenen.contains(aardVanRol)) {
+                zaakZoekObject.addBetrokkene(aardVanRol, rol.getIdentificatienummer());
+            }
+        }
     }
 
     private User findBehandelaar(final Zaak zaak) {

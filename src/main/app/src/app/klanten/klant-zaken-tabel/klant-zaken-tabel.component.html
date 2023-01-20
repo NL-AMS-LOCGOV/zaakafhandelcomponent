@@ -24,7 +24,33 @@
                         [mat-sort-header]="sorteerVeld.ZAAK_IDENTIFICATIE"> {{'zaak.identificatie' | translate}} </th>
                     <td mat-cell *matCellDef="let object"> {{object.identificatie | empty}} </td>
                 </ng-container>
-
+                <ng-container matColumnDef="betrokkene_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-form-field appearance="standard">
+                            <mat-select id="betrokkeneRoltype_filter"
+                                        [placeholder]="'betrokkeneRoltype.-kies-' | translate"
+                                        [formControl]="betrokkeneSelectControl"
+                                        (selectionChange)="filtersChanged()">
+                                <mat-option>{{'betrokkeneRoltype.-kies-' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_INITIATOR">{{'betrokkeneRoltype.INITIATOR' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_MEDE_INITIATOR">{{'betrokkeneRoltype.MEDE_INITIATOR' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_BELANGHEBBENDE">{{'betrokkeneRoltype.BELANGHEBBENDE' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_BESLISSER">{{'betrokkeneRoltype.BESLISSER' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_ADVISEUR">{{'betrokkeneRoltype.ADVISEUR' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_KLANTCONTACTER">{{'betrokkeneRoltype.KLANTCONTACTER' | translate}}</mat-option>
+                                <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_ZAAKCOORDINATOR">{{'betrokkeneRoltype.ZAAKCOORDINATOR' | translate}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="betrokkene">
+                    <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'betrokkeneRoltype' | translate }}</th>
+                    <td mat-cell *matCellDef="let object">
+                        <div *ngFor="let betrokkene of getBetrokkenheid(object)">
+                            {{'betrokkeneRoltype.' + betrokkene | translate}}
+                        </div>
+                    </td>
+                </ng-container>
                 <ng-container matColumnDef="status_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="status"

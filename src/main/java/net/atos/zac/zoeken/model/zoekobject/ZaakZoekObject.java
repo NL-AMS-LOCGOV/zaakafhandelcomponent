@@ -8,12 +8,17 @@ package net.atos.zac.zoeken.model.zoekobject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import com.google.common.collect.Lists;
+
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.zoeken.model.ZaakIndicatie;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -29,6 +34,8 @@ public class ZaakZoekObject implements ZoekObject {
     public static final String OMSCHRIJVING_FIELD = "zaak_omschrijving";
 
     public static final String TOELICHTING_FIELD = "zaak_toelichting";
+
+    public static final String ZAAK_BETROKKENE_PREFIX = "zaak_betrokkene_";
 
     @Field
     private String id;
@@ -141,6 +148,9 @@ public class ZaakZoekObject implements ZoekObject {
 
     @Field("zaak_indicaties_sort")
     private long indicatiesVolgorde;
+
+    @Field("zaak_betrokkene_*")
+    private Map<String, List<String>> betrokkenen;
 
     public ZaakZoekObject() {
     }
@@ -458,5 +468,24 @@ public class ZaakZoekObject implements ZoekObject {
         } else {
             this.indicatiesVolgorde &= ~(1L << bit);
         }
+    }
+
+    public void addBetrokkene(final AardVanRol rol, final String identificatie) {
+        final String key = "%s%s".formatted(ZAAK_BETROKKENE_PREFIX, rol.toValue());
+        if (betrokkenen == null) {
+            betrokkenen = new HashMap<>();
+        }
+        if (betrokkenen.containsKey(key)) {
+            betrokkenen.get(key).add(identificatie);
+        }
+        betrokkenen.put(key, Lists.newArrayList(identificatie));
+    }
+
+    public Map<String, List<String>> getBetrokkenen() {
+        return betrokkenen;
+    }
+
+    public void setBetrokkenen(final Map<String, List<String>> betrokkenen) {
+        this.betrokkenen = betrokkenen;
     }
 }
