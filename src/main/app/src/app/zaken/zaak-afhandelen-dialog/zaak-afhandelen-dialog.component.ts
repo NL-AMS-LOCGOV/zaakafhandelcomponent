@@ -23,6 +23,8 @@ import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {Mail} from '../../admin/model/mail';
 import {Mailtemplate} from '../../admin/model/mailtemplate';
 import {TranslateService} from '@ngx-translate/core';
+import {KlantenService} from '../../klanten/klanten.service';
+import {ActionIcon} from '../../shared/edit/action-icon';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -38,6 +40,9 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     mailtemplate: Mailtemplate;
     zaak: Zaak;
     planItem: PlanItem;
+    initiatorEmail: string;
+    initiatorToevoegenIcon: ActionIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
+        new Subject<void>());
     resultaattypes: Observable<Resultaattype[]>;
     private ngDestroy = new Subject<void>();
 
@@ -48,7 +53,8 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                 private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
-                private mailtemplateService: MailtemplateService) {
+                private mailtemplateService: MailtemplateService,
+                private klantenService: KlantenService) {
         this.zaak = data.zaak;
         this.planItem = data.planItem;
         this.resultaattypes = this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid);
@@ -61,6 +67,15 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         const zap = this.zaak.zaaktype.zaakafhandelparameters;
         this.mailBeschikbaar = zap.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR;
         this.sendMailDefault = zap.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN;
+
+        if (this.data.zaak.initiatorIdentificatieType && this.data.zaak.initiatorIdentificatie) {
+            this.klantenService.ophalenContactGegevens(this.data.zaak.initiatorIdentificatieType,
+                this.data.zaak.initiatorIdentificatie).subscribe(gegevens => {
+                if (gegevens.emailadres) {
+                    this.initiatorEmail = gegevens.emailadres;
+                }
+            });
+        }
 
         this.formGroup = this.formBuilder.group({
             resultaattype: [null, this.zaak.resultaat ? null : [Validators.required]],
@@ -112,6 +127,10 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)
         });
+    }
+
+    setInitatorEmail() {
+        this.formGroup.get('ontvanger').setValue(this.initiatorEmail);
     }
 
     getError(fc: AbstractControl, label: string) {

@@ -18,6 +18,7 @@ import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters
 import {ExternAdviesMail} from './model/extern-advies-mail';
 import {FormulierDefinitieID} from '../../admin/model/formulier-definitie';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {KlantenService} from '../../klanten/klanten.service';
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +30,8 @@ export class TaakFormulierenService {
                 private takenService: TakenService,
                 private zakenService: ZakenService,
                 private zaakafhandelParametersService: ZaakafhandelParametersService,
-                private mailtemplateService: MailtemplateService) { }
+                private mailtemplateService: MailtemplateService,
+                private klantenService: KlantenService) { }
 
     public getFormulierBuilder(formulierDefinitie: FormulierDefinitieID): TaakFormulierBuilder {
         switch (formulierDefinitie) {
@@ -37,7 +39,7 @@ export class TaakFormulierenService {
                 return new TaakFormulierBuilder(new DefaultTaakformulier(this.translate, this.informatieObjectenService));
             case 'AANVULLENDE_INFORMATIE':
                 return new TaakFormulierBuilder(new AanvullendeInformatie(this.translate, this.takenService,
-                    this.informatieObjectenService, this.mailtemplateService));
+                    this.informatieObjectenService, this.mailtemplateService, this.klantenService));
             case 'ADVIES':
                 return new TaakFormulierBuilder(new Advies(
                     this.translate, this.takenService, this.informatieObjectenService, this.zakenService, this.zaakafhandelParametersService));
