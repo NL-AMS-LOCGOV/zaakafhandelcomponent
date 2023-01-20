@@ -40,8 +40,8 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <table *ngIf="!loadingZaaktypes" fxFlex="100" mat-table [dataSource]="dataSource" matSort #sort="matSort" matSortActive="valide"
-                       matSortDirection="asc" multiTemplateDataRows>
+                <table *ngIf="!loadingZaaktypes" fxFlex="100" mat-table [dataSource]="dataSource" matSort matSortDirection="asc"
+                       (matSortChange)="sortData($event)" multiTemplateDataRows>
                     <ng-container matColumnDef="expand">
                         <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
                         <td mat-cell *matCellDef="let row">
@@ -50,21 +50,21 @@
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="zaaktypeOmschrijving">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'zaaktypeOmschrijving'|translate}} </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="zaaktypeOmschrijving">{{'zaaktypeOmschrijving'|translate}} </th>
                         <td mat-cell *matCellDef="let row"> {{row.zaaktype.omschrijving}} </td>
                     </ng-container>
                     <ng-container matColumnDef="zaaktypeDoel">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'doel'|translate}} </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="doel">{{'doel'|translate}} </th>
                         <td mat-cell *matCellDef="let row">
                             <read-more [text]="row.zaaktype.doel" [maxLength]="100"></read-more>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="beginGeldigheid">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'begin.geldigheid'|translate}} </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="beginGeldigheid">{{'begin.geldigheid'|translate}} </th>
                         <td mat-cell *matCellDef="let row"> {{row.zaaktype.beginGeldigheid | datum}} </td>
                     </ng-container>
                     <ng-container matColumnDef="valide">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="valide"></th>
                         <td mat-cell *matCellDef="let row">
                             <mat-icon *ngIf="row.valide" color="primary">check_circle_outline</mat-icon>
                             <mat-icon *ngIf="!row.valide" color="warn">error_outline</mat-icon>
