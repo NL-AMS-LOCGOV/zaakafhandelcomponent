@@ -329,6 +329,7 @@
   "informatieobject.documentType.bijlage": "Bijlage",
   "informatieobject.documentType.e-mail": "E-mail",
   "mail.-kies-": "- Kies een mailtemplate type -",
+  "mail.ZAAK_ALGEMEEN": "Algemene e-mail",
   "mail.ZAAK_ONTVANKELIJK": "Zaak ontvankelijk",
   "mail.ZAAK_NIET_ONTVANKELIJK": "Zaak niet ontvankelijk",
   "mail.ZAAK_AFGEHANDELD": "Zaak afgehandeld",

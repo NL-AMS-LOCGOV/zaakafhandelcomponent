@@ -8,6 +8,7 @@ package net.atos.zac.app.admin;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,7 +24,9 @@ import javax.ws.rs.core.MediaType;
 import net.atos.zac.app.admin.converter.RESTMailtemplateConverter;
 import net.atos.zac.app.admin.model.RESTMailtemplate;
 import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailTemplate;
+import net.atos.zac.mailtemplates.model.MailTemplateVariabelen;
 import net.atos.zac.policy.PolicyService;
 
 @Singleton
@@ -76,5 +79,11 @@ public class MailtemplateBeheerRESTService {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restMailtemplateConverter.convert(
                 mailTemplateService.storeMailtemplate(restMailtemplateConverter.convert(mailtemplate)));
+    }
+
+    @GET
+    @Path("variabelen/{mail}")
+    public Set<MailTemplateVariabelen> ophalenVariabelenVoorMail(@PathParam("mail") final Mail mail) {
+        return mail.getVariabelen();
     }
 }

@@ -9,6 +9,8 @@ import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.servi
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Mailtemplate} from './model/mailtemplate';
+import {Mail} from './model/mail';
+import {MailtemplateVariabele} from './model/mailtemplate-variabele';
 
 @Injectable({
     providedIn: 'root'
@@ -46,6 +48,12 @@ export class MailtemplateBeheerService {
 
     persistMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
         return this.http.put<Mailtemplate>(`${this.basepath}`, mailtemplate).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    ophalenVariabelenVoorMail(mail: Mail): Observable<MailtemplateVariabele[]> {
+        return this.http.get<MailtemplateVariabele[]>(`${this.basepath}/variabelen/${mail}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
