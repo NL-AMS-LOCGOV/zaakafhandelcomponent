@@ -40,8 +40,8 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <table *ngIf="!loadingZaaktypes" fxFlex="100" mat-table [dataSource]="dataSource" matSort #sort="matSort" matSortActive="valide"
-                       matSortDirection="asc" (matSortChange)="sortData($event)" multiTemplateDataRows>
+                <table *ngIf="!loadingZaaktypes" fxFlex="100" mat-table [dataSource]="dataSource" matSort matSortDirection="asc"
+                       (matSortChange)="sortData($event)" multiTemplateDataRows>
                     <ng-container matColumnDef="expand">
                         <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
                         <td mat-cell *matCellDef="let row">
