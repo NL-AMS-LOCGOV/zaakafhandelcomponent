@@ -5,11 +5,11 @@
 
 package net.atos.zac.app.klanten.converter;
 
+import static net.atos.zac.app.klanten.KlantenUtil.ONBEKEND;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,6 +18,7 @@ import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.model.NaamPersoon;
 import net.atos.client.brp.model.Verblijfplaats;
+import net.atos.zac.app.klanten.KlantenUtil;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 
@@ -35,8 +36,6 @@ public class RESTPersoonConverter {
                     "verblijfplaats.huisnummertoevoeging," +
                     "verblijfplaats.huisletter," +
                     "verblijfplaats.woonplaats";
-
-    public static final String ONBEKEND = "<onbekend>";
 
     public RESTPersoon convert(final IngeschrevenPersoonHal persoon) {
         final RESTPersoon restPersoon = new RESTPersoon();
@@ -92,9 +91,9 @@ public class RESTPersoonConverter {
 
     private String convertToNaam(final NaamPersoon naam) {
         if (naam != null) {
-            return Stream.of(naam.getVoornamen(), naam.getVoorvoegsel(), naam.getGeslachtsnaam())
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.joining(" "));
+            return KlantenUtil.nonBreaking(naam.getVoornamen(),
+                                           naam.getVoorvoegsel(),
+                                           naam.getGeslachtsnaam());
         } else {
             return ONBEKEND;
         }
@@ -110,14 +109,15 @@ public class RESTPersoonConverter {
 
     private String convertToInschrijfadres(final Verblijfplaats verblijfplaats) {
         if (verblijfplaats != null) {
-            return Stream.of(verblijfplaats.getStraat(),
-                             Objects.toString(verblijfplaats.getHuisnummer(), null),
-                             verblijfplaats.getHuisnummertoevoeging(),
-                             verblijfplaats.getHuisletter(),
-                             verblijfplaats.getPostcode(),
-                             verblijfplaats.getWoonplaats())
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.joining(" "));
+            final String adres = KlantenUtil.nonBreaking(verblijfplaats.getStraat(),
+                                                         Objects.toString(verblijfplaats.getHuisnummer(), null),
+                                                         verblijfplaats.getHuisnummertoevoeging(),
+                                                         verblijfplaats.getHuisletter());
+            final String postcode = KlantenUtil.nonBreaking(verblijfplaats.getPostcode());
+            final String woonplaats = KlantenUtil.nonBreaking(verblijfplaats.getWoonplaats());
+            return KlantenUtil.breakingAfterCommas(adres,
+                                                   postcode,
+                                                   woonplaats);
         } else {
             return ONBEKEND;
         }

@@ -35,7 +35,7 @@ export class FacetFilterComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.selected && !changes.selected.firstChange) {
+        if (changes.filter && !changes.filter.firstChange) {
             this.setSelected();
         }
     }

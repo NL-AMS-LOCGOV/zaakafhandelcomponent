@@ -16,3 +16,21 @@
 .mat-checkbox {
   margin-bottom: 10px;
 }
+
+mat-expansion-panel {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+button {
+  &.mat-button-base + button.mat-button-base {
+    margin: 0;
+  }
+
+  mat-icon {
+    color: #0000008A;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+}
