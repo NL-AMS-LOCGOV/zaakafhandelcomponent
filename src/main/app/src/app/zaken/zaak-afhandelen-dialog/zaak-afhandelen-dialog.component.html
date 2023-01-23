@@ -30,6 +30,12 @@
     </div>
     <div>
         <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('sendMail').value">
+            <button *ngIf="initiatorEmail" mat-icon-button type="button" matSuffix
+                    title="{{initiatorToevoegenIcon.title | translate}}"
+                    (click)="setInitatorEmail()">
+                <mat-icon>{{initiatorToevoegenIcon.icon}}</mat-icon>
+            </button>
+
             <mat-label>{{'ontvanger' | translate}}</mat-label>
             <input matInput id="ontvanger" maxlength="200" formControlName="ontvanger">
             <mat-hint align="end">{{formGroup.get('ontvanger').value.length}}/200</mat-hint>

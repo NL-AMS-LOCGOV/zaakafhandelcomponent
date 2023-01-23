@@ -28,6 +28,10 @@ import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/for
 import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {Mail} from '../../admin/model/mail';
+import {ActionIcon} from '../../shared/edit/action-icon';
+import {Subject} from 'rxjs';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {KlantenService} from '../../klanten/klanten.service';
 
 @Component({
     selector: 'zac-mail-create',
@@ -49,7 +53,7 @@ export class MailCreateComponent implements OnInit {
     fields: Array<AbstractFormField[]>;
     ingelogdeMedewerker: User;
 
-    ontvangerFormField: AbstractFormControlField;
+    ontvangerFormField: InputFormField;
     onderwerpFormField: AbstractFormControlField;
     bodyFormField: AbstractFormControlField;
     bijlagenFormField: AbstractFormControlField;
@@ -63,6 +67,7 @@ export class MailCreateComponent implements OnInit {
                 private identityService: IdentityService,
                 private mailService: MailService,
                 private mailtemplateService: MailtemplateService,
+                private klantenService: KlantenService,
                 public takenService: TakenService,
                 public utilService: UtilService) {
     }
@@ -102,6 +107,22 @@ export class MailCreateComponent implements OnInit {
         .label(this.fieldNames.BIJLAGEN)
         .documenten(documenten)
         .build();
+
+        if (this.zaak.initiatorIdentificatieType && this.zaak.initiatorIdentificatie) {
+            this.klantenService.ophalenContactGegevens(this.zaak.initiatorIdentificatieType,
+                this.zaak.initiatorIdentificatie).subscribe(gegevens => {
+                if (gegevens.emailadres) {
+                    const initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
+                        new Subject<void>());
+                    this.ontvangerFormField.icons ? this.ontvangerFormField.icons.push(initiatorToevoegenIcon) :
+                        this.ontvangerFormField.icons = [initiatorToevoegenIcon];
+                    initiatorToevoegenIcon.iconClicked.subscribe(() => {
+                        this.ontvangerFormField.value(gegevens.emailadres);
+                    });
+                }
+            });
+        }
+
         this.fields = [[this.ontvangerFormField], [this.onderwerpFormField], [this.bodyFormField], [this.bijlagenFormField]];
     }
 

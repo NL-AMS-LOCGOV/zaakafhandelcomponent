@@ -10,7 +10,7 @@ import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-c
 import {TranslateService} from '@ngx-translate/core';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {CustomValidators} from '../../../shared/validators/customValidators';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../../../taken/taken.service';
 import * as moment from 'moment/moment';
@@ -25,6 +25,9 @@ import {Mail} from '../../../admin/model/mail';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 import {CheckboxFormFieldBuilder} from '../../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {ZaakIndicatie} from '../../../shared/indicaties/zaak-indicaties/zaak-indicaties.component';
+import {KlantenService} from '../../../klanten/klanten.service';
+import {ActionIcon} from '../../../shared/edit/action-icon';
+import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -49,7 +52,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     constructor(translate: TranslateService, public takenService: TakenService,
                 public informatieObjectenService: InformatieObjectenService,
-                private mailtemplateService: MailtemplateService) {
+                private mailtemplateService: MailtemplateService,
+                private klantenService: KlantenService) {
         super(translate, informatieObjectenService);
     }
 
@@ -105,6 +109,22 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
                 this.getFormField(AbstractTaakFormulier.TAAK_FATALEDATUM).required = opschorten;
             });
 
+        }
+
+        if (this.zaak.initiatorIdentificatieType && this.zaak.initiatorIdentificatie) {
+            this.klantenService.ophalenContactGegevens(this.zaak.initiatorIdentificatieType,
+                this.zaak.initiatorIdentificatie).subscribe(gegevens => {
+                if (gegevens.emailadres) {
+                    const initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
+                        new Subject<void>());
+                    const emailInput = (this.getFormField(this.fields.EMAILADRES) as InputFormField);
+                    emailInput.icons ? emailInput.icons.push(initiatorToevoegenIcon) :
+                        emailInput.icons = [initiatorToevoegenIcon];
+                    initiatorToevoegenIcon.iconClicked.subscribe(() => {
+                        emailInput.value(gegevens.emailadres);
+                    });
+                }
+            });
         }
 
     }
