@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <flowable.version>6.7.2</flowable.version>
-        <node.version>v16.10.0</node.version>
+        <node.version>v18.10.0</node.version>
         <!-- Begin Dependecies on WildFly -->
         <wildfly.version>26.1.2.Final</wildfly.version>
         <infinispan.version>13.0.10.Final</infinispan.version>

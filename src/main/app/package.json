@@ -30,7 +30,6 @@
     "@ngx-translate/http-loader": "^7.0.0",
     "ngx-editor": "^15.0.1",
     "moment": "^2.29.4",
-    "ng2-pdfjs-viewer": "^13.2.2",
     "ngx-skeleton-loader": "^6.0.0",
     "ol": "^7.1.0",
     "proj4": "^2.8.0",
