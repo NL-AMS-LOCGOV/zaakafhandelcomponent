@@ -1,39 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-FileCopyrightText: 2023 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export enum MailtemplateVariabele {
-    DOCUMENT_TITEL = 'DOCUMENT_TITEL',
-    DOCUMENT_LINK = 'DOCUMENT_LINK',
-    DOCUMENT_URL = 'DOCUMENT_URL',
-    TAAK_BEHANDELAAR_GROEP = 'TAAK_BEHANDELAAR_GROEP',
-    TAAK_BEHANDELAAR_MEDEWERKER = 'TAAK_BEHANDELAAR_MEDEWERKER',
-    TAAK_FATALEDATUM = 'TAAK_FATALEDATUM',
-    TAAK_LINK = 'TAAK_LINK',
-    TAAK_URL = 'TAAK_URL',
-    ZAAK_BEHANDELAAR_GROEP = 'ZAAK_BEHANDELAAR_GROEP',
-    ZAAK_BEHANDELAAR_MEDEWERKER = 'ZAAK_BEHANDELAAR_MEDEWERKER',
-    ZAAK_FATALEDATUM = 'ZAAK_FATALEDATUM',
-    ZAAK_INITIATOR = 'ZAAK_INITIATOR',
-    ZAAK_LINK = 'ZAAK_LINK',
-    ZAAK_NUMMER = 'ZAAK_NUMMER',
-    ZAAK_OMSCHRIJVING = 'ZAAK_OMSCHRIJVING',
-    ZAAK_REGISTRATIEDATUM = 'ZAAK_REGISTRATIEDATUM',
-    ZAAK_STARTDATUM = 'ZAAK_STARTDATUM',
-    ZAAK_STATUS = 'ZAAK_STATUS',
-    ZAAK_STREEFDATUM = 'ZAAK_STREEFDATUM',
-    ZAAK_TOELICHTING = 'ZAAK_TOELICHTING',
-    ZAAK_TYPE = 'ZAAK_TYPE',
-    ZAAK_URL = 'ZAAK_URL'
-}
+export class MailtemplateVariabele {
 
-export class MailtemplateVariabeleUtil {
-    // Keep this set equal to MailTemplateVariabelen.ZAAK_VARIABELEN
-    static getDefaultVariabelen(): MailtemplateVariabele[] {
-        return [MailtemplateVariabele.ZAAK_NUMMER, MailtemplateVariabele.ZAAK_TYPE, MailtemplateVariabele.ZAAK_STATUS,
-            MailtemplateVariabele.ZAAK_REGISTRATIEDATUM, MailtemplateVariabele.ZAAK_STARTDATUM,
-            MailtemplateVariabele.ZAAK_STREEFDATUM, MailtemplateVariabele.ZAAK_FATALEDATUM,
-            MailtemplateVariabele.ZAAK_OMSCHRIJVING, MailtemplateVariabele.ZAAK_TOELICHTING];
-    }
 }

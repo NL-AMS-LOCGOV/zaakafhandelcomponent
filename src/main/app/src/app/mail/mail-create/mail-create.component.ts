@@ -26,6 +26,8 @@ import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/fo
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
 import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {Mail} from '../../admin/model/mail';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
@@ -64,6 +66,7 @@ export class MailCreateComponent implements OnInit {
                 private http: HttpClient,
                 private identityService: IdentityService,
                 private mailService: MailService,
+                private mailtemplateService: MailtemplateService,
                 private klantenService: KlantenService,
                 public takenService: TakenService,
                 public utilService: UtilService) {
@@ -74,6 +77,8 @@ export class MailCreateComponent implements OnInit {
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
+
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.ZAAK_ALGEMEEN, this.zaak.uuid);
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
@@ -86,6 +91,7 @@ export class MailCreateComponent implements OnInit {
         this.onderwerpFormField = new HtmlEditorFormFieldBuilder()
         .id(this.fieldNames.ONDERWERP)
         .label(this.fieldNames.ONDERWERP)
+        .mailtemplateOnderwerp(mailtemplate)
         .emptyToolbar()
         .validators(Validators.required)
         .maxlength(100)
@@ -93,6 +99,7 @@ export class MailCreateComponent implements OnInit {
         this.bodyFormField = new HtmlEditorFormFieldBuilder()
         .id(this.fieldNames.BODY)
         .label(this.fieldNames.BODY)
+        .mailtemplateBody(mailtemplate)
         .validators(Validators.required)
         .build();
         this.bijlagenFormField = new DocumentenLijstFieldBuilder()
