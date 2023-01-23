@@ -11,7 +11,7 @@ import {PersoonsgegevensComponent} from './persoonsgegevens/persoonsgegevens.com
 import {BedrijfsgegevensComponent} from './bedrijfsgegevens/bedrijfsgegevens.component';
 import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
 import {KlantKoppelComponent} from './koppel/klanten/klant-koppel.component';
-import {RouterLinkWithHref} from '@angular/router';
+import {RouterLink} from '@angular/router';
 import {KlantenRoutingModule} from './klanten-routing.module';
 import {PersoonViewComponent} from './persoon-view/persoon-view.component';
 import {BedrijfViewComponent} from './bedrijf-view/bedrijf-view.component';
@@ -40,7 +40,7 @@ import {ContactmomentenModule} from '../contactmomenten/contactmomenten.module';
     ],
     imports: [
         SharedModule,
-        RouterLinkWithHref,
+        RouterLink,
         KlantenRoutingModule,
         ContactmomentenModule
     ]
