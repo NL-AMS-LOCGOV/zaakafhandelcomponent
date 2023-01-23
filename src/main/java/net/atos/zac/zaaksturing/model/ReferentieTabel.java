@@ -33,6 +33,7 @@ public class ReferentieTabel {
 
     public enum Systeem {
         ADVIES,
+        AFZENDER,
         DOMEIN
     }
 
