@@ -19,7 +19,7 @@ import {AddressResult, LocationService, SuggestResult} from '../../../shared/loc
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
-import {MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent} from '@angular/material/legacy-autocomplete';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {LocationUtil} from '../../../shared/location/location-util';
 
 @Component({

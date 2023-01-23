@@ -38,7 +38,7 @@
              fxLayout="column" [fxFlex]="100/(editmode?grid.length:width)" fxLayoutGap="16px"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
              (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
-            <mat-card *ngFor="let card of column " cdkDrag>
+            <mat-card appearance="outlined" *ngFor="let card of column " cdkDrag>
                 <div class="placeholder" *cdkDragPlaceholder></div>
                 <ng-container *ngIf="card!=null">
                     <mat-card-title-group>

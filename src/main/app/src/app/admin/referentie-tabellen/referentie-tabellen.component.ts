@@ -7,12 +7,12 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {IdentityService} from '../../identity/identity.service';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {AdminComponent} from '../admin/admin.component';
 import {ReferentieTabelService} from '../referentie-tabel.service';
 import {ReferentieTabel} from '../model/referentie-tabel';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({

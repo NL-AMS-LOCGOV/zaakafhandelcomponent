@@ -3,20 +3,20 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list *ngIf=" layout == Layout.VIEW" [class]="layout.toLowerCase()" selectable="false" fxLayout="row">
-    <mat-chip *ngFor="let indicatie of indicaties"
-              [color]="indicatie.primary ? 'accent' : null"
-              [selected]="indicatie.primary ? true : null"
-              [matTooltip]="indicatie.toelichting | empty">
+<mat-chip-listbox *ngIf=" layout == Layout.VIEW" [class]="layout.toLowerCase()" selectable="false" fxLayout="row">
+    <mat-chip-option *ngFor="let indicatie of indicaties"
+                     [color]="indicatie.primary ? 'accent' : null"
+                     [selected]="indicatie.primary ? true : null"
+                     [matTooltip]="indicatie.toelichting | empty">
         {{'indicatie.' + indicatie.naam | translate}}
-    </mat-chip>
-</mat-chip-list>
+    </mat-chip-option>
+</mat-chip-listbox>
 
-<mat-chip-list *ngIf="layout== Layout.WERKLIJST || layout == Layout.ZOEKEN" [class]="layout.toLowerCase()" selectable="false" fxLayout="row">
-    <mat-chip *ngFor="let indicatie of indicaties"
-              [color]="indicatie.primary ? 'accent' : null"
-              [selected]="indicatie.primary ? true : null"
-              [matTooltip]="('indicatie.'+indicatie.naam | translate)+(indicatie.toelichting ? ': '+ indicatie.toelichting : '')">
+<mat-chip-listbox *ngIf="layout== Layout.WERKLIJST || layout == Layout.ZOEKEN" [class]="layout.toLowerCase()" selectable="false" fxLayout="row">
+    <mat-chip-option *ngFor="let indicatie of indicaties"
+                     [color]="indicatie.primary ? 'accent' : null"
+                     [selected]="indicatie.primary ? true : null"
+                     [matTooltip]="('indicatie.'+indicatie.naam | translate)+(indicatie.toelichting ? ': '+ indicatie.toelichting : '')">
         {{'indicatie.' + indicatie.naam + '.afkorting' | translate}}
-    </mat-chip>
-</mat-chip-list>
+    </mat-chip-option>
+</mat-chip-listbox>

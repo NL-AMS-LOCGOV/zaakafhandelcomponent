@@ -6,11 +6,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AdminComponent} from '../admin/admin.component';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {Mailtemplate} from '../model/mailtemplate';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {IdentityService} from '../../identity/identity.service';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '../../core/service/util.service';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';

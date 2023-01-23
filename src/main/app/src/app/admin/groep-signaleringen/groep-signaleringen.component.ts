@@ -9,7 +9,7 @@ import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {Group} from '../../identity/model/group';
 import {IdentityService} from '../../identity/identity.service';
 import {Observable} from 'rxjs';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {SignaleringSettings} from '../../signaleringen/model/signalering-settings';
 import {SignaleringenSettingsBeheerService} from '../signaleringen-settings-beheer.service';
 import {AdminComponent} from '../admin/admin.component';

@@ -13,7 +13,7 @@ import {ZaakKoppelGegevens} from '../model/zaak-koppel-gegevens';
 import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {Router} from '@angular/router';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 
 @Injectable({

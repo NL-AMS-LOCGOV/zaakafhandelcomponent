@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card [formGroup]="formGroup">
+<mat-card appearance="outlined" [formGroup]="formGroup">
     <mat-card-title-group>
         <mat-card-title>{{'zoeken.filter.' + (label | lowercase) | translate}}</mat-card-title>
         <mat-icon (click)="invert()" class="on" *ngIf="!inverse">toggle_off</mat-icon>

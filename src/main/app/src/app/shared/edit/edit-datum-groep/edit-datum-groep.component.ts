@@ -14,7 +14,7 @@ import {InputFormField} from '../../material-form-builder/form-components/input/
 import * as moment from 'moment/moment';
 import {Moment} from 'moment/moment';
 import {DialogComponent} from '../../dialog/dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {DialogData} from '../../dialog/dialog-data';
 import {ZakenService} from '../../../zaken/zaken.service';
 import {InputFormFieldBuilder} from '../../material-form-builder/form-components/input/input-form-field-builder';

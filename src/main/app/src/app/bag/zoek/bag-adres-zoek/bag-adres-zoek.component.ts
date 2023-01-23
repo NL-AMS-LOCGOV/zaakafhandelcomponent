@@ -5,14 +5,14 @@
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Adres} from '../../model/adres';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
 import {ListAdressenParameters} from '../../model/list-adressen-parameters';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../../shared/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 

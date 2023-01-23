@@ -5,7 +5,7 @@
 
 import {UtilService} from '../../core/service/util.service';
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {SignaleringenSettingsService} from '../signaleringen-settings.service';
 import {SignaleringSettings} from '../model/signalering-settings';
 

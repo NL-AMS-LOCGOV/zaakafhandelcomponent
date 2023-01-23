@@ -7,7 +7,7 @@ import {Injectable, isDevMode} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {FoutDialogComponent} from './dialog/fout-dialog.component';
 import {UtilService} from '../core/service/util.service';
 

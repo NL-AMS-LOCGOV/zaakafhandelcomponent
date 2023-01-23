@@ -9,7 +9,7 @@
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
 
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.synchroniseer.ztc.title' | translate}}
@@ -33,7 +33,7 @@
                 </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.zaaktype.inrichtingscheck' | translate}}
@@ -119,7 +119,7 @@
                     </ng-container>
                     <ng-container matColumnDef="zoekFilter">
                         <th mat-header-cell *matHeaderCellDef colspan="3">
-                            <mat-form-field appearance="standard">
+                            <mat-form-field>
                                 <mat-label>{{'filter' | translate}}</mat-label>
                                 <input matInput (keyup)="applyFilter($event)">
                             </mat-form-field>
@@ -141,7 +141,7 @@
                 <p *ngIf="dataSource.data.length === 0 && loadingZaaktypes">{{'msg.loading' | translate}}</p>
             </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.referentielijsten.inrichtingscheck' | translate}}

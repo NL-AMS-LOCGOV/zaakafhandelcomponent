@@ -16,7 +16,7 @@
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100" *ngIf="formulier">
+            <mat-card appearance="outlined" fxFlex="calc(60%-20px)" fxFlex.lt-lg="100" *ngIf="formulier">
                 <mat-card-content>
                     <div class="form">
                         <mfb-form (formPartial)="onFormPartial($event)"
@@ -28,7 +28,7 @@
                 </mat-card-content>
             </mat-card>
             <div fxFlex="calc(40%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
-                <mat-card>
+                <mat-card appearance="outlined">
                     <mat-card-header>
                         <mat-card-title>{{'taak' | translate}}</mat-card-title>
                     </mat-card-header>

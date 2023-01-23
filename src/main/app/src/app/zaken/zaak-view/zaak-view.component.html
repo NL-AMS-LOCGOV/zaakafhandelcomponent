@@ -65,7 +65,7 @@
                               [isVerwijderbaar]="zaak.rechten.behandelen"
                               (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
+            <mat-card appearance="outlined" fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
                     <mat-card-title fxLayout="row">
                         {{'zaak' | translate}}
@@ -371,7 +371,7 @@
                 <zac-besluit-view *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
                                   (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
-                <mat-card class="taken-card">
+                <mat-card appearance="outlined" class="taken-card">
                     <mat-card-header>
                         <mat-card-title>{{'taken'| translate}}</mat-card-title>
                         <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" id="takenAfgerondeToon_toggle"

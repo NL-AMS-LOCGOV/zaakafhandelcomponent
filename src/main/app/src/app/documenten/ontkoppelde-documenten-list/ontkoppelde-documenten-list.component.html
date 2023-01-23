@@ -24,7 +24,7 @@
             </ng-container>
             <ng-container matColumnDef="ontkoppeldDoor_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <mat-form-field appearance="standard">
+                    <mat-form-field>
                         <mat-select [compareWith]="compareUser"
                                     (selectionChange)="filtersChanged()" id="ontkoppeldDoor_filter" placeholder="{{'ontkoppeldDoor.-kies-' | translate }}"
                                     [(ngModel)]="listParameters.ontkoppeldDoor">

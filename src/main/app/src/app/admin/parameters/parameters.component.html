@@ -8,7 +8,7 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-content>
                 <div class="table-wrapper historie">
                     <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort" matSortActive="geldig" matSortDirection="desc">
@@ -20,7 +20,7 @@
                         </ng-container>
                         <ng-container matColumnDef="omschrijving_filter">
                             <th mat-header-cell *matHeaderCellDef>
-                                <mat-form-field appearance="standard">
+                                <mat-form-field>
                                     <mat-select [compareWith]="compareZaaktype" (selectionChange)="applyFilter()" id="zaaktype_filter"
                                                 placeholder="{{'zaaktype.-kies-' | translate }}"
                                                 [(ngModel)]="filterParameters.zaaktype">
@@ -35,7 +35,7 @@
                         </ng-container>
                         <ng-container matColumnDef="model_filter">
                             <th mat-header-cell *matHeaderCellDef>
-                                <mat-form-field appearance="standard">
+                                <mat-form-field>
                                     <mat-select [compareWith]="compareCaseDefinition" (selectionChange)="applyFilter()" id="caseDefinition_filter"
                                                 placeholder="{{'model.-kies-' | translate }}"
                                                 [(ngModel)]="filterParameters.caseDefinition">

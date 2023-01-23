@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card>
+<mat-card appearance="outlined">
     <mat-card-header>
         <mat-card-title>{{'zaken'| translate}}</mat-card-title>
         <mat-slide-toggle [(ngModel)]="inclusiefAfgerondeZaken" color="primary"
@@ -26,7 +26,7 @@
                 </ng-container>
                 <ng-container matColumnDef="betrokkene_filter">
                     <th mat-header-cell *matHeaderCellDef>
-                        <mat-form-field appearance="standard">
+                        <mat-form-field>
                             <mat-select id="betrokkeneRoltype_filter"
                                         [placeholder]="'betrokkeneRoltype.-kies-' | translate"
                                         [formControl]="betrokkeneSelectControl"

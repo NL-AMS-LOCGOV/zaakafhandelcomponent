@@ -25,7 +25,7 @@ import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {TaakHistorieRegel} from '../../shared/historie/model/taak-historie-regel';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';

@@ -4,7 +4,7 @@
  */
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {GebruikersvoorkeurenService} from '../gebruikersvoorkeuren.service';
 import {Zoekopdracht} from '../model/zoekopdracht';
 import {Werklijst} from '../model/werklijst';
