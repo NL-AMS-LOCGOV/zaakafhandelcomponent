@@ -143,7 +143,8 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         this.subscriptions$.push(ontvangstDatum.formControl.valueChanges.subscribe(value => {
             if (value && verzenddatum.formControl.enabled) {
                 status.formControl.setValue(
-                    informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
+                    informatieobjectStatussen.find(
+                        option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus, InformatieobjectStatus.DEFINITIEF)));
                 status.formControl.disable();
                 verzenddatum.formControl.disable();
             } else if (!value && verzenddatum.formControl.disabled) {
