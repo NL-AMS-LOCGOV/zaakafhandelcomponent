@@ -56,7 +56,7 @@
     </div>
     <ng-container *ngIf="zoekType===ZoekType.ZAC">
         <div fxLayout="row" fxLayoutGap="10px">
-            <div fxFlex="">
+            <div fxFlex="25">
                 <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
                     <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
                                             [filter]="zoekParameters.filters[filter.key]"
@@ -64,10 +64,8 @@
                                             (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
                     </zac-multi-facet-filter>
                 </div>
-                <zac-klant-filter *ngIf="hasZaken || zoekParameters.zoeken.ZAAK_INITIATOR" label="zaak_initiator"
-                                  [value]="zoekParameters.zoeken.ZAAK_INITIATOR"
-                                  (changed)="zoekParameters.zoeken.ZAAK_INITIATOR = $event; zoek.emit()">
-                </zac-klant-filter>
+                <zac-zaak-betrokkene-filter *ngIf="hasZaken || betrokkeneActief()" [zoekparameters]="zoekParameters"
+                                            (changed)="zoek.emit()"></zac-zaak-betrokkene-filter>
                 <zac-date-filter
                         *ngIf="hasZaken || hasTaken || hasDocument || zoekParameters.datums.STARTDATUM?.hasValue();"
                         label="startdatum"

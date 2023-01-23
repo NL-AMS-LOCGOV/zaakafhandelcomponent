@@ -47,6 +47,7 @@ export class ZoekComponent implements AfterViewInit, OnInit {
     hasTaken = false;
     hasZaken = false;
     hasDocument = false;
+    huidigZoekVeld: ZoekVeld = ZoekVeld.ALLE;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
@@ -167,9 +168,21 @@ export class ZoekComponent implements AfterViewInit, OnInit {
     }
 
     zoekVeldChanged() {
-        this.zoekParameters.zoeken = {};
+        delete this.zoekParameters.zoeken[this.huidigZoekVeld];
+        this.huidigZoekVeld = this.zoekveldControl.value;
         if (this.trefwoordenControl.value) {
             this.zoek.emit();
         }
+    }
+
+    betrokkeneActief(): boolean {
+        return !!(
+            this.zoekParameters.zoeken.ZAAK_BETROKKENEN ||
+            this.zoekParameters.zoeken.ZAAK_INITIATOR ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_BELANGHEBBENDE ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_ADVISEUR ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_BESLISSER ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_ZAAKCOORDINATOR ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_MEDE_INITIATOR);
     }
 }
