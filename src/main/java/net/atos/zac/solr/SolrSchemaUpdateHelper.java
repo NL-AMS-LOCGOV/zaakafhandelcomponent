@@ -120,6 +120,17 @@ public final class SolrSchemaUpdateHelper {
                 ));
     }
 
+    public static SchemaRequest.AddDynamicField addDynamicField(final String name, final FieldType type,
+            final boolean indexed, final boolean stored, final boolean multiValued) {
+        return new SchemaRequest.AddDynamicField(
+                Map.of(NAME, name,
+                       TYPE, type.getValue(),
+                       INDEXED, indexed,
+                       STORED, stored,
+                       MULTI_VALUED, multiValued
+                ));
+    }
+
     public static SchemaRequest.DeleteField deleteField(final String name) {
         return new SchemaRequest.DeleteField(name);
     }

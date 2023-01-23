@@ -7,6 +7,7 @@ import {ZoekObject} from '../zoek-object';
 import {ZaakRechten} from '../../../policy/model/zaak-rechten';
 import {ZoekObjectType} from '../zoek-object-type';
 import {ZaakIndicatie} from '../../../shared/indicaties/zaak-indicaties/zaak-indicaties.component';
+import {AardVanRol} from '../../../shared/model/aard-van-rol';
 
 export class ZaakZoekObject implements ZoekObject {
     id: string;
@@ -44,4 +45,5 @@ export class ZaakZoekObject implements ZoekObject {
     statusToelichting: string;
     rechten: ZaakRechten;
     indicaties: ZaakIndicatie[];
+    betrokkenen: Map<AardVanRol, string[]>;
 }

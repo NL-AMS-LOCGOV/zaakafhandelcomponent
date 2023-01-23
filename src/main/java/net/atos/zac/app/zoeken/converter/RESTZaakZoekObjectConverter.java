@@ -5,8 +5,12 @@
 
 package net.atos.zac.app.zoeken.converter;
 
+import java.util.EnumMap;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
 import net.atos.zac.policy.PolicyService;
@@ -57,6 +61,15 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.statusToelichting = zoekItem.getStatusToelichting();
         restZoekItem.indicaties = zoekItem.getZaakIndicaties();
         restZoekItem.rechten = restRechtenConverter.convert(policyService.readZaakRechten(zoekItem));
+        restZoekItem.betrokkenen = new EnumMap<>(AardVanRol.class);
+        if (zoekItem.getInitiatorIdentificatie() != null) {
+            restZoekItem.betrokkenen.put(AardVanRol.INITIATOR, List.of(zoekItem.getInitiatorIdentificatie()));
+        }
+        if (zoekItem.getBetrokkenen() != null) {
+            zoekItem.getBetrokkenen().forEach((betrokkenheid, ids) -> {
+                restZoekItem.betrokkenen.put(AardVanRol.fromValue(betrokkenheid.replace(ZaakZoekObject.ZAAK_BETROKKENE_PREFIX, "")), ids);
+            });
+        }
         return restZoekItem;
     }
 }

@@ -16,6 +16,8 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
+import {ZoekVeld} from '../../zoeken/model/zoek-veld';
+import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'zac-klant-zaken-tabel',
@@ -27,7 +29,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     dataSource: MatTableDataSource<ZaakZoekObject> = new MatTableDataSource<ZaakZoekObject>();
-    columns: string[] = ['identificatie', 'status', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
+    columns: string[] = ['identificatie', 'betrokkene', 'status', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
     filterColumns: string[] = this.columns.map(n => n + '_filter');
     isLoadingResults = true;
     sorteerVeld = SorteerVeld;
@@ -36,15 +38,23 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     zoekResultaat: ZoekResultaat<ZaakZoekObject> = new ZoekResultaat<ZaakZoekObject>();
     init: boolean;
     inclusiefAfgerondeZaken = false;
+    ZoekVeld = ZoekVeld;
+    betrokkeneSelectControl = new FormControl<ZoekVeld>(null);
 
     constructor(private utilService: UtilService, private zoekenService: ZoekenService) {}
 
     ngOnInit(): void {
         this.zoekParameters.type = ZoekObjectType.ZAAK;
-        this.zoekParameters.zoeken.ZAAK_INITIATOR = this.klantIdentificatie;
+        this.zoekParameters.zoeken.ZAAK_BETROKKENEN = this.klantIdentificatie;
     }
 
     private loadZaken(): Observable<ZoekResultaat<ZaakZoekObject>> {
+        this.zoekParameters.zoeken = {};
+        if (this.betrokkeneSelectControl.value) {
+            this.zoekParameters.zoeken[this.betrokkeneSelectControl.value] = this.klantIdentificatie;
+        } else {
+            this.zoekParameters.zoeken.ZAAK_BETROKKENEN = this.klantIdentificatie;
+        }
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = SorteerVeld[this.sort.active];
@@ -74,6 +84,18 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
             this.paginator.length = zoekResultaat.totaal;
             this.dataSource.data = zoekResultaat.resultaten;
         });
+    }
+
+    getBetrokkenheid(zaak: ZaakZoekObject): string[] {
+        const rollen = [];
+        Object.entries(zaak.betrokkenen).forEach((value: [string, string[]]) => {
+            const rol = value[0];
+            const ids = value[1];
+            if (ids.includes(this.klantIdentificatie)) {
+                rollen.push(rol);
+            }
+        });
+        return rollen;
     }
 
     filtersChanged(): void {
