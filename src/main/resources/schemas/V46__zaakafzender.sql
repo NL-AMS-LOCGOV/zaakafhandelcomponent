@@ -10,7 +10,7 @@ CREATE TABLE ${schema}.zaakafzender
     id_zaakafzender           BIGINT  NOT NULL,
     id_zaakafhandelparameters BIGINT  NOT NULL,
     mail                      BIGINT  NOT NULL,
-    defaul_mail               BOOLEAN NOT NULL DEFAULT (FALSE),
+    default_mail              BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_zaakafzender PRIMARY KEY (id_zaakafzender),
     CONSTRAINT fk_zaakafzender_zaakafhandelparameters FOREIGN KEY (id_zaakafhandelparameters)
         REFERENCES ${schema}.zaakafhandelparameters (id_zaakafhandelparameters)
