@@ -7,7 +7,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {MatSort} from '@angular/material/sort';
 import {ZaakafhandelParametersListParameters} from './zaakafhandel-parameters-list-parameters';

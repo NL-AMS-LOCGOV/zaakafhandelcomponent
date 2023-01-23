@@ -4,7 +4,7 @@
  */
 
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {MatSelectionListChange} from '@angular/material/list';
+import {MatLegacySelectionListChange as MatSelectionListChange} from '@angular/material/legacy-list';
 import {ColumnPickerValue} from './column-picker-value';
 
 @Component({

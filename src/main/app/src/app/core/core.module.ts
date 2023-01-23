@@ -17,7 +17,7 @@ import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../../environments/environment';
-import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogConfig} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DEFAULT_OPTIONS as MAT_DIALOG_DEFAULT_OPTIONS, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
 
 registerLocaleData(localeNl, 'nl-NL');
 

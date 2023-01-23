@@ -9,7 +9,7 @@ import {delay, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatLegacySnackBar as MatSnackBar} from '@angular/material/legacy-snack-bar';
 import {DOCUMENT} from '@angular/common';
 import {Router} from '@angular/router';
 import {ActionBarAction} from '../actionbar/model/action-bar-action';

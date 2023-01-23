@@ -5,9 +5,9 @@
 
 import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DashboardCard} from '../model/dashboard-card';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {interval, Observable, Subject, Subscription} from 'rxjs';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';

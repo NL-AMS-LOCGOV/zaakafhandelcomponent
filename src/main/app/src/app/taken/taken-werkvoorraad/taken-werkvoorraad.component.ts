@@ -11,9 +11,9 @@ import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column
 import {UtilService} from '../../core/service/util.service';
 import {SelectionModel} from '@angular/cdk/collections';
 import {IdentityService} from '../../identity/identity.service';
-import {MatDialog} from '@angular/material/dialog';
-import {MatTable} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatLegacyTable as MatTable} from '@angular/material/legacy-table';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {User} from '../../identity/model/user';

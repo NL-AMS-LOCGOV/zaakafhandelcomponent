@@ -7,7 +7,7 @@ import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleCha
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {FileFormat, FileFormatUtil} from '../../informatie-objecten/model/file-format';
 import {Zaak} from '../model/zaak';
@@ -22,14 +22,14 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
 import {EMPTY, Observable, share} from 'rxjs';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
-import {MatCheckboxChange} from '@angular/material/checkbox';
+import {MatLegacyCheckboxChange as MatCheckboxChange} from '@angular/material/legacy-checkbox';
 import {Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';

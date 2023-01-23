@@ -4,7 +4,7 @@
  */
 
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {TakenService} from '../taken.service';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';

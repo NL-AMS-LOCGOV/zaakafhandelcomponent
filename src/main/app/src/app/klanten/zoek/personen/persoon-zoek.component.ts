@@ -10,7 +10,7 @@ import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-
 import {ListPersonenParameters} from '../../model/personen/list-personen-parameters';
 import {KlantenService} from '../../klanten.service';
 import {Persoon} from '../../model/personen/persoon';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 import {MatSidenav} from '@angular/material/sidenav';

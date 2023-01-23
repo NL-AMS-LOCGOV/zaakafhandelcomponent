@@ -14,7 +14,7 @@ import {Zaak} from '../model/zaak';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZakenService} from '../zaken.service';
@@ -31,7 +31,7 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
@@ -57,10 +57,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';

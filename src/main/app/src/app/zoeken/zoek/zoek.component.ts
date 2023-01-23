@@ -8,7 +8,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild} from '
 import {ZoekObject} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {merge} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {UtilService} from '../../core/service/util.service';

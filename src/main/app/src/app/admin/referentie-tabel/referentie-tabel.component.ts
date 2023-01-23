@@ -14,7 +14,7 @@ import {Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {ReferentieTabelWaarde} from '../model/referentie-tabel-waarde';
 import {Observable, of} from 'rxjs';
 import {FoutAfhandelingService} from '../../fout-afhandeling/fout-afhandeling.service';

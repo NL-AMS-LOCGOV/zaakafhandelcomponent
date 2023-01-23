@@ -17,7 +17,7 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {GebruikersvoorkeurenService} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 import {forkJoin} from 'rxjs';
 import {DashboardCardInstelling} from './model/dashboard-card-instelling';
-import {MatMenuTrigger} from '@angular/material/menu';
+import {MatLegacyMenuTrigger as MatMenuTrigger} from '@angular/material/legacy-menu';
 
 @Component({
     templateUrl: './dashboard.component.html',

@@ -17,7 +17,7 @@ import {StaticTextComponent} from './static-text/static-text.component';
 import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
 import {StatusLabelComponent} from './status-label/status-label.component';
-import {MatPaginatorIntl} from '@angular/material/paginator';
+import {MatLegacyPaginatorIntl as MatPaginatorIntl} from '@angular/material/legacy-paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 import {OutsideClickDirective} from './directives/outside-click.directive';

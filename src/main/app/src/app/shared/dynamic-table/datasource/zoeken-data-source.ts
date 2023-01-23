@@ -5,7 +5,7 @@
 
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {finalize, tap} from 'rxjs/operators';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
