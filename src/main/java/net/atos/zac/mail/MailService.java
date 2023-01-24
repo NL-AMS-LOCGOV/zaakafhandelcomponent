@@ -155,7 +155,7 @@ public class MailService {
     private void createZaakDocumentFromMail(final String subject, final String body,
             final String ontvanger, final List<Attachment> attachments, final Zaak zaak) {
         final EnkelvoudigInformatieobjectWithInhoud informatieObject =
-                createDocumentInformatieObject(zaak, subject, ontvanger, body, attachments);
+                createDocumentInformatieObject(zaak, subject, body, ontvanger, attachments);
         zgwApiService.createZaakInformatieobjectForZaak(zaak, informatieObject, subject,
                 subject, OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
