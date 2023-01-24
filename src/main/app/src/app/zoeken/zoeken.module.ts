@@ -12,8 +12,8 @@ import {ZaakZoekObjectComponent} from './zoek-object/zaak-zoek-object/zaak-zoek-
 import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-object.component';
 import {MultiFacetFilterComponent} from './zoek/filters/multi-facet-filter/multi-facet-filter.component';
 import {DateFilterComponent} from './zoek/filters/date-filter/date-filter.component';
-import {KlantFilterComponent} from './zoek/filters/klant-filter/klant-filter.component';
-import {KlantFilterDialog} from './zoek/filters/klant-filter/klant-filter.dialog';
+import {ZaakBetrokkeneFilterComponent} from './zoek/filters/zaak-betrokkene-filter/zaak-betrokkene-filter.component';
+import {KlantZoekDialog} from './zoek/filters/zaak-betrokkene-filter/klant-zoek-dialog.component';
 import {KlantenModule} from '../klanten/klanten.module';
 import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
 import {RouterLink, RouterLinkWithHref} from '@angular/router';
@@ -28,8 +28,8 @@ import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-objec
         ZaakZoekObjectComponent,
         TaakZoekObjectComponent,
         DocumentZoekObjectComponent,
-        KlantFilterComponent,
-        KlantFilterDialog
+        ZaakBetrokkeneFilterComponent,
+        KlantZoekDialog
     ],
     exports: [
         ZoekComponent,
