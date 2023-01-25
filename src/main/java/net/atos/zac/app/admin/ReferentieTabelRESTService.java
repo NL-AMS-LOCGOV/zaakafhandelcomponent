@@ -6,6 +6,7 @@
 package net.atos.zac.app.admin;
 
 import static net.atos.zac.policy.PolicyService.assertPolicy;
+import static net.atos.zac.zaaksturing.model.ReferentieTabel.Systeem.AFZENDER;
 import static net.atos.zac.zaaksturing.model.ReferentieTabel.Systeem.DOMEIN;
 
 import java.util.List;
@@ -99,6 +100,14 @@ public class ReferentieTabelRESTService {
     public void deleteReferentieTabel(@PathParam("id") final long id) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         referentieTabelBeheerService.deleteReferentieTabel(id);
+    }
+
+    @GET
+    @Path("afzender")
+    public List<String> listAfzenders() {
+        assertPolicy(policyService.readOverigeRechten().getBeheren());
+        return restReferentieWaardeConverter.convert(
+                referentieTabelService.readReferentieTabel(AFZENDER.name()).getWaarden());
     }
 
     @GET
