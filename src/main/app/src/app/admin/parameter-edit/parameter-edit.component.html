@@ -297,7 +297,6 @@
                                         <tr mat-header-row *matHeaderRowDef="['default', 'mail', 'id'];"></tr>
                                         <tr mat-row *matRowDef="let row; columns: ['default', 'mail', 'id'];"></tr>
                                     </table>
-                                    <p *ngIf="zaakAfzenders.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                                 </div>
                             </mat-card-content>
                         </mat-card>
