@@ -267,6 +267,7 @@
                                         <ng-container matColumnDef="id" stickyEnd>
                                             <th mat-header-cell *matHeaderCellDef>
                                                 <button mat-icon-button
+                                                        *ngIf="0<zaakAfzenders.length"
                                                         id="afzender-toevoegen"
                                                         title="{{ 'actie.toevoegen' | translate}}"
                                                         aria-label="Afzender toevoegen"
