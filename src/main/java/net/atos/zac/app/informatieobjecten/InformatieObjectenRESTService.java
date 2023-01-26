@@ -260,7 +260,7 @@ public class InformatieObjectenRESTService {
                                                                 OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
             final Task task = takenService.readOpenTask(documentReferentieId);
-            final List<UUID> taakdocumenten = taakVariabelenService.readTaakdocumenten(task);
+            final List<UUID> taakdocumenten = new ArrayList<>(taakVariabelenService.readTaakdocumenten(task));
             taakdocumenten.add(UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()));
             taakVariabelenService.setTaakdocumenten(task, taakdocumenten);
         }
