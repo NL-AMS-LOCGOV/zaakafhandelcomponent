@@ -38,7 +38,6 @@ import {Mailtemplate} from '../model/mailtemplate';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 import {ZaakAfzender} from '../model/zaakafzender';
 import {MatTableDataSource} from '@angular/material/table';
-import {Sort} from '@angular/material/sort';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -88,7 +87,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.parameters.afrondenMail = this.parameters.afrondenMail ? this.parameters.afrondenMail : ZaakStatusmailOptie.BESCHIKBAAR_UIT;
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
             this.humanTaskParameters = this.parameters.humanTaskParameters;
-            this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders;
             adminService.listResultaattypes(this.parameters.zaaktype.uuid)
                         .subscribe(resultaattypes => this.resultaattypes = resultaattypes);
             forkJoin([
@@ -238,7 +236,10 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             });
             this.mailFormGroup.addControl(beschikbareKoppeling, formGroup);
         });
-        this.sortZaakAfzender();
+        for (const afzender of this.parameters.zaakAfzenders) {
+            this.removeAfzender(afzender.mail);
+        }
+        this.initZaakAfzenders();
         this.initAfzenders();
     }
 
@@ -301,11 +302,19 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         }
     }
 
+    initZaakAfzenders() {
+        this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders.slice().sort((a, b) => {
+            return a.speciaal !== b.speciaal ? a.speciaal < b.speciaal ? 1 : -1 : a.mail.localeCompare(b.mail);
+        });
+    }
+
     addZaakAfzender(afzender: string): void {
         const zaakAfzender: ZaakAfzender = new ZaakAfzender();
         zaakAfzender.mail = afzender;
+        zaakAfzender.defaultMail = false;
+        zaakAfzender.speciaal = false;
         this.parameters.zaakAfzenders.push(zaakAfzender);
-        this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders;
+        this.initZaakAfzenders();
         this.removeAfzender(afzender);
     }
 
@@ -322,26 +331,17 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 this.parameters.zaakAfzenders.splice(i, 1);
             }
         }
-        this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders;
+        this.initZaakAfzenders();
         this.addAfzender(afzender);
     }
 
-    sortZaakAfzender(sort?: Sort) {
-        this.zaakAfzendersDataSource.data = this.zaakAfzendersDataSource.data.slice().sort((a, b) => {
-            return a.mail.localeCompare(b.mail) * (sort?.direction === 'desc' ? -1 : 1);
-        });
-    }
-
     private initAfzenders(): void {
-        for (const afzender of this.parameters.zaakAfzenders) {
-            this.removeAfzender(afzender.mail);
-        }
-        this.sortAfzenders();
+        this.zaakAfzenders.sort((a, b) => a.localeCompare(b));
     }
 
     private addAfzender(afzender: string): void {
         this.zaakAfzenders.push(afzender);
-        this.sortAfzenders();
+        this.initAfzenders();
     }
 
     private removeAfzender(afzender: string): void {
@@ -350,10 +350,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 this.zaakAfzenders.splice(i, 1);
             }
         }
-    }
-
-    private sortAfzenders(): void {
-        this.zaakAfzenders.sort((a, b) => a.localeCompare(b));
     }
 
     getZaakbeeindigControl(parameter: ZaakbeeindigParameter, field: string): FormControl {

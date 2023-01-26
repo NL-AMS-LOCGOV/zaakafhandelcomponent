@@ -304,7 +304,7 @@
   "dashboard.card.MIJN_ZAKEN_NIEUW": "Recent aan mij toegewezen zaken",
   "dashboard.card.MIJN_ZAKEN_WAARSCHUWING": "Mijn binnenkort verlopende zaken",
   "gegevens.mail.afzender.-kies-": "- Kies de afzender -",
-  "gegevens.mail.afzender.ALGEMEEN": "Algemeen E-Mail adres",
+  "gegevens.mail.afzender.ALGEMEEN": "E-Mail adres van de gemeente",
   "gegevens.mail.afzender.BEHANDELAAR": "E-Mail adres van de behandelaar",
   "gegevens.mail.afzender.MEDEWERKER": "E-Mail adres van de medewerker",
   "gerelateerde.zaak.identificatie": "Zaaknummer",

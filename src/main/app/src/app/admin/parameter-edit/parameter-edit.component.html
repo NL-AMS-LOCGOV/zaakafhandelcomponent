@@ -245,9 +245,7 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <div class="table-wrapper">
-                                    <table mat-table [dataSource]="zaakAfzendersDataSource"
-                                           matSort matSortActive="mail" matSortDirection="asc"
-                                           (matSortChange)="sortZaakAfzender($event)">
+                                    <table mat-table [dataSource]="zaakAfzendersDataSource">
                                         <ng-container matColumnDef="default">
                                             <th mat-header-cell *matHeaderCellDef>
                                                 {{'default' | translate}}

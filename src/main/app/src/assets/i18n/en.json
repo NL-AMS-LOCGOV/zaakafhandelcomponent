@@ -304,7 +304,7 @@
   "dashboard.card.MIJN_ZAKEN_NIEUW": "Cases recently assigned to me",
   "dashboard.card.MIJN_ZAKEN_WAARSCHUWING": "My cases that will soon expire",
   "gegevens.mail.afzender.-kies-": "- Select the sender -",
-  "gegevens.mail.afzender.ALGEMEEN": "General E-Mail address",
+  "gegevens.mail.afzender.ALGEMEEN": "E-Mail address of the municipality",
   "gegevens.mail.afzender.BEHANDELAAR": "E-Mail address of the case handler",
   "gegevens.mail.afzender.MEDEWERKER": "E-Mail address of the employee",
   "gerelateerde.zaak.identificatie": "Case number",
