@@ -50,6 +50,8 @@ public class RESTZaakafhandelParameters {
 
     public List<RESTZaakbeeindigParameter> zaakbeeindigParameters = new ArrayList<>();
 
+    public List<RESTZaakAfzender> zaakAfzenders = new ArrayList<>();
+
     public RESTZaakafhandelParameters() {
     }
 }

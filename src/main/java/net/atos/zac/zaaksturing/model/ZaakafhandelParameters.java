@@ -109,6 +109,10 @@ public class ZaakafhandelParameters {
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<MailtemplateKoppeling> mailtemplateKoppelingen;
 
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
+    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<ZaakAfzender> zaakAfzenders;
+
     public Long getId() {
         return id;
     }
@@ -216,13 +220,27 @@ public class ZaakafhandelParameters {
         return userEventListenerParametersCollection != null ? userEventListenerParametersCollection : Collections.emptySet();
     }
 
-    public void setUserEventListenerParametersCollection(final Collection<UserEventListenerParameters> userEventListenerParametersCollection) {
+    public void setUserEventListenerParametersCollection(
+            final Collection<UserEventListenerParameters> userEventListenerParametersCollection) {
         if (this.userEventListenerParametersCollection == null) {
             this.userEventListenerParametersCollection = new HashSet<>();
         } else {
             this.userEventListenerParametersCollection.clear();
         }
         userEventListenerParametersCollection.forEach(this::addUserEventListenerParameters);
+    }
+
+    public Set<ZaakAfzender> getZaakAfzenders() {
+        return zaakAfzenders != null ? zaakAfzenders : Collections.emptySet();
+    }
+
+    public void setZaakAfzenders(final Collection<ZaakAfzender> zaakAfzenders) {
+        if (this.zaakAfzenders == null) {
+            this.zaakAfzenders = new HashSet<>();
+        } else {
+            this.zaakAfzenders.clear();
+        }
+        zaakAfzenders.forEach(this::addZaakAfzender);
     }
 
     private void addMailtemplateKoppeling(final MailtemplateKoppeling mailtemplateKoppeling) {
@@ -243,6 +261,11 @@ public class ZaakafhandelParameters {
     private void addUserEventListenerParameters(final UserEventListenerParameters userEventListenerParameters) {
         userEventListenerParameters.setZaakafhandelParameters(this);
         userEventListenerParametersCollection.add(userEventListenerParameters);
+    }
+
+    private void addZaakAfzender(final ZaakAfzender zaakAfzender) {
+        zaakAfzender.setZaakafhandelParameters(this);
+        zaakAfzenders.add(zaakAfzender);
     }
 
     public String getZaaktypeOmschrijving() {

@@ -55,4 +55,10 @@ export class ReferentieTabelService {
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
+
+    listAfzenders(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/afzender`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
 }
