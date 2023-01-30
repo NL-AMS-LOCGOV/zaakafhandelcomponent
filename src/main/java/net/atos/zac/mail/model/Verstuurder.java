@@ -5,13 +5,9 @@
 
 package net.atos.zac.mail.model;
 
-import org.eclipse.microprofile.config.ConfigProvider;
-
 import javax.json.bind.annotation.JsonbProperty;
 
 public class Verstuurder {
-
-    private static final String MAIL_DOMEIN = ConfigProvider.getConfig().getValue("mail.domein", String.class);
 
     @JsonbProperty("Email")
     private String email;
@@ -19,10 +15,9 @@ public class Verstuurder {
     @JsonbProperty("Name")
     private String name;
 
-    public Verstuurder() {
-        // Voor de eerste opzet zijn deze waarden hardcoded
-        this.email = "zaakafhandelcomponent@" + MAIL_DOMEIN;
-        this.name = "Zaakafhandelcomponent";
+    public Verstuurder(final String email, final String name) {
+        this.email = email;
+        this.name = name;
     }
 
     public String getEmail() {

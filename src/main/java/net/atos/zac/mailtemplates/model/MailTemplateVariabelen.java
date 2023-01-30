@@ -16,6 +16,7 @@ public enum MailTemplateVariabelen {
     DOCUMENT_TITEL(false),
     DOCUMENT_LINK(false),
     DOCUMENT_URL(false),
+    GEMEENTE(false),
     TAAK_BEHANDELAAR_GROEP(false),
     TAAK_BEHANDELAAR_MEDEWERKER(true),
     TAAK_FATALEDATUM(false),
@@ -48,6 +49,10 @@ public enum MailTemplateVariabelen {
     }
 
     // Sets of variables for mail templates for specific subject types
+    private static final Set<MailTemplateVariabelen> GEMEENTE_VARIABELEN =
+            toSet(GEMEENTE);
+
+    // Sets of variables for mail templates for specific subject types
     private static final Set<MailTemplateVariabelen> ZAAK_VARIABELEN =
             toSet(ZAAK_NUMMER, ZAAK_TYPE, ZAAK_STATUS,
                   ZAAK_REGISTRATIEDATUM, ZAAK_STARTDATUM, ZAAK_STREEFDATUM, ZAAK_FATALEDATUM,
@@ -77,7 +82,7 @@ public enum MailTemplateVariabelen {
 
     // Sets of variables for mail templates for specific uses cases
     public static final Set<MailTemplateVariabelen> ZAAK_VOORTGANG_VARIABELEN =
-            add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
+            add(add(GEMEENTE_VARIABELEN, ZAAK_VARIABELEN), ZAAK_INITIATOR_VARIABELEN);
 
     public static final Set<MailTemplateVariabelen> ACTIE_VARIABELEN =
             add(ZAAK_VARIABELEN, ZAAK_INITIATOR_VARIABELEN);
@@ -94,12 +99,6 @@ public enum MailTemplateVariabelen {
     private static Set<MailTemplateVariabelen> toSet(
             final MailTemplateVariabelen... values) {
         return Collections.unmodifiableSet(toEnumSet(Arrays.asList(values)));
-    }
-
-    private static Set<MailTemplateVariabelen> add(
-            final Set<MailTemplateVariabelen> set,
-            final MailTemplateVariabelen... values) {
-        return add(set, toEnumSet(Arrays.asList(values)));
     }
 
     private static Set<MailTemplateVariabelen> add(

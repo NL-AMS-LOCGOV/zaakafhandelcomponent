@@ -73,15 +73,9 @@ export class UtilService {
         return overlayElements;
     }
 
-    readGemeenteNaam(): string {
-        // TODO Configuratie uitlezen
-        return 'zaakafhandelcomponent';
-    }
-
     setTitle(title: string, params?: {}): void {
-        const _prefix = this.translate.instant('title.prefix', {gemeente: this.readGemeenteNaam()});
         const _title = this.translate.instant(title, params);
-        this.titleService.setTitle(_prefix + _title);
+        this.titleService.setTitle(this.translate.instant('title', {title: _title}));
         this.headerTitle.next(_title);
     }
 
