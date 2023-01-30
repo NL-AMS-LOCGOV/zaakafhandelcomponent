@@ -24,6 +24,7 @@ export abstract class AbstractTaakFormulier {
     public static TAAK_FATALEDATUM: string = 'taakFataledatum';
     public static TAAK_TOEKENNING: string = 'taakToekenning';
     public static BIJLAGEN_FIELD: string = 'bijlagen';
+    public static ONDERTEKENEN_FIELD: string = 'ondertekenen';
 
     zaak: Zaak;
     taakNaam: string;
@@ -142,7 +143,7 @@ export abstract class AbstractTaakFormulier {
         Object.entries(formGroup.value)
               .filter(([key]) => key !== AbstractTaakFormulier.TAAK_TOEKENNING)
               .filter(([key]) => key !== AbstractTaakFormulier.TAAK_FATALEDATUM)
-              .filter(([key]) => !this.isReadonlyFormField(key))
+              .filter(([key]) => !this.isReadonlyFormField(key) || key === AbstractTaakFormulier.ONDERTEKENEN_FIELD)
               .map(([key, value]) => {
                   this.dataElementen[key] = value as any;
                   if (typeof this.dataElementen[key] === 'boolean') {
