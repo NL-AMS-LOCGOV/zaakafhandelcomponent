@@ -88,10 +88,17 @@ public class MailService {
     private static final Logger LOG = Logger.getLogger(MailService.class.getName());
 
     private static final String MEDIA_TYPE_PDF = "application/pdf";
+
     private static final String MAIL_ONTVANGER = "Ontvanger";
+
     private static final String MAIL_BIJLAGE = "Bijlage";
+
     private static final String MAIL_ONDERWERP = "Onderwerp";
+
     private static final String MAIL_BERICHT = "Bericht";
+
+    @Inject
+    private ConfiguratieService configuratieService;
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -127,7 +134,8 @@ public class MailService {
         final String body = resolveVariabelen(mailGegevens.getBody(), bronnen);
         final List<Attachment> attachments = getAttachments(mailGegevens.getBijlagen());
 
-        final EMail eMail = new EMail(body, new Verstuurder(),
+        final EMail eMail = new EMail(body, new Verstuurder(configuratieService.readGemeenteMail(),
+                                                            configuratieService.readGemeenteNaam()),
                                       List.of(mailGegevens.getOntvanger()),
                                       subject,
                                       attachments);
@@ -157,7 +165,7 @@ public class MailService {
         final EnkelvoudigInformatieobjectWithInhoud informatieObject =
                 createDocumentInformatieObject(zaak, subject, body, ontvanger, attachments);
         zgwApiService.createZaakInformatieobjectForZaak(zaak, informatieObject, subject,
-                subject, OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                        subject, OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
 
     private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
@@ -262,7 +270,8 @@ public class MailService {
         return mailTemplateHelper.resolveVariabelen(
                 mailTemplateHelper.resolveVariabelen(
                         mailTemplateHelper.resolveVariabelen(
-                                tekst,
+                                mailTemplateHelper.resolveVariabelen(
+                                        tekst),
                                 getZaakBron(bronnen))
                         , bronnen.document)
                 , bronnen.taskInfo);

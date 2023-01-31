@@ -108,11 +108,19 @@ public class ConfiguratieService {
     private String contextUrl;
 
     @Inject
-    private ZTCClientService ztcClientService;
+    @ConfigProperty(name = "GEMEENTE_NAAM")
+    private String gemeenteNaam;
+
+    @Inject
+    @ConfigProperty(name = "GEMEENTE_MAIL")
+    private String gemeenteMail;
 
     @Inject
     @ConfigProperty(name = "AUTH_RESOURCE")
     private String authResource;
+
+    @Inject
+    private ZTCClientService ztcClientService;
 
     private URI catalogusURI;
 
@@ -138,6 +146,15 @@ public class ConfiguratieService {
     }
 
     public URI informatieobjectTonenUrl(final UUID enkelvoudigInformatieobjectUUID) {
-        return UriBuilder.fromUri(contextUrl).path("informatie-objecten/{enkelvoudigInformatieobjectUUID}").build(enkelvoudigInformatieobjectUUID.toString());
+        return UriBuilder.fromUri(contextUrl).path("informatie-objecten/{enkelvoudigInformatieobjectUUID}")
+                .build(enkelvoudigInformatieobjectUUID.toString());
+    }
+
+    public String readGemeenteNaam() {
+        return gemeenteNaam;
+    }
+
+    public String readGemeenteMail() {
+        return gemeenteMail;
     }
 }

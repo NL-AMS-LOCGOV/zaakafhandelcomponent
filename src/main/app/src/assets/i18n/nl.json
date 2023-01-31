@@ -1,6 +1,6 @@
 {
   " 1 ": ">>--> TITELS <--<<",
-  "title.prefix": "{{gemeente}} - ",
+  "title": "Zaakafhandelcomponent - {{title}}",
   "title.dashboard": "Dashboard",
   "title.document": "Document | {{document}}",
   "title.documenten.ontkoppeldeDocumenten": "Ontkoppelde documenten",
@@ -361,6 +361,7 @@
   "mailtemplate.variabele.DOCUMENT_TITEL": "De titel van het document.",
   "mailtemplate.variabele.DOCUMENT_LINK": "Een klikbare link naar het document in de zaakafhandelcomponent.",
   "mailtemplate.variabele.DOCUMENT_URL": "De zaakafhandelcomponent-URL van het document.",
+  "mailtemplate.variabele.GEMEENTE": "De gemeentenaam.",
   "mailtemplate.variabele.TAAK_BEHANDELAAR_GROEP": "De groep waaraan de taak is toegekend.",
   "mailtemplate.variabele.TAAK_BEHANDELAAR_MEDEWERKER": "De medewerker aan wie de taak is toegekend.",
   "mailtemplate.variabele.TAAK_FATALEDATUM": "De fatale datum van de taak.",

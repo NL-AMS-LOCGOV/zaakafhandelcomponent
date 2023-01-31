@@ -28,9 +28,13 @@ ldap:
   user: ""
   password: ""
 
+# Configuration gemeente
+gemeente:
+  naam: ""
+  mail: ""
+
 # Configuration email sending connection
 mail:
-  domein: "" # example.com
   # API and secret key used for sending mail via mailjet (https://www.mailjet.com)
   mailjet:
     apiKey: ""
