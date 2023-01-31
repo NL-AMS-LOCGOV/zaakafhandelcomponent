@@ -39,6 +39,7 @@ import {Resultaattype} from './model/resultaattype';
 import {Besluittype} from './model/besluittype';
 import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
+import {ZaakAfzender} from '../admin/model/zaakafzender';
 
 @Injectable({
     providedIn: 'root'
@@ -227,16 +228,30 @@ export class ZakenService {
         );
     }
 
+    listAfzendersVoorZaak(zaakUuid: string): Observable<ZaakAfzender[]> {
+        return this.http.get<ZaakAfzender[]>(`${this.basepath}/zaak/${zaakUuid}/afzender`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    readDefaultAfzenderVoorZaak(zaakUuid: string): Observable<ZaakAfzender> {
+        return this.http.get<ZaakAfzender>(`${this.basepath}/zaak/${zaakUuid}/afzender/default`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     afbreken(uuid: string, beeindigReden: ZaakbeeindigReden): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, new ZaakAfbrekenGegevens(beeindigReden.id)).pipe(
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`,
+            new ZaakAfbrekenGegevens(beeindigReden.id)).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     heropenen(uuid: string, heropenReden: string): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden)).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden))
+                   .pipe(
+                       catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                   );
     }
 
     afsluiten(uuid: string, afsluitenReden: string, resultaattypeUuid: string): Observable<void> {

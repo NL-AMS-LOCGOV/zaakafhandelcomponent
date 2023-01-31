@@ -25,9 +25,14 @@ import javax.validation.constraints.NotNull;
 public class ZaakAfzender {
 
     public enum Speciaal {
-        ALGEMEEN,
+        GEMEENTE,
+        GROEP,
         BEHANDELAAR,
         MEDEWERKER;
+
+        public boolean is(final String name) {
+            return this.name().equals(name);
+        }
     }
 
     @Id
@@ -77,9 +82,5 @@ public class ZaakAfzender {
 
     public void setDefault(final boolean defaultMail) {
         this.defaultMail = defaultMail;
-    }
-
-    public boolean is(final Speciaal speciaal) {
-        return speciaal.name().equals(mail);
     }
 }

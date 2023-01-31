@@ -122,7 +122,8 @@ public class MailTemplateHelper {
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STARTDATUM,
                                              zaak.getStartdatum().format(DATE_FORMATTER));
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STREEFDATUM,
-                                             zaak.getEinddatumGepland().format(DATE_FORMATTER));
+                                             Optional.ofNullable(zaak.getEinddatumGepland())
+                                                     .map(datum -> datum.format(DATE_FORMATTER)));
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_FATALEDATUM,
                                              zaak.getUiterlijkeEinddatumAfdoening().format(DATE_FORMATTER));
 

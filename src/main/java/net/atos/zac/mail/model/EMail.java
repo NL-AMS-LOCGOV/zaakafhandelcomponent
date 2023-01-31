@@ -5,9 +5,9 @@
 
 package net.atos.zac.mail.model;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import java.util.List;
+
+import javax.json.bind.annotation.JsonbProperty;
 
 public class EMail {
 
@@ -15,7 +15,7 @@ public class EMail {
     private String body;
 
     @JsonbProperty("From")
-    private Verstuurder verstuurder;
+    private Verzender verzender;
 
     @JsonbProperty("To")
     private List<Ontvanger> ontvangers;
@@ -26,29 +26,21 @@ public class EMail {
     @JsonbProperty("Attachments")
     private List<Attachment> attachments;
 
-    public EMail(final String body, final Verstuurder verstuurder, final List<Ontvanger> ontvangers,
-            final String onderwerp, final List<Attachment> attachments) {
-        this.body = "<pre>" + body + "</pre>";
-        this.verstuurder = verstuurder;
+    public EMail(final Verzender verzender, final List<Ontvanger> ontvangers, final String onderwerp, final String body,
+            final List<Attachment> attachments) {
+        this.verzender = verzender;
         this.ontvangers = ontvangers;
         this.onderwerp = onderwerp;
+        this.body = "<pre>" + body + "</pre>";
         this.attachments = attachments;
     }
 
-    public String getBody() {
-        return body;
+    public Verzender getVerzender() {
+        return verzender;
     }
 
-    public void setBody(final String body) {
-        this.body = body;
-    }
-
-    public Verstuurder getVerstuurder() {
-        return verstuurder;
-    }
-
-    public void setVerstuurder(final Verstuurder verstuurder) {
-        this.verstuurder = verstuurder;
+    public void setVerzender(final Verzender verzender) {
+        this.verzender = verzender;
     }
 
     public List<Ontvanger> getOntvangers() {
@@ -65,6 +57,14 @@ public class EMail {
 
     public void setOnderwerp(final String onderwerp) {
         this.onderwerp = onderwerp;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(final String body) {
+        this.body = body;
     }
 
     public List<Attachment> getAttachments() {
