@@ -9,6 +9,8 @@ public class RESTMailGegevens {
 
     public String ontvanger;
 
+    public String replyTo;
+
     public String onderwerp;
 
     public String body;

@@ -15,10 +15,13 @@ public class EMail {
     private String body;
 
     @JsonbProperty("From")
-    private Verzender verzender;
+    private MailAdres verzender;
 
     @JsonbProperty("To")
-    private List<Ontvanger> ontvangers;
+    private List<MailAdres> ontvangers;
+
+    @JsonbProperty("ReplyTo")
+    private MailAdres replyTo;
 
     @JsonbProperty("Subject")
     private String onderwerp;
@@ -26,29 +29,38 @@ public class EMail {
     @JsonbProperty("Attachments")
     private List<Attachment> attachments;
 
-    public EMail(final Verzender verzender, final List<Ontvanger> ontvangers, final String onderwerp, final String body,
-            final List<Attachment> attachments) {
+    public EMail(final MailAdres verzender, final List<MailAdres> ontvangers, final MailAdres replyTo,
+            final String onderwerp, final String body, final List<Attachment> attachments) {
         this.verzender = verzender;
         this.ontvangers = ontvangers;
+        this.replyTo = replyTo;
         this.onderwerp = onderwerp;
         this.body = "<pre>" + body + "</pre>";
         this.attachments = attachments;
     }
 
-    public Verzender getVerzender() {
+    public MailAdres getVerzender() {
         return verzender;
     }
 
-    public void setVerzender(final Verzender verzender) {
+    public void setVerzender(final MailAdres verzender) {
         this.verzender = verzender;
     }
 
-    public List<Ontvanger> getOntvangers() {
+    public List<MailAdres> getOntvangers() {
         return ontvangers;
     }
 
-    public void setOntvangers(final List<Ontvanger> ontvangers) {
+    public void setOntvangers(final List<MailAdres> ontvangers) {
         this.ontvangers = ontvangers;
+    }
+
+    public MailAdres getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(final MailAdres replyTo) {
+        this.replyTo = replyTo;
     }
 
     public String getOnderwerp() {

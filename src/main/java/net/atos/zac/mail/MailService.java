@@ -69,7 +69,7 @@ import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
-import net.atos.zac.mail.model.Verzender;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.MailTemplateHelper;
 import net.atos.zac.mailtemplates.model.MailGegevens;
 
@@ -128,8 +128,8 @@ public class MailService {
 
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public Verzender getGemeenteVerzender() {
-        return new Verzender(configuratieService.readGemeenteMail(), configuratieService.readGemeenteNaam());
+    public MailAdres getGemeenteMailAdres() {
+        return new MailAdres(configuratieService.readGemeenteMail(), configuratieService.readGemeenteNaam());
     }
 
     public String sendMail(final MailGegevens mailGegevens, final Bronnen bronnen) {
@@ -142,6 +142,7 @@ public class MailService {
 
         final EMail eMail = new EMail(mailGegevens.getVerzender(),
                                       List.of(mailGegevens.getOntvanger()),
+                                      mailGegevens.getReplyTo(),
                                       subject,
                                       body,
                                       attachments);

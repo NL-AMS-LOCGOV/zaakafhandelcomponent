@@ -5,14 +5,15 @@
 
 package net.atos.zac.mailtemplates.model;
 
-import net.atos.zac.mail.model.Ontvanger;
-import net.atos.zac.mail.model.Verzender;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.MailTemplateHelper;
 
 public class MailGegevens {
-    private final Verzender verzender;
+    private final MailAdres verzender;
 
-    private final Ontvanger ontvanger;
+    private final MailAdres ontvanger;
+
+    private final MailAdres replyTo;
 
     private final String onderwerp;
 
@@ -22,27 +23,32 @@ public class MailGegevens {
 
     private final boolean createDocumentFromMail;
 
-    public MailGegevens(final Verzender verzender, final Ontvanger ontvanger, final String onderwerp,
-            final String body, final String bijlagen, final boolean createDocumentFromMail) {
+    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final MailAdres replyTo,
+            final String onderwerp, final String body, final String bijlagen, final boolean createDocumentFromMail) {
         this.verzender = verzender;
         this.ontvanger = ontvanger;
+        this.replyTo = replyTo;
         this.onderwerp = MailTemplateHelper.stripParagraphTags(onderwerp);
         this.body = body;
         this.bijlagen = bijlagen != null ? bijlagen.split(";") : new String[0];
         this.createDocumentFromMail = createDocumentFromMail;
     }
 
-    public MailGegevens(final Verzender verzender, final Ontvanger ontvanger, final String onderwerp,
-            final String body) {
-        this(verzender, ontvanger, onderwerp, body, null, false);
+    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final MailAdres replyTo,
+            final String onderwerp, final String body) {
+        this(verzender, ontvanger, replyTo, onderwerp, body, null, false);
     }
 
-    public Verzender getVerzender() {
+    public MailAdres getVerzender() {
         return verzender;
     }
 
-    public Ontvanger getOntvanger() {
+    public MailAdres getOntvanger() {
         return ontvanger;
+    }
+
+    public MailAdres getReplyTo() {
+        return replyTo;
     }
 
     public String getOnderwerp() {

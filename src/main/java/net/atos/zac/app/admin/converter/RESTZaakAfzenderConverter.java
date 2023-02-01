@@ -42,8 +42,9 @@ public class RESTZaakAfzenderConverter {
     public RESTZaakAfzender convertZaakAfzender(final ZaakAfzender zaakAfzender) {
         final RESTZaakAfzender restZaakAfzender = new RESTZaakAfzender();
         restZaakAfzender.id = zaakAfzender.getId();
-        restZaakAfzender.mail = zaakAfzender.getMail();
         restZaakAfzender.defaultMail = zaakAfzender.isDefault();
+        restZaakAfzender.mail = zaakAfzender.getMail();
+        restZaakAfzender.replyTo = zaakAfzender.getReplyTo();
         restZaakAfzender.speciaal = Arrays.stream(ZaakAfzender.Speciaal.values())
                 .anyMatch(speciaal -> speciaal.is(restZaakAfzender.mail));
         return restZaakAfzender;
@@ -52,8 +53,9 @@ public class RESTZaakAfzenderConverter {
     public ZaakAfzender convertRESTZaakAfzender(final RESTZaakAfzender restZaakAfzender) {
         final ZaakAfzender zaakAfzender = new ZaakAfzender();
         zaakAfzender.setId(restZaakAfzender.id);
-        zaakAfzender.setMail(restZaakAfzender.mail);
         zaakAfzender.setDefault(restZaakAfzender.defaultMail);
+        zaakAfzender.setMail(restZaakAfzender.mail);
+        zaakAfzender.setReplyTo(restZaakAfzender.replyTo);
         return zaakAfzender;
     }
 }

@@ -6,6 +6,7 @@
 export class MailGegevens {
     verzender: string;
     ontvanger: string;
+    replyTo: string;
     onderwerp: string;
     body: string;
     bijlagen: string;
