@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -70,11 +71,22 @@ public class KVKClientService {
     }
 
     public Optional<Vestiging> readVestiging(final String vestigingsnummer) {
-        return Optional.of(vestigingsprofielClient.getVestiging(vestigingsnummer));
+        try {
+            return Optional.of(vestigingsprofielClient.getVestiging(vestigingsnummer));
+        } catch (WebApplicationException e) {
+            return Optional.empty();
+        }
     }
 
     public CompletionStage<Optional<Vestiging>> readVestigingAsync(final String vestigingsnummer) {
-        return vestigingsprofielClient.getVestigingAsync(vestigingsnummer).thenApply(Optional::of);
+        return vestigingsprofielClient.getVestigingAsync(vestigingsnummer)
+                .handle((resultaat, exception) -> {
+                    if (resultaat != null) {
+                        return Optional.of(resultaat);
+                    } else {
+                        return Optional.empty();
+                    }
+                });
     }
 
     private Resultaat handleListAsync(final Resultaat resultaat, final Throwable exception) {
