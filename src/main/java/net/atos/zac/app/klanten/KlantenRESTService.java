@@ -127,13 +127,6 @@ public class KlantenRESTService {
                 .get();
     }
 
-//    private RESTBedrijf convertToRESTBedrijf(final Optional<ResultaatItem> vestiging, final Optional<Klant> klant) {
-//        return vestiging
-//                .map(bedrijfConverter::convert)
-//                .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
-//                .orElse(new RESTBedrijf());
-//    }
-
     private RESTBedrijf convertToRESTBedrijf(final Optional<Vestiging> vestiging, final Optional<Klant> klant) {
         return vestiging
                 .map(bedrijfConverter::convert)

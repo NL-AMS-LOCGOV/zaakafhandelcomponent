@@ -74,9 +74,9 @@ public class RESTBedrijfConverter {
         restBedrijf.kvkNummer = bedrijf.getKvkNummer();
         restBedrijf.vestigingsnummer = bedrijf.getVestigingsnummer();
         restBedrijf.handelsnaam = convertToNaam(bedrijf);
-        //restBedrijf.postcode =
+        restBedrijf.postcode = convertPostcode(bedrijf);
         restBedrijf.rsin = bedrijf.getRsin();
-        //restBedrijf.type =
+        restBedrijf.type = convertType(bedrijf);
         restBedrijf.adres = convertAdres(bedrijf);
         return restBedrijf;
     }
@@ -113,6 +113,20 @@ public class RESTBedrijfConverter {
                                                            postcode,
                                                            woonplaats);
                 })
+                .orElse(ADRES_ONBEKEND);
+    }
+
+    private String convertPostcode(final Vestiging bedrijf) {
+        return bedrijf.getAdressen().stream()
+                .findFirst()
+                .map(locatie -> KlantenUtil.nonBreaking(locatie.getPostcode()))
+                .orElse(ADRES_ONBEKEND);
+    }
+
+    private String convertType(final Vestiging bedrijf) {
+        return bedrijf.getAdressen().stream()
+                .findFirst()
+                .map(locatie -> KlantenUtil.nonBreaking(locatie.getType()))
                 .orElse(ADRES_ONBEKEND);
     }
 }
