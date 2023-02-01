@@ -17,6 +17,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.kvk.exception.KvKClientNoResultException;
 import net.atos.client.kvk.model.KVKZoekenParameters;
+import net.atos.client.kvk.vestigingsprofiel.model.Vestiging;
 import net.atos.client.kvk.zoeken.model.Resultaat;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 
@@ -28,6 +29,10 @@ public class KVKClientService {
     @Inject
     @RestClient
     private ZoekenClient zoekenClient;
+
+    @Inject
+    @RestClient
+    private VestigingsprofielClient vestigingsprofielClient;
 
     public Resultaat list(final KVKZoekenParameters parameters) {
         try {
@@ -62,6 +67,14 @@ public class KVKClientService {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setVestigingsnummer(vestigingsnummer);
         return listAsync(zoekParameters).thenApply(this::convertToSingleItem);
+    }
+
+    public Optional<Vestiging> readVestiging(final String vestigingsnummer) {
+        return Optional.of(vestigingsprofielClient.getVestiging(vestigingsnummer));
+    }
+
+    public CompletionStage<Optional<Vestiging>> readVestigingAsync(final String vestigingsnummer) {
+        return vestigingsprofielClient.getVestigingAsync(vestigingsnummer).thenApply(Optional::of);
     }
 
     private Resultaat handleListAsync(final Resultaat resultaat, final Throwable exception) {

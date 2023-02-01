@@ -13,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.kvk.model.KVKZoekenParameters;
+import net.atos.client.kvk.vestigingsprofiel.model.Vestiging;
 import net.atos.client.kvk.zoeken.model.Resultaat;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.zac.app.klanten.KlantenUtil;
@@ -20,6 +21,8 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 
 public class RESTBedrijfConverter {
+
+    final static String ADRES_ONBEKEND = "-";
 
     public KVKZoekenParameters convert(final RESTListBedrijvenParameters restListParameters) {
         final KVKZoekenParameters zoekenParameters = new KVKZoekenParameters();
@@ -66,8 +69,24 @@ public class RESTBedrijfConverter {
         return restBedrijf;
     }
 
+    public RESTBedrijf convert(final Vestiging bedrijf) {
+        final RESTBedrijf restBedrijf = new RESTBedrijf();
+        restBedrijf.kvkNummer = bedrijf.getKvkNummer();
+        restBedrijf.vestigingsnummer = bedrijf.getVestigingsnummer();
+        restBedrijf.handelsnaam = convertToNaam(bedrijf);
+        //restBedrijf.postcode =
+        restBedrijf.rsin = bedrijf.getRsin();
+        //restBedrijf.type =
+        restBedrijf.adres = convertAdres(bedrijf);
+        return restBedrijf;
+    }
+
     private String convertToNaam(final ResultaatItem bedrijf) {
         return KlantenUtil.nonBreaking(bedrijf.getHandelsnaam());
+    }
+
+    private String convertToNaam(final Vestiging bedrijf) {
+        return KlantenUtil.nonBreaking(bedrijf.getEersteHandelsnaam());
     }
 
     private String convertAdres(final ResultaatItem bedrijf) {
@@ -79,5 +98,21 @@ public class RESTBedrijfConverter {
         return KlantenUtil.breakingAfterCommas(adres,
                                                postcode,
                                                woonplaats);
+    }
+
+    private String convertAdres(final Vestiging bedrijf) {
+        return bedrijf.getAdressen().stream()
+                .findFirst()
+                .map(locatie -> {
+                    final String adres = KlantenUtil.nonBreaking(locatie.getStraatnaam(),
+                                                                 Objects.toString(locatie.getHuisnummer(), null),
+                                                                 locatie.getHuisnummerToevoeging());
+                    final String postcode = KlantenUtil.nonBreaking(locatie.getPostcode());
+                    final String woonplaats = KlantenUtil.nonBreaking(locatie.getPlaats());
+                    return KlantenUtil.breakingAfterCommas(adres,
+                                                           postcode,
+                                                           woonplaats);
+                })
+                .orElse(ADRES_ONBEKEND);
     }
 }

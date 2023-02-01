@@ -34,6 +34,7 @@ import net.atos.client.klanten.KlantenClientService;
 import net.atos.client.klanten.model.Klant;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
+import net.atos.client.kvk.vestigingsprofiel.model.Vestiging;
 import net.atos.client.kvk.zoeken.model.Resultaat;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -119,14 +120,21 @@ public class KlantenRESTService {
     @Path("vestiging/{vestigingsnummer}")
     public RESTBedrijf readVestiging(@PathParam("vestigingsnummer") final String vestigingsnummer)
             throws ExecutionException, InterruptedException {
-        return kvkClientService.findVestigingAsync(vestigingsnummer)
+        return kvkClientService.readVestigingAsync(vestigingsnummer)
                 .thenCombine(klantenClientService.findVestigingAsync(vestigingsnummer),
                              (vestiging, klant) -> convertToRESTBedrijf(vestiging, klant))
                 .toCompletableFuture()
                 .get();
     }
 
-    private RESTBedrijf convertToRESTBedrijf(final Optional<ResultaatItem> vestiging, final Optional<Klant> klant) {
+//    private RESTBedrijf convertToRESTBedrijf(final Optional<ResultaatItem> vestiging, final Optional<Klant> klant) {
+//        return vestiging
+//                .map(bedrijfConverter::convert)
+//                .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
+//                .orElse(new RESTBedrijf());
+//    }
+
+    private RESTBedrijf convertToRESTBedrijf(final Optional<Vestiging> vestiging, final Optional<Klant> klant) {
         return vestiging
                 .map(bedrijfConverter::convert)
                 .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
@@ -196,6 +204,6 @@ public class KlantenRESTService {
             restContactGegevens.emailadres = klant.getEmailadres();
         });
 
-         return restContactGegevens;
+        return restContactGegevens;
     }
 }
