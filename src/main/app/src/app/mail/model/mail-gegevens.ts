@@ -4,9 +4,10 @@
  */
 
 export class MailGegevens {
+    verzender: string;
     ontvanger: string;
     onderwerp: string;
     body: string;
-    createDocumentFromMail: boolean;
     bijlagen: string;
+    createDocumentFromMail: boolean;
 }

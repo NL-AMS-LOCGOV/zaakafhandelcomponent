@@ -69,7 +69,7 @@ import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
-import net.atos.zac.mail.model.Verstuurder;
+import net.atos.zac.mail.model.Verzender;
 import net.atos.zac.mailtemplates.MailTemplateHelper;
 import net.atos.zac.mailtemplates.model.MailGegevens;
 
@@ -88,6 +88,8 @@ public class MailService {
     private static final Logger LOG = Logger.getLogger(MailService.class.getName());
 
     private static final String MEDIA_TYPE_PDF = "application/pdf";
+
+    private static final String MAIL_VERZENDER = "Afzender";
 
     private static final String MAIL_ONTVANGER = "Ontvanger";
 
@@ -126,6 +128,10 @@ public class MailService {
 
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
+    public Verzender getGemeenteVerzender() {
+        return new Verzender(configuratieService.readGemeenteMail(), configuratieService.readGemeenteNaam());
+    }
+
     public String sendMail(final MailGegevens mailGegevens, final Bronnen bronnen) {
 
         final String subject = StringUtils.abbreviate(
@@ -134,10 +140,10 @@ public class MailService {
         final String body = resolveVariabelen(mailGegevens.getBody(), bronnen);
         final List<Attachment> attachments = getAttachments(mailGegevens.getBijlagen());
 
-        final EMail eMail = new EMail(body, new Verstuurder(configuratieService.readGemeenteMail(),
-                                                            configuratieService.readGemeenteNaam()),
+        final EMail eMail = new EMail(mailGegevens.getVerzender(),
                                       List.of(mailGegevens.getOntvanger()),
                                       subject,
+                                      body,
                                       attachments);
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JSONB.toJson(new EMails(List.of(eMail))));
@@ -145,8 +151,12 @@ public class MailService {
             final int status = mailjetClient.post(request).getStatus();
             if (status < 300) {
                 if (mailGegevens.isCreateDocumentFromMail()) {
-                    createZaakDocumentFromMail(subject, body, mailGegevens.getOntvanger().getEmail(),
-                                               attachments, bronnen.zaak);
+                    createZaakDocumentFromMail(mailGegevens.getVerzender().getEmail(),
+                                               mailGegevens.getOntvanger().getEmail(),
+                                               subject,
+                                               body,
+                                               attachments,
+                                               bronnen.zaak);
                 }
             } else {
                 LOG.log(Level.WARNING,
@@ -160,18 +170,19 @@ public class MailService {
         return body;
     }
 
-    private void createZaakDocumentFromMail(final String subject, final String body,
-            final String ontvanger, final List<Attachment> attachments, final Zaak zaak) {
+    private void createZaakDocumentFromMail(final String verzender, final String ontvanger, final String subject,
+            final String body, final List<Attachment> attachments, final Zaak zaak) {
         final EnkelvoudigInformatieobjectWithInhoud informatieObject =
-                createDocumentInformatieObject(zaak, subject, body, ontvanger, attachments);
+                createDocumentInformatieObject(verzender, ontvanger, subject, body, attachments, zaak);
         zgwApiService.createZaakInformatieobjectForZaak(zaak, informatieObject, subject,
                                                         subject, OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
 
-    private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
-            final String subject, final String body, final String ontvanger, final List<Attachment> attachments) {
+    private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final String verzender,
+            final String ontvanger, final String subject, final String body, final List<Attachment> attachments,
+            final Zaak zaak) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
-        final byte[] pdfDocument = createPdfDocument(subject, body, ontvanger, attachments);
+        final byte[] pdfDocument = createPdfDocument(verzender, ontvanger, subject, body, attachments);
 
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
         enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
@@ -190,8 +201,8 @@ public class MailService {
         return enkelvoudigInformatieobjectWithInhoud;
     }
 
-    private byte[] createPdfDocument(final String subject, final String body, final String ontvanger,
-            final List<Attachment> attachments) {
+    private byte[] createPdfDocument(final String verzender, final String ontvanger, final String subject,
+            final String body, final List<Attachment> attachments) {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final Document document = new Document();
         try {
@@ -200,6 +211,7 @@ public class MailService {
             document.addTitle(subject);
             final Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
             final Paragraph paragraph = new Paragraph(StringUtils.EMPTY, font);
+            addToParagraph(paragraph, MAIL_VERZENDER, verzender);
             addToParagraph(paragraph, MAIL_ONTVANGER, ontvanger);
             if (!attachments.isEmpty()) {
                 addToParagraph(paragraph, MAIL_BIJLAGE,

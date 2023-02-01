@@ -5,13 +5,15 @@ package net.atos.zac.app.mail.model;
  */
 public class RESTMailGegevens {
 
+    public String verzender;
+
     public String ontvanger;
 
     public String onderwerp;
 
     public String body;
 
-    public boolean createDocumentFromMail;
-
     public String bijlagen;
+
+    public boolean createDocumentFromMail;
 }

@@ -79,7 +79,7 @@ public class RESTZaakafhandelParametersConverter {
             restZaakafhandelParameters.mailtemplateKoppelingen = mailtemplateKoppelingConverter.convert(
                     zaakafhandelParameters.getMailtemplateKoppelingen());
             restZaakafhandelParameters.zaakAfzenders = zaakAfzenderConverter.convertZaakAfzenders(
-                    zaakafhandelParameters.getZaakAfzenders());
+                    zaakafhandelParameters.getZaakAfzenders(), true);
         }
         if (zaakafhandelParameters.getIntakeMail() != null) {
             restZaakafhandelParameters.intakeMail = RESTZaakStatusmailOptie.valueOf(

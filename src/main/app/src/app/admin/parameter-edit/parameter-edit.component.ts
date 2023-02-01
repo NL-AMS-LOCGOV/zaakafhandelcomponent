@@ -304,7 +304,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     initZaakAfzenders() {
         this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders.slice().sort((a, b) => {
-            return a.speciaal !== b.speciaal ? a.speciaal < b.speciaal ? 1 : -1 : a.mail.localeCompare(b.mail);
+            return a.speciaal !== b.speciaal ? a.speciaal ? -1 : 1 : a.mail.localeCompare(b.mail);
         });
     }
 

@@ -7,7 +7,7 @@ package net.atos.zac.mail.model;
 
 import javax.json.bind.annotation.JsonbProperty;
 
-public class Verstuurder {
+public class Verzender {
 
     @JsonbProperty("Email")
     private String email;
@@ -15,7 +15,7 @@ public class Verstuurder {
     @JsonbProperty("Name")
     private String name;
 
-    public Verstuurder(final String email, final String name) {
+    public Verzender(final String email, final String name) {
         this.email = email;
         this.name = name;
     }

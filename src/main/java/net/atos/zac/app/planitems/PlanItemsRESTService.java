@@ -186,6 +186,7 @@ public class PlanItemsRESTService {
 
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
+                            mailService.getGemeenteVerzender(),
                             new Ontvanger(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
                             mailTemplate.getOnderwerp(),
                             taakVariabelenService.readMailBody(taakdata).orElse(null),

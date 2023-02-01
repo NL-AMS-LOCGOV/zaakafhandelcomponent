@@ -62,9 +62,8 @@ public class MailRESTService {
             final RESTMailGegevens restMailGegevens) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        if (!ValidationUtil.isValidEmail(restMailGegevens.ontvanger)) {
-            throw new RuntimeException(String.format("email '%s' is not valid", restMailGegevens.ontvanger));
-        }
+        validateEmail(restMailGegevens.verzender);
+        validateEmail(restMailGegevens.ontvanger);
         mailService.sendMail(
                 restMailGegevensConverter.convert(restMailGegevens), Bronnen.fromZaak(zaak));
     }
@@ -76,9 +75,8 @@ public class MailRESTService {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         assertPolicy(!zaakVariabelenService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false) &&
                              policyService.readZaakRechten(zaak).getBehandelen());
-        if (!ValidationUtil.isValidEmail(restMailGegevens.ontvanger)) {
-            throw new RuntimeException(String.format("email '%s' is not valid", restMailGegevens.ontvanger));
-        }
+        validateEmail(restMailGegevens.verzender);
+        validateEmail(restMailGegevens.ontvanger);
         mailService.sendMail(
                 restMailGegevensConverter.convert(restMailGegevens), Bronnen.fromZaak(zaak));
 
@@ -86,6 +84,12 @@ public class MailRESTService {
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         if (!Statustype.isHeropend(statustype)) {
             zaakVariabelenService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
+        }
+    }
+
+    private void validateEmail(final String email) {
+        if (!ValidationUtil.isValidEmail(email)) {
+            throw new RuntimeException(String.format("E-Mail '%s' is not valid", email));
         }
     }
 }

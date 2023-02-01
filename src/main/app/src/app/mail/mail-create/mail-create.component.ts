@@ -32,6 +32,8 @@ import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {KlantenService} from '../../klanten/klanten.service';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 
 @Component({
     selector: 'zac-mail-create',
@@ -41,6 +43,7 @@ import {KlantenService} from '../../klanten/klanten.service';
 export class MailCreateComponent implements OnInit {
 
     fieldNames = {
+        VERZENDER: 'verzender',
         ONTVANGER: 'ontvanger',
         BODY: 'body',
         ONDERWERP: 'onderwerp',
@@ -53,6 +56,7 @@ export class MailCreateComponent implements OnInit {
     fields: Array<AbstractFormField[]>;
     ingelogdeMedewerker: User;
 
+    verzenderFormField: SelectFormField;
     ontvangerFormField: InputFormField;
     onderwerpFormField: AbstractFormControlField;
     bodyFormField: AbstractFormControlField;
@@ -82,6 +86,15 @@ export class MailCreateComponent implements OnInit {
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+
+        this.verzenderFormField = new SelectFormFieldBuilder()
+        .id(this.fieldNames.VERZENDER)
+        .label(this.fieldNames.VERZENDER)
+        .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
+        .optionLabel('mail')
+        .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
+        .validators(Validators.required)
+        .build();
         this.ontvangerFormField = new InputFormFieldBuilder()
         .id(this.fieldNames.ONTVANGER)
         .label(this.fieldNames.ONTVANGER)
@@ -123,12 +136,18 @@ export class MailCreateComponent implements OnInit {
             });
         }
 
-        this.fields = [[this.ontvangerFormField], [this.onderwerpFormField], [this.bodyFormField], [this.bijlagenFormField]];
+        this.fields = [
+            [this.verzenderFormField],
+            [this.ontvangerFormField],
+            [this.onderwerpFormField],
+            [this.bodyFormField],
+            [this.bijlagenFormField]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup?.valid) {
             const mailGegevens = new MailGegevens();
+            mailGegevens.verzender = this.verzenderFormField.formControl.value.mail;
             mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
             mailGegevens.onderwerp = this.onderwerpFormField.formControl.value;
             mailGegevens.body = this.bodyFormField.formControl.value;

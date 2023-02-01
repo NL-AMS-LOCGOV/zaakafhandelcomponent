@@ -15,14 +15,18 @@ import net.atos.zac.zaaksturing.model.ZaakAfzender;
 
 public class RESTZaakAfzenderConverter {
 
-    public List<RESTZaakAfzender> convertZaakAfzenders(final Set<ZaakAfzender> zaakAfzender) {
+    public List<RESTZaakAfzender> convertZaakAfzenders(final Set<ZaakAfzender> zaakAfzender,
+            final boolean speciaalToevoegen) {
         final List<RESTZaakAfzender> restZaakAfzenders = zaakAfzender.stream()
                 .map(this::convertZaakAfzender)
                 .collect(Collectors.toList());
-        for (final ZaakAfzender.Speciaal speciaal : ZaakAfzender.Speciaal.values()) {
-            if (zaakAfzender.stream()
-                    .noneMatch(afzender -> afzender.is(speciaal))) {
-                restZaakAfzenders.add(new RESTZaakAfzender(speciaal));
+        if (speciaalToevoegen) {
+            for (final ZaakAfzender.Speciaal speciaal : ZaakAfzender.Speciaal.values()) {
+                if (zaakAfzender.stream()
+                        .map(ZaakAfzender::getMail)
+                        .noneMatch(speciaal::is)) {
+                    restZaakAfzenders.add(new RESTZaakAfzender(speciaal));
+                }
             }
         }
         return restZaakAfzenders;
@@ -35,16 +39,17 @@ public class RESTZaakAfzenderConverter {
                 .toList();
     }
 
-    private RESTZaakAfzender convertZaakAfzender(final ZaakAfzender zaakAfzender) {
+    public RESTZaakAfzender convertZaakAfzender(final ZaakAfzender zaakAfzender) {
         final RESTZaakAfzender restZaakAfzender = new RESTZaakAfzender();
         restZaakAfzender.id = zaakAfzender.getId();
         restZaakAfzender.mail = zaakAfzender.getMail();
         restZaakAfzender.defaultMail = zaakAfzender.isDefault();
-        restZaakAfzender.speciaal = Arrays.stream(ZaakAfzender.Speciaal.values()).anyMatch(zaakAfzender::is);
+        restZaakAfzender.speciaal = Arrays.stream(ZaakAfzender.Speciaal.values())
+                .anyMatch(speciaal -> speciaal.is(restZaakAfzender.mail));
         return restZaakAfzender;
     }
 
-    private ZaakAfzender convertRESTZaakAfzender(final RESTZaakAfzender restZaakAfzender) {
+    public ZaakAfzender convertRESTZaakAfzender(final RESTZaakAfzender restZaakAfzender) {
         final ZaakAfzender zaakAfzender = new ZaakAfzender();
         zaakAfzender.setId(restZaakAfzender.id);
         zaakAfzender.setMail(restZaakAfzender.mail);
