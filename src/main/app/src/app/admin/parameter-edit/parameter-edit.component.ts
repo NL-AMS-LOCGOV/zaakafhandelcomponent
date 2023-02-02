@@ -38,6 +38,7 @@ import {Mailtemplate} from '../model/mailtemplate';
 import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 import {ZaakAfzender} from '../model/zaakafzender';
 import {MatTableDataSource} from '@angular/material/table';
+import {ReplyTo} from '../model/replyto';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -75,6 +76,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     formulierDefinities: FormulierDefinitie[];
     zaakbeeindigRedenen: ZaakbeeindigReden[];
     mailtemplates: Mailtemplate[];
+    replyTos: ReplyTo[];
     loading: boolean;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
@@ -95,12 +97,14 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 referentieTabelService.listReferentieTabellen(),
                 referentieTabelService.listDomeinen(),
                 referentieTabelService.listAfzenders(),
+                adminService.listReplyTos(),
                 identityService.listGroups(),
                 identityService.listUsers(),
                 adminService.listZaakbeeindigRedenen(),
                 mailtemplateBeheerService.listKoppelbareMailtemplates()
             ]).subscribe(
-                ([caseDefinitions, formulierDefinities, referentieTabellen, domeinen, afzenders, groepen, medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
+                ([caseDefinitions, formulierDefinities, referentieTabellen, domeinen, afzenders, replyTos, groepen,
+                     medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
                     this.caseDefinitions = caseDefinitions;
                     this.formulierDefinities = formulierDefinities;
                     this.referentieTabellen = referentieTabellen;
@@ -110,6 +114,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                     this.zaakbeeindigRedenen = zaakbeeindigRedenen;
                     this.mailtemplates = mailtemplates;
                     this.zaakAfzenders = afzenders;
+                    this.replyTos = replyTos;
                     this.createForm();
                 });
         });
@@ -236,11 +241,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             });
             this.mailFormGroup.addControl(beschikbareKoppeling, formGroup);
         });
-        for (const afzender of this.parameters.zaakAfzenders) {
-            this.removeAfzender(afzender.mail);
-        }
         this.initZaakAfzenders();
-        this.initAfzenders();
     }
 
     createZaakbeeindigForm() {
@@ -302,7 +303,17 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         }
     }
 
-    initZaakAfzenders() {
+    private initZaakAfzenders() {
+        let i = 0;
+        for (const zaakAfzender of this.parameters.zaakAfzenders) {
+            zaakAfzender.index = i++;
+            this.addZaakAfzenderControl(zaakAfzender);
+        }
+        this.loadZaakAfzenders();
+        this.initAfzenders();
+    }
+
+    private loadZaakAfzenders() {
         this.zaakAfzendersDataSource.data = this.parameters.zaakAfzenders.slice().sort((a, b) => {
             return a.speciaal !== b.speciaal ? a.speciaal ? -1 : 1 : a.mail.localeCompare(b.mail);
         });
@@ -314,8 +325,15 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         zaakAfzender.defaultMail = false;
         zaakAfzender.mail = afzender;
         zaakAfzender.replyTo = null;
+        zaakAfzender.index = 0;
+        for (const bestaand of this.parameters.zaakAfzenders) {
+            if (zaakAfzender.index <= bestaand.index) {
+                zaakAfzender.index = bestaand.index + 1;
+            }
+        }
+        this.addZaakAfzenderControl(zaakAfzender);
         this.parameters.zaakAfzenders.push(zaakAfzender);
-        this.initZaakAfzenders();
+        this.loadZaakAfzenders();
         this.removeAfzender(afzender);
     }
 
@@ -332,17 +350,33 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 this.parameters.zaakAfzenders.splice(i, 1);
             }
         }
-        this.initZaakAfzenders();
+        this.loadZaakAfzenders();
         this.addAfzender(afzender);
     }
 
-    private initAfzenders(): void {
+    private addZaakAfzenderControl(zaakAfzender: ZaakAfzender) {
+        this.mailFormGroup.addControl('afzender' + zaakAfzender.index + '__replyTo',
+            new FormControl(zaakAfzender.replyTo));
+    }
+
+    getZaakAfzenderControl(zaakAfzender: ZaakAfzender, field: string): FormControl {
+        return this.mailFormGroup.get(`afzender${zaakAfzender.index}__${field}`) as FormControl;
+    }
+
+    private initAfzenders() {
+        for (const zaakAfzender of this.parameters.zaakAfzenders) {
+            this.removeAfzender(zaakAfzender.mail);
+        }
+        this.loadAfzenders();
+    }
+
+    private loadAfzenders(): void {
         this.zaakAfzenders.sort((a, b) => a.localeCompare(b));
     }
 
     private addAfzender(afzender: string): void {
         this.zaakAfzenders.push(afzender);
-        this.initAfzenders();
+        this.loadAfzenders();
     }
 
     private removeAfzender(afzender: string): void {
@@ -412,6 +446,10 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 this.parameters.zaakbeeindigParameters.push(param);
             }
         });
+
+        for (const afzender of this.parameters.zaakAfzenders) {
+            afzender.replyTo = this.getZaakAfzenderControl(afzender, 'replyTo').value;
+        }
 
         this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(data => {
             this.loading = false;

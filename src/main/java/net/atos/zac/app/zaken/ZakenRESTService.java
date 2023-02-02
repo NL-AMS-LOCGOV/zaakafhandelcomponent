@@ -683,7 +683,7 @@ public class ZakenRESTService {
      * Retrieve all possible afzenders for a zaak
      *
      * @param zaakUUID the id of the zaak
-     * @return list of E-Mail addresses
+     * @return list of afzenders
      */
     @GET
     @Path("zaak/{uuid}/afzender")
@@ -694,7 +694,7 @@ public class ZakenRESTService {
                         zaakAfzenderConverter.convertZaakAfzenders(
                                 zaakafhandelParameterService.readZaakafhandelParameters(
                                                 UriUtil.uuidFromURI(zaak.getZaaktype()))
-                                        .getZaakAfzenders(), true).stream(), zaak));
+                                        .getZaakAfzenders()).stream(), zaak));
     }
 
     /**

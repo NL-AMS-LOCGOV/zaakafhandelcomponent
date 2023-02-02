@@ -60,7 +60,7 @@ public class RESTGerelateerdeZaakConverter {
         return switch (aardRelatie) {
             case VERVOLG -> RelatieType.VERVOLG;
             case BIJDRAGE -> RelatieType.BIJDRAGE;
-            case ONDERWERP -> RelatieType.RELEVANT;
+            case ONDERWERP -> RelatieType.ONDERWERP;
         };
     }
 }

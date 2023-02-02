@@ -15,18 +15,15 @@ import net.atos.zac.zaaksturing.model.ZaakAfzender;
 
 public class RESTZaakAfzenderConverter {
 
-    public List<RESTZaakAfzender> convertZaakAfzenders(final Set<ZaakAfzender> zaakAfzender,
-            final boolean speciaalToevoegen) {
+    public List<RESTZaakAfzender> convertZaakAfzenders(final Set<ZaakAfzender> zaakAfzender) {
         final List<RESTZaakAfzender> restZaakAfzenders = zaakAfzender.stream()
                 .map(this::convertZaakAfzender)
                 .collect(Collectors.toList());
-        if (speciaalToevoegen) {
-            for (final ZaakAfzender.Speciaal speciaal : ZaakAfzender.Speciaal.values()) {
-                if (zaakAfzender.stream()
-                        .map(ZaakAfzender::getMail)
-                        .noneMatch(speciaal::is)) {
-                    restZaakAfzenders.add(new RESTZaakAfzender(speciaal));
-                }
+        for (final ZaakAfzender.Speciaal speciaal : ZaakAfzender.Speciaal.values()) {
+            if (zaakAfzender.stream()
+                    .map(ZaakAfzender::getMail)
+                    .noneMatch(speciaal::is)) {
+                restZaakAfzenders.add(new RESTZaakAfzender(speciaal));
             }
         }
         return restZaakAfzenders;
@@ -34,7 +31,12 @@ public class RESTZaakAfzenderConverter {
 
     public List<ZaakAfzender> convertRESTZaakAfzenders(final List<RESTZaakAfzender> restZaakAfzender) {
         return restZaakAfzender.stream()
-                .filter(afzender -> !afzender.speciaal || afzender.defaultMail)
+                .peek(afzender -> {
+                    if (afzender.mail.equals(afzender.replyTo)) {
+                        afzender.replyTo = null;
+                    }
+                })
+                .filter(afzender -> !afzender.speciaal || afzender.defaultMail || afzender.replyTo != null)
                 .map(this::convertRESTZaakAfzender)
                 .toList();
     }
