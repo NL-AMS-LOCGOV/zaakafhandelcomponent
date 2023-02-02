@@ -4,8 +4,7 @@ import javax.inject.Inject;
 
 import net.atos.zac.app.mail.model.RESTMailGegevens;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.mail.model.Ontvanger;
-import net.atos.zac.mail.model.Verzender;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.model.MailGegevens;
 
 public class RESTMailGegevensConverter {
@@ -16,9 +15,11 @@ public class RESTMailGegevensConverter {
     public MailGegevens convert(final RESTMailGegevens restMailGegevens) {
         // Note that most of the actual conversion happens in the constructor.
         // Please do not move it here, because MailGegevens do not always get constructed here.
+        final String afzender = configuratieService.readGemeenteNaam();
         return new MailGegevens(
-                new Verzender(restMailGegevens.verzender, configuratieService.readGemeenteNaam()),
-                new Ontvanger(restMailGegevens.ontvanger),
+                new MailAdres(restMailGegevens.verzender, afzender),
+                new MailAdres(restMailGegevens.ontvanger),
+                restMailGegevens.replyTo == null ? null : new MailAdres(restMailGegevens.replyTo, afzender),
                 restMailGegevens.onderwerp,
                 restMailGegevens.body,
                 restMailGegevens.bijlagen,

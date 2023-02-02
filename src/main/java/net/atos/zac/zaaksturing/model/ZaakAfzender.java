@@ -45,12 +45,15 @@ public class ZaakAfzender {
     @JoinColumn(name = "id_zaakafhandelparameters", referencedColumnName = "id_zaakafhandelparameters")
     private ZaakafhandelParameters zaakafhandelParameters;
 
+    @Column(name = "default_mail", nullable = false)
+    private boolean defaultMail;
+
     @NotBlank
     @Column(name = "mail", nullable = false)
     private String mail;
 
-    @Column(name = "default_mail", nullable = false)
-    private boolean defaultMail;
+    @Column(name = "replyto")
+    private String replyTo;
 
     public Long getId() {
         return id;
@@ -68,6 +71,14 @@ public class ZaakAfzender {
         this.zaakafhandelParameters = zaakafhandelParameters;
     }
 
+    public boolean isDefault() {
+        return defaultMail;
+    }
+
+    public void setDefault(final boolean defaultMail) {
+        this.defaultMail = defaultMail;
+    }
+
     public String getMail() {
         return mail;
     }
@@ -76,11 +87,11 @@ public class ZaakAfzender {
         this.mail = mail;
     }
 
-    public boolean isDefault() {
-        return defaultMail;
+    public String getReplyTo() {
+        return replyTo;
     }
 
-    public void setDefault(final boolean defaultMail) {
-        this.defaultMail = defaultMail;
+    public void setReplyTo(final String replyTo) {
+        this.replyTo = replyTo;
     }
 }

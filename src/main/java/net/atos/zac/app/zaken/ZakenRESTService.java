@@ -721,33 +721,36 @@ public class ZakenRESTService {
             final Zaak zaak) {
         return afzenders
                 .peek(afzender -> {
-                    if (afzender.speciaal) {
-                        if (ZaakAfzender.Speciaal.GEMEENTE.is(afzender.mail)) {
-                            afzender.mail = configuratieService.readGemeenteMail();
-                        } else {
-                            if (ZaakAfzender.Speciaal.GROEP.is(afzender.mail)) {
-                                afzender.mail = zgwApiService.findGroepForZaak(zaak)
-                                        .map(RolOrganisatorischeEenheid::getIdentificatienummer)
-                                        .map(identityService::readGroup)
-                                        .map(Group::getEmail)
-                                        .orElse(null);
-                            } else {
-                                if (ZaakAfzender.Speciaal.BEHANDELAAR.is(afzender.mail)) {
-                                    afzender.mail = zgwApiService.findBehandelaarForZaak(zaak)
-                                            .map(RolMedewerker::getIdentificatienummer)
-                                            .map(identityService::readUser)
-                                            .map(User::getEmail)
-                                            .orElse(null);
-                                } else {
-                                    if (ZaakAfzender.Speciaal.MEDEWERKER.is(afzender.mail)) {
-                                        afzender.mail = loggedInUserInstance.get().getEmail();
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    afzender.mail = resolveMail(afzender.mail, zaak);
+                    afzender.replyTo = resolveMail(afzender.replyTo, zaak);
                 })
                 .filter(afzender -> afzender.mail != null);
+    }
+
+    private String resolveMail(final String mail, final Zaak zaak) {
+        if (mail != null && !mail.contains("@")) {
+            if (ZaakAfzender.Speciaal.GEMEENTE.is(mail)) {
+                return configuratieService.readGemeenteMail();
+            }
+            if (ZaakAfzender.Speciaal.GROEP.is(mail)) {
+                return zgwApiService.findGroepForZaak(zaak)
+                        .map(RolOrganisatorischeEenheid::getIdentificatienummer)
+                        .map(identityService::readGroup)
+                        .map(Group::getEmail)
+                        .orElse(null);
+            }
+            if (ZaakAfzender.Speciaal.BEHANDELAAR.is(mail)) {
+                return zgwApiService.findBehandelaarForZaak(zaak)
+                        .map(RolMedewerker::getIdentificatienummer)
+                        .map(identityService::readUser)
+                        .map(User::getEmail)
+                        .orElse(null);
+            }
+            if (ZaakAfzender.Speciaal.MEDEWERKER.is(mail)) {
+                return loggedInUserInstance.get().getEmail();
+            }
+        }
+        return mail;
     }
 
     private static List<RESTZaakAfzender> sortAndRemoveDuplicates(Stream<RESTZaakAfzender> afzenders) {

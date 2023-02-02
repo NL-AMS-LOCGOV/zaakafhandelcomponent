@@ -310,9 +310,10 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     addZaakAfzender(afzender: string): void {
         const zaakAfzender: ZaakAfzender = new ZaakAfzender();
-        zaakAfzender.mail = afzender;
-        zaakAfzender.defaultMail = false;
         zaakAfzender.speciaal = false;
+        zaakAfzender.defaultMail = false;
+        zaakAfzender.mail = afzender;
+        zaakAfzender.replyTo = null;
         this.parameters.zaakAfzenders.push(zaakAfzender);
         this.initZaakAfzenders();
         this.removeAfzender(afzender);
