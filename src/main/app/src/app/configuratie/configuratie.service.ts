@@ -20,6 +20,7 @@ export class ConfiguratieService {
     private defaultTaal$: Observable<Taal>;
     private maxFileSizeMB$: Observable<number>;
     private additionalAllowedFileTypes$: Observable<string[]>;
+    private gemeenteNaam$: Observable<string>;
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
@@ -63,5 +64,15 @@ export class ConfiguratieService {
                 );
         }
         return this.additionalAllowedFileTypes$;
+    }
+
+    readGemeenteNaam(): Observable<string> {
+        if (!this.gemeenteNaam$) {
+            this.gemeenteNaam$ = this.http.get<string>(`${this.basepath}/gemeente`).pipe(
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err)),
+                shareReplay(1)
+            );
+        }
+        return this.gemeenteNaam$;
     }
 }

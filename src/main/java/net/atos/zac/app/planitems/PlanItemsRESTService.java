@@ -41,7 +41,7 @@ import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
-import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailGegevens;
@@ -186,7 +186,9 @@ public class PlanItemsRESTService {
 
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
-                            new Ontvanger(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
+                            mailService.getGemeenteMailAdres(),
+                            new MailAdres(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
+                            null,
                             mailTemplate.getOnderwerp(),
                             taakVariabelenService.readMailBody(taakdata).orElse(null),
                             taakVariabelenService.readBijlagen(taakdata).orElse(null),

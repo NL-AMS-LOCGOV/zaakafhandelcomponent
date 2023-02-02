@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
-import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringTarget;
 
@@ -38,7 +38,7 @@ public class SignaleringenMailHelper {
         return null;
     }
 
-    public Ontvanger formatTo(final SignaleringTarget.Mail mail) {
-        return new Ontvanger(mail.emailadres, mail.naam);
+    public MailAdres formatTo(final SignaleringTarget.Mail mail) {
+        return new MailAdres(mail.emailadres, mail.naam);
     }
 }

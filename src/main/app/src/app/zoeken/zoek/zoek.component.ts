@@ -182,6 +182,7 @@ export class ZoekComponent implements AfterViewInit, OnInit {
             this.zoekParameters.zoeken.ZAAK_BETROKKENE_BELANGHEBBENDE ||
             this.zoekParameters.zoeken.ZAAK_BETROKKENE_ADVISEUR ||
             this.zoekParameters.zoeken.ZAAK_BETROKKENE_BESLISSER ||
+            this.zoekParameters.zoeken.ZAAK_BETROKKENE_KLANTCONTACTER ||
             this.zoekParameters.zoeken.ZAAK_BETROKKENE_ZAAKCOORDINATOR ||
             this.zoekParameters.zoeken.ZAAK_BETROKKENE_MEDE_INITIATOR);
     }

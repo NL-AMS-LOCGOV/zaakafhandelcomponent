@@ -66,7 +66,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectListAcceptFor('informatieobject.status',
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectListExceptFor('informatieobject.status',
             InformatieobjectStatus, [InformatieobjectStatus.GEARCHIVEERD]);
 
         const titel = new InputFormFieldBuilder()
@@ -184,7 +184,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         this.subscriptions$.push(ontvangstDatum.formControl.valueChanges.subscribe(value => {
             if (value && verzendDatum.formControl.enabled) {
                 status.formControl.setValue(
-                    informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
+                    informatieobjectStatussen.find(
+                        option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus, InformatieobjectStatus.DEFINITIEF)));
                 status.formControl.disable();
                 verzendDatum.formControl.disable();
             } else if (!value && verzendDatum.formControl.disabled) {

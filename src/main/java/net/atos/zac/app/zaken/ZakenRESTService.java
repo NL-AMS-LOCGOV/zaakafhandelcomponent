@@ -21,10 +21,12 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -80,6 +82,8 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.admin.converter.RESTZaakAfzenderConverter;
+import net.atos.zac.app.admin.model.RESTZaakAfzender;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.KlantenRESTService;
@@ -137,6 +141,7 @@ import net.atos.zac.util.LocalDateUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakAfzender;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zoeken.IndexeerService;
@@ -252,6 +257,9 @@ public class ZakenRESTService {
 
     @Inject
     private OpschortenZaakHelper opschortenZaakHelper;
+
+    @Inject
+    private RESTZaakAfzenderConverter zaakAfzenderConverter;
 
     @GET
     @Path("zaak/{uuid}")
@@ -669,6 +677,100 @@ public class ZakenRESTService {
                 zrcClientService.listRollen(zaak).stream()
                         .filter(rol -> KlantenRESTService.betrokkenen.contains(
                                 AardVanRol.fromValue(rol.getOmschrijvingGeneriek()))));
+    }
+
+    /**
+     * Retrieve all possible afzenders for a zaak
+     *
+     * @param zaakUUID the id of the zaak
+     * @return list of E-Mail addresses
+     */
+    @GET
+    @Path("zaak/{uuid}/afzender")
+    public List<RESTZaakAfzender> listAfzendersVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return sortAndRemoveDuplicates(
+                resolveZaakAfzenderMail(
+                        zaakAfzenderConverter.convertZaakAfzenders(
+                                zaakafhandelParameterService.readZaakafhandelParameters(
+                                                UriUtil.uuidFromURI(zaak.getZaaktype()))
+                                        .getZaakAfzenders(), true).stream(), zaak));
+    }
+
+    /**
+     * Retrieve the default afzender for a zaak
+     *
+     * @param zaakUUID the id of the zaak
+     * @return the default zaakafzender or null if no default is available
+     */
+    @GET
+    @Path("zaak/{uuid}/afzender/default")
+    public RESTZaakAfzender readDefaultAfzenderVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return resolveZaakAfzenderMail(
+                zaakafhandelParameterService.readZaakafhandelParameters(
+                                UriUtil.uuidFromURI(zaak.getZaaktype()))
+                        .getZaakAfzenders().stream()
+                        .filter(ZaakAfzender::isDefault)
+                        .map(zaakAfzenderConverter::convertZaakAfzender), zaak)
+                .findAny()
+                .orElse(null);
+    }
+
+    private Stream<RESTZaakAfzender> resolveZaakAfzenderMail(final Stream<RESTZaakAfzender> afzenders,
+            final Zaak zaak) {
+        return afzenders
+                .peek(afzender -> {
+                    afzender.mail = resolveMail(afzender.mail, zaak);
+                    afzender.replyTo = resolveMail(afzender.replyTo, zaak);
+                })
+                .filter(afzender -> afzender.mail != null);
+    }
+
+    private String resolveMail(final String mail, final Zaak zaak) {
+        if (mail != null && !mail.contains("@")) {
+            if (ZaakAfzender.Speciaal.GEMEENTE.is(mail)) {
+                return configuratieService.readGemeenteMail();
+            }
+            if (ZaakAfzender.Speciaal.GROEP.is(mail)) {
+                return zgwApiService.findGroepForZaak(zaak)
+                        .map(RolOrganisatorischeEenheid::getIdentificatienummer)
+                        .map(identityService::readGroup)
+                        .map(Group::getEmail)
+                        .orElse(null);
+            }
+            if (ZaakAfzender.Speciaal.BEHANDELAAR.is(mail)) {
+                return zgwApiService.findBehandelaarForZaak(zaak)
+                        .map(RolMedewerker::getIdentificatienummer)
+                        .map(identityService::readUser)
+                        .map(User::getEmail)
+                        .orElse(null);
+            }
+            if (ZaakAfzender.Speciaal.MEDEWERKER.is(mail)) {
+                return loggedInUserInstance.get().getEmail();
+            }
+        }
+        return mail;
+    }
+
+    private static List<RESTZaakAfzender> sortAndRemoveDuplicates(Stream<RESTZaakAfzender> afzenders) {
+        final List<RESTZaakAfzender> list = afzenders
+                .sorted((a, b) -> {
+                    final int result = a.mail.compareTo(b.mail);
+                    return result == 0 ? a.defaultMail ? -1 : 0 : result;
+                })
+                .toList();
+        final Iterator<RESTZaakAfzender> i = list.iterator();
+        String previous = null;
+        while (i.hasNext()) {
+            final RESTZaakAfzender afzender = i.next();
+            if (afzender.mail.equals(previous)) {
+                i.remove();
+            } else {
+                previous = afzender.mail;
+            }
+        }
+        return list;
     }
 
     @GET

@@ -38,15 +38,20 @@ public class RESTZaakafhandelParametersConverter {
     private RESTHumanTaskParametersConverter humanTaskParametersConverter;
 
     @Inject
+    private RESTZaakAfzenderConverter zaakAfzenderConverter;
+
+    @Inject
     private ZTCClientService ztcClientService;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
-    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, final boolean inclusiefRelaties) {
+    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters,
+            final boolean inclusiefRelaties) {
         final RESTZaakafhandelParameters restZaakafhandelParameters = new RESTZaakafhandelParameters();
         restZaakafhandelParameters.id = zaakafhandelParameters.getId();
-        restZaakafhandelParameters.zaaktype = restZaaktypeOverzichtConverter.convert(ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
+        restZaakafhandelParameters.zaaktype = restZaaktypeOverzichtConverter.convert(
+                ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
         restZaakafhandelParameters.defaultGroepId = zaakafhandelParameters.getGroepID();
         restZaakafhandelParameters.defaultBehandelaarId = zaakafhandelParameters.getGebruikersnaamMedewerker();
         restZaakafhandelParameters.einddatumGeplandWaarschuwing = zaakafhandelParameters.getEinddatumGeplandWaarschuwing();
@@ -55,8 +60,8 @@ public class RESTZaakafhandelParametersConverter {
         restZaakafhandelParameters.valide = zaakafhandelParameters.isValide();
 
         if (zaakafhandelParameters.getCaseDefinitionID() != null) {
-            restZaakafhandelParameters.caseDefinition = caseDefinitionConverter.convertToRESTCaseDefinition(zaakafhandelParameters.getCaseDefinitionID(),
-                                                                                                            inclusiefRelaties);
+            restZaakafhandelParameters.caseDefinition = caseDefinitionConverter.convertToRESTCaseDefinition(
+                    zaakafhandelParameters.getCaseDefinitionID(), inclusiefRelaties);
         }
         if (inclusiefRelaties && restZaakafhandelParameters.caseDefinition != null) {
             if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
@@ -64,43 +69,53 @@ public class RESTZaakafhandelParametersConverter {
                         ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
             }
             restZaakafhandelParameters.humanTaskParameters = humanTaskParametersConverter.convertHumanTaskParametersCollection(
-                    zaakafhandelParameters.getHumanTaskParametersCollection(), restZaakafhandelParameters.caseDefinition.humanTaskDefinitions);
+                    zaakafhandelParameters.getHumanTaskParametersCollection(),
+                    restZaakafhandelParameters.caseDefinition.humanTaskDefinitions);
             restZaakafhandelParameters.userEventListenerParameters = userEventListenerParametersConverter.convertUserEventListenerParametersCollection(
-                    zaakafhandelParameters.getUserEventListenerParametersCollection(), restZaakafhandelParameters.caseDefinition.userEventListenerDefinitions);
+                    zaakafhandelParameters.getUserEventListenerParametersCollection(),
+                    restZaakafhandelParameters.caseDefinition.userEventListenerDefinitions);
             restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertZaakbeeindigParameters(
                     zaakafhandelParameters.getZaakbeeindigParameters());
+            restZaakafhandelParameters.mailtemplateKoppelingen = mailtemplateKoppelingConverter.convert(
+                    zaakafhandelParameters.getMailtemplateKoppelingen());
+            restZaakafhandelParameters.zaakAfzenders = zaakAfzenderConverter.convertZaakAfzenders(
+                    zaakafhandelParameters.getZaakAfzenders(), true);
         }
         if (zaakafhandelParameters.getIntakeMail() != null) {
-            restZaakafhandelParameters.intakeMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getIntakeMail());
+            restZaakafhandelParameters.intakeMail = RESTZaakStatusmailOptie.valueOf(
+                    zaakafhandelParameters.getIntakeMail());
         }
-        if(zaakafhandelParameters.getAfrondenMail() != null) {
-            restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getAfrondenMail());
+        if (zaakafhandelParameters.getAfrondenMail() != null) {
+            restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(
+                    zaakafhandelParameters.getAfrondenMail());
         }
         restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
         restZaakafhandelParameters.domein = zaakafhandelParameters.getDomein();
 
-        restZaakafhandelParameters.mailtemplateKoppelingen =
-                mailtemplateKoppelingConverter.convert(zaakafhandelParameters.getMailtemplateKoppelingen());
-
         return restZaakafhandelParameters;
     }
 
-    public ZaakafhandelParameters convertRESTZaakafhandelParameters(final RESTZaakafhandelParameters restZaakafhandelParameters) {
-        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(restZaakafhandelParameters.zaaktype.uuid);
+    public ZaakafhandelParameters convertRESTZaakafhandelParameters(
+            final RESTZaakafhandelParameters restZaakafhandelParameters) {
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
+                restZaakafhandelParameters.zaaktype.uuid);
         zaakafhandelParameters.setId(restZaakafhandelParameters.id);
         zaakafhandelParameters.setZaakTypeUUID(restZaakafhandelParameters.zaaktype.uuid);
         zaakafhandelParameters.setZaaktypeOmschrijving(restZaakafhandelParameters.zaaktype.omschrijving);
         zaakafhandelParameters.setCaseDefinitionID(restZaakafhandelParameters.caseDefinition.key);
         zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroepId);
-        zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
-        zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
+        zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(
+                restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
+        zaakafhandelParameters.setNietOntvankelijkResultaattype(
+                restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
         zaakafhandelParameters.setIntakeMail(restZaakafhandelParameters.intakeMail.name());
         zaakafhandelParameters.setAfrondenMail(restZaakafhandelParameters.afrondenMail.name());
         zaakafhandelParameters.setProductaanvraagtype(restZaakafhandelParameters.productaanvraagtype);
         zaakafhandelParameters.setDomein(restZaakafhandelParameters.domein);
         zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaarId);
         if (restZaakafhandelParameters.einddatumGeplandWaarschuwing != null) {
-            zaakafhandelParameters.setEinddatumGeplandWaarschuwing(restZaakafhandelParameters.einddatumGeplandWaarschuwing);
+            zaakafhandelParameters.setEinddatumGeplandWaarschuwing(
+                    restZaakafhandelParameters.einddatumGeplandWaarschuwing);
         }
         zaakafhandelParameters.setHumanTaskParametersCollection(
                 humanTaskParametersConverter.convertRESTHumanTaskParameters(
@@ -114,6 +129,9 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setMailtemplateKoppelingen(
                 mailtemplateKoppelingConverter.convertRESTmailtemplateKoppelingen(
                         restZaakafhandelParameters.mailtemplateKoppelingen));
+        zaakafhandelParameters.setZaakAfzenders(
+                zaakAfzenderConverter.convertRESTZaakAfzenders(
+                        restZaakafhandelParameters.zaakAfzenders));
         return zaakafhandelParameters;
     }
 }

@@ -5,24 +5,25 @@ metadata:
   labels:
     {{- include "zaakafhandelcomponent.labels" . | nindent 4 }}
 data:
-  CONTEXT_URL: {{ required "Valid .Values.contextUrl entry required!" .Values.contextUrl }}
-  DB_HOST: {{ required "Valid .Values.db.host entry required!" .Values.db.host }}
-  DB_NAME: {{ required "Valid .Values.db.name entry required!" .Values.db.name }}
-  AUTH_SERVER: {{ required "Valid .Values.auth.server entry required!" .Values.auth.server }}
-  AUTH_REALM: {{ required "Valid .Values.auth.realm entry required!" .Values.auth.realm }}
-  LDAP_URL: {{ required "Valid .Values.ldap.url entry required!" .Values.ldap.url }}
-  LDAP_DN: {{ required "Valid .Values.ldap.dn entry required!" .Values.ldap.dn }}
-  MAIL_DOMEIN: {{ required "Valid .Values.mail.domein entry required!" .Values.mail.domein }}
-  ZGW_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.zgwApis.url entry required!" .Values.zgwApis.url }}
-  ZGW_API_URL_EXTERN: {{ required "Valid .Values.zgwApis.urlExtern entry required!" .Values.zgwApis.urlExtern }}
-  KLANTEN_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.klantenApi.url entry required!" .Values.klantenApi.url }}
-  CONTACTMOMENTEN_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.contactmomentenApi.url entry required!" .Values.contactmomentenApi.url }}
-  OBJECTS_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objectenApi.url entry required!" .Values.objectenApi.url }}
-  OBJECTTYPES_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objecttypenApi.url entry required!" .Values.objecttypenApi.url }}
-  BRP_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.brpApi.url entry required!" .Values.brpApi.url }}
-  KVK_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.kvkApi.url entry required!" .Values.kvkApi.url }}
-  BAG_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.bagApi.url entry required!" .Values.bagApi.url }}
-  VRL_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.vrlApi.url entry required!" .Values.vrlApi.url }}
+  CONTEXT_URL: { { required "Valid .Values.contextUrl entry required!" .Values.contextUrl } }
+  DB_HOST: { { required "Valid .Values.db.host entry required!" .Values.db.host } }
+  DB_NAME: { { required "Valid .Values.db.name entry required!" .Values.db.name } }
+  AUTH_SERVER: { { required "Valid .Values.auth.server entry required!" .Values.auth.server } }
+  AUTH_REALM: { { required "Valid .Values.auth.realm entry required!" .Values.auth.realm } }
+  LDAP_URL: { { required "Valid .Values.ldap.url entry required!" .Values.ldap.url } }
+  LDAP_DN: { { required "Valid .Values.ldap.dn entry required!" .Values.ldap.dn } }
+  GEMEENTE_NAAM: { { required "Valid .Values.gemeente.naam entry required!" .Values.gemeente.naam } }
+  GEMEENTE_MAIL: { { required "Valid .Values.gemeente.mail entry required!" .Values.gemeente.mail } }
+  ZGW_API_CLIENT_MP_REST_URL: { { required "Valid .Values.zgwApis.url entry required!" .Values.zgwApis.url } }
+  ZGW_API_URL_EXTERN: { { required "Valid .Values.zgwApis.urlExtern entry required!" .Values.zgwApis.urlExtern } }
+  KLANTEN_API_CLIENT_MP_REST_URL: { { required "Valid .Values.klantenApi.url entry required!" .Values.klantenApi.url } }
+  CONTACTMOMENTEN_API_CLIENT_MP_REST_URL: { { required "Valid .Values.contactmomentenApi.url entry required!" .Values.contactmomentenApi.url } }
+  OBJECTS_API_CLIENT_MP_REST_URL: { { required "Valid .Values.objectenApi.url entry required!" .Values.objectenApi.url } }
+  OBJECTTYPES_API_CLIENT_MP_REST_URL: { { required "Valid .Values.objecttypenApi.url entry required!" .Values.objecttypenApi.url } }
+  BRP_API_CLIENT_MP_REST_URL: { { required "Valid .Values.brpApi.url entry required!" .Values.brpApi.url } }
+  KVK_API_CLIENT_MP_REST_URL: { { required "Valid .Values.kvkApi.url entry required!" .Values.kvkApi.url } }
+  BAG_API_CLIENT_MP_REST_URL: { { required "Valid .Values.bagApi.url entry required!" .Values.bagApi.url } }
+  VRL_API_CLIENT_MP_REST_URL: { { required "Valid .Values.vrlApi.url entry required!" .Values.vrlApi.url } }
   OPEN_FORMS_URL: {{ required "Valid .Values.openForms.url entry required!" .Values.openForms.url }}
   SD_CLIENT_MP_REST_URL: {{ required "Valid .Values.smartDocuments.url entry required!" .Values.smartDocuments.url }}
   MAX_FILE_SIZE_MB: {{ required "Valid .Values.maxFileSizeMB entry required!" .Values.maxFileSizeMB | quote }}

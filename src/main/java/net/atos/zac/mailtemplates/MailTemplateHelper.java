@@ -3,6 +3,7 @@ package net.atos.zac.mailtemplates;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_LINK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_TITEL;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.DOCUMENT_URL;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.GEMEENTE;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_GROEP;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_BEHANDELAAR_MEDEWERKER;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TAAK_FATALEDATUM;
@@ -99,6 +100,12 @@ public class MailTemplateHelper {
         return PTAGS.matcher(onderwerp).replaceAll(StringUtils.EMPTY);
     }
 
+    public String resolveVariabelen(final String tekst) {
+        String resolvedTekst = tekst;
+        resolvedTekst = replaceVariabele(resolvedTekst, GEMEENTE, configuratieService.readGemeenteNaam());
+        return resolvedTekst;
+    }
+
     public String resolveVariabelen(final String tekst, final Zaak zaak) {
         String resolvedTekst = tekst;
         if (zaak != null) {
@@ -115,7 +122,8 @@ public class MailTemplateHelper {
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STARTDATUM,
                                              zaak.getStartdatum().format(DATE_FORMATTER));
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_STREEFDATUM,
-                                             zaak.getEinddatumGepland().format(DATE_FORMATTER));
+                                             Optional.ofNullable(zaak.getEinddatumGepland())
+                                                     .map(datum -> datum.format(DATE_FORMATTER)));
             resolvedTekst = replaceVariabele(resolvedTekst, ZAAK_FATALEDATUM,
                                              zaak.getUiterlijkeEinddatumAfdoening().format(DATE_FORMATTER));
 

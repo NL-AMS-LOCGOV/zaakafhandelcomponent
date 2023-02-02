@@ -5,9 +5,9 @@
 
 package net.atos.zac.mail.model;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import java.util.List;
+
+import javax.json.bind.annotation.JsonbProperty;
 
 public class EMail {
 
@@ -15,10 +15,13 @@ public class EMail {
     private String body;
 
     @JsonbProperty("From")
-    private Verstuurder verstuurder;
+    private MailAdres verzender;
 
     @JsonbProperty("To")
-    private List<Ontvanger> ontvangers;
+    private List<MailAdres> ontvangers;
+
+    @JsonbProperty("ReplyTo")
+    private MailAdres replyTo;
 
     @JsonbProperty("Subject")
     private String onderwerp;
@@ -26,37 +29,38 @@ public class EMail {
     @JsonbProperty("Attachments")
     private List<Attachment> attachments;
 
-    public EMail(final String body, final Verstuurder verstuurder, final List<Ontvanger> ontvangers,
-            final String onderwerp, final List<Attachment> attachments) {
-        this.body = "<pre>" + body + "</pre>";
-        this.verstuurder = verstuurder;
+    public EMail(final MailAdres verzender, final List<MailAdres> ontvangers, final MailAdres replyTo,
+            final String onderwerp, final String body, final List<Attachment> attachments) {
+        this.verzender = verzender;
         this.ontvangers = ontvangers;
+        this.replyTo = replyTo;
         this.onderwerp = onderwerp;
+        this.body = "<pre>" + body + "</pre>";
         this.attachments = attachments;
     }
 
-    public String getBody() {
-        return body;
+    public MailAdres getVerzender() {
+        return verzender;
     }
 
-    public void setBody(final String body) {
-        this.body = body;
+    public void setVerzender(final MailAdres verzender) {
+        this.verzender = verzender;
     }
 
-    public Verstuurder getVerstuurder() {
-        return verstuurder;
-    }
-
-    public void setVerstuurder(final Verstuurder verstuurder) {
-        this.verstuurder = verstuurder;
-    }
-
-    public List<Ontvanger> getOntvangers() {
+    public List<MailAdres> getOntvangers() {
         return ontvangers;
     }
 
-    public void setOntvangers(final List<Ontvanger> ontvangers) {
+    public void setOntvangers(final List<MailAdres> ontvangers) {
         this.ontvangers = ontvangers;
+    }
+
+    public MailAdres getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(final MailAdres replyTo) {
+        this.replyTo = replyTo;
     }
 
     public String getOnderwerp() {
@@ -65,6 +69,14 @@ public class EMail {
 
     public void setOnderwerp(final String onderwerp) {
         this.onderwerp = onderwerp;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(final String body) {
+        this.body = body;
     }
 
     public List<Attachment> getAttachments() {

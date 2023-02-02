@@ -57,4 +57,10 @@ public class ConfiguratieRESTService {
     public List<String> readAdditionalAllowedFileTypes() {
         return configuratieService.readAdditionalAllowedFileTypes();
     }
+
+    @GET
+    @Path("gemeente")
+    public String readGemeenteNaam() {
+        return configuratieService.readGemeenteNaam();
+    }
 }

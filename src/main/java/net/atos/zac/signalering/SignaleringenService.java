@@ -40,7 +40,7 @@ import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TakenService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
-import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailGegevens;
@@ -217,7 +217,8 @@ public class SignaleringenService {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
-            final Ontvanger to = signaleringenMailHelper.formatTo(mail);
+            final MailAdres from = mailService.getGemeenteMailAdres();
+            final MailAdres to = signaleringenMailHelper.formatTo(mail);
             final MailTemplate mailTemplate = getMailtemplate(signalering);
             final Bronnen.Builder bronnenBuilder = new Bronnen.Builder();
             switch (signalering.getSubjecttype()) {
@@ -230,7 +231,7 @@ public class SignaleringenService {
                 case TAAK -> bronnenBuilder.add(getTaak(signalering.getSubject()));
                 case DOCUMENT -> bronnenBuilder.add(getDocument(signalering.getSubject()));
             }
-            mailService.sendMail(new MailGegevens(to, mailTemplate.getOnderwerp(), mailTemplate.getBody()),
+            mailService.sendMail(new MailGegevens(from, to, null, mailTemplate.getOnderwerp(), mailTemplate.getBody()),
                                  bronnenBuilder.build());
         }
     }

@@ -73,15 +73,9 @@ export class UtilService {
         return overlayElements;
     }
 
-    readGemeenteNaam(): string {
-        // TODO Configuratie uitlezen
-        return 'zaakafhandelcomponent';
-    }
-
     setTitle(title: string, params?: {}): void {
-        const _prefix = this.translate.instant('title.prefix', {gemeente: this.readGemeenteNaam()});
         const _title = this.translate.instant(title, params);
-        this.titleService.setTitle(_prefix + _title);
+        this.titleService.setTitle(this.translate.instant('title', {title: _title}));
         this.headerTitle.next(_title);
     }
 
@@ -99,16 +93,20 @@ export class UtilService {
         return list;
     }
 
-    getEnumAsSelectListAcceptFor(prefix: string, enumValue: any, acceptEnumValues: [string]): { label: string, value: string }[] {
+    getEnumAsSelectListExceptFor(prefix: string, enum_: any, exceptEnumValues: [string]): { label: string, value: string }[] {
         const list: { label: string, value: string }[] = [];
-        Object.keys(enumValue)
-              .filter(value => !acceptEnumValues.some(acceptEnumValue => acceptEnumValue === enumValue[value]))
-              .forEach(value => {
-                  this.translate.get(`${prefix}.${enumValue[value]}`).subscribe(result => {
-                      list.push({label: result, value: value});
+        Object.keys(enum_)
+              .filter(key => !exceptEnumValues.some(acceptEnumValue => acceptEnumValue === enum_[key]))
+              .forEach(key => {
+                  this.translate.get(`${prefix}.${enum_[key]}`).subscribe(result => {
+                      list.push({label: result, value: key});
                   });
               });
         return list;
+    }
+
+    getEnumKeyByValue(enum_: any, value: any) {
+        return Object.keys(enum_)[Object.values(enum_).indexOf(value)];
     }
 
     openSnackbarError(message: string, params?: {}) {

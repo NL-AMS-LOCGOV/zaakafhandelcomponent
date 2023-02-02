@@ -11,6 +11,7 @@ import {UserEventListenerParameter} from './user-event-listener-parameter';
 import {Resultaattype} from '../../zaken/model/resultaattype';
 import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
 import {MailtemplateKoppeling} from './mailtemplate-koppeling';
+import {ZaakAfzender} from './zaakafzender';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
@@ -26,6 +27,7 @@ export class ZaakafhandelParameters {
     userEventListenerParameters: UserEventListenerParameter[];
     mailtemplateKoppelingen: MailtemplateKoppeling[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];
+    zaakAfzenders: ZaakAfzender[];
     intakeMail: ZaakStatusmailOptie;
     afrondenMail: ZaakStatusmailOptie;
     productaanvraagtype: string;
