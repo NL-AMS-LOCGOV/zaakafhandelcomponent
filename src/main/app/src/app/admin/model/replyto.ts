@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ZaakAfzender {
-    id: string;
-    defaultMail: boolean;
+export class ReplyTo {
     mail: string;
-    replyTo: string;
     speciaal: boolean;
-    index: number;
 }
