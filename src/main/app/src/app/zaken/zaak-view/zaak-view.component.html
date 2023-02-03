@@ -53,7 +53,7 @@
                       [zaak]="zaak"></zac-zaakdata>
 
     </mat-drawer>
-    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
+    <mat-drawer-content class="flex-col gap-20">
         <zac-persoongegevens *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
                              [isVerwijderbaar]="zaak.rechten.behandelen"
                              (delete)="deleteInitiator()"></zac-persoongegevens>
@@ -64,19 +64,17 @@
         <zac-bedrijfsgegevens *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
                               [isVerwijderbaar]="zaak.rechten.behandelen"
                               (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
-        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card appearance="outlined" fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
-                <mat-card-header fxLayout="row">
-                    <mat-card-title fxLayout="row">
-                        {{'zaak' | translate}}
-                    </mat-card-title>
+        <div class="flex-row flex-wrap flex-col-md gap-20">
+            <mat-card appearance="outlined" class="flex-1 w50 w100-md">
+                <mat-card-header>
+                    <mat-card-title>{{'zaak' | translate}}</mat-card-title>
                     <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
                         <mat-tab label="{{'gegevens.algemeen' | translate}}">
-                            <div id="algemeneGegevens_tab" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div id="algemeneGegevens_tab" class="content flex-row flex-wrap flex-col-xs">
+                                <div class="flex-1 w33 w50-sm">
                                     <zac-static-text [label]="'zaak.identificatie' | translate"
                                                      [value]="zaak.identificatie"></zac-static-text>
                                     <zac-static-text [label]="'zaaktype' | translate"
@@ -87,8 +85,8 @@
                                                      (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
                                     </zac-edit-select>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="flex-1 w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
@@ -103,13 +101,13 @@
                                     </zac-edit-groep-behandelaar>
 
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="flex-1 w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
-                                    <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
+                                    <zac-static-text class="flex-1 w25" [label]="'registratiedatum' | translate"
                                                      [value]="zaak.registratiedatum | datum"></zac-static-text>
-                                    <zac-static-text *ngIf="zaak.einddatum" fxFlex.sm="25" [label]="'einddatum' | translate"
+                                    <zac-static-text *ngIf="zaak.einddatum" class="flex-1 w25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum"></zac-static-text>
                                     <zac-static-text [label]="'status' | translate"
                                                      [value]="zaak.status | empty:'naam'"
@@ -123,12 +121,12 @@
                                                      [matTooltip]="zaak.resultaat?.toelichting"
                                                      [attr.role]="zaak.resultaat?.toelichting ? 'tooltip' : null"
                                                      [attr.aria-label]="zaak.resultaat?.toelichting"></zac-static-text>
-                                    <zac-static-text *ngIf="zaak.archiefNominatie" fxFlex.sm="25"
+                                    <zac-static-text *ngIf="zaak.archiefNominatie" class="flex-1 w25"
                                                      [label]="'archiefNominatie.datum.'+zaak.archiefNominatie | translate"
                                                      [value]="zaak.archiefActiedatum | datum | empty"></zac-static-text>
                                 </div>
-                                <div fxFlex="100" fxLayout.sm="row">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="flex-1 flex-row">
+                                    <div class="mat-divider-wrapper hide-gt-xs">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'locatie' | translate"
@@ -136,10 +134,10 @@
                                                      (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
 
-                                <div fxFlex="100" class="mat-divider-wrapper">
+                                <div class="flex-1 mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>
-                                <div fxFlex="100" fxLayout.sm="row">
+                                <div class="flex-1">
                                     <zac-edit-datum-groep [startDatumField]="editFormFields.get('startdatum')"
                                                           [einddatumGeplandField]="editFormFields.get('einddatumGepland')"
                                                           [uiterlijkeEinddatumAfdoeningField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
@@ -163,17 +161,17 @@
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
-                                <div fxFlex="100" class="mat-divider-wrapper">
+                                <div class="flex-1 w100 mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>
 
-                                <div fxFlex="100">
+                                <div class="flex-1 w100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     [reasonField]="editFormFields.get('reden')"
                                                     [readonly]="!zaak.rechten.wijzigen"
                                                     (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
-                                <div fxFlex="100">
+                                <div class="flex-1 w100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
                                                     [reasonField]="editFormFields.get('reden')"
                                                     [readonly]="!zaak.rechten.wijzigen"
@@ -367,7 +365,7 @@
                     </mat-tab-group>
                 </mat-card-content>
             </mat-card>
-            <div fxFlex="calc(50%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
+            <div class="flex-1 w50 w100-md gap-20 flex-col">
                 <zac-besluit-view *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
                                   (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
@@ -442,10 +440,10 @@
                                 <ng-container matColumnDef="expandedTaakDetail">
                                     <td mat-cell *matCellDef="let row" colspan="9">
                                         <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
-                                            <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                                                <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
+                                            <div class="flex-row flex-wrap gap-10 flex-fill">
+                                                <zac-static-text class="flex-1 w50" [label]="'uitkomst' | translate"
                                                                  [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
-                                                <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlagen"
+                                                <zac-static-text class="flex-1 w50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlagen"
                                                                  [value]="row.data.taakinformatie?.bijlagen"></zac-static-text>
                                                 <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
                                                                  [value]="row.data.taakinformatie?.opmerking"></zac-static-text>

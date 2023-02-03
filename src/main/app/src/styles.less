@@ -23,7 +23,7 @@ body {
 mat-drawer-container {
   height: calc(100% - 64px);
 
-  .mat-drawer-content {
+  .mat-mdc-drawer-content {
     padding: 10px
   }
 
@@ -37,7 +37,7 @@ mat-sidenav-container {
   height: calc(100% - 64px);
 }
 
-.mat-sidenav-container .mat-drawer {
+.mat-mdc-sidenav-container .mat-mdc-drawer {
   box-shadow: none;
   border-right: solid 1px rgba(0, 0, 0, .12);
 }
@@ -52,7 +52,7 @@ mat-sidenav-container {
     justify-content: flex-end;
   }
 
-  .mat-radio-button ~ .mat-radio-button {
+  .mat-mdc-radio-button ~ .mat-mdc-radio-button {
     margin-left: 16px;
   }
 }
@@ -73,12 +73,32 @@ mat-sidenav-container {
 }
 
 .table-wrapper {
-
   table {
     width: 100%;
 
-    caption {
-      text-align: left;
+    th {
+      padding: 0 10px;
+      border-bottom-width: 0;
+      color: rgba(0, 0, 0, 0.54);
+
+      mat-form-field {
+        font-size: 12px;
+        width: 100%;
+        padding: 5px;
+
+        .mat-mdc-floating-label {
+          font-size: 12px;
+        }
+
+        .mat-mdc-text-field-wrapper {
+          padding-left: 0;
+          background-color: #ffffff;
+        }
+
+        .mat-mdc-form-field-infix {
+          width: auto;
+        }
+      }
     }
 
     tr.collapsed-row {
@@ -95,50 +115,18 @@ mat-sidenav-container {
       }
 
       & td {
+        padding: 0 10px;
         border-bottom-width: 0;
       }
     }
-
     tr {
-      &.mat-row.document-preview {
+      &.mat-mdc-row.document-preview {
         height: 0;
 
         & td {
           border: none;
         }
       }
-
-      & .mat-table-sticky.mat-table-sticky-border-elem-right {
-        button, a {
-          float: right;
-        }
-      }
-
-      th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
-        padding: 0 10px;
-      }
-
-      th.mat-header-cell.cdk-drag {
-        cursor: all-scroll;
-      }
-
-      td > .mat-button-base {
-        min-width: 40px;
-        padding: 0;
-      }
-    }
-
-    td {
-      mat-icon {
-        margin-top: -8px;
-        top: 4px;
-        position: relative;
-      }
-    }
-
-    .row-detail {
-      overflow: hidden;
-      display: flex;
     }
   }
 
@@ -147,6 +135,27 @@ mat-sidenav-container {
     font-style: italic;
     text-align: center;
   }
+}
+
+.pagination-wrapper {
+  bottom: 0;
+  position: sticky;
+  z-index: 10;
+}
+
+
+.filter-menu {
+  #deleteZoekopdracht:hover {
+    color: #ff4081;
+  }
+}
+
+.mat-mdc-select, .mat-mdc-option {
+  font-size: 12px;
+}
+
+.mat-mdc-option {
+  font-size: 12px;
 }
 
 mat-paginator[sticky] {
@@ -172,29 +181,29 @@ mat-paginator[sticky] {
   padding: 10px;
 }
 
-button.mat-button-base + button.mat-button-base {
+button.mat-mdc-button-base + button.mat-mdc-button-base {
   margin: 0 5px;
 }
 
-.mat-icon-button.edit-button {
+.mat-mdc-icon-button.edit-button {
   position: absolute;
   right: 15px;
   top: 15px;
 }
 
-.mat-radio-container {
-  .mat-radio-outer-circle, .mat-radio-inner-circle {
+.mat-mdc-radio-container {
+  .mat-mdc-radio-outer-circle, .mat-mdc-radio-inner-circle {
     height: 18px;
     width: 18px;
   }
 
-  .mat-radio-button .mat-radio-ripple {
+  .mat-mdc-radio-button .mat-mdc-radio-ripple {
     width: 38px;
     height: 38px;
   }
 }
 
-.mat-divider-wrapper {
+.mat-mdc-divider-wrapper {
   padding-bottom: 10px;
 }
 
@@ -237,16 +246,18 @@ button.mat-button-base + button.mat-button-base {
   }
 }
 
-.mat-tab-group {
+.mat-mdc-tab-group {
   padding-bottom: 10px;
 }
 
-mat-card {
-  .mat-card-header .mat-card-title {
+.mat-mdc-card {
+  padding: 16px;
+
+  .mat-mdc-card-header .mat-mdc-card-title {
     font-size: 14px;
   }
 
-  .mat-card-title-group .mat-card-title {
+  .mat-mdc-card-title-group .mat-mdc-card-title {
     font-size: 14px;
   }
 }
@@ -263,14 +274,14 @@ mat-card {
   }
 }
 
-.mat-form-field-appearance-legacy {
-  .mat-form-field-underline {
+.mat-mdc-form-field-appearance-legacy {
+  .mat-mdc-form-field-underline {
     display: none;
   }
 }
 
 mat-form-field {
-  .mat-form-field {
+  .mat-mdc-form-field {
     &-wrapper {
       padding-bottom: 1em;
     }
@@ -279,35 +290,9 @@ mat-form-field {
       position: relative;
       bottom: auto;
     }
-
-    &-subscript-wrapper {
-      position: static;
-    }
   }
-
   mat-icon {
     cursor: pointer;
-  }
-}
-
-.form-field-not-disabled-view {
-  &.mat-form-field-appearance-fill.mat-form-field-disabled {
-
-    & .mat-form-field-flex {
-      background-color: rgba(0, 0, 0, .04);
-    }
-
-    & .mat-input-element {
-      color: rgba(0, 0, 0, .87);
-    }
-
-    & .mat-form-field-label {
-      color: rgba(0, 0, 0, .6);
-    }
-
-    & .mat-form-field-underline::before {
-      background-color: rgba(0, 0, 0, .42);
-    }
   }
 }
 
@@ -331,7 +316,7 @@ mat-form-field {
   opacity: 0.6;
 }
 
-.mat-icon.spinner {
+.mat-mdc-icon.spinner {
   position: absolute;
   top: 50%;
   left: 50%;

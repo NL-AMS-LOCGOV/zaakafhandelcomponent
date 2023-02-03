@@ -11,64 +11,50 @@
 
 .profile {
   margin-top: 15px;
-
   .user-name-toolbar {
     margin-top: -15px;
     font-size: 12px;
-    text-align: center;
+
   }
 }
-
 .user-name-menu {
   text-align: center;
   font-size: 14px;
 }
 
-.search-field ::ng-deep {
-  font-size: 14px;
-  padding-top: 24px;
+.search-field {
+  ::ng-deep {
+    font-size: 12px;
 
-  .mat-input-element::placeholder {
-    color: rgba(255, 255, 255, 0.85);
+    input::placeholder {
+      color: #f5f5f5 !important;
+    }
+
+    .mdc-line-ripple {
+      display: none;
+    }
+
+    .mdc-floating-label, .mdc-text-field__input {
+      color: #f5f5f5;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .mat-mdc-form-field-flex {
+      margin-top: -7px;
+    }
   }
 
-  .mat-form-field-infix {
-    border: 0.5em solid rgba(0, 0, 0, 0);
-  }
+  #zoeken-button, #wissen-button {
+    .material-icons {
+      font-family: "Material Icons Outlined";
+    }
 
-  .mat-form-field-flex {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    padding-left: 5px;
-  }
-}
-
-#zoeken-button, #wissen-button {
-  .material-icons {
-    font-family: "Material Icons Outlined";
-  }
-
-  font-size: 18px;
-  padding: 0;
-  margin: 0 5px 0 0;
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
-:host ::ng-deep #dashboardMijn_button.mat-badge-small {
-  > .mat-badge-content {
-    width: 12px;
-    height: 12px;
-    line-height: 12px;
-  }
-
-  &.mat-badge-overlap.mat-badge-after .mat-badge-content {
-    right: -3px;
-  }
-
-  &.mat-badge-above .mat-badge-content {
-    top: -3px;
+    font-size: 18px;
+    padding: 0;
+    margin: 0 5px 0 0;
   }
 }

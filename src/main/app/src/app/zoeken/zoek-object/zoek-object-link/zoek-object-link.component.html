@@ -3,8 +3,8 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="link" fxLayout="row wrap" fxLayoutAlign="space-between center">
-    <div fxLayout="column">
+<div class="link flex-row flex-wrap space-between items-center">
+    <div class="flex-col">
         <label>{{zoekObject.type.toLowerCase() | translate}}</label>
         <a (click)="(_newtab || sideNav.close()) && $event.stopPropagation()"
            [routerLink]="getLink()" title="{{ 'actie.'+zoekObject.type.toLowerCase()+'.bekijken' | translate }}">

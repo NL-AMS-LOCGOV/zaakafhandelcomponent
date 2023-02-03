@@ -4,34 +4,34 @@
   -->
 
 <div class="form">
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
+    <div class="flex-row flex-col-xs gap-10 flex-fill">
+        <div class="flex-1">
             <mfb-form-field [field]="kvkFormField"></mfb-form-field>
         </div>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
+    <div class="flex-row flex-col-xs gap-10 flex-fill">
+        <div class="flex-1">
             <mfb-form-field [field]="vestigingsnummerFormField"></mfb-form-field>
         </div>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
+    <div class="flex-row flex-col-xs gap-10 flex-fill">
+        <div class="flex-1">
             <mfb-form-field [field]="rsinFormField"></mfb-form-field>
         </div>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="66">
+    <div class="flex-row flex-col-xs gap-10 flex-fill">
+        <div class="flex-1 w66">
             <mfb-form-field [field]="handelsnaamFormField"></mfb-form-field>
         </div>
-        <div fxFlex="33">
+        <div class="flex-grow">
             <mfb-form-field [field]="typeFormField" (valueChanges)="typeChanged($event)"></mfb-form-field>
         </div>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="66">
+    <div class="flex-row flex-col-xs gap-10 flex-fill">
+        <div class="flex-1 w66">
             <mfb-form-field [field]="postcodeFormField"></mfb-form-field>
         </div>
-        <div fxFlex="33">
+        <div class="flex-grow">
             <mfb-form-field [field]="huisnummerFormField"></mfb-form-field>
         </div>
     </div>

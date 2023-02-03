@@ -7,7 +7,7 @@
     <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    <mat-sidenav-content class="flex-col gap-20">
         <mat-card appearance="outlined">
             <mat-card-content>
                 <mfb-form-field [field]="naamFormField" (click)="$event.stopPropagation()"></mfb-form-field>
@@ -15,7 +15,7 @@
                 <mfb-form-field [field]="onderwerpFormField" (click)="$event.stopPropagation()"></mfb-form-field>
                 <mfb-form-field [field]="bodyFormField" (click)="$event.stopPropagation()"></mfb-form-field>
 
-                <div class="button-group" fxLayout="row" fxLayoutAlign="start">
+                <div class="button-group flex-row items-start">
                     <button mat-flat-button color="primary"
                             id="opslaan_button"
                             type="submit"

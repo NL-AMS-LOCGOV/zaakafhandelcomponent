@@ -3,8 +3,8 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout>
-    <mat-expansion-panel fxFlex="calc(100%-20px)"
+<div class="flex-row">
+    <mat-expansion-panel class="flex-1"
                          [expanded]="klantExpanded"
                          (expandedChange)="klantExpandedChanged($event)">
         <mat-expansion-panel-header>
@@ -27,41 +27,41 @@
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="persoon$"
                              [options]="{layout: skeletonLayout.FIELDS, fields:4, fieldsPerRow:5}">
-            <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
+            <div id="persoonsgegevens" class="content flex-row flex-wrap flex-col-xs">
+                <div class="flex-1 w15 w50-sm">
                     <zac-static-text [label]="'burgerservicenummer' | translate"
                                      [value]="bsn"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="flex-1 w15 w50-sm">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'geboortedatum' | translate"
                                      [value]="persoon?.geboortedatum | datum | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="flex-1 w15 w50-sm">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'inschrijfadres' | translate"
                                      [value]="persoon?.inschrijfadres | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="flex-1 w15 w50-sm">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'telefoonnummer' | translate"
                                      [value]="persoon?.telefoonnummer | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="flex-1 w15 w50-sm">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'emailadres' | translate"
                                      [value]="persoon?.emailadres | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="flex-1 w15 w50-sm">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                 </div>

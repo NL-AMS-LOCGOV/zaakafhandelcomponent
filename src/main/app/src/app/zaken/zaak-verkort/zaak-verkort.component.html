@@ -17,21 +17,21 @@
         </mat-card-header>
         <mat-card-content>
             <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
-            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <zac-static-text fxFlex="50" [label]="'zaaktype' | translate"
+            <div class="content flex-row flex-wrap flex-col-xs">
+                <zac-static-text class="flex-1 w50" [label]="'zaaktype' | translate"
                                  [value]="zaak.zaaktype.omschrijving"></zac-static-text>
 
-                <zac-static-text fxFlex="50" [label]="'status' | translate"
+                <zac-static-text class="flex-1 w50" [label]="'status' | translate"
                                  [value]="zaak.status | empty:'naam'"></zac-static-text>
 
-                <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
+                <zac-static-text class="flex-1 w50" [label]="'startdatum' | translate"
                                  [value]="zaak.startdatum | datum"></zac-static-text>
 
-                <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
+                <zac-static-text class="flex-1 w50" [label]="'einddatumGepland' | translate"
                                  [value]="zaak.einddatumGepland | datum"
                                  [icon]="einddatumGeplandIcon"></zac-static-text>
 
-                <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
+                <zac-static-text class="flex-1 w50" [label]="'toelichting' | translate"
                                  [value]="zaak.toelichting"></zac-static-text>
             </div>
         </mat-card-content>

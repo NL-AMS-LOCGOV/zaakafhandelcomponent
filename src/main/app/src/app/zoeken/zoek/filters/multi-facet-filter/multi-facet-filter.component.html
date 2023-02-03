@@ -10,7 +10,7 @@
         <mat-icon (click)="invert()" class="off" *ngIf="inverse">toggle_on</mat-icon>
     </mat-card-title-group>
     <mat-card-content>
-        <div *ngFor="let facetWaarde of opties;" fxLayout="row" fxLayoutAlign="space-between center">
+        <div *ngFor="let facetWaarde of opties;" class="flex-row space-between items-center">
             <mat-checkbox (change)="checkboxChange()" [formControlName]="facetWaarde.naam">
                 <read-more *ngIf="isVertaalbaar(label)"
                            [text]="VERTAALBARE_FACETTEN[label]+facetWaarde.naam | translate"

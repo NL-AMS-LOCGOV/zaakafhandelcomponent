@@ -4,8 +4,8 @@
   -->
 
 <div class="form" [class.loading]="utilService.loading$ | async">
-    <div sticky-top fxLayout="row" fxLayoutGap="10px" fxFlexFill>
-        <mat-form-field fxFlex="24" appearance="fill">
+    <div sticky-top class="flex-row gap-10 flex-fill">
+        <mat-form-field class="flex-1 w25" appearance="fill">
             <mat-label>Zoeken in</mat-label>
             <mat-select [formControl]="zoekveldControl" (selectionChange)="zoekVeldChanged()">
                 <mat-option [value]="ZoekVeld.ALLE">{{'zoekVeld.ALLE' | translate}}</mat-option>
@@ -16,7 +16,7 @@
                 <mat-option [value]="ZoekVeld.DOCUMENT_BESCHRIJVING">{{'zoekVeld.DOCUMENT_BESCHRIJVING' | translate}}</mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="fill" fxFlex="grow">
+        <mat-form-field class="flex-grow" appearance="fill">
             <mat-label>{{'actie.zoeken' | translate}}</mat-label>
             <input [formControl]="trefwoordenControl" id="zoekVeld" matInput
                    (keyup.enter)="keywordsChange()"
@@ -55,8 +55,8 @@
         </mat-form-field>
     </div>
     <ng-container *ngIf="zoekType===ZoekType.ZAC">
-        <div fxLayout="row" fxLayoutGap="10px">
-            <div fxFlex="25">
+        <div class="flex-row gap-10">
+            <div class="flex-1 w25">
                 <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
                     <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
                                             [filter]="zoekParameters.filters[filter.key]"
@@ -89,7 +89,7 @@
                                  (changed)="zoekParameters.datums.ZAAK_EINDDATUM = $event; zoek.emit()">
                 </zac-date-filter>
             </div>
-            <div fxFlex="grow">
+            <div class="flex-grow">
                 <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
                     <ng-container [ngSwitch]="zoekObject.type">
                         <zac-zaak-zoek-object *ngSwitchCase="zoekObjectType.ZAAK" [sideNav]="zoekenSideNav"
@@ -111,7 +111,7 @@
     <ng-container *ngIf="zoekType===ZoekType.BEDRIJVEN">
         <zac-bedrijf-zoek [sideNav]="zoekenSideNav"></zac-bedrijf-zoek>
     </ng-container>
-    <mat-paginator [fxHide]="zoekType !== ZoekType.ZAC"
+    <mat-paginator [ngClass]="{'hide' : zoekType !== ZoekType.ZAC}"
                    #paginator
                    [pageIndex]="0"
                    [pageSize]="10"

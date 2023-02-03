@@ -7,16 +7,16 @@
     <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    <mat-sidenav-content class="flex-col gap-20">
         <mat-card appearance="outlined">
             <mat-card-content>
-                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
-                    <div fxFlex="33" fxFlex.lt-md="100">
+                <div class="flex-row fex-wrap gap-20">
+                    <div class="w33 w100-md">
                         <zac-edit-input [formField]="codeFormField"
                                         [readonly]="tabel?.systeem"
                                         (onSave)="editTabel($event, 'code')"></zac-edit-input>
                     </div>
-                    <div fxFlex="33" fxFlex.lt-md="100">
+                    <div class="w33 w100-md">
                         <zac-edit-input [formField]="naamFormField"
                                         (onSave)="editTabel($event, 'naam')"></zac-edit-input>
                     </div>

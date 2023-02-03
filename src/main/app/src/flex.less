@@ -1,0 +1,225 @@
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-col-xs {
+  @media screen and (max-width: 599px) {
+    flex-direction: column !important;
+  }
+}
+
+//mobile
+.flex-col-md {
+  @media screen and (max-width: 599px) {
+    flex-direction: column !important;
+  }
+}
+
+//tablet
+
+.gap-4 {
+  gap: 4px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-content {
+  justify-content: flex-end;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.items-center {
+  align-items: center;
+  align-content: center;
+}
+
+.items-start {
+  align-items: start;
+  align-content: start
+}
+
+.items-end {
+  align-items: end;
+  align-content: end
+}
+
+.flex-1 {
+  flex: 1
+}
+
+//flex: 1 1 0 (grow, shrink, basis 0). width: 100%;
+.flex-grow {
+  flex-grow: 1;
+}
+
+// flex: 1 1 auto (grow, shrink, basis auto).
+.flex-nogrow {
+  flex-grow: 0;
+}
+
+// flex: 0 1 auto (grow, shrink, basis auto).
+
+.hide {
+  display: none !important;
+}
+
+.hide-xs {
+  @media screen and (max-width: 599px) {
+    display: none !important;
+  }
+}
+
+// Hide on mobile.
+.hide-gt-xs {
+  @media screen and (min-width: 600px) {
+    display: none !important;
+  }
+}
+
+// Show only on mobile. Hide on desktop.
+.hide-sm {
+  @media screen and (max-width: 959px) {
+    display: none !important;
+  }
+}
+
+// Hide on mobile/tablet.
+.hide-gt-sm {
+  @media screen and (min-width: 960px) {
+    display: none !important;
+  }
+}
+
+// Show only on mobile/tablet. Hide on desktop.
+
+.w15 {
+  max-width: 15%;
+  flex-basis: 15%
+}
+
+.w25 {
+  max-width: 25%;
+  flex-basis: 25%
+}
+
+.w33 {
+  max-width: 33%;
+  flex-basis: 33%
+}
+
+.w40 {
+  max-width: 40%;
+  flex-basis: 40%
+}
+
+.w50 {
+  max-width: 50%;
+  flex-basis: 50%
+}
+
+.w60 {
+  max-width: 60%;
+  flex-basis: 60%
+}
+
+.w66 {
+  max-width: 66%;
+  flex-basis: 66%
+}
+
+.w75 {
+  max-width: 75%;
+  flex-basis: 75%
+}
+
+.w85 {
+  max-width: 85%;
+  flex-basis: 85%
+}
+
+.w100 {
+  max-width: 100%;
+  flex-basis: 100%
+}
+
+.w100-md {
+  @media screen and (max-width: 959px) {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+.w80-md {
+  @media screen and (max-width: 959px) {
+    max-width: 80%;
+    flex-basis: 80%;
+  }
+}
+
+.w100-sm {
+  @media screen and (max-width: 599px) {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+.w50-sm {
+  @media screen and (max-width: 599px) {
+    max-width: 50%;
+    flex-basis: 50%;
+  }
+}
+
+.flex-fill {
+  height: 100%;
+  min-height: 100%;
+  min-width: 100%;
+  width: 100%;
+}

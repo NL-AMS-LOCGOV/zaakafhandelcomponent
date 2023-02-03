@@ -3,12 +3,12 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <div>
-    <div class="search" fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-        <div fxFlex="calc(30%-20px)" fxFlex.lt-lg="80">
+    <div class="search row flex-wrap flex-col-md gap-20">
+        <div class="flex 1 w33 w80-md">
             <zac-static-text [label]="'zaak.locatie.' +( selectedAddress ? selectedAddress.type: 'adres') | translate"
                              [value]="selectedAddress ? selectedAddress.weergavenaam : null"></zac-static-text>
         </div>
-        <div fxFlex="20" fxLayoutAlign="center center">
+        <div class="flex-1 w20 justify-center items-center">
             <button mat-flat-button color="primary"
                     [disabled]="!selectedAddress"
                     id="opslaan_button"
@@ -24,7 +24,7 @@
             </button>
         </div>
 
-        <mat-form-field appearance="fill" fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
+        <mat-form-field appearance="fill" class="flex-1 w50 w100-md">
             <mat-label>Locatie</mat-label>
             <input type="text"
                    placeholder="Zoek een adres"

@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <div>
-    <div fxFlex fxLayoutAlign="flex-end top">
+    <div class="flex-row justify-end items-start justify-start">
         <mat-slide-toggle class="mode-slider" color="primary"
                           id="dashboardEdit_toggle"
                           [(ngModel)]="editmode"
@@ -20,8 +20,8 @@
             <mat-icon>dashboard_customize</mat-icon>
         </button>
         <mat-menu #cardsMenu="matMenu">
-            <h4 class="menu-title" fxHide.xs translate="actie.card.toevoegen"></h4>
-            <mat-divider fxHide.gt-xs></mat-divider>
+            <h4 class="menu-title hide-xs" translate="actie.card.toevoegen"></h4>
+            <mat-divider class="hide-gt-xs"></mat-divider>
             <ng-container *ngFor="let card of available">
                 <button mat-menu-item (click)="add(card)">
                     <mat-icon>{{card.signaleringType != null ? 'notifications' : ''}}</mat-icon>
@@ -34,8 +34,7 @@
 <div class="grid" cdkDropListGroup>
     <ng-container *ngFor="let column of grid">
         <div *ngIf="editmode||0<column.length"
-             class="grid-column" [ngClass]="{'draggable':editmode}"
-             fxLayout="column" [fxFlex]="100/(editmode?grid.length:width)" fxLayoutGap="16px"
+             class="grid-column flex-col gap-16" [ngClass]="{'draggable':editmode}" style="{{'width:'+ 100/(editmode?grid.length:width)+'%'}}"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
              (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
             <mat-card appearance="outlined" *ngFor="let card of column " cdkDrag>

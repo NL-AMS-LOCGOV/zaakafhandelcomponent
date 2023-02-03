@@ -37,9 +37,10 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.less",
+              "node_modules/ol/ol.css",
               "src/variables.less",
-              "node_modules/ol/ol.css"
+              "src/styles.less",
+              "src/flex.less"
             ],
             "scripts": [],
             "vendorChunk": true,
@@ -82,7 +83,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "app:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

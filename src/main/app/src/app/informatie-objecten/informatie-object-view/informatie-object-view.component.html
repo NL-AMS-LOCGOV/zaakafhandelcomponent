@@ -15,9 +15,9 @@
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
     </mat-drawer>
-    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
-        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card appearance="outlined" fxFlex="calc(60%-20px)" fxFlex.lt-lg="100">
+    <mat-drawer-content class="flex-col gap-20">
+        <div class="flex-row fex-wrap flex-col-md gap-20">
+            <mat-card appearance="outlined" class="w66 w100-md">
                 <mat-card-header>
                     <mat-card-title>
                         {{'informatieobject' | translate}}
@@ -28,8 +28,8 @@
                     <mat-tab-group>
                         <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
 
-                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div class="content flex-row flex-wrap flex-col-xs">
+                                <div class="w33 w50-sm">
                                     <zac-static-text [label]="'titel' | translate"
                                                      [value]="infoObject.titel"></zac-static-text>
                                     <zac-static-text [label]="'identificatie' | translate"
@@ -42,15 +42,15 @@
                                               class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"></span>
                                     </zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'documentType' | translate"
                                                      [value]="infoObject.informatieobjectTypeOmschrijving"></zac-static-text>
                                     <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
                                     <zac-static-text [label]="'beschrijving' | translate" [value]="infoObject.beschrijving"></zac-static-text>
-                                    <div fxLayout="row wrap">
+                                    <div class="flex-row fex-wrap">
                                         <button [disabled]="infoObject.versie === 1" mat-icon-button (click)="haalVersieOp(infoObject.versie - 1)">
                                             <mat-icon>chevron_left</mat-icon>
                                         </button>
@@ -61,8 +61,8 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'informatieobject.status' | translate"
@@ -74,19 +74,19 @@
                                                      [value]="infoObject.taal"></zac-static-text>
                                 </div>
                             </div>
-                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div class="content flex-row flex-wrap flex-col-xs">
+                                <div class="w33 w50-sm">
                                     <zac-static-text [label]="'creatiedatum' | translate" [value]="infoObject.creatiedatum | datum"></zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'registratiedatum' | translate"
                                                      [value]="infoObject.registratiedatumTijd | datum:'short'"></zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum"
@@ -152,7 +152,7 @@
                 </mat-card-content>
             </mat-card>
 
-            <mat-accordion class="mat-accordion" fxFlex="calc(40%-20px)" fxFlex.lt-lg="100">
+            <mat-accordion class="mat-accordion w40 w100-md">
                 <mat-expansion-panel [disabled]="true">
                     <mat-expansion-panel-header class="mat-accordion-header">
                         {{'gerelateerdeZaken'| translate}}
@@ -172,16 +172,16 @@
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
-                    <zac-static-text [fxFlex]="100/3" [label]="'status' | translate"
+                    <zac-static-text class="w33" [label]="'status' | translate"
                                      [value]="zaakInformatieobject.zaakStatus|empty:'naam'"></zac-static-text>
-                    <zac-static-text [fxFlex]="100/3" [label]="'startdatum' | translate" [value]="zaakInformatieobject.zaakStartDatum|datum"></zac-static-text>
-                    <zac-static-text [fxFlex]="100/3" [label]="'einddatumGepland' | translate"
+                    <zac-static-text class="w33" [label]="'startdatum' | translate" [value]="zaakInformatieobject.zaakStartDatum|datum"></zac-static-text>
+                    <zac-static-text class="w33" [label]="'einddatumGepland' | translate"
                                      [value]="zaakInformatieobject.zaakEinddatumGepland|datum|empty"></zac-static-text>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
-        <div fxLayout *ngIf="documentPreviewBeschikbaar">
-            <mat-expansion-panel fxFlex="calc(100%-20px)" expanded="true">
+        <div class="flex-row gap-20" *ngIf="documentPreviewBeschikbaar">
+            <mat-expansion-panel class="w100" expanded="true">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <mat-icon class="material-icons-outlined">plagiarism</mat-icon>

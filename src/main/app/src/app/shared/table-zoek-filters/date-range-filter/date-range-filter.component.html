@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field>
+<mat-form-field subscriptSizing="dynamic" floatLabel="never">
     <mat-label>{{label | translate}}</mat-label>
     <mat-date-range-input [rangePicker]="datumPicker" (change)="change()">
         <input matStartDate placeholder="van" [formControl]="dateVan">

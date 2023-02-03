@@ -4,22 +4,22 @@
   -->
 
 <div class="form">
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <mfb-form-field fxFlex [field]="bsnFormField"></mfb-form-field>
-        <mfb-form-field fxFlex="33" [field]="geboortedatumFormField"></mfb-form-field>
+    <div class="flex-row flex-col-md gap-10 flex-fill">
+        <mfb-form-field class="flex-1" [field]="bsnFormField"></mfb-form-field>
+        <mfb-form-field class="flex-1 w33" [field]="geboortedatumFormField"></mfb-form-field>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <mfb-form-field fxFlex [field]="voornamenFormField"></mfb-form-field>
-        <mfb-form-field fxFlex="33" [field]="voorvoegselFormField"></mfb-form-field>
-        <mfb-form-field fxFlex [field]="geslachtsnaamFormField"></mfb-form-field>
+    <div class="flex-row flex-col-md gap-10 flex-fill">
+        <mfb-form-field class="flex-1" [field]="voornamenFormField"></mfb-form-field>
+        <mfb-form-field class="flex-1 w33" [field]="voorvoegselFormField"></mfb-form-field>
+        <mfb-form-field class="flex-1" [field]="geslachtsnaamFormField"></mfb-form-field>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <mfb-form-field fxFlex="66" [field]="postcodeFormField"></mfb-form-field>
-        <mfb-form-field fxFlex [field]="huisnummerFormField"></mfb-form-field>
+    <div class="flex-row flex-col-md gap-10 flex-fill">
+        <mfb-form-field class="flex-1 w66" [field]="postcodeFormField"></mfb-form-field>
+        <mfb-form-field class="flex-1" [field]="huisnummerFormField"></mfb-form-field>
     </div>
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <mfb-form-field fxFlex [field]="straatFormField"></mfb-form-field>
-        <mfb-form-field fxFlex="33" [field]="gemeenteCodeFormField"></mfb-form-field>
+    <div class="flex-row flex-col-md gap-10 flex-fill">
+        <mfb-form-field class="flex-1" [field]="straatFormField"></mfb-form-field>
+        <mfb-form-field class="flex-1 w33" [field]="gemeenteCodeFormField"></mfb-form-field>
     </div>
     <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekPersonen()">Zoek
         <mat-icon class="spinner" *ngIf="loading">

@@ -3,8 +3,8 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout>
-    <mat-expansion-panel fxFlex="calc(100%-20px)"
+<div class="flex-row">
+    <mat-expansion-panel class="flex-1"
                          [expanded]="klantExpanded"
                          (expandedChange)="klantExpandedChanged($event)">
         <mat-expansion-panel-header>
@@ -31,13 +31,13 @@
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="bedrijf$"
                              [options]="{layout: skeletonLayout.FIELDS, fields:5, fieldsPerRow:5}">
-            <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
+            <div id="bedrijfsgegevens" class="content flex-row flex-wrap flex-col-xs">
+                <div class="w15 w50-sm flex-1">
                     <zac-static-text [label]="'kvknummer' | translate"
                                      [value]="bedrijf?.kvkNummer"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="w15 w50-sm flex-1">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text *ngIf="bedrijf?.vestigingsnummer"
@@ -47,30 +47,30 @@
                                      [label]="'RSIN' | translate"
                                      [value]="bedrijf?.rsin"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50" fxLayout.sm="row">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="w15 w50-sm flex-1">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'type' | translate"
                                      [value]="bedrijf?.type | translate"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="w15 w50-sm flex-1">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'adres' | translate"
                                      [value]="bedrijf?.adres | empty"></zac-static-text>
 
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="w15 w50-sm flex-1">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'telefoonnummer' | translate"
                                      [value]="bedrijf?.telefoonnummer | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                <div class="w15 w50-sm flex-1">
+                    <div class="mat-divider-wrapper hide-gt-sm">
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'emailadres' | translate"

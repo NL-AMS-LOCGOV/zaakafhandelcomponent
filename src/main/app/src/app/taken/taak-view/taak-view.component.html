@@ -14,9 +14,9 @@
         <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN" [sideNav]="actionsSidenav"
                                    [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-add>
     </mat-drawer>
-    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
-        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card appearance="outlined" fxFlex="calc(60%-20px)" fxFlex.lt-lg="100" *ngIf="formulier">
+    <mat-drawer-content class="flex-col gap-20">
+        <div class="flex-row flex-wrap flex-col-md gap-20">
+            <mat-card appearance="outlined" class="w60 w100-md flex-1" *ngIf="formulier">
                 <mat-card-content>
                     <div class="form">
                         <mfb-form (formPartial)="onFormPartial($event)"
@@ -27,7 +27,7 @@
                     </div>
                 </mat-card-content>
             </mat-card>
-            <div fxFlex="calc(40%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
+            <div class="flex-grow w100-md flex-col gap-20">
                 <mat-card appearance="outlined">
                     <mat-card-header>
                         <mat-card-title>{{'taak' | translate}}</mat-card-title>
@@ -35,31 +35,31 @@
                     <mat-card-content>
                         <mat-tab-group>
                             <mat-tab label="{{'gegevens.algemeen' | translate}}">
-                                <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                <div class="content flex-row flex-wrap flex-col-xs">
+                                    <div class="flex-1 w33 w50-sm">
                                         <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
                                         <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
                                     </div>
 
-                                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <div class="flex-1 w33 w50-sm">
                                         <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
                                                                     [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.toekennen"
                                                                     (onSave)="editToewijzing($event)">
                                         </zac-edit-groep-behandelaar>
                                     </div>
 
-                                    <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
-                                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                    <div class="flex-1 w33 w100-sm">
+                                        <div class="mat-divider-wrapper hide-gt-sm">
                                             <mat-divider></mat-divider>
                                         </div>
-                                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate"
+                                        <zac-static-text [label]="'creatiedatum' | translate"
                                                          [value]="taak.creatiedatumTijd | datum"></zac-static-text>
-                                        <zac-static-text fxFlex.sm="50" [label]="'fataledatum' | translate"
+                                        <zac-static-text [label]="'fataledatum' | translate"
                                                          [value]="taak.fataledatum | datum"
                                                          [icon]="fataledatumIcon"></zac-static-text>
                                     </div>
 
-                                    <div fxFlex="100">
+                                    <div class="flex-1">
                                         <zac-edit-tekst [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.wijzigen"
                                                         [formField]="editFormFields.get('toelichting')"
                                                         (onSave)="partialEditTaak($event, 'toelichting')">

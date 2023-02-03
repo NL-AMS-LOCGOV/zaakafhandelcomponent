@@ -29,9 +29,9 @@
             {{'actie.betrokkene.toevoegen.persoon' | translate}}
         </ng-template>
         <div class="form betrokkene-form">
-            <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
-                <mfb-form-field fxFlex="33" [field]="betrokkeneRoltype"></mfb-form-field>
-                <mfb-form-field fxFlex [field]="betrokkeneToelichting"></mfb-form-field>
+            <div class="flex-row flex-col-xs gap-10">
+                <mfb-form-field class="flex-1 w33" [field]="betrokkeneRoltype"></mfb-form-field>
+                <mfb-form-field class="flex-1 flex-grow" [field]="betrokkeneToelichting"></mfb-form-field>
             </div>
         </div>
         <zac-persoon-zoek (persoon)="klantGeselecteerd($event)"></zac-persoon-zoek>
@@ -42,9 +42,9 @@
             {{'actie.betrokkene.toevoegen.bedrijf' | translate}}
         </ng-template>
         <div class="form">
-            <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
-                <mfb-form-field fxFlex="33" [field]="betrokkeneRoltype"></mfb-form-field>
-                <mfb-form-field fxFlex [field]="betrokkeneToelichting"></mfb-form-field>
+            <div class="flex-row flex-col-xs gap-10">
+                <mfb-form-field class="flex-1 w33" [field]="betrokkeneRoltype"></mfb-form-field>
+                <mfb-form-field class="flex-grow" [field]="betrokkeneToelichting"></mfb-form-field>
             </div>
         </div>
         <zac-bedrijf-zoek (bedrijf)="klantGeselecteerd($event)"></zac-bedrijf-zoek>

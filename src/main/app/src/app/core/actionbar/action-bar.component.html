@@ -15,7 +15,7 @@
                 </span>
             </div>
             <div class="sub-text" mat-line>{{action.subText}}</div>
-            <div fxFlex fxLayoutAlign="end center">
+            <div class="flex-row justify-end items-center">
                 <button mat-icon-button color="primary"
                         title="{{(action.actionEnabled() ? action.action.title: null) | translate}}"
                         [disabled]="!action.actionEnabled() || actionBarDisabled"

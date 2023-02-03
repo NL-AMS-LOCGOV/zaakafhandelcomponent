@@ -7,7 +7,8 @@
     <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    <mat-sidenav-content class="flex-row gap-20">
+
         <mat-card appearance="outlined">
             <mat-card-content>
                 <mat-form-field appearance="fill" class="full-width">
