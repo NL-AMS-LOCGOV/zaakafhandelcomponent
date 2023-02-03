@@ -148,8 +148,8 @@ export class MailCreateComponent implements OnInit {
         if (formGroup?.valid) {
             const mailGegevens = new MailGegevens();
             mailGegevens.verzender = this.verzenderFormField.formControl.value.mail;
-            mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
             mailGegevens.replyTo = this.verzenderFormField.formControl.value.replyTo;
+            mailGegevens.ontvanger = this.ontvangerFormField.formControl.value;
             mailGegevens.onderwerp = this.onderwerpFormField.formControl.value;
             mailGegevens.body = this.bodyFormField.formControl.value;
             mailGegevens.bijlagen = this.bijlagenFormField.formControl.value;

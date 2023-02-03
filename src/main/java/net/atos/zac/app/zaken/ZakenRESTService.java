@@ -759,7 +759,7 @@ public class ZakenRESTService {
                     final int result = a.mail.compareTo(b.mail);
                     return result == 0 ? a.defaultMail ? -1 : 0 : result;
                 })
-                .toList();
+                .collect(Collectors.toList());
         final Iterator<RESTZaakAfzender> i = list.iterator();
         String previous = null;
         while (i.hasNext()) {

@@ -29,6 +29,7 @@ import {Mail} from '../../admin/model/mail';
 import {KlantenService} from '../../klanten/klanten.service';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -64,6 +65,14 @@ export class OntvangstbevestigingComponent implements OnInit {
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.TAAK_ONTVANGSTBEVESTIGING, this.zaak.uuid);
 
+        const verzender = new SelectFormFieldBuilder()
+        .id('verzender')
+        .label('verzender')
+        .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
+        .optionLabel('mail')
+        .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
+        .validators(Validators.required)
+        .build();
         const ontvanger = new InputFormFieldBuilder()
         .id('ontvanger')
         .label('ontvanger')
@@ -105,13 +114,15 @@ export class OntvangstbevestigingComponent implements OnInit {
             });
         }
 
-        this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
+        this.fields = [[verzender], [ontvanger], [onderwerp], [body], [bijlagen]];
 
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             const mailGegevens = new MailGegevens();
+            mailGegevens.verzender = formGroup.controls['verzender'].value.mail;
+            mailGegevens.replyTo = formGroup.controls['verzender'].value.replyTo;
             mailGegevens.ontvanger = formGroup.controls['ontvanger'].value;
             mailGegevens.onderwerp = formGroup.controls['onderwerp'].value;
             mailGegevens.body = formGroup.controls['body'].value;
