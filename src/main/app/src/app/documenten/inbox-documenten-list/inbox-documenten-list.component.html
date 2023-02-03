@@ -26,7 +26,8 @@
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-zoekopdracht [werklijst]="werklijst"
+                    <zac-zoekopdracht class="flex-row justify-end"
+                                      [werklijst]="werklijst"
                                       [zoekFilters]="listParameters"
                                       [filtersChanged]="clearZoekopdracht"
                                       (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
@@ -53,23 +54,25 @@
             <ng-container matColumnDef="actions" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let row">
-                    <a mat-flat-button [routerLink]="['/informatie-objecten', row.enkelvoudiginformatieobjectUUID]"
-                            title="{{ 'actie.document.bekijken' | translate}}">
-                        <mat-icon>visibility</mat-icon>
-                    </a>
-                    <a mat-flat-button
-                       [href]="getDownloadURL(row)"
-                       title="{{ 'actie.downloaden' | translate}}">
-                        <mat-icon>download</mat-icon>
-                    </a>
-                    <button mat-flat-button (click)="documentVerwijderen(row)"
-                            title="{{ 'actie.verwijderen' | translate}}">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                    <button mat-flat-button [disabled]="isDocumentVerplaatsenDisabled(row)" (click)="documentVerplaatsen(row)"
-                            title="{{ 'actie.document.verplaatsen' | translate}}">
-                        <mat-icon>content_cut</mat-icon>
-                    </button>
+                    <div class="flex-row justify-end">
+                        <a mat-icon-button [routerLink]="['/informatie-objecten', row.enkelvoudiginformatieobjectUUID]"
+                           title="{{ 'actie.document.bekijken' | translate}}">
+                            <mat-icon>visibility</mat-icon>
+                        </a>
+                        <a mat-icon-button
+                           [href]="getDownloadURL(row)"
+                           title="{{ 'actie.downloaden' | translate}}">
+                            <mat-icon>download</mat-icon>
+                        </a>
+                        <button mat-icon-button (click)="documentVerwijderen(row)"
+                                title="{{ 'actie.verwijderen' | translate}}">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <button mat-icon-button [disabled]="isDocumentVerplaatsenDisabled(row)" (click)="documentVerplaatsen(row)"
+                                title="{{ 'actie.document.verplaatsen' | translate}}">
+                            <mat-icon>content_cut</mat-icon>
+                        </button>
+                    </div>
                 </td>
             </ng-container>
 

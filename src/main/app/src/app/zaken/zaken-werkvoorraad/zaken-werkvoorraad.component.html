@@ -290,7 +290,7 @@
     </table>
 
     <ng-container *ngIf="dataSource.totalItems === 0"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></ng-container>
-    <div class="pagination-wrapper" sticky>
+    <div class="pagination-wrapper">
         <zac-export-button [zoekParameters]="this.dataSource.zoekParameters"
                            [filename]="'title.zaken.werkvoorraad' | translate"></zac-export-button>
         <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"

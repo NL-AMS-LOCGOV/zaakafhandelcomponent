@@ -185,14 +185,16 @@
                 <zac-column-picker [columnSrc]="dataSource.columns" (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
-                <a mat-flat-button [routerLink]="['/taken', row.id]" (click)="$event.stopPropagation()"
-                   [id]="'zaakBekijken_' + row.id +'_button'" title="{{ 'actie.taak.bekijken' | translate }}">
-                    <mat-icon>visibility</mat-icon>
-                </a>
-                <button mat-flat-button [id]="'kenZaakAanMijToe_' + row.id +'_button'" title="{{ 'actie.mij.toekennen' | translate }}"
-                        (click)="assignToMe(row, $event)" *ngIf="showAssignToMe(row)">
-                    <mat-icon>person_add_alt_1</mat-icon>
-                </button>
+                <div class="flex-row">
+                    <a mat-icon-button [routerLink]="['/taken', row.id]" (click)="$event.stopPropagation()"
+                       [id]="'taakBekijken_' + row.id +'_button'" title="{{ 'actie.taak.bekijken' | translate }}">
+                        <mat-icon>visibility</mat-icon>
+                    </a>
+                    <button mat-icon-button [id]="'kenTaakAanMijToe_' + row.identificatie +'_button'" title="{{ 'actie.mij.toekennen' | translate }}"
+                            (click)="assignToMe(row, $event)" *ngIf="showAssignToMe(row)">
+                        <mat-icon>person_add_alt_1</mat-icon>
+                    </button>
+                </div>
             </td>
         </ng-container>
 
