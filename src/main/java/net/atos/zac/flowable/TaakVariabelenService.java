@@ -37,9 +37,11 @@ public class TaakVariabelenService {
 
     private final static String TAAK_DATA_MAIL_BODY = "body";
 
-    private final static String TAAK_DATA_EMAILADRES = "emailadres";
+    private final static String TAAK_DATA_AFZENDERADRES = "afzenderadres";
 
     private final static String TAAK_DATA_REPLYTOADRES = "replytoadres";
+
+    private final static String TAAK_DATA_EMAILADRES = "emailadres";
 
     public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
 
@@ -91,12 +93,16 @@ public class TaakVariabelenService {
         return findTaskDataElement(taakData, TAAK_DATA_ONDERTEKENEN);
     }
 
-    public Optional<String> readEmailadres(Map<String, String> taakData) {
-        return findTaskDataElement(taakData, TAAK_DATA_EMAILADRES);
+    public Optional<String> readAfzenderAdres(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_AFZENDERADRES);
     }
 
-    public Optional<String> readReplyToadres(Map<String, String> taakData) {
+    public Optional<String> readReplyToAdres(Map<String, String> taakData) {
         return findTaskDataElement(taakData, TAAK_DATA_REPLYTOADRES);
+    }
+
+    public Optional<String> readEmailAdres(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_EMAILADRES);
     }
 
     public boolean isZaakOpschorten(Map<String, String> taakData) {

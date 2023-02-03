@@ -34,9 +34,9 @@ public class MailGegevens {
         this.createDocumentFromMail = createDocumentFromMail;
     }
 
-    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final MailAdres replyTo,
-            final String onderwerp, final String body) {
-        this(verzender, ontvanger, replyTo, onderwerp, body, null, false);
+    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final String onderwerp,
+            final String body) {
+        this(verzender, ontvanger, null, onderwerp, body, null, false);
     }
 
     public MailAdres getVerzender() {

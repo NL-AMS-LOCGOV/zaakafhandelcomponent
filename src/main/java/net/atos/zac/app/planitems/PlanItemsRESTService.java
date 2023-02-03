@@ -36,6 +36,7 @@ import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
@@ -96,6 +97,9 @@ public class PlanItemsRESTService {
 
     @Inject
     private MailService mailService;
+
+    @Inject
+    private ConfiguratieService configuratieService;
 
     @Inject
     private MailTemplateService mailTemplateService;
@@ -184,11 +188,18 @@ public class PlanItemsRESTService {
                     .filter(template -> template.getMail().equals(mail))
                     .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
 
+            final String afzender = configuratieService.readGemeenteNaam();
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
-                            mailService.getGemeenteMailAdres(),
-                            new MailAdres(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
-                            new MailAdres(taakVariabelenService.readReplyToadres(taakdata).orElse(null)),
+                            taakVariabelenService.readAfzenderAdres(taakdata)
+                                    .map(email -> new MailAdres(email, afzender))
+                                    .orElse(mailService.getGemeenteMailAdres()),
+                            taakVariabelenService.readEmailAdres(taakdata)
+                                    .map(MailAdres::new)
+                                    .orElse(null),
+                            taakVariabelenService.readReplyToAdres(taakdata)
+                                    .map(email -> new MailAdres(email, afzender))
+                                    .orElse(null),
                             mailTemplate.getOnderwerp(),
                             taakVariabelenService.readMailBody(taakdata).orElse(null),
                             taakVariabelenService.readBijlagen(taakdata).orElse(null),

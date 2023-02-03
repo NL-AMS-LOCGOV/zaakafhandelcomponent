@@ -231,7 +231,7 @@ public class SignaleringenService {
                 case TAAK -> bronnenBuilder.add(getTaak(signalering.getSubject()));
                 case DOCUMENT -> bronnenBuilder.add(getDocument(signalering.getSubject()));
             }
-            mailService.sendMail(new MailGegevens(from, to, null, mailTemplate.getOnderwerp(), mailTemplate.getBody()),
+            mailService.sendMail(new MailGegevens(from, to, mailTemplate.getOnderwerp(), mailTemplate.getBody()),
                                  bronnenBuilder.build());
         }
     }
