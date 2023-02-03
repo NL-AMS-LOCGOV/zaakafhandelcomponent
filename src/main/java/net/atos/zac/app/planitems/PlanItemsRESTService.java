@@ -188,7 +188,7 @@ public class PlanItemsRESTService {
                     new MailGegevens(
                             mailService.getGemeenteMailAdres(),
                             new MailAdres(taakVariabelenService.readEmailadres(taakdata).orElse(null)),
-                            null,
+                            new MailAdres(taakVariabelenService.readReplyToadres(taakdata).orElse(null)),
                             mailTemplate.getOnderwerp(),
                             taakVariabelenService.readMailBody(taakdata).orElse(null),
                             taakVariabelenService.readBijlagen(taakdata).orElse(null),
