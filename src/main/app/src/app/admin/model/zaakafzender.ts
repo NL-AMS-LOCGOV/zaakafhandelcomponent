@@ -7,6 +7,7 @@ export class ZaakAfzender {
     id: string;
     defaultMail: boolean;
     mail: string;
+    suffix: string;
     replyTo: string;
     speciaal: boolean;
     index: number;

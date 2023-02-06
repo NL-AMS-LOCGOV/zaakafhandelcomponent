@@ -6,13 +6,16 @@
 <div mat-dialog-content [formGroup]="formGroup">
     <p *ngIf="data.planItem.toelichting" class="readonly" [innerHTML]="planItem.toelichting"></p>
     <p *ngIf="besluitVastleggen" class="readonly error" [innerHTML]="'msg.besluit.verplicht' | translate"></p>
-    <zac-static-text *ngIf="zaak.resultaat" [label]="'resultaat' | translate" [value]="this.zaak.resultaat.resultaattype.naam"></zac-static-text>
-    <zac-static-text *ngFor="let besluit of zaak.besluiten" [label]="besluit.identificatie" [value]="besluit.besluittype.naam"></zac-static-text>
+    <zac-static-text *ngIf="zaak.resultaat" [label]="'resultaat' | translate"
+                     [value]="this.zaak.resultaat.resultaattype.naam"></zac-static-text>
+    <zac-static-text *ngFor="let besluit of zaak.besluiten" [label]="besluit.identificatie"
+                     [value]="besluit.besluittype.naam"></zac-static-text>
     <div *ngIf="!zaak.resultaat">
         <mat-form-field appearance="fill" floatLabel="always" class="full-width">
             <mat-label>{{'resultaat' | translate}}</mat-label>
             <mat-select placeholder="{{'resultaat.-kies-' | translate}}" formControlName="resultaattype">
-                <mat-option *ngFor="let resultaattype of resultaattypes | async" [value]="resultaattype">{{ resultaattype.naam }}</mat-option>
+                <mat-option *ngFor="let resultaattype of resultaattypes | async"
+                            [value]="resultaattype">{{ resultaattype.naam }}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
@@ -33,8 +36,16 @@
             <mat-label>{{'verzender' | translate}}</mat-label>
             <mat-select placeholder="{{'verzender.-kies-' | translate}}"
                         formControlName="verzender" [compareWith]="compareObject">
+                <mat-select-trigger>
+                    {{formGroup.get('verzender').value?.mail}}
+                </mat-select-trigger>
                 <mat-option *ngFor="let afzender of afzenders | async"
-                            [value]="afzender">{{ afzender.mail }}</mat-option>
+                            [value]="afzender">
+                    {{ afzender.mail }}
+                    <div class="suffix" *ngIf="afzender.suffix">
+                        {{afzender.suffix | translate}}
+                    </div>
+                </mat-option>
             </mat-select>
         </mat-form-field>
     </div>

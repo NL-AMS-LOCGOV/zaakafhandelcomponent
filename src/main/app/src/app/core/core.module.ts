@@ -51,7 +51,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         UtilService,
         {provide: LOCALE_ID, useValue: 'nl-NL'},
         {provide: MAT_DATE_LOCALE, useValue: 'nl-NL'},
-        {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {...new MatDialogConfig(), width: '500px', autoFocus: 'dialog'}}
+        {
+            provide: MAT_DIALOG_DEFAULT_OPTIONS,
+            useValue: {...new MatDialogConfig(), minWidth: '500px', autoFocus: 'dialog'}
+        }
     ]
 })
 

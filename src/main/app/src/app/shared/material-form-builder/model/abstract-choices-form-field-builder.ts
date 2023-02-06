@@ -20,6 +20,11 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         return this;
     }
 
+    optionSuffix(optionSuffix: string): this {
+        this.formField.optionSuffix = optionSuffix;
+        return this;
+    }
+
     optionValue(optionValue: string): this {
         this.formField.optionValue = optionValue;
         return this;
@@ -33,5 +38,4 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         }
         return this;
     }
-
 }

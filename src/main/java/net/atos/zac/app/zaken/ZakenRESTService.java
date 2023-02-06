@@ -721,34 +721,39 @@ public class ZakenRESTService {
             final Zaak zaak) {
         return afzenders
                 .peek(afzender -> {
-                    afzender.mail = resolveMail(afzender.mail, zaak);
-                    afzender.replyTo = resolveMail(afzender.replyTo, zaak);
+                    final ZaakAfzender.Speciaal speciaal = speciaalMail(afzender.mail);
+                    if (speciaal != null) {
+                        afzender.suffix = "gegevens.mail.afzender." + speciaal;
+                        afzender.mail = resolveMail(speciaal, afzender.mail, zaak);
+                    }
+                    afzender.replyTo = resolveMail(speciaalMail(afzender.replyTo), afzender.replyTo, zaak);
                 })
                 .filter(afzender -> afzender.mail != null);
     }
 
-    private String resolveMail(final String mail, final Zaak zaak) {
+    private ZaakAfzender.Speciaal speciaalMail(final String mail) {
         if (mail != null && !mail.contains("@")) {
-            if (ZaakAfzender.Speciaal.GEMEENTE.is(mail)) {
-                return configuratieService.readGemeenteMail();
-            }
-            if (ZaakAfzender.Speciaal.GROEP.is(mail)) {
-                return zgwApiService.findGroepForZaak(zaak)
+            return ZaakAfzender.Speciaal.valueOf(mail);
+        }
+        return null;
+    }
+
+    private String resolveMail(ZaakAfzender.Speciaal speciaal, final String mail, final Zaak zaak) {
+        if (speciaal != null) {
+            return switch (speciaal) {
+                case GEMEENTE -> configuratieService.readGemeenteMail();
+                case GROEP -> zgwApiService.findGroepForZaak(zaak)
                         .map(RolOrganisatorischeEenheid::getIdentificatienummer)
                         .map(identityService::readGroup)
                         .map(Group::getEmail)
                         .orElse(null);
-            }
-            if (ZaakAfzender.Speciaal.BEHANDELAAR.is(mail)) {
-                return zgwApiService.findBehandelaarForZaak(zaak)
+                case BEHANDELAAR -> zgwApiService.findBehandelaarForZaak(zaak)
                         .map(RolMedewerker::getIdentificatienummer)
                         .map(identityService::readUser)
                         .map(User::getEmail)
                         .orElse(null);
-            }
-            if (ZaakAfzender.Speciaal.MEDEWERKER.is(mail)) {
-                return loggedInUserInstance.get().getEmail();
-            }
+                case MEDEWERKER -> loggedInUserInstance.get().getEmail();
+            };
         }
         return mail;
     }

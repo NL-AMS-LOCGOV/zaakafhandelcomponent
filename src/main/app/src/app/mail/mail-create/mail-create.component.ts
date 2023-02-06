@@ -92,6 +92,7 @@ export class MailCreateComponent implements OnInit {
         .label(this.fieldNames.VERZENDER)
         .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
         .optionLabel('mail')
+        .optionSuffix('suffix')
         .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
         .validators(Validators.required)
         .build();

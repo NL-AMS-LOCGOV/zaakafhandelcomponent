@@ -15,6 +15,8 @@ public class RESTZaakAfzender {
 
     public String mail;
 
+    public String suffix;
+
     public String replyTo;
 
     public boolean speciaal;

@@ -29,8 +29,16 @@
             <mat-label>{{'verzender' | translate}}</mat-label>
             <mat-select placeholder="{{'verzender.-kies-' | translate}}"
                         formControlName="verzender" [compareWith]="compareObject">
+                <mat-select-trigger>
+                    {{formGroup.get('verzender').value?.mail}}
+                </mat-select-trigger>
                 <mat-option *ngFor="let afzender of afzenders | async"
-                            [value]="afzender">{{ afzender.mail }}</mat-option>
+                            [value]="afzender">
+                    {{ afzender.mail }}
+                    <div class="suffix" *ngIf="afzender.suffix">
+                        {{afzender.suffix | translate}}
+                    </div>
+                </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
