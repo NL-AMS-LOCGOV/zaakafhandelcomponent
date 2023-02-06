@@ -29,15 +29,19 @@ import org.flowable.task.api.TaskInfo;
 @Transactional
 public class TaakVariabelenService {
 
-    private static final String TAAK_DATA_BIJLAGEN = "bijlagen";
-
     private static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
 
     private static final String TAAK_DATA_ZAAK_HERVATTEN = "zaakHervatten";
 
+    private final static String TAAK_DATA_MAIL_FROM = "verzender";
+
+    private final static String TAAK_DATA_MAIL_REPLYTO = "replyTo";
+
+    private final static String TAAK_DATA_MAIL_TO = "emailadres";
+
     private final static String TAAK_DATA_MAIL_BODY = "body";
 
-    private final static String TAAK_DATA_EMAILADRES = "emailadres";
+    private static final String TAAK_DATA_MAIL_BIJLAGEN = "bijlagen";
 
     public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
 
@@ -73,8 +77,16 @@ public class TaakVariabelenService {
         return (List<UUID>) findTaskVariable(taskInfo, VAR_TASK_TAAKDOCUMENTEN).orElse(Collections.emptyList());
     }
 
-    public Optional<String> readBijlagen(Map<String, String> taakData) {
-        return findTaskDataElement(taakData, TAAK_DATA_BIJLAGEN);
+    public Optional<String> readMailFrom(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_MAIL_FROM);
+    }
+
+    public Optional<String> readMailReplyTo(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_MAIL_REPLYTO);
+    }
+
+    public Optional<String> readMailTo(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_MAIL_TO);
     }
 
     public Optional<String> readMailBody(Map<String, String> taakData) {
@@ -85,12 +97,12 @@ public class TaakVariabelenService {
         taakData.put(TAAK_DATA_MAIL_BODY, body);
     }
 
-    public Optional<String> readOndertekeningen(Map<String, String> taakData) {
-        return findTaskDataElement(taakData, TAAK_DATA_ONDERTEKENEN);
+    public Optional<String> readMailBijlagen(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_MAIL_BIJLAGEN);
     }
 
-    public Optional<String> readEmailadres(Map<String, String> taakData) {
-        return findTaskDataElement(taakData, TAAK_DATA_EMAILADRES);
+    public Optional<String> readOndertekeningen(Map<String, String> taakData) {
+        return findTaskDataElement(taakData, TAAK_DATA_ONDERTEKENEN);
     }
 
     public boolean isZaakOpschorten(Map<String, String> taakData) {

@@ -25,6 +25,7 @@ import {Mailtemplate} from '../../admin/model/mailtemplate';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
 import {ActionIcon} from '../../shared/edit/action-icon';
+import {ZaakAfzender} from '../../admin/model/zaakafzender';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -44,6 +45,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     initiatorToevoegenIcon: ActionIcon = new ActionIcon('person', 'actie.initiator.email.toevoegen',
         new Subject<void>());
     resultaattypes: Observable<Resultaattype[]>;
+    afzenders: Observable<ZaakAfzender[]>;
     private ngDestroy = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<ZaakAfhandelenDialogComponent>,
@@ -58,9 +60,11 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         this.zaak = data.zaak;
         this.planItem = data.planItem;
         this.resultaattypes = this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid);
-        this.mailtemplateService.findMailtemplate(Mail.ZAAK_AFGEHANDELD, this.data.zaak.uuid).subscribe(mailtemplate => {
-            this.mailtemplate = mailtemplate;
-        });
+        this.afzenders = this.zakenService.listAfzendersVoorZaak(this.data.zaak.uuid);
+        this.mailtemplateService.findMailtemplate(Mail.ZAAK_AFGEHANDELD, this.data.zaak.uuid)
+            .subscribe(mailtemplate => {
+                this.mailtemplate = mailtemplate;
+            });
     }
 
     ngOnInit(): void {
@@ -81,25 +85,33 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
             resultaattype: [null, this.zaak.resultaat ? null : [Validators.required]],
             toelichting: '',
             sendMail: this.sendMailDefault,
+            verzender: [null, (this.sendMailDefault ? [Validators.required] : null)],
             ontvanger: ['', (this.sendMailDefault ? [Validators.required, CustomValidators.email] : null)]
         });
-
+        this.zakenService.readDefaultAfzenderVoorZaak(this.data.zaak.uuid).subscribe(afzender => {
+            this.formGroup.get('verzender').setValue(afzender);
+        });
         this.formGroup.get('sendMail').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
+            this.formGroup.get('verzender').setValidators(value ? [Validators.required] : null);
+            this.formGroup.get('verzender').updateValueAndValidity();
             this.formGroup.get('ontvanger').setValidators(value ? [Validators.required, CustomValidators.email] : null);
             this.formGroup.get('ontvanger').updateValueAndValidity();
         });
-        this.formGroup.get('resultaattype').valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe((value: Resultaattype) => {
-            this.besluitVastleggen = value.besluitVerplicht;
-            if (this.besluitVastleggen) {
-                this.formGroup.get('toelichting').disable();
-                this.formGroup.get('sendMail').disable();
-                this.formGroup.get('ontvanger').disable();
-            } else {
-                this.formGroup.get('toelichting').enable();
-                this.formGroup.get('sendMail').enable();
-                this.formGroup.get('ontvanger').enable();
-            }
-        });
+        this.formGroup.get('resultaattype').valueChanges.pipe(takeUntil(this.ngDestroy))
+            .subscribe((value: Resultaattype) => {
+                this.besluitVastleggen = value.besluitVerplicht;
+                if (this.besluitVastleggen) {
+                    this.formGroup.get('toelichting').disable();
+                    this.formGroup.get('sendMail').disable();
+                    this.formGroup.get('verzender').disable();
+                    this.formGroup.get('ontvanger').disable();
+                } else {
+                    this.formGroup.get('toelichting').enable();
+                    this.formGroup.get('sendMail').enable();
+                    this.formGroup.get('verzender').enable();
+                    this.formGroup.get('ontvanger').enable();
+                }
+            });
     }
 
     close(): void {
@@ -113,14 +125,17 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
         if (values.sendMail && this.mailtemplate) {
             const mailGegevens: MailGegevens = new MailGegevens();
-            mailGegevens.createDocumentFromMail = true;
+            mailGegevens.verzender = values.verzender.mail;
+            mailGegevens.replyTo = values.verzender.replyTo;
+            mailGegevens.ontvanger = values.ontvanger;
             mailGegevens.onderwerp = this.mailtemplate.onderwerp;
             mailGegevens.body = this.mailtemplate.body;
-            mailGegevens.ontvanger = values.ontvanger;
+            mailGegevens.createDocumentFromMail = true;
             this.mailService.sendMail(this.zaak.uuid, mailGegevens).subscribe(() => {});
         }
 
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.planItem.id, this.zaak.uuid);
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.planItem.id,
+            this.zaak.uuid);
         userEventListenerData.resultaattypeUuid = this.zaak.resultaat ? this.zaak.resultaat.resultaattype.id : values.resultaattype.id;
         userEventListenerData.resultaatToelichting = values.toelichting;
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
@@ -144,5 +159,24 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
     openBesluitVastleggen(): void {
         this.dialogRef.close('openBesluitVastleggen');
+    }
+
+    compareObject(object1: any, object2: any): boolean {
+        if (typeof object1 === 'string') {
+            return object1 === object2;
+        }
+        if (object1 && object2) {
+            if (object1.hasOwnProperty('key')) {
+                return object1.key === object2.key;
+            } else if (object1.hasOwnProperty('id')) {
+                return object1.id === object2.id;
+            } else if (object1.hasOwnProperty('naam')) {
+                return object1.naam === object2.naam;
+            } else if (object1.hasOwnProperty('name')) {
+                return object1.name === object2.name;
+            }
+            return object1 === object2;
+        }
+        return false;
     }
 }

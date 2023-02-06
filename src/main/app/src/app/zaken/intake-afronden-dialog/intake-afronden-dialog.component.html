@@ -21,10 +21,29 @@
         </mat-form-field>
     </div>
     <div>
-        <mat-checkbox *ngIf="mailBeschikbaar" id="sendMail" formControlName="sendMail">{{'sendMail' | translate}}</mat-checkbox>
+        <mat-checkbox *ngIf="mailBeschikbaar" id="sendMail"
+                      formControlName="sendMail">{{'sendMail' | translate}}</mat-checkbox>
     </div>
-    <div>
-        <mat-form-field appearance="fill" class="full-width" *ngIf="formGroup.get('sendMail').value">
+    <div *ngIf="formGroup.get('sendMail').value">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{'verzender' | translate}}</mat-label>
+            <mat-select placeholder="{{'verzender.-kies-' | translate}}"
+                        formControlName="verzender" [compareWith]="compareObject">
+                <mat-select-trigger>
+                    {{formGroup.get('verzender').value?.mail}}
+                </mat-select-trigger>
+                <mat-option *ngFor="let afzender of afzenders | async"
+                            [value]="afzender">
+                    {{ afzender.mail }}
+                    <div class="suffix" *ngIf="afzender.suffix">
+                        {{afzender.suffix | translate}}
+                    </div>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div *ngIf="formGroup.get('sendMail').value">
+        <mat-form-field appearance="fill" class="full-width">
             <button *ngIf="initiatorEmail" mat-icon-button type="button" matSuffix
                     title="{{initiatorToevoegenIcon.title | translate}}"
                     (click)="setInitatorEmail()">

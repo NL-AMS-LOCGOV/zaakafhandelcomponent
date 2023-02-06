@@ -18,14 +18,19 @@ import {Mail} from '../../../admin/model/mail';
 import {HtmlEditorFormFieldBuilder} from '../../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
 import {MailtemplateService} from '../../../mailtemplate/mailtemplate.service';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
+import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {ZakenService} from '../../../zaken/zaken.service';
+import {HiddenFormFieldBuilder} from '../../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
+import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 
 export class ExternAdviesMail extends AbstractTaakFormulier {
 
     fields = {
-        BODY: 'body',
         ADVISEUR: 'adviseur',
+        VERZENDER: 'verzender',
+        REPLYTO: 'replyTo',
         EMAILADRES: 'emailadres',
-        BRON: 'bron',
+        BODY: 'body',
         EXTERNADVIES: 'externAdvies',
         BIJLAGEN: 'bijlagen'
     };
@@ -38,7 +43,8 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
         translate: TranslateService,
         public takenService: TakenService,
         public informatieObjectenService: InformatieObjectenService,
-        public mailtemplateService: MailtemplateService) {
+        public mailtemplateService: MailtemplateService,
+        private zakenService: ZakenService) {
         super(translate, informatieObjectenService);
     }
 
@@ -59,6 +65,19 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             .validators(Validators.required)
             .maxlength(1000)
             .build()],
+            [new SelectFormFieldBuilder()
+            .id(fields.VERZENDER)
+            .label(fields.VERZENDER)
+            .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
+            .optionLabel('mail')
+            .optionSuffix('suffix')
+            .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
+            .validators(Validators.required)
+            .build()],
+            [new HiddenFormFieldBuilder()
+            .id(fields.REPLYTO)
+            .label(fields.REPLYTO)
+            .build()],
             [new InputFormFieldBuilder()
             .id(fields.EMAILADRES)
             .label(fields.EMAILADRES)
@@ -75,27 +94,40 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             .label(fields.BIJLAGEN)
             .documenten(documenten).build()]
         );
+
+        this.getFormField(fields.VERZENDER).formControl.valueChanges.subscribe((afzender: ZaakAfzender) => {
+            this.getFormField(fields.REPLYTO).formControl.setValue(afzender.replyTo);
+        });
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ParagraphFormFieldBuilder().text(this.translate.instant('msg.extern.advies.vastleggen.behandelen')).build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.ADVISEUR)).id(fields.ADVISEUR)
-                                                                               .label(fields.ADVISEUR)
-                                                                               .build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.EMAILADRES)).id(fields.EMAILADRES)
-                                                                                 .label(fields.EMAILADRES)
-                                                                                 .build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BODY)).id(fields.BODY)
-                                                                           .label(fields.BODY)
-                                                                           .build()],
-
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.EXTERNADVIES)).id(fields.EXTERNADVIES)
-                                                                                   .label(fields.EXTERNADVIES)
-                                                                                   .validators(Validators.required)
-                                                                                   .readonly(this.readonly)
-                                                                                   .maxlength(1000).build()]
+            [new ParagraphFormFieldBuilder()
+            .text(this.translate.instant('msg.extern.advies.vastleggen.behandelen'))
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.ADVISEUR))
+            .id(fields.ADVISEUR)
+            .label(fields.ADVISEUR)
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VERZENDER))
+            .id(fields.VERZENDER)
+            .label(fields.VERZENDER)
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.EMAILADRES))
+            .id(fields.EMAILADRES)
+            .label(fields.EMAILADRES)
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BODY))
+            .id(fields.BODY)
+            .label(fields.BODY)
+            .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.EXTERNADVIES))
+            .id(fields.EXTERNADVIES)
+            .label(fields.EXTERNADVIES)
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .maxlength(1000).build()]
         );
     }
 

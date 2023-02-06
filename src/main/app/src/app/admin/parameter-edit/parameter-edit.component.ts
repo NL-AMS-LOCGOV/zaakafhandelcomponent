@@ -447,7 +447,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             }
         });
 
+        const index: string[] = [];
         for (const afzender of this.parameters.zaakAfzenders) {
+            index[afzender.index] = afzender.mail;
             afzender.replyTo = this.getZaakAfzenderControl(afzender, 'replyTo').value;
         }
 
@@ -455,6 +457,14 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.loading = false;
             this.utilService.openSnackbar('msg.zaakafhandelparameters.opgeslagen');
             this.parameters = data;
+            for (const afzender of this.parameters.zaakAfzenders) {
+                for (let i = 0; i < index.length; i++) {
+                    if (index[i] === afzender.mail) {
+                        afzender.index = i;
+                        break;
+                    }
+                }
+            }
         });
     }
 
