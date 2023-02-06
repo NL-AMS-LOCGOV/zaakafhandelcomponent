@@ -13,23 +13,23 @@
 
         <a mat-list-item *ngSwitchCase="menuItemType.LINK" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
-                      mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title | translate}}</div>
+                      matListItemIcon>{{menuItem.icon}}</mat-icon>
+            <div matListItemTitle>{{menuItem.title | translate}}</div>
         </a>
         <a mat-list-item *ngSwitchCase="menuItemType.BUTTON" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
-                      mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title | translate}}</div>
+                      matListItemIcon>{{menuItem.icon}}</mat-icon>
+            <div matListItemTitle>{{menuItem.title | translate}}</div>
         </a>
         <a mat-list-item *ngSwitchCase="menuItemType.HREF" [href]="asHrefMenuItem(menuItem).url">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
-                      mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title | translate}}</div>
+                      matListItemIcon>{{menuItem.icon}}</mat-icon>
+            <div matListItemTitle>{{menuItem.title | translate}}</div>
         </a>
     </ng-container>
 </mat-nav-list>
 <mat-toolbar class="toolbar-footer">
-    <button (click)="toggleMenu()" mat-mini-fab color="" id="toggleMenuButon" title="{{'actie.menu.aanpassen' | translate}}">
+    <button (click)="toggleMenu()" mat-mini-fab id="toggleMenuButon" title="{{'actie.menu.aanpassen' | translate}}">
         <mat-icon [@rotated180]="menuMode">{{menuMode === MenuMode.AUTO ? 'menu' : 'menu_open'}}</mat-icon>
     </button>
 </mat-toolbar>
