@@ -191,18 +191,18 @@ public class PlanItemsRESTService {
             final String afzender = configuratieService.readGemeenteNaam();
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
-                            taakVariabelenService.readAfzenderAdres(taakdata)
+                            taakVariabelenService.readMailFrom(taakdata)
                                     .map(email -> new MailAdres(email, afzender))
                                     .orElse(mailService.getGemeenteMailAdres()),
-                            taakVariabelenService.readEmailAdres(taakdata)
+                            taakVariabelenService.readMailTo(taakdata)
                                     .map(MailAdres::new)
                                     .orElse(null),
-                            taakVariabelenService.readReplyToAdres(taakdata)
+                            taakVariabelenService.readMailReplyTo(taakdata)
                                     .map(email -> new MailAdres(email, afzender))
                                     .orElse(null),
                             mailTemplate.getOnderwerp(),
                             taakVariabelenService.readMailBody(taakdata).orElse(null),
-                            taakVariabelenService.readBijlagen(taakdata).orElse(null),
+                            taakVariabelenService.readMailBijlagen(taakdata).orElse(null),
                             true),
                     Bronnen.fromZaak(zaak)));
         }

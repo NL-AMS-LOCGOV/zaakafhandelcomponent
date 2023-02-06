@@ -9,58 +9,61 @@ import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.MailTemplateHelper;
 
 public class MailGegevens {
-    private final MailAdres verzender;
+    private final MailAdres from;
 
-    private final MailAdres ontvanger;
+    private final MailAdres to;
 
     private final MailAdres replyTo;
 
-    private final String onderwerp;
+    private final String subject;
 
     private final String body;
 
-    private final String[] bijlagen;
+    private final String[] attachments;
 
     private final boolean createDocumentFromMail;
 
-    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final MailAdres replyTo,
-            final String onderwerp, final String body, final String bijlagen, final boolean createDocumentFromMail) {
-        this.verzender = verzender;
-        this.ontvanger = ontvanger;
+    public MailGegevens(
+            final MailAdres from, final MailAdres to, final MailAdres replyTo,
+            final String subject, final String body, final String attachments,
+            final boolean createDocumentFromMail) {
+        this.from = from;
+        this.to = to;
         this.replyTo = replyTo;
-        this.onderwerp = MailTemplateHelper.stripParagraphTags(onderwerp);
+        this.subject = MailTemplateHelper.stripParagraphTags(subject);
         this.body = body;
-        this.bijlagen = bijlagen != null ? bijlagen.split(";") : new String[0];
+        this.attachments = attachments != null ? attachments.split(";") : new String[0];
         this.createDocumentFromMail = createDocumentFromMail;
     }
 
-    public MailGegevens(final MailAdres verzender, final MailAdres ontvanger, final String onderwerp,
-            final String body) {
-        this(verzender, ontvanger, null, onderwerp, body, null, false);
+    public MailGegevens(
+            final MailAdres from, final MailAdres to,
+            final String subject, final String body) {
+        this(from, to, null, subject, body, null, false);
     }
 
-    public MailAdres getVerzender() {
-        return verzender;
+    public MailAdres getFrom() {
+        return from;
     }
 
-    public MailAdres getOntvanger() {
-        return ontvanger;
+    public MailAdres getTo() {
+        return to;
     }
 
     public MailAdres getReplyTo() {
         return replyTo;
     }
 
-    public String getOnderwerp() {
-        return onderwerp;
+    public String getSubject() {
+        return subject;
     }
 
     public String getBody() {
         return body;
     }
 
-    public String[] getBijlagen() {
-        return bijlagen;
+    public String[] getAttachments() {
+        return attachments;
     }
 
     public boolean isCreateDocumentFromMail() {

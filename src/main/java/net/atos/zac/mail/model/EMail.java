@@ -15,44 +15,44 @@ public class EMail {
     private String body;
 
     @JsonbProperty("From")
-    private MailAdres verzender;
+    private MailAdres from;
 
     @JsonbProperty("To")
-    private List<MailAdres> ontvangers;
+    private List<MailAdres> to;
 
     @JsonbProperty("ReplyTo")
     private MailAdres replyTo;
 
     @JsonbProperty("Subject")
-    private String onderwerp;
+    private String subject;
 
     @JsonbProperty("Attachments")
     private List<Attachment> attachments;
 
-    public EMail(final MailAdres verzender, final List<MailAdres> ontvangers, final MailAdres replyTo,
-            final String onderwerp, final String body, final List<Attachment> attachments) {
-        this.verzender = verzender;
-        this.ontvangers = ontvangers;
+    public EMail(final MailAdres from, final List<MailAdres> to, final MailAdres replyTo,
+            final String subject, final String body, final List<Attachment> attachments) {
+        this.from = from;
+        this.to = to;
         this.replyTo = replyTo;
-        this.onderwerp = onderwerp;
+        this.subject = subject;
         this.body = "<pre>" + body + "</pre>";
         this.attachments = attachments;
     }
 
-    public MailAdres getVerzender() {
-        return verzender;
+    public MailAdres getFrom() {
+        return from;
     }
 
-    public void setVerzender(final MailAdres verzender) {
-        this.verzender = verzender;
+    public void setFrom(final MailAdres from) {
+        this.from = from;
     }
 
-    public List<MailAdres> getOntvangers() {
-        return ontvangers;
+    public List<MailAdres> getTo() {
+        return to;
     }
 
-    public void setOntvangers(final List<MailAdres> ontvangers) {
-        this.ontvangers = ontvangers;
+    public void setTo(final List<MailAdres> to) {
+        this.to = to;
     }
 
     public MailAdres getReplyTo() {
@@ -63,12 +63,12 @@ public class EMail {
         this.replyTo = replyTo;
     }
 
-    public String getOnderwerp() {
-        return onderwerp;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setOnderwerp(final String onderwerp) {
-        this.onderwerp = onderwerp;
+    public void setSubject(final String subject) {
+        this.subject = subject;
     }
 
     public String getBody() {

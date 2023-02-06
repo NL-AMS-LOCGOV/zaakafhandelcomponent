@@ -36,21 +36,41 @@ export class TaakFormulierenService {
     public getFormulierBuilder(formulierDefinitie: FormulierDefinitieID): TaakFormulierBuilder {
         switch (formulierDefinitie) {
             case 'DEFAULT_TAAKFORMULIER':
-                return new TaakFormulierBuilder(new DefaultTaakformulier(this.translate, this.informatieObjectenService));
+                return new TaakFormulierBuilder(new DefaultTaakformulier(
+                    this.translate,
+                    this.informatieObjectenService));
             case 'AANVULLENDE_INFORMATIE':
-                return new TaakFormulierBuilder(new AanvullendeInformatie(this.translate, this.takenService,
-                    this.informatieObjectenService, this.mailtemplateService, this.klantenService));
+                return new TaakFormulierBuilder(new AanvullendeInformatie(
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService,
+                    this.mailtemplateService,
+                    this.klantenService,
+                    this.zakenService));
             case 'ADVIES':
                 return new TaakFormulierBuilder(new Advies(
-                    this.translate, this.takenService, this.informatieObjectenService, this.zakenService, this.zaakafhandelParametersService));
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService,
+                    this.zakenService,
+                    this.zaakafhandelParametersService));
             case 'EXTERN_ADVIES_VASTLEGGEN':
-                return new TaakFormulierBuilder(new ExternAdviesVastleggen(this.translate, this.takenService, this.informatieObjectenService));
+                return new TaakFormulierBuilder(new ExternAdviesVastleggen(
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService));
             case 'EXTERN_ADVIES_MAIL':
-                return new TaakFormulierBuilder(
-                    new ExternAdviesMail(this.translate, this.takenService, this.informatieObjectenService, this.mailtemplateService));
+                return new TaakFormulierBuilder(new ExternAdviesMail(
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService,
+                    this.mailtemplateService,
+                    this.zakenService));
             case 'GOEDKEUREN':
-                return new TaakFormulierBuilder(
-                    new Goedkeuren(this.translate, this.takenService, this.informatieObjectenService));
+                return new TaakFormulierBuilder(new Goedkeuren(
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService));
             default:
                 throw new Error(`Onbekend formulier: ${formulierDefinitie}`);
         }

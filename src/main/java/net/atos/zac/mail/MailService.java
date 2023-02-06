@@ -135,34 +135,28 @@ public class MailService {
     public String sendMail(final MailGegevens mailGegevens, final Bronnen bronnen) {
 
         final String subject = StringUtils.abbreviate(
-                resolveVariabelen(mailGegevens.getOnderwerp(), bronnen),
+                resolveVariabelen(mailGegevens.getSubject(), bronnen),
                 SUBJECT_MAXWIDTH);
         final String body = resolveVariabelen(mailGegevens.getBody(), bronnen);
-        final List<Attachment> attachments = getAttachments(mailGegevens.getBijlagen());
+        final List<Attachment> attachments = getAttachments(mailGegevens.getAttachments());
 
-        final EMail eMail = new EMail(mailGegevens.getVerzender(),
-                                      List.of(mailGegevens.getOntvanger()),
-                                      mailGegevens.getReplyTo(),
-                                      subject,
-                                      body,
-                                      attachments);
+        final EMail eMail = new EMail(
+                mailGegevens.getFrom(), List.of(mailGegevens.getTo()), mailGegevens.getReplyTo(),
+                subject, body, attachments);
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JSONB.toJson(new EMails(List.of(eMail))));
         try {
             final int status = mailjetClient.post(request).getStatus();
             if (status < 300) {
                 if (mailGegevens.isCreateDocumentFromMail()) {
-                    createZaakDocumentFromMail(mailGegevens.getVerzender().getEmail(),
-                                               mailGegevens.getOntvanger().getEmail(),
-                                               subject,
-                                               body,
-                                               attachments,
-                                               bronnen.zaak);
+                    createZaakDocumentFromMail(
+                            mailGegevens.getFrom().getEmail(), mailGegevens.getTo().getEmail(),
+                            subject, body, attachments,
+                            bronnen.zaak);
                 }
             } else {
                 LOG.log(Level.WARNING,
-                        String.format("Failed to send mail with subject '%s' (http result %d).", subject,
-                                      status));
+                        String.format("Failed to send mail with subject '%s' (http result %d).", subject, status));
             }
         } catch (MailjetException e) {
             LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s'.", subject), e);
