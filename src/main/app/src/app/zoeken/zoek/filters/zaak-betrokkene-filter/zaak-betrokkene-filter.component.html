@@ -6,7 +6,7 @@
 <mat-card>
     <mat-card-title>{{'zoeken.filter.zaak_betrokkene' | translate}}</mat-card-title>
     <mat-card-content class="zaak-betrokkene-filter">
-        <mat-form-field appearance="standard">
+        <mat-form-field class="full-width" appearance="fill">
             <mat-select id="betrokkeneRoltype_filter"
                         [formControl]="betrokkeneSelectControl"
                         (selectionChange)="roltypeChanged()">
@@ -20,7 +20,7 @@
                 <mat-option [value]="ZoekVeld.ZAAK_BETROKKENE_ZAAKCOORDINATOR">{{'betrokkeneRoltype.ZAAKCOORDINATOR' | translate}}</mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="standard">
+        <mat-form-field class="full-width" appearance="fill">
             <input matInput placeholder="{{'bsn.vestigingsnummer.rsin' | translate}}" (blur)="idChanged()" (keyup.enter)="idChanged()"
                    [formControl]="klantIdControl">
             <mat-icon [ngClass]="{'active': dialogOpen}" matSuffix (click)="openDialog()">person</mat-icon>

@@ -3,14 +3,14 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card appearance="outlined" [formGroup]="formGroup">
+<mat-card class="multi-facet-filter" appearance="outlined" [formGroup]="formGroup">
     <mat-card-title-group>
         <mat-card-title>{{'zoeken.filter.' + (label | lowercase) | translate}}</mat-card-title>
         <mat-icon (click)="invert()" class="on" *ngIf="!inverse">toggle_off</mat-icon>
         <mat-icon (click)="invert()" class="off" *ngIf="inverse">toggle_on</mat-icon>
     </mat-card-title-group>
     <mat-card-content>
-        <div *ngFor="let facetWaarde of opties;" class="flex-row space-between items-center">
+        <div *ngFor="let facetWaarde of opties;" class="flex-row space-between">
             <mat-checkbox (change)="checkboxChange()" [formControlName]="facetWaarde.naam">
                 <read-more *ngIf="isVertaalbaar(label)"
                            [text]="VERTAALBARE_FACETTEN[label]+facetWaarde.naam | translate"
