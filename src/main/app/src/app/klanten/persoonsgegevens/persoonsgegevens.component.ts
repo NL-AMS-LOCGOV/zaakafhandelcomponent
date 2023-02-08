@@ -12,6 +12,7 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 
 @Component({
     selector: 'zac-persoongegevens',
+    styleUrls: ['./persoonsgegevens.component.less'],
     templateUrl: './persoonsgegevens.component.html'
 })
 export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
@@ -38,7 +39,6 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
         this.loadPersoon();
     }
 

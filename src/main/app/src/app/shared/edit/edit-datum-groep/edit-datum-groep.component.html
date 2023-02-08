@@ -4,7 +4,7 @@
   -->
 
 <div *ngIf="!editing">
-    <div class="datum-groep-wrapper static-text flex-row flex-wrap flex-col-xs" [class.readonly]="readonly" (click)="edit()">
+    <div class="static-text flex-row flex-wrap flex-col-xs" [class.readonly]="readonly" (click)="edit()">
         <div class="flex-1 w33 w100-sm">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
@@ -52,8 +52,8 @@
             </div>
         </div>
     </div>
-    <div class="datum-control-wrapper flex-row flex-wrap flex-col-xs">
-        <div class="flex-1 w75">
+    <div class="flex-row space-between toelichting">
+        <div class="flex-col w100 gap-5">
             <div *ngIf="verlengDuur">
                 {{'duurVerlenging' | translate:{duur: verlengDuur} }}
             </div>
@@ -61,7 +61,7 @@
                 {{'duurDagenOpschorting' | translate:{dagen: opschortDuur} }}
             </div>
         </div>
-        <div class="flex-grow">
+        <div class="flex-1 flex-row">
             <div *ngIf="actieVerlengen" class="time-control">
                 <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
                     <mat-icon class="time-button">history</mat-icon>
@@ -87,24 +87,23 @@
 </div>
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
-    <div class="flex-row flex-wrap flex-col-xs">
-        <div class="datum-field w33 w50-sm flex-1">
+    <div class="flex-row flex-col-xs flex-wrap gap-5">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="startDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
         </div>
-        <div class="datum-field w33 w50-sm flex-1">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="einddatumGeplandField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showEinddatumGeplandError">
                 {{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
         </div>
-        <div class="w33 w100-sm flex-1">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="uiterlijkeEinddatumAfdoeningField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showUiterlijkeEinddatumAfdoeningError">
                 {{ 'msg.error.date.invalid.fatale' + (einddatumGeplandField.formControl.defaultValue ? '1' : '2') | translate}}</mat-error>
         </div>
+        <mfb-form-field class="w100" [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
     </div>
-    <div>
-        <mfb-form-field [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
-    </div>
+
     <div class="form-buttons">
         <button (click)="save()" [disabled]="hasError() || formFields.invalid" color="primary" id="datumOpslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">
