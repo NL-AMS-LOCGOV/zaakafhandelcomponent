@@ -7,11 +7,13 @@
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{besluit.identificatie}}
+
+            </mat-panel-title>
+            <mat-panel-description>
+                &nbsp;
                 <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation(); besluitWijzigen.emit(besluit)">
                     <mat-icon>edit</mat-icon>
                 </button>
-            </mat-panel-title>
-            <mat-panel-description>
             </mat-panel-description>
         </mat-expansion-panel-header>
 
