@@ -9,8 +9,15 @@
            matInput type="text" [maxlength]="data.maxlength">
     <mat-icon matSuffix *ngIf="isSearching()">search</mat-icon>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="data.optionValue ? option[data.optionValue] : option">
+        <mat-select-trigger>
+            {{(data.optionLabel && data.formControl.value ? data.formControl.value[data.optionLabel] : data.formControl.value) | translate}}
+        </mat-select-trigger>
+        <mat-option *ngFor="let option of filteredOptions | async"
+                    [value]="data.optionValue ? option[data.optionValue] : option">
             {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
+            <div class="suffix" *ngIf="data.optionSuffix">
+                {{option[data.optionSuffix] | translate}}
+            </div>
         </mat-option>
     </mat-autocomplete>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>

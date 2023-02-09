@@ -17,6 +17,7 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
     optionsChanged$ = new EventEmitter<void>();
     private options$: Observable<any[]>;
     public optionLabel: string | null;
+    public optionSuffix: string | null;
     public optionValue: string | null;
     loading$ = new EventEmitter<boolean>();
 

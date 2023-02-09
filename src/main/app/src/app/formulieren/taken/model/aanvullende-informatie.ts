@@ -28,10 +28,15 @@ import {ZaakIndicatie} from '../../../shared/indicaties/zaak-indicaties/zaak-ind
 import {KlantenService} from '../../../klanten/klanten.service';
 import {ActionIcon} from '../../../shared/edit/action-icon';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
+import {ZakenService} from '../../../zaken/zaken.service';
+import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     fields = {
+        VERZENDER: 'verzender',
+        REPLYTO: 'replyTo',
         EMAILADRES: 'emailadres',
         BODY: 'body',
         DATUMGEVRAAGD: 'datumGevraagd',
@@ -40,7 +45,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
         BIJLAGEN: 'bijlagen',
         ZAAK_OPSCHORTEN: 'zaakOpschorten',
-        ZAAK_HERVATTEN: 'zaakHervatten',
+        ZAAK_HERVATTEN: 'zaakHervatten'
     };
 
     taakinformatieMapping = {
@@ -53,7 +58,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
     constructor(translate: TranslateService, public takenService: TakenService,
                 public informatieObjectenService: InformatieObjectenService,
                 private mailtemplateService: MailtemplateService,
-                private klantenService: KlantenService) {
+                private klantenService: KlantenService,
+                private zakenService: ZakenService) {
         super(translate, informatieObjectenService);
     }
 
@@ -63,7 +69,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.TAAK_AANVULLENDE_INFORMATIE, this.zaak.uuid);
+        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.TAAK_AANVULLENDE_INFORMATIE,
+            this.zaak.uuid);
         this.humanTaskData.taakStuurGegevens.mail = Mail.TAAK_AANVULLENDE_INFORMATIE;
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
@@ -72,6 +79,19 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         morgen.setDate(morgen.getDate() + 1);
         const fields = this.fields;
         this.form.push(
+            [new SelectFormFieldBuilder()
+            .id(fields.VERZENDER)
+            .label(fields.VERZENDER)
+            .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
+            .optionLabel('mail')
+            .optionSuffix('suffix')
+            .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
+            .validators(Validators.required)
+            .build()],
+            [new HiddenFormFieldBuilder()
+            .id(fields.REPLYTO)
+            .label(fields.REPLYTO)
+            .build()],
             [new InputFormFieldBuilder()
             .id(fields.EMAILADRES)
             .label(fields.EMAILADRES)
@@ -98,6 +118,10 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .showDays()
             .build()
             ]);
+        this.getFormField(fields.VERZENDER).formControl.valueChanges.subscribe((afzender: ZaakAfzender) => {
+            this.getFormField(fields.REPLYTO).formControl.setValue(afzender.replyTo);
+        });
+
         if (this.opschortenMogelijk()) {
             this.form.push(
                 [new CheckboxFormFieldBuilder()
@@ -108,7 +132,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             this.getFormField(fields.ZAAK_OPSCHORTEN).formControl.valueChanges.subscribe(opschorten => {
                 this.getFormField(AbstractTaakFormulier.TAAK_FATALEDATUM).required = opschorten;
             });
-
         }
 
         if (this.zaak.initiatorIdentificatieType && this.zaak.initiatorIdentificatie) {
@@ -126,48 +149,58 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
                 }
             });
         }
-
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.EMAILADRES)).id(fields.EMAILADRES)
-                                                                                 .label(fields.EMAILADRES)
-                                                                                 .build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BODY)).id(fields.BODY)
-                                                                           .label(fields.BODY)
-                                                                           .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.OPMERKINGEN)).id(fields.OPMERKINGEN)
-                                                                                  .label(fields.OPMERKINGEN)
-                                                                                  .validators(Validators.required)
-                                                                                  .readonly(this.readonly)
-                                                                                  .maxlength(1000)
-                                                                                  .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VERZENDER))
+            .id(fields.VERZENDER)
+            .label(fields.VERZENDER)
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.EMAILADRES))
+            .id(fields.EMAILADRES)
+            .label(fields.EMAILADRES)
+            .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BODY))
+            .id(fields.BODY)
+            .label(fields.BODY)
+            .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.OPMERKINGEN))
+            .id(fields.OPMERKINGEN)
+            .label(fields.OPMERKINGEN)
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .maxlength(1000)
+            .build()],
             [
-                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGEVRAAGD)).id(fields.DATUMGEVRAAGD)
-                                                                                   .label(fields.DATUMGEVRAAGD)
-                                                                                   .readonly(true)
-                                                                                   .build(),
-                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGELEVERD)).id(fields.DATUMGELEVERD)
-                                                                                   .label(fields.DATUMGELEVERD)
-                                                                                   .readonly(this.readonly)
-                                                                                   .build()
+                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGEVRAAGD))
+                .id(fields.DATUMGEVRAAGD)
+                .label(fields.DATUMGEVRAAGD)
+                .readonly(true)
+                .build(),
+                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGELEVERD))
+                .id(fields.DATUMGELEVERD)
+                .label(fields.DATUMGELEVERD)
+                .readonly(this.readonly)
+                .build()
             ],
             [new RadioFormFieldBuilder(this.readonly && aanvullendeInformatieDataElement ?
-                this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement).id(fields.AANVULLENDE_INFORMATIE)
-                                                                                                            .label(fields.AANVULLENDE_INFORMATIE)
-                                                                                                            .options(this.getAanvullendeInformatieOpties())
-                                                                                                            .validators(Validators.required)
-                                                                                                            .readonly(this.readonly)
-                                                                                                            .build()]);
+                this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement)
+            .id(fields.AANVULLENDE_INFORMATIE)
+            .label(fields.AANVULLENDE_INFORMATIE)
+            .options(this.getAanvullendeInformatieOpties())
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .build()]);
 
         if (this.toonHervatten()) {
             if (this.readonly) {
                 this.form.push([
                     new ReadonlyFormFieldBuilder(
-                        this.translate.instant(this.getDataElement(fields.ZAAK_HERVATTEN) === 'true' ? 'zaak.hervatten.ja' : 'zaak.hervatten.nee'))
+                        this.translate.instant(this.getDataElement(
+                            fields.ZAAK_HERVATTEN) === 'true' ? 'zaak.hervatten.ja' : 'zaak.hervatten.nee'))
                     .id(fields.ZAAK_HERVATTEN)
                     .label('actie.zaak.hervatten').build()]);
             } else {
@@ -175,7 +208,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
                     [new RadioFormFieldBuilder(this.getDataElement(fields.ZAAK_HERVATTEN))
                     .id(fields.ZAAK_HERVATTEN)
                     .label('actie.zaak.hervatten')
-                    .options([{value: 'true', label: 'zaak.hervatten.ja'}, {value: 'false', label: 'zaak.hervatten.nee'}])
+                    .options(
+                        [{value: 'true', label: 'zaak.hervatten.ja'}, {value: 'false', label: 'zaak.hervatten.nee'}])
                     .validators(Validators.required)
                     .optionLabel('label')
                     .optionValue('value')
@@ -209,7 +243,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         if (this.readonly) {
             return this.getDataElement(this.fields.ZAAK_HERVATTEN);
         }
-        return this.zaak.indicaties.find(indicatie => indicatie === ZaakIndicatie.OPSCHORTING) && this.zaak.rechten.behandelen;
+        return this.zaak.indicaties.find(
+            indicatie => indicatie === ZaakIndicatie.OPSCHORTING) && this.zaak.rechten.behandelen;
     }
 }
 

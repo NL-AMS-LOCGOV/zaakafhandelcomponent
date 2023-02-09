@@ -7,24 +7,16 @@ package net.atos.zac.app.admin.model;
 
 import net.atos.zac.zaaksturing.model.ZaakAfzender;
 
-public class RESTZaakAfzender {
-
-    public Long id;
-
-    public boolean defaultMail;
+public class RESTReplyTo {
 
     public String mail;
 
-    public String suffix;
-
-    public String replyTo;
-
     public boolean speciaal;
 
-    public RESTZaakAfzender() {
+    public RESTReplyTo() {
     }
 
-    public RESTZaakAfzender(ZaakAfzender.Speciaal speciaal) {
+    public RESTReplyTo(ZaakAfzender.Speciaal speciaal) {
         this.mail = speciaal.name();
         this.speciaal = true;
     }

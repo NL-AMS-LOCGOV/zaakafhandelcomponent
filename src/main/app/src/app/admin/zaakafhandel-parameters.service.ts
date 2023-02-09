@@ -13,6 +13,7 @@ import {CaseDefinition} from './model/case-definition';
 import {ZaakbeeindigReden} from './model/zaakbeeindig-reden';
 import {Resultaattype} from '../zaken/model/resultaattype';
 import {FormulierDefinitie} from './model/formulier-definitie';
+import {ReplyTo} from './model/replyto';
 
 @Injectable({
     providedIn: 'root'
@@ -74,6 +75,12 @@ export class ZaakafhandelParametersService {
 
     listFormulierDefinities(): Observable<FormulierDefinitie[]> {
         return this.http.get<string[]>(`${this.basepath}/formulierDefinities`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listReplyTos(): Observable<ReplyTo[]> {
+        return this.http.get<ReplyTo[]>(`${this.basepath}/replyTo`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

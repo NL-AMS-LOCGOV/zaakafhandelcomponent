@@ -4,6 +4,6 @@ public enum RelatieType {
     DEELZAAK,
     HOOFDZAAK,
     VERVOLG,
-    RELEVANT,
+    ONDERWERP,
     BIJDRAGE
 }
