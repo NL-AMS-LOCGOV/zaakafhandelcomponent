@@ -4,7 +4,7 @@
   -->
 
 <!--Initiator-->
-<mat-tab-group *ngIf="initiator">
+<mat-tab-group mat-stretch-tabs="false" *ngIf="initiator">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>emoji_people</mat-icon>
@@ -22,7 +22,7 @@
 </mat-tab-group>
 
 <!--Betrokkene-->
-<mat-tab-group *ngIf="!initiator">
+<mat-tab-group mat-stretch-tabs="false" *ngIf="!initiator">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>emoji_people</mat-icon>

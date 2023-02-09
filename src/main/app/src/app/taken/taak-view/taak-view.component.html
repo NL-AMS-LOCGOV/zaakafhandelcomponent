@@ -17,7 +17,7 @@
     <mat-drawer-content>
         <div class="flex-col gap-20">
             <div class="flex-row flex-col-xl gap-20">
-                <mat-card appearance="outlined" *ngIf="formulier">
+                <mat-card *ngIf="formulier">
                     <mat-card-content>
                         <div class="form">
                             <mfb-form (formPartial)="onFormPartial($event)"
@@ -29,12 +29,12 @@
                     </mat-card-content>
                 </mat-card>
                 <div class="flex-col gap-20 w40">
-                    <mat-card appearance="outlined">
+                    <mat-card>
                         <mat-card-header>
                             <mat-card-title>{{'taak' | translate}}</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
-                            <mat-tab-group>
+                            <mat-tab-group mat-stretch-tabs="false">
                                 <mat-tab label="{{'gegevens.algemeen' | translate}}">
                                     <div class="content flex-row flex-wrap flex-col-xs">
                                         <div class="flex-1 w33 w50-sm">

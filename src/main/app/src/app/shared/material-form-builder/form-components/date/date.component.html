@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field appearance="fill" class="full-width" subscriptSizing="dynamic">
+<mat-form-field appearance="fill" class="full-width" subscriptSizing="fixed">
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_datefield'"
            [min]="data.minDate" [max]="data.maxDate"

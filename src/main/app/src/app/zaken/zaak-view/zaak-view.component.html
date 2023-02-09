@@ -55,7 +55,7 @@
     </mat-drawer>
     <mat-drawer-content>
 
-        <div class="flex-row flex-wrap gap-20">
+        <div class="flex-row flex-wrap">
             <div class="flex w100">
 
                 <zac-persoongegevens *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
@@ -77,7 +77,7 @@
                         <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
                     </mat-card-header>
                     <mat-card-content>
-                        <mat-tab-group>
+                        <mat-tab-group mat-stretch-tabs="false">
                             <mat-tab label="{{'gegevens.algemeen' | translate}}">
                                 <div id="algemeneGegevens_tab" class="content flex-row flex-wrap flex-col-xs">
                                     <div class="flex-1 w33 w50-md">
@@ -366,7 +366,7 @@
                                       [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
                                       (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
 
-                    <mat-card appearance="outlined" class="taken-card">
+                    <mat-card class="taken-card">
                         <mat-card-header>
                             <mat-card-title>{{'taken'| translate}}</mat-card-title>
                             <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" id="takenAfgerondeToon_toggle"
@@ -470,9 +470,9 @@
                 </div>
 
             </div>
-            <div class="flex w100">
-                <zac-zaak-documenten class="flex-1 w100" [zaak]="zaak"></zac-zaak-documenten>
-            </div>
+
+            <zac-zaak-documenten class="w100" [zaak]="zaak"></zac-zaak-documenten>
+
         </div>
 
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>

@@ -9,7 +9,7 @@
     </mat-sidenav>
     <mat-sidenav-content class="flex-col gap-20">
 
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.synchroniseer.ztc.title' | translate}}
@@ -33,7 +33,7 @@
                 </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.zaaktype.inrichtingscheck' | translate}}
@@ -141,7 +141,7 @@
                 <p *ngIf="dataSource.data.length === 0 && loadingZaaktypes">{{'msg.loading' | translate}}</p>
             </mat-card-content>
         </mat-card>
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.referentielijsten.inrichtingscheck' | translate}}

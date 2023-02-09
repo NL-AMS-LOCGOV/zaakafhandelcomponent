@@ -37,7 +37,7 @@
              class="grid-column flex-col gap-16" [ngClass]="{'draggable':editmode}" style="{{'width:'+ 100/(editmode?grid.length:width)+'%'}}"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
              (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
-            <mat-card appearance="outlined" *ngFor="let card of column " cdkDrag>
+            <mat-card *ngFor="let card of column " cdkDrag>
                 <div class="placeholder" *cdkDragPlaceholder></div>
                 <ng-container *ngIf="card!=null">
                     <mat-card-title-group>

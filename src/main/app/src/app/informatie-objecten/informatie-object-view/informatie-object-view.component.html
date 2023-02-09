@@ -25,7 +25,7 @@
                     <zac-informatie-object-indicaties [layout]="indicatiesLayout.VIEW" [document]="infoObject"></zac-informatie-object-indicaties>
                 </mat-card-header>
                 <mat-card-content>
-                    <mat-tab-group>
+                    <mat-tab-group mat-stretch-tabs="false">
                         <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
 
                             <div class="content flex-row flex-wrap flex-col-xs">
@@ -153,7 +153,7 @@
             </mat-card>
 
             <div class="flex-col flex-1 w40">
-                <mat-card appearance="outlined" class="zaak-gegevens" *ngFor="let zaak of zaakInformatieObjecten">
+                <mat-card class="zaak-gegevens" *ngFor="let zaak of zaakInformatieObjecten">
 
                     <mat-card-header>
                         <mat-card-title-group>

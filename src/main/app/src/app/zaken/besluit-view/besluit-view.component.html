@@ -17,7 +17,7 @@
             </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <mat-tab-group>
+        <mat-tab-group mat-stretch-tabs="false">
             <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
                 <div class="content flex-row flex-wrap">
                     <zac-static-text class="flex-1" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
