@@ -3,8 +3,8 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field appearance="standard">
-    <mat-select id="{{label+'_filter'}}" (selectionChange)="change()"
+<mat-form-field subscriptSizing="dynamic">
+    <mat-select panelClass="facet-filter-options" id="{{label+'_filter'}}" (selectionChange)="change()"
                 placeholder="{{ (label+'.-kies-') | translate }}"
                 [(ngModel)]="selected">
         <mat-option>{{ (label + '.-kies-') | translate }}</mat-option>

@@ -144,7 +144,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         const ontvangstDatum = new DateFormFieldBuilder()
         .id('ontvangstdatum')
         .label('ontvangstdatum')
-        .hint('msg.document.ontvangstdatum.hint')
+        .hint('msg.document.ontvangstdatum.hint', 'start')
         .build();
 
         const verzendDatum = new DateFormFieldBuilder()

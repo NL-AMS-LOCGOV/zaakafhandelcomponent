@@ -58,6 +58,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
 
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
+
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;

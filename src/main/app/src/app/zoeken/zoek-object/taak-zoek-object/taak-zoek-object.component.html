@@ -3,15 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout="row wrap" class="zoek-object-wrapper">
-    <div [fxFlex]="100/3">
+<div class="flex-row flex-wrap zoek-object-wrapper">
+    <div class="flex-1 w33">
         <zac-zoek-object-link [zoekObject]="taak" [sideNav]="sideNav"></zac-zoek-object-link>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="taak.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"
                          [value]="'taak.status.'+taak.status | translate"></zac-static-text>
     </div>
-    <div [fxFlex]="100/3">
+    <div class="flex-1 w33">
         <zac-static-text [label]="'zaakIdentificatie' | translate"
                          [value]="taak.zaakIdentificatie"></zac-static-text>
         <zac-static-text [label]="'behandelaar' | translate"
@@ -19,7 +19,7 @@
         <zac-static-text [label]="'groep' | translate"
                          [value]="taak.groepNaam"></zac-static-text>
     </div>
-    <div [fxFlex]="100/3">
+    <div class="flex-1 w33">
         <zac-static-text [label]="'creatiedatum' | translate"
                          [value]="taak.creatiedatum | datum"></zac-static-text>
         <zac-static-text [label]="'fataledatum' | translate"

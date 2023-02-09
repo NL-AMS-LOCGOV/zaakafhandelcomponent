@@ -10,7 +10,6 @@ import {InputComponent} from './form-components/input/input.component';
 import {FormFieldDirective} from './form/form-field/form-field.directive';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {CommonModule} from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {DateComponent} from './form-components/date/date.component';
@@ -86,7 +85,6 @@ import {MatListModule} from '@angular/material/list';
         HttpClientJsonpModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        FlexLayoutModule,
         GoogleMapsModule,
         MatFormFieldModule,
         MatInputModule,

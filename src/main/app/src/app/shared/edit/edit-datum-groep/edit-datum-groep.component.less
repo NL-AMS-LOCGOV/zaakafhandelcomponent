@@ -8,59 +8,14 @@
   font-size: 75%;
 }
 
-.datum-field {
-  padding-right: 5px;
-}
-
-.static-text {
-  &:not(.readonly) {
-    &:hover {
-      div:nth-child(1) {
-        .static-text-content {
-          box-shadow: -1px 0 0 1px @box-shadow-color-light;
-          clip-path: inset(-1px 0px -1px -1px);
-        }
-      }
-
-      div:nth-child(2) {
-        .static-text-content {
-          clip-path: inset(-1px 1px -1px 0px);
-        }
-      }
-
-      div:nth-child(3) {
-        .static-text-content {
-          box-shadow: 1px 0 0 1px @box-shadow-color-light;
-          clip-path: inset(-1px -1px -1px 0px);
-        }
-      }
-    }
-  }
-
-  .label-icon {
-    top: 9px;
-    margin-top: -11px;
-  }
-}
-
-.datum-groep-wrapper {
-  min-height: 24px;
-  flex: 1 1 100%;
-  display: flex;
-  justify-content: space-between;
-  white-space: pre-line;
-}
-
-.datum-control-wrapper {
-  width: 100%;
+.toelichting {
+  font-size: 14px;
 }
 
 .time-control {
   .time-button {
     transform: scaleX(-1);
   }
-
-  float: right;
 }
 
 .play-control {
@@ -82,6 +37,4 @@
   .play-button {
     display: none;
   }
-
-  float: right;
 }

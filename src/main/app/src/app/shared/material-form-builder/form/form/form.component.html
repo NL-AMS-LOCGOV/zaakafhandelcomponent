@@ -5,14 +5,14 @@
 
 <form [formGroup]="formGroup" (ngSubmit)="submit()">
     <ng-container *ngFor="let row of data">
-        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-            <div [fxFlex]="100/row.length" *ngFor="let tile of row">
+        <div class="flex-row flex-col-md flex-wrap gap-20 flex-fill">
+            <div class="flex" *ngFor="let tile of row">
                 <mfb-form-field [field]="tile"></mfb-form-field>
             </div>
         </div>
     </ng-container>
 
-    <div fxLayout="row" fxLayoutAlign="start" *ngIf="config">
+    <div class="flex-row justify-start" *ngIf="config">
         <button mat-flat-button color="accent"
                 *ngIf="config.partialButtonText || config.partialButtonIcon"
                 [disabled]="formGroup.invalid||submitting"

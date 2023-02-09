@@ -9,7 +9,7 @@
     </label>
 
     <div [id]="data.id" class="value">
-        <mat-form-field *ngIf="!data.readonly" appearance="standard">
+        <mat-form-field *ngIf="!data.readonly">
             <mat-label>{{'filter' | translate}}</mat-label>
             <input matInput (keyup)="applyFilter($event)">
         </mat-form-field>

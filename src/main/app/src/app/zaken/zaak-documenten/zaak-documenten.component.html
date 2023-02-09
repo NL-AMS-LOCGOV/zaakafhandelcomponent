@@ -3,12 +3,12 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout>
-    <mat-card fxFlex="calc(100%-20px)">
-        <mat-card-header fxLayout="row">
+<div class="flex-wrap">
+    <mat-card appearance="outlined" class="flex-1">
+        <mat-card-header class="flex-row">
             <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
             <mat-slide-toggle *ngIf="heeftGerelateerdeZaken"
-                              [(ngModel)]="toonGekoppeldeZaakDocumenten" color="primary" fxLayout="row"
+                              [(ngModel)]="toonGekoppeldeZaakDocumenten" color="primary" class="flex-row"
                               id="gekoppeldeZaakDocumentenToon_toggle"
                               (change)="toggleGekoppeldeZaakDocumenten()">{{ 'toonGekoppeldeZaakDocumenten' | translate }}</mat-slide-toggle>
         </mat-card-header>

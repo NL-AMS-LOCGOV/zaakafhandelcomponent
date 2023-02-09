@@ -4,141 +4,144 @@
   -->
 
 <mat-toolbar color="primary">
-    <mat-toolbar-row>
-        <button mat-mini-fab
-                color="primary"
-                fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
-                title="{{ 'actie.terug' | translate }}" zacBackButton>
-            <mat-icon>arrow_back</mat-icon>
-        </button>
+    <mat-toolbar-row class="flex-row space-between items-center">
+        <div>
+            <button mat-mini-fab
+                    color="primary"
+                    class="hide-gt-sm"
+                    [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
+                    title="{{ 'actie.terug' | translate }}" zacBackButton>
+                <mat-icon>arrow_back</mat-icon>
+            </button>
 
-        <button routerLink="" id="dashboardMijn_button" mat-mini-fab
-                [matBadgeHidden]="!hasNewSignaleringen"
-                matBadge="&#8288;" matBadgeColor="warn" matBadgeSize="small"
-                color="primary"
-                title="{{ 'title.dashboard' | translate }}" aria-label="Dashboard">
-            <mat-icon mat-list-icon>home</mat-icon>
-        </button>
+            <button routerLink="" id="dashboardMijn_button" mat-mini-fab
+                    [matBadgeHidden]="!hasNewSignaleringen"
+                    matBadge="!" matBadgeColor="warn" matBadgeSize="small"
+                    color="primary"
+                    title="{{ 'title.dashboard' | translate }}" aria-label="Dashboard">
+                <mat-icon mat-list-icon>home</mat-icon>
+            </button>
 
-        <button *ngIf="this.overigeRechten.startenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
-                title="{{ 'actie.zaak.aanmaken' | translate }}" aria-label="Zaak toevoegen">
-            <mat-icon>create_new_folder</mat-icon>
-        </button>
+            <button *ngIf="this.overigeRechten.startenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
+                    title="{{ 'actie.zaak.aanmaken' | translate }}" aria-label="Zaak toevoegen">
+                <mat-icon>create_new_folder</mat-icon>
+            </button>
 
-        <button *ngIf="this.werklijstRechten.zakenTaken" [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
-                color="primary"
-                aria-label="Menu voor zaken">
-            {{'zaken' |translate }}
-            <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #zakenMenu="matMenu">
-            <button routerLink="/zaken/werkvoorraad" id="zakenWerkvoorraad_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>source</mat-icon>
-                <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
+            <button *ngIf="this.werklijstRechten.zakenTaken" [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
+                    color="primary"
+                    aria-label="Menu voor zaken">
+                {{'zaken' |translate }}
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button routerLink="/zaken/mijn" id="zakenMijn_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>folder_shared</mat-icon>
-                <span>{{ 'title.zaken.mijn' | translate }}</span>
-            </button>
-            <button routerLink="/zaken/afgehandeld" id="zakenAfgehandeld_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>rule_folder</mat-icon>
-                <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
-            </button>
-        </mat-menu>
+            <mat-menu #zakenMenu="matMenu">
+                <button routerLink="/zaken/werkvoorraad" id="zakenWerkvoorraad_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>source</mat-icon>
+                    <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
+                </button>
+                <button routerLink="/zaken/mijn" id="zakenMijn_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>folder_shared</mat-icon>
+                    <span>{{ 'title.zaken.mijn' | translate }}</span>
+                </button>
+                <button routerLink="/zaken/afgehandeld" id="zakenAfgehandeld_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>rule_folder</mat-icon>
+                    <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
+                </button>
+            </mat-menu>
 
-        <button *ngIf="this.werklijstRechten.zakenTaken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
-                color="primary"
-                aria-label="Menu voor taken">
-            {{'taken' |translate }}
-            <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #takenMenu="matMenu">
-            <button routerLink="/taken/werkvoorraad" id="takenWerkvoorraad_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>description</mat-icon>
-                <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
+            <button *ngIf="this.werklijstRechten.zakenTaken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
+                    color="primary"
+                    aria-label="Menu voor taken">
+                {{'taken' |translate }}
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button routerLink="/taken/mijn" id="takenMijn_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>contact_page</mat-icon>
-                <span>{{ 'title.taken.mijn' | translate }}</span>
-            </button>
-        </mat-menu>
+            <mat-menu #takenMenu="matMenu">
+                <button routerLink="/taken/werkvoorraad" id="takenWerkvoorraad_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>description</mat-icon>
+                    <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
+                </button>
+                <button routerLink="/taken/mijn" id="takenMijn_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>contact_page</mat-icon>
+                    <span>{{ 'title.taken.mijn' | translate }}</span>
+                </button>
+            </mat-menu>
 
-        <button *ngIf="this.werklijstRechten.documentenInbox || this.werklijstRechten.documentenOntkoppeld" [matMenuTriggerFor]="documentenMenu"
-                id="documenten_button" mat-flat-button
-                color="primary"
-                aria-label="Menu voor documenten">
-            {{'documenten' |translate }}
-            <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #documentenMenu="matMenu">
-            <button *ngIf="this.werklijstRechten.documentenOntkoppeld" routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>inbox</mat-icon>
-                <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
+            <button *ngIf="this.werklijstRechten.documentenInbox || this.werklijstRechten.documentenOntkoppeld" [matMenuTriggerFor]="documentenMenu"
+                    id="documenten_button" mat-flat-button
+                    color="primary"
+                    aria-label="Menu voor documenten">
+                {{'documenten' |translate }}
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>drive_file_move_outline</mat-icon>
-                <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
-            </button>
-        </mat-menu>
+            <mat-menu #documentenMenu="matMenu">
+                <button *ngIf="this.werklijstRechten.documentenOntkoppeld" routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>inbox</mat-icon>
+                    <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
+                </button>
+                <button *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>drive_file_move_outline</mat-icon>
+                    <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
+                </button>
+            </mat-menu>
+        </div>
 
-        <span class="spacer"></span>
-        <div class="title" fxHide.lt-lg>{{headerTitle$ | async | translate}}</div>
-        <span class="spacer"></span>
+        <div class="title hide-sm">{{headerTitle$ | async | translate}}</div>
 
-        <mat-form-field class="search-field" *ngIf="this.overigeRechten.zoeken" fxHide.lt-md>
-            <mat-label>Zoeken</mat-label>
-            <input (keyup.enter)="zoekenSideNav.open()" [formControl]="zoekenFormControl" matInput type="search"
-                   placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}">
-            <button *ngIf="hasSearched"
-                    [title]="'actie.zoekopdracht.wissen' | translate"
-                    (click)="resetSearch()"
-                    mat-icon-button matSuffix
-                    id="wissen-button">
-                <mat-icon fontIcon="backspace"></mat-icon>
-            </button>
-            <button mat-icon-button type="button" matSuffix id="zoeken-button"
-                    title="{{'actie.zoeken' | translate}}"
-                    (click)="zoekenSideNav.open()">
+        <div class="flex-row items-center">
+            <mat-form-field subscriptSizing="dynamic" class="search-field hide-sm" *ngIf="this.overigeRechten.zoeken">
+                <mat-label>Zoeken</mat-label>
+                <input (keyup.enter)="zoekenSideNav.open()" [formControl]="zoekenFormControl" matInput
+                       placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}">
+                <button *ngIf="hasSearched"
+                        [title]="'actie.zoekopdracht.wissen' | translate"
+                        (click)="resetSearch()"
+                        mat-icon-button matSuffix
+                        id="wissen-button">
+                    <mat-icon fontIcon="backspace"></mat-icon>
+                </button>
+                <button mat-icon-button type="button" matSuffix id="zoeken-button"
+                        title="{{'actie.zoeken' | translate}}"
+                        (click)="zoekenSideNav.open()">
+                    <mat-icon fontIcon="search"></mat-icon>
+                </button>
+            </mat-form-field>
+            <button *ngIf="this.overigeRechten.zoeken" mat-mini-fab class="hide-gt-sm"
+                    (click)="zoekenSideNav.open()"
+                    color="primary"
+                    title="{{ 'actie.zoeken' | translate }}">
                 <mat-icon fontIcon="search"></mat-icon>
             </button>
-        </mat-form-field>
-        <button *ngIf="this.overigeRechten.zoeken" mat-mini-fab fxHide.gt-sm
-                (click)="zoekenSideNav.open()"
-                color="primary"
-                title="{{ 'actie.zoeken' | translate }}">
-            <mat-icon fontIcon="search"></mat-icon>
-        </button>
-        <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button
-                title="{{ 'actie.admin' | translate }}">
-            <mat-icon>settings</mat-icon>
-        </button>
+            <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button
+                    title="{{ 'actie.admin' | translate }}">
+                <mat-icon>settings</mat-icon>
+            </button>
 
-        <div class="profile" fxFlexAlign="column" [matTooltip]="ingelogdeMedewerker?.naam">
-            <button [matMenuTriggerFor]="accountMenu" id="gebruikersProfiel_button" mat-icon-button
-                    title="{{ 'toolbar.profiel' | translate }}" aria-label="Gebruikers profiel">
-                <mat-icon>account_circle</mat-icon>
-            </button>
-            <div class="user-name-toolbar">{{medewerkerNaamToolbar}}</div>
+            <div class="profile flex-col items-center" [matTooltip]="ingelogdeMedewerker?.naam">
+                <button [matMenuTriggerFor]="accountMenu" id="gebruikersProfiel_button" mat-icon-button
+                        title="{{ 'toolbar.profiel' | translate }}" aria-label="Gebruikers profiel">
+                    <mat-icon>account_circle</mat-icon>
+                </button>
+                <div class="user-name-toolbar">{{medewerkerNaamToolbar}}</div>
+            </div>
+            <mat-menu #accountMenu="matMenu">
+                <p class="user-name-menu">{{ ingelogdeMedewerker?.naam }}</p>
+                <mat-divider></mat-divider>
+                <button routerLink="/signaleringen/settings" id="signaleringen_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon>notifications_active</mat-icon>
+                    <span>{{'actie.mijn.signaleringen.settings' | translate}}</span>
+                </button>
+                <a href="/logout" id="uitloggen_button" mat-menu-item>
+                    <mat-icon>logout</mat-icon>
+                    <span>{{'actie.uitloggen' | translate}}</span>
+                </a>
+            </mat-menu>
         </div>
-        <mat-menu #accountMenu="matMenu">
-            <p class="user-name-menu">{{ ingelogdeMedewerker?.naam }}</p>
-            <mat-divider></mat-divider>
-            <button routerLink="/signaleringen/settings" id="signaleringen_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon>notifications_active</mat-icon>
-                <span>{{'actie.mijn.signaleringen.settings' | translate}}</span>
-            </button>
-            <a href="/logout" id="uitloggen_button" mat-menu-item>
-                <mat-icon>logout</mat-icon>
-                <span>{{'actie.uitloggen' | translate}}</span>
-            </a>
-        </mat-menu>
     </mat-toolbar-row>
 </mat-toolbar>

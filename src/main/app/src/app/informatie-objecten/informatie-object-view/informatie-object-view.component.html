@@ -15,9 +15,9 @@
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
     </mat-drawer>
-    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
-        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
-            <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100">
+    <mat-drawer-content>
+        <div class="flex-row flex-wrap flex-col-xl gap-20">
+            <mat-card class="flex-1 w60" appearance="outlined">
                 <mat-card-header>
                     <mat-card-title>
                         {{'informatieobject' | translate}}
@@ -28,8 +28,8 @@
                     <mat-tab-group>
                         <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
 
-                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div class="content flex-row flex-wrap flex-col-xs">
+                                <div class="w33 w50-sm">
                                     <zac-static-text [label]="'titel' | translate"
                                                      [value]="infoObject.titel"></zac-static-text>
                                     <zac-static-text [label]="'identificatie' | translate"
@@ -42,15 +42,15 @@
                                               class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"></span>
                                     </zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'documentType' | translate"
                                                      [value]="infoObject.informatieobjectTypeOmschrijving"></zac-static-text>
                                     <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
                                     <zac-static-text [label]="'beschrijving' | translate" [value]="infoObject.beschrijving"></zac-static-text>
-                                    <div fxLayout="row wrap">
+                                    <div class="flex-row fex-wrap">
                                         <button [disabled]="infoObject.versie === 1" mat-icon-button (click)="haalVersieOp(infoObject.versie - 1)">
                                             <mat-icon>chevron_left</mat-icon>
                                         </button>
@@ -61,8 +61,8 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'informatieobject.status' | translate"
@@ -74,19 +74,19 @@
                                                      [value]="infoObject.taal"></zac-static-text>
                                 </div>
                             </div>
-                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div class="content flex-row flex-wrap flex-col-xs">
+                                <div class="w33 w50-sm">
                                     <zac-static-text [label]="'creatiedatum' | translate" [value]="infoObject.creatiedatum | datum"></zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'registratiedatum' | translate"
                                                      [value]="infoObject.registratiedatumTijd | datum:'short'"></zac-static-text>
                                 </div>
-                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <div class="w33 w50-sm">
+                                    <div class="mat-divider-wrapper hide-gt-sm">
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum"
@@ -152,44 +152,47 @@
                 </mat-card-content>
             </mat-card>
 
-            <mat-accordion class="mat-accordion" fxFlex="calc(40%-20px)" fxFlex.lt-lg="100">
-                <mat-expansion-panel [disabled]="true">
-                    <mat-expansion-panel-header class="mat-accordion-header">
-                        {{'gerelateerdeZaken'| translate}}
-                    </mat-expansion-panel-header>
-                </mat-expansion-panel>
-                <mat-expansion-panel *ngFor="let zaakInformatieobject of zaakInformatieObjecten" hideToggle [expanded]="zaakInformatieObjecten.length === 1">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            {{zaakInformatieobject.zaakIdentificatie}}
-                        </mat-panel-title>
-                        <mat-panel-description>
-                            {{zaakInformatieobject.zaaktypeOmschrijving}}
-                            <a *ngIf="zaakInformatieobject.zaakRechten.lezen" mat-flat-button
-                               [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
+            <div class="flex-col flex-1 w40">
+                <mat-card appearance="outlined" class="zaak-gegevens" *ngFor="let zaak of zaakInformatieObjecten">
+
+                    <mat-card-header>
+                        <mat-card-title-group>
+                            <mat-card-title>{{'zaak' | translate}} {{zaak.zaakIdentificatie}}</mat-card-title>
+                            <mat-card-subtitle>{{zaak.zaaktypeOmschrijving}}</mat-card-subtitle>
+                            <a [routerLink]="['/zaken', zaak?.zaakIdentificatie]" [title]="zaak.zaakIdentificatie + ' openen'" id="zaakDetail_button"
+                               mat-icon-button>
                                 <mat-icon>visibility</mat-icon>
                             </a>
-                        </mat-panel-description>
-                    </mat-expansion-panel-header>
+                        </mat-card-title-group>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="content flex-row flex-wrap flex-col-xs">
 
-                    <zac-static-text [fxFlex]="100/3" [label]="'status' | translate"
-                                     [value]="zaakInformatieobject.zaakStatus|empty:'naam'"></zac-static-text>
-                    <zac-static-text [fxFlex]="100/3" [label]="'startdatum' | translate" [value]="zaakInformatieobject.zaakStartDatum|datum"></zac-static-text>
-                    <zac-static-text [fxFlex]="100/3" [label]="'einddatumGepland' | translate"
-                                     [value]="zaakInformatieobject.zaakEinddatumGepland|datum|empty"></zac-static-text>
+                            <zac-static-text class="flex-1 w33" [label]="'status' | translate"
+                                             [value]="zaak.zaakStatus | empty:'naam'"></zac-static-text>
+
+                            <zac-static-text class="flex-1 w33" [label]="'startdatum' | translate"
+                                             [value]="zaak.zaakStartDatum | datum"></zac-static-text>
+
+                            <zac-static-text class="flex-1 w33" [label]="'einddatumGepland' | translate"
+                                             [value]="zaak.zaakEinddatumGepland | datum | empty "></zac-static-text>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <div class="flex-row w100" *ngIf="documentPreviewBeschikbaar">
+                <mat-expansion-panel class="w100" expanded="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <mat-icon class="material-icons-outlined">plagiarism</mat-icon>
+                            {{infoObject.titel}} | {{ 'document.preview' | translate}}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <zac-document-viewer [document]="infoObject"></zac-document-viewer>
                 </mat-expansion-panel>
-            </mat-accordion>
-        </div>
-        <div fxLayout *ngIf="documentPreviewBeschikbaar">
-            <mat-expansion-panel fxFlex="calc(100%-20px)" expanded="true">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <mat-icon class="material-icons-outlined">plagiarism</mat-icon>
-                        {{infoObject.titel}} | {{ 'document.preview' | translate}}
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <zac-document-viewer [document]="infoObject"></zac-document-viewer>
-            </mat-expansion-panel>
+            </div>
         </div>
     </mat-drawer-content>
 </mat-drawer-container>

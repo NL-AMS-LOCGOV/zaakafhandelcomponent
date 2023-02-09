@@ -3,8 +3,8 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout>
-    <mat-expansion-panel fxFlex="calc(100%-20px)"
+<div class="flex-row flex-wrap">
+    <mat-expansion-panel class="flex-1 w100"
                          [expanded]="klantExpanded"
                          (expandedChange)="klantExpandedChanged($event)">
         <mat-expansion-panel-header>
@@ -16,7 +16,7 @@
                             (click)="$event.stopPropagation(); delete.emit(persoon)">
                         <mat-icon>delete</mat-icon>
                     </button>
-                    <a *ngIf="persoon" mat-flat-button [routerLink]="['/persoon', persoon.bsn]"
+                    <a *ngIf="persoon" mat-icon-button [routerLink]="['/persoon', persoon.bsn]"
                        (click)="$event.stopPropagation()"
                        [id]="'persoonBekijken_' + persoon.bsn +'_button'"
                        title="{{ 'actie.persoon.bekijken' | translate }}">
@@ -26,44 +26,31 @@
             </mat-panel-description>
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="persoon$"
-                             [options]="{layout: skeletonLayout.FIELDS, fields:4, fieldsPerRow:5}">
-            <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
+                             [options]="{layout: skeletonLayout.FIELDS, fields:6, fieldsPerRow:6}">
+            <div id="persoonsgegevens" class="content flex-row flex-wrap">
+                <div>
+                    <zac-static-text [label]="'naam' | translate"
+                                     [value]="persoon?.naam"></zac-static-text>
+                </div>
+                <div>
                     <zac-static-text [label]="'burgerservicenummer' | translate"
                                      [value]="bsn"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
+                <div>
                     <zac-static-text [label]="'geboortedatum' | translate"
                                      [value]="persoon?.geboortedatum | datum | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
+                <div>
                     <zac-static-text [label]="'inschrijfadres' | translate"
                                      [value]="persoon?.inschrijfadres | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
+                <div>
                     <zac-static-text [label]="'telefoonnummer' | translate"
                                      [value]="persoon?.telefoonnummer | empty"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
+                <div>
                     <zac-static-text [label]="'emailadres' | translate"
                                      [value]="persoon?.emailadres | empty"></zac-static-text>
-                </div>
-                <div [fxFlex]="100/6" fxFlex.lt-md="50">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
                 </div>
             </div>
         </zac-skeleton-loader>

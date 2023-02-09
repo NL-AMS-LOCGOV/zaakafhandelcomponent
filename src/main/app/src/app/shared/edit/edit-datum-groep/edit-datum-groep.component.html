@@ -4,8 +4,8 @@
   -->
 
 <div *ngIf="!editing">
-    <div class="datum-groep-wrapper static-text" [class.readonly]="readonly" (click)="edit()" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-        <div [fxFlex]="100/3 + 1.5" fxLayout.sm="row">
+    <div class="static-text flex-row flex-wrap flex-col-xs" [class.readonly]="readonly" (click)="edit()">
+        <div class="flex-1 w33 w100-sm">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
@@ -14,7 +14,7 @@
                 {{startDatumField.formControl.defaultValue | datum}}
             </div>
         </div>
-        <div [fxFlex]="100/3 + 0.75" fxLayout.sm="row">
+        <div class="flex-1 w33 w100-sm">
             <label class="static-text-label">
                 {{einddatumGeplandField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div [fxFlex]="100/3 - 2.25" fxLayout.sm="row">
+        <div class="flex-1 w33 w100-sm">
             <label class="static-text-label">
                 {{uiterlijkeEinddatumAfdoeningField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
@@ -52,16 +52,16 @@
             </div>
         </div>
     </div>
-    <div class="datum-control-wrapper" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-        <div [fxFlex]="75">
-            <div *ngIf="verlengDuur" fxLayout.sm="row">
+    <div class="flex-row space-between toelichting">
+        <div class="gap-5 flex-col">
+            <div *ngIf="verlengDuur">
                 {{'duurVerlenging' | translate:{duur: verlengDuur} }}
             </div>
-            <div *ngIf="opgeschort" fxLayout.sm="row">
+            <div *ngIf="opgeschort">
                 {{'duurDagenOpschorting' | translate:{dagen: opschortDuur} }}
             </div>
         </div>
-        <div [fxFlex]="25" fxLayout.sm="row">
+        <div class="flex-row">
             <div *ngIf="actieVerlengen" class="time-control">
                 <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
                     <mat-icon class="time-button">history</mat-icon>
@@ -87,24 +87,23 @@
 </div>
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
-    <div fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-        <div class="datum-field" [fxFlex]="100/3" fxFlex.lt-md="50">
+    <div class="flex-row flex-col-xs flex-wrap gap-5">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="startDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
         </div>
-        <div class="datum-field" [fxFlex]="100/3" fxFlex.lt-md="50">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="einddatumGeplandField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showEinddatumGeplandError">
                 {{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
         </div>
-        <div [fxFlex]="100/3" fxFlex.lt-md="100">
+        <div class="flex-1 w50-md">
             <mfb-form-field [field]="uiterlijkeEinddatumAfdoeningField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showUiterlijkeEinddatumAfdoeningError">
                 {{ 'msg.error.date.invalid.fatale' + (einddatumGeplandField.formControl.defaultValue ? '1' : '2') | translate}}</mat-error>
         </div>
+        <mfb-form-field class="w100" [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
     </div>
-    <div>
-        <mfb-form-field [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
-    </div>
+
     <div class="form-buttons">
         <button (click)="save()" [disabled]="hasError() || formFields.invalid" color="primary" id="datumOpslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">

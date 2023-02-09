@@ -7,9 +7,9 @@
     <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    <mat-sidenav-content class="flex-col gap-20">
 
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.synchroniseer.ztc.title' | translate}}
@@ -33,14 +33,14 @@
                 </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.zaaktype.inrichtingscheck' | translate}}
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <table *ngIf="!loadingZaaktypes" fxFlex="100" mat-table [dataSource]="dataSource" matSort matSortDirection="asc"
+                <table *ngIf="!loadingZaaktypes" mat-table [dataSource]="dataSource" matSort matSortDirection="asc"
                        (matSortChange)="sortData($event)" multiTemplateDataRows>
                     <ng-container matColumnDef="expand">
                         <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
@@ -75,7 +75,7 @@
                     </ng-container>
                     <ng-container matColumnDef="expandedTitle">
                         <td mat-cell *matCellDef="let row">
-                            <div class="detail" fxLayout="column" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                            <div class="detail flex-col" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                                 <div *ngIf="!row.zaakafhandelParametersValide">{{'zaakafhandelparameters' | translate}}</div>
                                 <div *ngIf="!row.statustypeIntakeAanwezig">{{'statustype' | translate}}</div>
                                 <div *ngIf="!row.statustypeInBehandelingAanwezig">{{'statustype' | translate}}</div>
@@ -93,7 +93,7 @@
                     </ng-container>
                     <ng-container matColumnDef="expandedDetail">
                         <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplay.length -3">
-                            <div class="detail" fxLayout="column" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                            <div class="detail flex-col" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                                 <div *ngIf="!row.zaakafhandelParametersValide">{{'healthCheck.zaaktype.zaakafhandelParametersOngeldig' | translate}}</div>
                                 <div *ngIf="!row.statustypeIntakeAanwezig">{{'healthCheck.zaaktype.geenStatustypeIntakeAanwezig' | translate}}</div>
                                 <div *ngIf="!row.statustypeInBehandelingAanwezig">
@@ -119,7 +119,7 @@
                     </ng-container>
                     <ng-container matColumnDef="zoekFilter">
                         <th mat-header-cell *matHeaderCellDef colspan="3">
-                            <mat-form-field appearance="standard">
+                            <mat-form-field>
                                 <mat-label>{{'filter' | translate}}</mat-label>
                                 <input matInput (keyup)="applyFilter($event)">
                             </mat-form-field>
@@ -141,7 +141,7 @@
                 <p *ngIf="dataSource.data.length === 0 && loadingZaaktypes">{{'msg.loading' | translate}}</p>
             </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card appearance="outlined">
             <mat-card-header>
                 <mat-card-title>
                     {{'healthCheck.referentielijsten.inrichtingscheck' | translate}}

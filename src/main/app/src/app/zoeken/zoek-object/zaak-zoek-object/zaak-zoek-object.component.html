@@ -2,8 +2,8 @@
   ~ SPDX-FileCopyrightText: 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<div fxLayout="row wrap" class="zoek-object-wrapper">
-    <div [fxFlex]="100/3">
+<div class="flex-row flex-wrap zoek-object-wrapper">
+    <div class="flex-1 w33">
         <zac-zoek-object-link [zoekObject]="zaak" [sideNav]="sideNav"></zac-zoek-object-link>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
@@ -11,7 +11,7 @@
                          [value]="zaak.statustypeOmschrijving"></zac-static-text>
 
     </div>
-    <div [fxFlex]="100/3">
+    <div class="flex-1 w33">
         <zac-static-text [label]="'groep' | translate"
                          [value]="zaak.groepNaam"></zac-static-text>
         <zac-static-text [label]="'behandelaar' | translate"
@@ -19,7 +19,7 @@
         <zac-static-text [label]="'resultaat' | translate"
                          [value]="zaak.resultaattypeOmschrijving"></zac-static-text>
     </div>
-    <div [fxFlex]="100/3">
+    <div class="flex-1 w33">
         <zac-static-text [label]="'startdatum' | translate"
                          [value]="zaak.startdatum | datum"></zac-static-text>
         <zac-static-text [label]="'einddatumGepland' | translate"

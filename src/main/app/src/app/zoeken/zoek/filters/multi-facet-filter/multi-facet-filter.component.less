@@ -4,23 +4,30 @@
  */
 @import "src/variables";
 
-.mat-card {
-  background-color: @body-background-color;
-  margin: 10px;
+.multi-facet-filter {
 
-  .mat-card-title {
-    font-size: 14px;
+  --mdc-checkbox-touch-target-size: 24px;
+  --mdc-checkbox-state-layer-size: 24px;
+
+  .mat-mdc-card {
+    background-color: @body-background-color;
+    margin: 10px;
+
+    .mat-mdc-card-title {
+      font-size: 14px;
+    }
   }
-}
 
-.waarde {
-  color: @box-shadow-color;
-}
+  .waarde {
+    color: @box-shadow-color;
+  }
 
-.on {
-  color: #7fc87f;
-}
+  .on {
+    color: #7fc87f;
+  }
 
-.off {
-  color: #fdb5b5;
+  .off {
+    color: #fdb5b5;
+  }
+
 }

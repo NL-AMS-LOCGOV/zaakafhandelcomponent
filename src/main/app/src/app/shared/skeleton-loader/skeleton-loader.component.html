@@ -1,11 +1,11 @@
 <ng-container [ngSwitch]="options.layout" *ngIf="showLoader$|async">
     <ng-container *ngSwitchCase="layoutOptions.CARD">
-        <mat-card @loadingFadeIn>
+        <mat-card appearance="outlined" @loadingFadeIn>
             <ngx-skeleton-loader [theme]="cardHeaderTheme" appearance="line"></ngx-skeleton-loader>
             <mat-card-content>
-                <div class="content" fxLayout="row wrap">
+                <div class="content flex-row flex-wrap">
 
-                    <div *ngFor="let field of getFields(options.fields)" [fxFlex]="100/options.fieldsPerRow">
+                    <div *ngFor="let field of getFields(options.fields)" class="flex-1">
                         <div class="label-value-loading">
                             <label>
                                 <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>
@@ -16,7 +16,7 @@
                         </div>
                     </div>
 
-                    <div class="label-value-loading" fxFlex="100">
+                    <div class="label-value-loading flex-1">
                         <label>
                             <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>
                         </label>
@@ -36,9 +36,9 @@
         </div>
     </ng-container>
     <ng-container *ngSwitchCase="layoutOptions.FIELDS">
-        <div class="content" fxLayout="row wrap" @loadingFadeIn>
+        <div class="content flex-row flex-wrap" @loadingFadeIn>
 
-            <div *ngFor="let field of getFields(options.fields)" [fxFlex]="100/options.fieldsPerRow">
+            <div *ngFor="let field of getFields(options.fields)" class="flex-1">
                 <div class="label-value-loading">
                     <label>
                         <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>

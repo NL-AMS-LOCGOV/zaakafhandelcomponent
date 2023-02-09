@@ -210,33 +210,33 @@
             <td mat-cell *matCellDef="let row" [colSpan]="dataSource.visibleColumns.length">
                 <div class="row-detail"
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
-                    <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
+                    <div class="flex-row flex-wrap">
                         <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
                             <zac-static-text *ngSwitchCase="zoekenColumn.EINDDATUM_GEPLAND" [value]="row.einddatumGepland | datum" [icon]="einddatumGeplandIcon"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.DAGEN_TOT_STREEFDATUM" [value]="row.einddatumGepland | dagen"
                                              [icon]="einddatumGeplandIcon"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.UITERLIJKE_EINDDATUM_AFDOENING" [value]="row.uiterlijkeEinddatumAfdoening | datum"
                                              [icon]="uiterlijkeEinddatumAfdoeningIcon"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.DAGEN_TOT_FATALEDATUM" [value]="row.uiterlijkeEinddatumAfdoening | dagen"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.STARTDATUM" [value]="row.startdatum | datum"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.ZAAK_DOT_IDENTIFICATIE" [value]="row.identificatie"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.GROEP" [value]="row.groepNaam"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.ZAAKTYPE" [value]="row.zaaktypeOmschrijving"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.STATUS" [value]="row.statustypeOmschrijving"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.OPENSTAANDE_TAKEN" [value]="row.aantalOpenstaandeTaken"
-                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchDefault [label]="column | translate" [value]="row[column] | translate"
-                                             fxFlex="33"></zac-static-text>
-                            <div fxFlex="33" *ngSwitchCase="zoekenColumn.INDICATIES" class="static-text">
+                                             class="flex-1 w33"></zac-static-text>
+                            <div class="flex-1 w33" *ngSwitchCase="zoekenColumn.INDICATIES" class="static-text">
                                 <label class="static-text-label">{{'indicaties' | translate}}</label>
                                 <div class="static-text-content">
                                     <zac-zaak-indicaties [layout]="indicatiesLayout.WERKLIJST" [zaakZoekObject]="row"></zac-zaak-indicaties>

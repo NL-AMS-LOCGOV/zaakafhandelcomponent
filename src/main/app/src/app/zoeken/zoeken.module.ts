@@ -16,7 +16,7 @@ import {ZaakBetrokkeneFilterComponent} from './zoek/filters/zaak-betrokkene-filt
 import {KlantZoekDialog} from './zoek/filters/zaak-betrokkene-filter/klant-zoek-dialog.component';
 import {KlantenModule} from '../klanten/klanten.module';
 import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
-import {RouterLink, RouterLinkWithHref} from '@angular/router';
+import {RouterLink} from '@angular/router';
 import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-object-link.component';
 
 @NgModule({
@@ -37,7 +37,7 @@ import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-objec
     imports: [
         SharedModule,
         KlantenModule,
-        RouterLinkWithHref,
+        RouterLink,
         RouterLink
     ]
 })

@@ -7,7 +7,6 @@ import {APP_INITIALIZER, Injector, NgModule} from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {Title} from '@angular/platform-browser';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {SideNavComponent} from './side-nav/side-nav.component';
 import {RouterModule} from '@angular/router';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -88,7 +87,6 @@ import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-objec
     imports: [
         FormsModule,
         BrowserAnimationsModule,
-        FlexLayoutModule,
         RouterModule,
         PipesModule,
         MaterialModule,
@@ -102,7 +100,6 @@ import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-objec
         FormsModule,
         TranslateModule,
         DragDropModule,
-        FlexLayoutModule,
         SideNavComponent,
         BackButtonDirective,
         StaticTextComponent,

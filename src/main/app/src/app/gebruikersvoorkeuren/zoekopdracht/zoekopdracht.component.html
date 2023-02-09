@@ -3,8 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div fxLayout="row">
-    <read-more class="filter-naam" fxFlexAlign="center" fxFlex [text]="actieveZoekopdracht?.naam" [maxLength]="75"></read-more>
+<div class="flex-row">
     <div *ngIf="!zoekopdrachten.length" class="filter-control">
         <button [disabled]="!actieveFilters"
                 mat-icon-button (click)="clearActief(true)" id="clearZoekopdrachtButton1">
@@ -27,6 +26,7 @@
             </mat-icon>
         </button>
         <button *ngIf="actieveZoekopdracht || actieveFilters"
+                [matTooltip]="actieveZoekopdracht?.naam"
                 mat-icon-button (click)="clearActief(true)" id="clearZoekopdrachtButton2">
             <mat-icon class="filter-icon">
                 filter_alt
@@ -43,17 +43,13 @@
             {{ actieveZoekopdracht ? 'star' : 'star_outline' }}
         </mat-icon>
     </button>
-    <mat-menu class="filter-menu" #filterMenu="matMenu" fxLayout="row">
-        <button *ngFor="let value of zoekopdrachten"
-                mat-menu-item (click)="setActief(value)" id="selecteerZoekopdracht">
-                              <span fxFlexAlign="center" fxFlex>
-                                <read-more [text]="value.naam" [maxLength]="75"></read-more>
-                              </span>
-            <mat-icon fxFlexAlign="center" fxFlex="nogrow"
-                      (click)="deleteZoekopdracht($event, value)" id="deleteZoekopdracht"
-                      title="{{ 'actie.zoekopdracht.verwijderen' | translate }}">
-                delete
+    <mat-menu class="filter-menu" #filterMenu="matMenu" xPosition="before">
+        <button *ngFor="let value of zoekopdrachten" mat-menu-item (click)="setActief(value)" id="selecteerZoekopdracht">
+            <read-more [text]="value.naam" [maxLength]="75"></read-more>
+            <mat-icon matSuffix (click)="deleteZoekopdracht($event, value)" id="deleteZoekopdracht"
+                      title="{{ 'actie.zoekopdracht.verwijderen' | translate }}">delete
             </mat-icon>
         </button>
+
     </mat-menu>
 </div>

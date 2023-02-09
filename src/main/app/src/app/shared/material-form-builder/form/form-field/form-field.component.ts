@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormItem} from '../../model/form-item';
 import {FormFieldDirective} from './form-field.directive';
 import {ReadonlyFormFieldBuilder} from '../../form-components/readonly/readonly-form-field-builder';
@@ -17,12 +17,9 @@ import {Subscription} from 'rxjs';
     templateUrl: './form-field.component.html',
     styleUrls: ['./form-field.component.less']
 })
-export class FormFieldComponent implements AfterViewInit {
+export class FormFieldComponent implements OnInit, AfterViewInit {
 
-    @Input() set field(item: AbstractFormField) {
-        this._field = this.mfbService.getFormItem(item);
-        this.refreshComponent();
-    }
+    @Input() field: AbstractFormField;
 
     @Output() valueChanges = new EventEmitter<any>();
 
@@ -33,6 +30,11 @@ export class FormFieldComponent implements AfterViewInit {
     @ViewChild(FormFieldDirective) formField: FormFieldDirective;
 
     constructor(public mfbService: MaterialFormBuilderService) {
+    }
+
+    ngOnInit(): void {
+        this._field = this.mfbService.getFormItem(this.field);
+        this.refreshComponent();
     }
 
     ngAfterViewInit() {

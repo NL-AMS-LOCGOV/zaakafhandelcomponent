@@ -7,25 +7,27 @@
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{besluit.identificatie}}
+
+            </mat-panel-title>
+            <mat-panel-description>
+                &nbsp;
                 <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation(); besluitWijzigen.emit(besluit)">
                     <mat-icon>edit</mat-icon>
                 </button>
-            </mat-panel-title>
-            <mat-panel-description>
             </mat-panel-description>
         </mat-expansion-panel-header>
 
         <mat-tab-group>
             <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
-                <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                    <zac-static-text fxFlex="50" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
-                    <zac-static-text fxFlex="50" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
-                    <zac-static-text fxFlex="50" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
-                    <zac-static-text fxFlex="50" [label]="'vervaldatum' | translate" [value]="besluit.vervaldatum | datum"></zac-static-text>
-                    <zac-static-text fxFlex="100" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
-                    <div class="table-field-wrapper" *ngIf="besluitInformatieobjecten[besluit.uuid]">
-                        <mfb-form-field [field]="besluitInformatieobjecten[besluit.uuid]"></mfb-form-field>
-                    </div>
+                <div class="content flex-row flex-wrap">
+                    <zac-static-text class="flex-1" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'vervaldatum' | translate" [value]="besluit.vervaldatum | datum"></zac-static-text>
+                    <zac-static-text class="w100 flex-1" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
+                    <mfb-form-field class="flex" *ngIf="besluitInformatieobjecten[besluit.uuid]"
+                                    [field]="besluitInformatieobjecten[besluit.uuid]"></mfb-form-field>
+
                 </div>
             </mat-tab>
 
