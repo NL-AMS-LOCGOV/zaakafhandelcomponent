@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="flex-row space-between toelichting">
-        <div class="flex-col w100 gap-5">
+        <div class="gap-5 flex-col">
             <div *ngIf="verlengDuur">
                 {{'duurVerlenging' | translate:{duur: verlengDuur} }}
             </div>
@@ -61,7 +61,7 @@
                 {{'duurDagenOpschorting' | translate:{dagen: opschortDuur} }}
             </div>
         </div>
-        <div class="flex-1 flex-row">
+        <div class="flex-row">
             <div *ngIf="actieVerlengen" class="time-control">
                 <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
                     <mat-icon class="time-button">history</mat-icon>
