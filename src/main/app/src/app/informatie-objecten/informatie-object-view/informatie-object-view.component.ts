@@ -59,8 +59,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
 
-    zaakColumns: string[] = ['zaakID', 'zaakType', 'zaakStatus', 'zaakStartdatum', 'zaakStreefdatum', 'actions'];
-
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
