@@ -16,8 +16,8 @@
     </mat-drawer>
     <mat-drawer-content>
         <div class="flex-col gap-20">
-            <div class="flex-row flex-wrap flex-col-md gap-20">
-                <mat-card appearance="outlined" class="flex-grow" *ngIf="formulier">
+            <div class="flex-row flex-col-xl gap-20">
+                <mat-card appearance="outlined" *ngIf="formulier">
                     <mat-card-content>
                         <div class="form">
                             <mfb-form (formPartial)="onFormPartial($event)"
@@ -28,7 +28,7 @@
                         </div>
                     </mat-card-content>
                 </mat-card>
-                <div class="flex-1 w50 flex-col gap-20">
+                <div class="flex-col gap-20 w40">
                     <mat-card appearance="outlined">
                         <mat-card-header>
                             <mat-card-title>{{'taak' | translate}}</mat-card-title>
@@ -114,6 +114,7 @@
                     <zac-zaak-verkort [zaak$]="zaak$"></zac-zaak-verkort>
                 </div>
             </div>
+
             <zac-zaak-documenten [taakZaak$]="zaak$"></zac-zaak-documenten>
         </div>
     </mat-drawer-content>
