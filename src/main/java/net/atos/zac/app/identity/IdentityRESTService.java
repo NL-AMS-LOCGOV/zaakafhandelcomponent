@@ -21,6 +21,7 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.app.identity.model.RESTUserWithGroups;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -67,7 +68,7 @@ public class IdentityRESTService {
 
     @GET
     @Path("loggedInUser")
-    public RESTUser readLoggedInUser() {
-        return userConverter.convertUser(loggedInUserInstance.get());
+    public RESTUserWithGroups readLoggedInUser() {
+        return userConverter.convertUserWithGroups(loggedInUserInstance.get());
     }
 }

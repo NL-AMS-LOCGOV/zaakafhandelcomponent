@@ -25,7 +25,7 @@ import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {User} from '../../identity/model/user';
+import {UserWithGroups} from '../../identity/model/user-with-groups';
 import {IdentityService} from '../../identity/identity.service';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -120,7 +120,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakRollenListener: WebsocketListener;
     private zaakBesluitenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
-    private ingelogdeMedewerker: User;
+    private ingelogdeMedewerker: UserWithGroups;
     private dialogSubscriptions: Subscription[] = [];
     private datumPipe = new DatumPipe('nl');
 
@@ -755,7 +755,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignTaakToMe(taak: Taak): boolean {
-        return taak.status !== TaakStatus.Afgerond && taak.rechten.toekennen && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
+        return taak.status !== TaakStatus.Afgerond &&
+            taak.rechten.toekennen &&
+            this.ingelogdeMedewerker.id !== taak.behandelaar?.id &&
+            this.ingelogdeMedewerker.groupIds.indexOf(taak.groep.id) >= 0;
     }
 
     private assignZaakToMe(event: any): void {

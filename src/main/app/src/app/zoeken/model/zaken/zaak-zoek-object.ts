@@ -24,6 +24,7 @@ export class ZaakZoekObject implements ZoekObject {
     communicatiekanaal: string;
     vertrouwelijkheidaanduiding: string;
     afgehandeld: boolean;
+    groepId: string;
     groepNaam: string;
     behandelaarNaam: string;
     behandelaarGebruikersnaam: string;

@@ -11,6 +11,7 @@ import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {User} from './model/user';
 import {SessionStorageUtil} from '../shared/storage/session-storage.util';
+import {UserWithGroups} from './model/user-with-groups';
 
 @Injectable({
     providedIn: 'root'
@@ -40,12 +41,12 @@ export class IdentityService {
         );
     }
 
-    readLoggedInUser(): Observable<User> {
-        const loggedInUser = SessionStorageUtil.getItem('loggedInUser') as User;
+    readLoggedInUser(): Observable<UserWithGroups> {
+        const loggedInUser = SessionStorageUtil.getItem('loggedInUser') as UserWithGroups;
         if (loggedInUser) {
             return of(loggedInUser);
         }
-        return this.http.get<User>(`${this.basepath}/loggedInUser`).pipe(
+        return this.http.get<UserWithGroups>(`${this.basepath}/loggedInUser`).pipe(
             tap(user => {
                 SessionStorageUtil.setItem('loggedInUser', user);
             }),
