@@ -12,7 +12,8 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 
 @Component({
     selector: 'zac-bedrijfsgegevens',
-    templateUrl: './bedrijfsgegevens.component.html'
+    templateUrl: './bedrijfsgegevens.component.html',
+    styleUrls: ['./bedrijfsgegevens.component.less']
 })
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Input() isVerwijderbaar: boolean;

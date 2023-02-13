@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <div>
-    <div class="flex-row justify-end items-start justify-start">
+    <div class="flex-row justify-end items-start">
         <mat-slide-toggle class="mode-slider" color="primary"
                           id="dashboardEdit_toggle"
                           [(ngModel)]="editmode"
@@ -19,7 +19,7 @@
                 [matMenuTriggerFor]="cardsMenu">
             <mat-icon>dashboard_customize</mat-icon>
         </button>
-        <mat-menu #cardsMenu="matMenu">
+        <mat-menu #cardsMenu="matMenu" class="cards-menu">
             <h4 class="menu-title hide-xs" translate="actie.card.toevoegen"></h4>
             <mat-divider class="hide-gt-xs"></mat-divider>
             <ng-container *ngFor="let card of available">
@@ -31,30 +31,32 @@
         </mat-menu>
     </div>
 </div>
-<div class="grid" cdkDropListGroup>
+<div class="grid-padding" cdkDropListGroup>
     <ng-container *ngFor="let column of grid">
-        <div *ngIf="editmode||0<column.length"
-             class="grid-column flex-col gap-16" [ngClass]="{'draggable':editmode}" style="{{'width:'+ 100/(editmode?grid.length:width)+'%'}}"
+        <div *ngIf="editmode||0<column.length" class="grid-column-{{editmode? '3' : width}}"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
              (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
-            <mat-card *ngFor="let card of column " cdkDrag>
+            <mat-card appearance="raised" class="dashboard-card" *ngFor="let card of column " cdkDrag>
                 <div class="placeholder" *cdkDragPlaceholder></div>
                 <ng-container *ngIf="card!=null">
-                    <mat-card-title-group>
-                        <mat-card-title>
-                            {{'dashboard.card.' + card.id | translate}}
-                            <mat-icon *ngIf="card.signaleringType!=null" class="cardtype"
-                                      title="{{'signalering.type.'+card.signaleringType | translate}}">
-                                notifications_active
-                            </mat-icon>
-                        </mat-card-title>
-                        <button *ngIf="editmode" class="delete"
-                                [id]="'cardVerwijderen_' + card.id +'_button'" mat-icon-button
-                                title="{{ 'actie.card.verwijderen' | translate }}"
-                                (click)="delete(card)">
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    </mat-card-title-group>
+                    <mat-card-header>
+                        <mat-card-title-group>
+                            <mat-card-title>
+                                {{'dashboard.card.' + card.id | translate}}
+                                <mat-icon *ngIf="card.signaleringType!=null" class="cardtype"
+                                          title="{{'signalering.type.'+card.signaleringType | translate}}">
+                                    notifications_active
+                                </mat-icon>
+                            </mat-card-title>
+
+                            <button *ngIf="editmode" class="delete"
+                                    [id]="'cardVerwijderen_' + card.id +'_button'" mat-icon-button
+                                    title="{{ 'actie.card.verwijderen' | translate }}"
+                                    (click)="delete(card)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-card-title-group>
+                    </mat-card-header>
                     <mat-card-content class="dashboard-card-content" [ngSwitch]="card.type">
                         <zac-informatieobjecten-card
                                 [data]="card" *ngSwitchCase="dashboardCardType.INFORMATIEOBJECTEN">
