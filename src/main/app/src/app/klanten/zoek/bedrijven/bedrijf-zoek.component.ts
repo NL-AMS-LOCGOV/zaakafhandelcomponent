@@ -15,6 +15,7 @@ import {KlantenService} from '../../klanten.service';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 import {MatSidenav} from '@angular/material/sidenav';
 import {Router} from '@angular/router';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -40,7 +41,7 @@ export class BedrijfZoekComponent implements OnInit {
     huisnummerFormField: AbstractFormControlField;
     plaatsFormField: AbstractFormControlField;
 
-    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder, private router: Router) {
+    constructor(private klantenService: KlantenService, private utilService: UtilService, private formBuilder: FormBuilder, private router: Router) {
     }
 
     ngOnInit(): void {
@@ -122,11 +123,13 @@ export class BedrijfZoekComponent implements OnInit {
 
     zoekBedrijven() {
         this.loading = true;
+        this.utilService.setLoading(true);
         this.bedrijven.data = [];
         this.klantenService.listBedrijven(this.createListParameters()).subscribe(bedrijven => {
             this.bedrijven.data = bedrijven.resultaten;
             this.foutmelding = bedrijven.foutmelding;
             this.loading = false;
+            this.utilService.setLoading(false);
         });
     }
 

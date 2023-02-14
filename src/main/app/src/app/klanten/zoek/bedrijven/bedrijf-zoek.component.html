@@ -35,11 +35,7 @@
             <mfb-form-field [field]="huisnummerFormField"></mfb-form-field>
         </div>
     </div>
-    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekBedrijven()">Zoek
-        <mat-icon class="spinner" *ngIf="loading">
-            <mat-progress-spinner color="warn" diameter="20" mode="indeterminate"></mat-progress-spinner>
-        </mat-icon>
-    </button>
+    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekBedrijven()">Zoek</button>
 </div>
 
 <div class="table-wrapper">
@@ -68,10 +64,10 @@
         <ng-container matColumnDef="acties" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-                <button *ngIf="bedrijf.observed" mat-flat-button color="primary" (click)="bedrijf.emit(row)" title="{{ 'actie.selecteren' | translate}}">
+                <button *ngIf="bedrijf.observed" mat-icon-button color="primary" (click)="bedrijf.emit(row)" title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>business</mat-icon>
                 </button>
-                <button *ngIf="!bedrijf.observed" mat-flat-button
+                <button *ngIf="!bedrijf.observed" mat-icon-button
                         (click)="openBedrijfPagina(row)"
                         [id]="'bedrijfBekijken_' + row.identificatie +'_button'"
                         title="{{ 'actie.bedrijf.bekijken' | translate }}">

@@ -15,6 +15,7 @@ import {CustomValidators} from '../../../shared/validators/customValidators';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 import {MatSidenav} from '@angular/material/sidenav';
 import {Router} from '@angular/router';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -39,7 +40,7 @@ export class PersoonZoekComponent implements OnInit {
     persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];
     loading = false;
 
-    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder, private router: Router) {
+    constructor(private klantenService: KlantenService, private utilService: UtilService, private formBuilder: FormBuilder, private router: Router) {
     }
 
     ngOnInit(): void {
@@ -132,11 +133,13 @@ export class PersoonZoekComponent implements OnInit {
 
     zoekPersonen(): void {
         this.loading = true;
+        this.utilService.setLoading(true);
         this.personen.data = [];
         this.klantenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {
             this.personen.data = personen.resultaten;
             this.foutmelding = personen.foutmelding;
             this.loading = false;
+            this.utilService.setLoading(false);
         });
     }
 
