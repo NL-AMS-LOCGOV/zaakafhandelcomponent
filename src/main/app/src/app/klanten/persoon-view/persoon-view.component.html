@@ -5,15 +5,15 @@
 
 <mat-drawer-container class="inner-sidenav-container tablet-bottom-toolbar">
     <mat-drawer-content class="flex-col gap-10">
-        <div class="flex-row flex-wrap flex flex-col-xs gap-10">
-            <mat-card appearance="outlined" class="flex-1 w15 w100-md">
+        <div class="flex-row flex-wrap gap-10">
+            <mat-card class="flex-1">
                 <mat-card-header>
                     <mat-card-title>{{'persoonsgegevens' | translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <zac-skeleton-loader [loading$]="persoon$"
                                          [options]="{layout: skeletonLayout.FIELDS, fields:6, fieldsPerRow:1}">
-                        <div id="persoonsgegevens" class="content flex-col flex-wrap">
+                        <div id="persoonsgegevens" class="content flex-row flex-wrap">
                             <zac-static-text class="flex-1" [label]="'naam' | translate"
                                              [value]="persoon?.naam"></zac-static-text>
                             <zac-static-text class="flex-1" [label]="'burgerservicenummer' | translate"
@@ -32,10 +32,12 @@
             </mat-card>
 
 
-            <zac-klant-zaken-tabel class="flex-grow" [klantIdentificatie]="bsn"></zac-klant-zaken-tabel>
-
+            <div class="flex-1 w75">
+                <zac-klant-zaken-tabel [klantIdentificatie]="bsn"></zac-klant-zaken-tabel>
+                <zac-klant-contactmomenten-tabel [bsn]="bsn"></zac-klant-contactmomenten-tabel>
+            </div>
         </div>
-        <zac-klant-contactmomenten-tabel [bsn]="bsn"></zac-klant-contactmomenten-tabel>
+
     </mat-drawer-content>
 
 </mat-drawer-container>

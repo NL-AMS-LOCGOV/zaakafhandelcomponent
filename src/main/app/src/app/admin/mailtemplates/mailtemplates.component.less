@@ -8,6 +8,15 @@
 .detail {
   overflow: hidden;
   line-height: 36px;
+
+  > div {
+    border-bottom: 1px solid @border-color;
+  }
+}
+
+.detail-suffix > div {
+  padding: 4px 0;
+  border-bottom: 1px solid @border-color;
 }
 
 .main-row td {
@@ -20,7 +29,6 @@ tr.detail-row {
 
   .detail div {
     width: 100%;
-    border-bottom: 1px solid @border-color;
     padding-top: 10px;
     padding-bottom: 10px;
   }

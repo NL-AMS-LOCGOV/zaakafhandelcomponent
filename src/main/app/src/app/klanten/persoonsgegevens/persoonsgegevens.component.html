@@ -26,32 +26,21 @@
             </mat-panel-description>
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="persoon$"
-                             [options]="{layout: skeletonLayout.FIELDS, fields:6, fieldsPerRow:6}">
-            <div id="persoonsgegevens" class="content flex-row flex-wrap">
-                <div>
-                    <zac-static-text [label]="'naam' | translate"
-                                     [value]="persoon?.naam"></zac-static-text>
-                </div>
-                <div>
-                    <zac-static-text [label]="'burgerservicenummer' | translate"
-                                     [value]="bsn"></zac-static-text>
-                </div>
-                <div>
-                    <zac-static-text [label]="'geboortedatum' | translate"
-                                     [value]="persoon?.geboortedatum | datum | empty"></zac-static-text>
-                </div>
-                <div>
-                    <zac-static-text [label]="'inschrijfadres' | translate"
-                                     [value]="persoon?.inschrijfadres | empty"></zac-static-text>
-                </div>
-                <div>
-                    <zac-static-text [label]="'telefoonnummer' | translate"
-                                     [value]="persoon?.telefoonnummer | empty"></zac-static-text>
-                </div>
-                <div>
-                    <zac-static-text [label]="'emailadres' | translate"
-                                     [value]="persoon?.emailadres | empty"></zac-static-text>
-                </div>
+                             [options]="{layout: skeletonLayout.FIELDS, fields:7, fieldsPerRow:1}">
+
+            <div id="persoonsgegevens" class="content flex-row flex-wrap justify-start">
+                <zac-static-text class="flex-1" [label]="'naam' | translate"
+                                 [value]="persoon?.naam"></zac-static-text>
+                <zac-static-text class="flex-1" [label]="'burgerservicenummer' | translate"
+                                 [value]="bsn"></zac-static-text>
+                <zac-static-text class="flex-1" [label]="'geboortedatum' | translate"
+                                 [value]="persoon?.geboortedatum | datum"></zac-static-text>
+                <zac-static-text class="flex-1" [label]="'inschrijfadres' | translate"
+                                 [value]="persoon?.inschrijfadres | empty"></zac-static-text>
+                <zac-static-text class="flex-1" [label]="'telefoonnummer' | translate"
+                                 [value]="persoon?.telefoonnummer | empty"></zac-static-text>
+                <zac-static-text class="flex-1" [label]="'emailadres' | translate"
+                                 [value]="persoon?.emailadres | empty"></zac-static-text>
             </div>
         </zac-skeleton-loader>
     </mat-expansion-panel>

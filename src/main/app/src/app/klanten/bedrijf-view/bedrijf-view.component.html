@@ -4,16 +4,16 @@
   -->
 
 <mat-drawer-container class="inner-sidenav-container tablet-bottom-toolbar">
-    <mat-drawer-content class="flex-col gap-10">
-        <div class="flex-row flex-wrap gap-10">
-            <mat-card appearance="outlined" class="flex-1 w15 w100-md">
+    <mat-drawer-content>
+        <div class="flex-row flex-wrap">
+            <mat-card class="flex-1">
                 <mat-card-header>
                     <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <zac-skeleton-loader [loading$]="bedrijf$"
                                          [options]="{layout: skeletonLoaderLayout.FIELDS, fields:7, fieldsPerRow:1}">
-                        <div id="bedrijfsgegevens" class="content flex-col flex-wrap">
+                        <div id="bedrijfsgegevens" class="content flex-row flex-wrap space-between">
                             <zac-static-text [label]="'handelsnaam' | translate"
                                              [value]="bedrijf?.naam"></zac-static-text>
                             <zac-static-text [label]="'kvknummer' | translate"
@@ -34,10 +34,12 @@
                     </zac-skeleton-loader>
                 </mat-card-content>
             </mat-card>
-            <zac-klant-zaken-tabel class="flex-grow" [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
+
+            <div class="flex-1 w75">
+                <zac-klant-zaken-tabel [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
+                <zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer" [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
+            </div>
         </div>
 
-        <zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer"
-                                         [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
     </mat-drawer-content>
 </mat-drawer-container>

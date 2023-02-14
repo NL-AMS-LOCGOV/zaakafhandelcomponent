@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="options.layout" *ngIf="showLoader$|async">
     <ng-container *ngSwitchCase="layoutOptions.CARD">
-        <mat-card appearance="outlined" @loadingFadeIn>
+        <mat-card @loadingFadeIn>
             <ngx-skeleton-loader [theme]="cardHeaderTheme" appearance="line"></ngx-skeleton-loader>
             <mat-card-content>
                 <div class="content flex-row flex-wrap">

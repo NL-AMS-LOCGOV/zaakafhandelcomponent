@@ -8,7 +8,7 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content class="flex-col gap-20">
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-content>
                 <div class="table-wrapper historie">
                     <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort" matSortActive="geldig" matSortDirection="desc">

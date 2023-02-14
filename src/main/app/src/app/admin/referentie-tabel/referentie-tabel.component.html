@@ -8,7 +8,7 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content class="flex-col gap-20">
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-content>
                 <div class="flex-row fex-wrap gap-20">
                     <div class="w33 w100-md">
@@ -23,7 +23,7 @@
                 </div>
             </mat-card-content>
         </mat-card>
-        <mat-card appearance="outlined">
+        <mat-card>
             <mat-card-content>
                 <div class="table-wrapper" [ngClass]="{'table-loading-shade':isLoadingResults}">
                     <table mat-table [dataSource]="dataSource"
