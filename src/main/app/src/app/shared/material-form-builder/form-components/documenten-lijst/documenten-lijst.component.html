@@ -65,17 +65,19 @@
                 <ng-container matColumnDef="url" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let document">
-                        <a mat-icon-button
-                           [href]="document.viewLink"
-                           target="_blank"
-                           title="{{ 'actie.document.bekijken' | translate}}">
-                            <mat-icon>visibility</mat-icon>
-                        </a>
-                        <a mat-icon-button
-                           [href]="document.downloadLink"
-                           title="{{ 'actie.downloaden' | translate}}">
-                            <mat-icon>download</mat-icon>
-                        </a>
+                        <div class="flex-row">
+                            <a mat-icon-button
+                               [href]="document.viewLink"
+                               target="_blank"
+                               title="{{ 'actie.document.bekijken' | translate}}">
+                                <mat-icon>visibility</mat-icon>
+                            </a>
+                            <a mat-icon-button
+                               [href]="document.downloadLink"
+                               title="{{ 'actie.downloaden' | translate}}">
+                                <mat-icon>download</mat-icon>
+                            </a>
+                        </div>
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
