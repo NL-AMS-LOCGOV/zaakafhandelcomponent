@@ -25,7 +25,7 @@
                 </ng-container>
                 <ng-container matColumnDef="betrokkene_filter">
                     <th mat-header-cell *matHeaderCellDef>
-                        <mat-form-field>
+                        <mat-form-field subscriptSizing="dynamic">
                             <mat-select id="betrokkeneRoltype_filter"
                                         [placeholder]="'betrokkeneRoltype.-kies-' | translate"
                                         [formControl]="betrokkeneSelectControl"
