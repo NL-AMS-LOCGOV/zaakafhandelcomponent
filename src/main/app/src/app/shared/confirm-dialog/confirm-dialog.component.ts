@@ -39,5 +39,13 @@ export class ConfirmDialogComponent {
 }
 
 export class ConfirmDialogData {
-    constructor(public melding: string, public observable?: Observable<any>, public uitleg?: string) {}
+    _melding: { key: string, args?: object };
+
+    constructor(private translation: { key: string, args?: object } | string, public observable?: Observable<any>, public uitleg?: string) {
+        if (typeof translation === 'string') {
+            this._melding = {key: translation, args: {}};
+        } else {
+            this._melding = translation;
+        }
+    }
 }

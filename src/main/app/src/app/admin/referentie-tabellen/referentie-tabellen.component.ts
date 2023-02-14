@@ -52,7 +52,7 @@ export class ReferentieTabellenComponent extends AdminComponent implements OnIni
     verwijderReferentieTabel(referentieTabel: ReferentieTabel): void {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                this.translate.instant('msg.tabel.verwijderen.bevestigen', {tabel: referentieTabel.code}),
+                {key: 'msg.tabel.verwijderen.bevestigen', args: {tabel: referentieTabel.code}},
                 this.service.deleteReferentieTabel(referentieTabel.id)
             )
         }).afterClosed().subscribe(result => {

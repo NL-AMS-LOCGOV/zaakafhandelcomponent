@@ -17,7 +17,7 @@
     </mat-drawer>
     <mat-drawer-content>
         <div class="flex-row flex-wrap flex-col-xl gap-20">
-            <mat-card class="flex-1 w60" appearance="outlined">
+            <mat-card class="w60" appearance="outlined">
                 <mat-card-header>
                     <mat-card-title>
                         {{'informatieobject' | translate}}
@@ -152,7 +152,7 @@
                 </mat-card-content>
             </mat-card>
 
-            <div class="flex-col flex-1 w40">
+            <div class="flex-col flex-grow">
                 <mat-card class="zaak-gegevens" *ngFor="let zaak of zaakInformatieObjecten">
 
                     <mat-card-header>

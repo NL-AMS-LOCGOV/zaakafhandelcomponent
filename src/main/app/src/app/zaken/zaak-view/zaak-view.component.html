@@ -98,9 +98,6 @@
                                                                 [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
                                                                 (onSave)="editToewijzing($event)">
                                     </zac-edit-groep-behandelaar>
-                                    <zac-static-text [label]="'locatie' | translate"
-                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
-                                                     (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
                                 <div class="flex-grow">
                                     <zac-static-text [label]="'registratiedatum' | translate"
@@ -122,6 +119,9 @@
                                     <zac-static-text *ngIf="zaak.archiefNominatie"
                                                      [label]="'archiefNominatie.datum.'+zaak.archiefNominatie | translate"
                                                      [value]="zaak.archiefActiedatum | datum | empty"></zac-static-text>
+                                    <zac-static-text [label]="'locatie' | translate"
+                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
+                                                     (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
 
                                 </div>
 

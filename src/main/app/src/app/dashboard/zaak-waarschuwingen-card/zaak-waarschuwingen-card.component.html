@@ -47,9 +47,9 @@
         <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let zaak">
-                <a *ngIf="zaak.rechten.lezen" mat-flat-button [routerLink]="['/zaken', zaak.identificatie]"
-                        [id]="'zaakBekijken_' + zaak.uuid +'_button'"
-                        title="{{ 'actie.zaak.bekijken' | translate }}">
+                <a *ngIf="zaak.rechten.lezen" mat-icon-button [routerLink]="['/zaken', zaak.identificatie]"
+                   [id]="'zaakBekijken_' + zaak.uuid +'_button'"
+                   title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </a>
             </td>

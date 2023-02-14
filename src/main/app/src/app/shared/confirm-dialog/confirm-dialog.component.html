@@ -4,7 +4,7 @@
   -->
 
 <div mat-dialog-content>
-    <p [innerHTML]="data.melding"></p>
+    <p [innerHTML]="data._melding.key | translate: data._melding.args"></p>
     <p *ngIf="data.uitleg" class="uitleg" [innerHTML]="data.uitleg"></p>
 </div>
 <div mat-dialog-actions>

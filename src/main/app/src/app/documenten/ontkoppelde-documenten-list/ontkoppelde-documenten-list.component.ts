@@ -101,8 +101,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     documentVerwijderen(od: OntkoppeldDocument): void {
         this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.document.verwijderen.bevestigen', {document: od.titel}),
+            data: new ConfirmDialogData({key: 'msg.document.verwijderen.bevestigen', args: {document: od.titel}},
                 this.ontkoppeldeDocumentenService.delete(od)
             )
         }).afterClosed().subscribe(result => {
