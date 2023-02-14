@@ -79,20 +79,6 @@
                     </div>
                     <div class="flex-row flex-wrap gap-20">
                         <mat-form-field class="w33 w100-md" floatLabel="always">
-                            <mat-label>{{'statusmail.type.intake' | translate}}</mat-label>
-                            <mat-select formControlName="intakeMail" [compareWith]="compareObject">
-                                <mat-option *ngFor="let b of mailOpties" [value]="b.value">{{ b.label | translate }}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field class="w33 w100-md" floatLabel="always">
-                            <mat-label>{{'statusmail.type.afronden' | translate}}</mat-label>
-                            <mat-select formControlName="afrondenMail" [compareWith]="compareObject">
-                                <mat-option *ngFor="let b of mailOpties" [value]="b.value">{{ b.label | translate }}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="flex-row flex-wrap gap-20">
-                        <mat-form-field class="w33 w100-md" floatLabel="always">
                             <mat-label>{{'productaanvraagtype' | translate}}</mat-label>
                             <input matInput formControlName="productaanvraagtype">
                         </mat-form-field>
@@ -223,20 +209,18 @@
             <mat-step [stepControl]="mailFormGroup" [hasError]="mailFormGroup.invalid">
                 <ng-template matStepLabel>{{"gegevens.mail" | translate}}</ng-template>
                 <ng-template matStepContent>
-                    <form [formGroup]="mailFormGroup" fxLayout="column">
+                    <form [formGroup]="mailFormGroup" class="flex-col">
                         <mat-card>
-                            <mat-card-content fxLayout="column">
-                                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
-                                                    floatLabel="always">
+                            <mat-card-content class="flex-col">
+                                <div class="flex-row flex-wrap gap-20">
+                                    <mat-form-field class="flex-1 w33 w100-md" floatLabel="always">
                                         <mat-label>{{'statusmail.type.intake' | translate}}</mat-label>
                                         <mat-select formControlName="intakeMail" [compareWith]="compareObject">
                                             <mat-option *ngFor="let b of mailOpties"
                                                         [value]="b.value">{{ b.label | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
-                                                    floatLabel="always">
+                                    <mat-form-field class="flex-1 w33 w100-md" floatLabel="always">
                                         <mat-label>{{'statusmail.type.afronden' | translate}}</mat-label>
                                         <mat-select formControlName="afrondenMail" [compareWith]="compareObject">
                                             <mat-option *ngFor="let b of mailOpties"
@@ -295,9 +279,9 @@
                                                     <mat-icon>add_circle</mat-icon>
                                                 </button>
                                                 <mat-menu #afzendersMenu="matMenu">
-                                                    <h4 class="menu-title" fxHide.xs
+                                                    <h4 class="menu-title hide-xs"
                                                         translate="actie.afzender.toevoegen"></h4>
-                                                    <mat-divider fxHide.gt-xs></mat-divider>
+                                                    <mat-divider class="hide-gt-xs"></mat-divider>
                                                     <ng-container *ngFor="let afzender of zaakAfzenders">
                                                         <button mat-menu-item (click)="addZaakAfzender(afzender)">
                                                             {{ afzender }}
@@ -306,7 +290,7 @@
                                                 </mat-menu>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                                <button mat-flat-button
+                                                <button mat-icon-button
                                                         *ngIf="!row.speciaal"
                                                         id="afzender-verwijderen"
                                                         title="{{ 'actie.verwijderen' | translate}}"
@@ -331,25 +315,28 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <mat-accordion>
-                                    <mat-expansion-panel [formGroupName]="mailtemplate" fxLayout="column"
+                                    <mat-expansion-panel [formGroupName]="mailtemplate" class="flex-col"
                                                          *ngFor="let mailtemplate of mailtemplateKoppelingen">
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
                                                 {{'mail.' + mailtemplate | translate}}
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <div fxLayout="row wrap">
-                                            <mat-form-field fxFlex="33" fxFlex.lt-md="100" floatLabel="always">
-                                        <mat-label>{{'title.mailtemplate' | translate}}</mat-label>
-                                        <mat-select placeholder="{{'mailtemplate.-kies-' | translate}}"
-                                                    [formControl]="getMailtemplateKoppelingControl(mailtemplate, 'mailtemplate')" [compareWith]="compareObject">
-                                            <mat-option *ngFor="let template of getBeschikbareMailtemplates(mailtemplate)"
-                                                        [value]="template.id">{{ template.mailTemplateNaam }}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                            </mat-expansion-panel>
-                        </mat-accordion></mat-card-content>
+                                        <div class="flex-row flex-wrap">
+                                            <mat-form-field class="flex-1 w33 w100-md" floatLabel="always">
+                                                <mat-label>{{'title.mailtemplate' | translate}}</mat-label>
+                                                <mat-select placeholder="{{'mailtemplate.-kies-' | translate}}"
+                                                            [formControl]="getMailtemplateKoppelingControl(mailtemplate, 'mailtemplate')"
+                                                            [compareWith]="compareObject">
+                                                    <mat-option
+                                                            *ngFor="let template of getBeschikbareMailtemplates(mailtemplate)"
+                                                            [value]="template.id">{{ template.mailTemplateNaam }}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </mat-expansion-panel>
+                                </mat-accordion>
+                            </mat-card-content>
                         </mat-card>
                         <div class="button-group flex-row flex-wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
