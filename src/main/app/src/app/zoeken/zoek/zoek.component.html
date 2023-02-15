@@ -34,7 +34,7 @@
             </button>
             <span *ngIf="zoekType === ZoekType.ZAC" class="separator" matSuffix></span>
             <button mat-icon-button type="button" matSuffix id="zac-button"
-                    title="{{'zaken' | translate}}"
+                    title="{{'actie.zoeken.zac' | translate}}"
                     [color]="zoekType === ZoekType.ZAC ? 'primary' : null"
                     (click)="setZoektype(ZoekType.ZAC)">
                 <mat-icon fontIcon="cases"></mat-icon>
