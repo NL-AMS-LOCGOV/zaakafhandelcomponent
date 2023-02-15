@@ -260,8 +260,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     private openDocumentOndertekenenDialog(): void {
-        const dialogData = new ConfirmDialogData(this.translate.instant('msg.document.ondertekenen.bevestigen',
-                {document: this.infoObject.titel}),
+        const dialogData = new ConfirmDialogData({key: 'msg.document.ondertekenen.bevestigen', args: {document: this.infoObject.titel}},
             this.informatieObjectenService.ondertekenInformatieObject(this.infoObject.uuid, this.zaak.uuid));
 
         this.dialog.open(ConfirmDialogComponent, {data: dialogData}).afterClosed().subscribe(() => {});

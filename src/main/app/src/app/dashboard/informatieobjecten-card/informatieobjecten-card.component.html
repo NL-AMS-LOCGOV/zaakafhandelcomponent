@@ -29,9 +29,9 @@
         <ng-container matColumnDef="url" stickyEnd id="informatieobjectButtons">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let informatieobject">
-                <a mat-flat-button [routerLink]="['/informatieobjecten', informatieobject.identificatie]"
-                        [id]="'informatieobjectBekijken_' + informatieobject.uuid +'_button'"
-                        title="{{ 'actie.document.bekijken' | translate }}">
+                <a mat-icon-button [routerLink]="['/informatieobjecten', informatieobject.identificatie]"
+                   [id]="'informatieobjectBekijken_' + informatieobject.uuid +'_button'"
+                   title="{{ 'actie.document.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </a>
             </td>

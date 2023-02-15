@@ -547,6 +547,7 @@
   "actie.zoeken": "Search",
   "actie.zoeken.persoon": "Search person",
   "actie.zoeken.bedrijf": "Search company",
+  "actie.zoeken.zac": "Search cases, tasks and documents",
   "actie.zoekopdracht.wissen": "Clear the filter",
   "actie.zoekopdracht.verwijderen": "Delete this saved search query",
   "actie.zoekopdracht.selecteer": "Use a saved search query as filter",

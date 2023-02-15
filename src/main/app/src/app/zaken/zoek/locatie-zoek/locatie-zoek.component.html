@@ -2,39 +2,37 @@
   ~ SPDX-FileCopyrightText: 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<div>
-    <div class="search row flex-wrap flex-col-md gap-20">
-        <div class="flex 1 w33 w80-md">
-            <zac-static-text [label]="'zaak.locatie.' +( selectedAddress ? selectedAddress.type: 'adres') | translate"
-                             [value]="selectedAddress ? selectedAddress.weergavenaam : null"></zac-static-text>
-        </div>
-        <div class="flex-1 w20 justify-center items-center">
-            <button mat-flat-button color="primary"
-                    [disabled]="!selectedAddress"
-                    id="opslaan_button"
-                    (click)="save()"
-                    type="button">
-                {{'actie.opslaan' | translate}}
-            </button>
-            <button mat-flat-button
-                    id="verwijder_button"
-                    (click)="clear()"
-                    type="button">
-                {{'actie.verwijderen' | translate}}
-            </button>
-        </div>
+<div class="flex-row flex-wrap items-center">
+    <zac-static-text class="flex-1 w33" [label]="'zaak.locatie.' +( selectedAddress ? selectedAddress.type: 'adres') | translate"
+                     [value]="selectedAddress ? selectedAddress.weergavenaam : null">
+    </zac-static-text>
+    <div class="flex-1 flex-row">
+        <button mat-raised-button color="primary"
+                [disabled]="!selectedAddress"
+                id="opslaan_button"
+                (click)="save()"
+                type="button">
+            {{'actie.opslaan' | translate}}
+        </button>
+        <button mat-raised-button
+                id="verwijder_button"
+                (click)="clear()"
+                type="button">
+            {{'actie.verwijderen' | translate}}
+        </button>
+    </div>
 
-        <mat-form-field appearance="fill" class="flex-1 w50 w100-md">
-            <mat-label>Locatie</mat-label>
-            <input type="text"
-                   placeholder="Zoek een adres"
-                   matInput
-                   [formControl]="searchControl"
-                   [matAutocomplete]="auto"
-                   maxlength="100">
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectionChanged($event)" [displayWith]="resultDisplay">
-                <mat-option *ngFor="let result of results" [value]="result">
-                    <mat-icon mat-list-icon *ngIf="result.type === 'weg'">add_road</mat-icon>
+    <mat-form-field subscriptSizing="dynamic" class="adres-zoek-veld flex-1">
+        <mat-label>Locatie</mat-label>
+        <input type="text"
+               placeholder="Zoek een adres"
+               matInput
+               [formControl]="searchControl"
+               [matAutocomplete]="auto"
+               maxlength="100">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectionChanged($event)" [displayWith]="resultDisplay">
+            <mat-option *ngFor="let result of results" [value]="result">
+                <mat-icon mat-list-icon *ngIf="result.type === 'weg'">add_road</mat-icon>
                     <mat-icon mat-list-icon *ngIf="result.type === 'adres'">home</mat-icon>
                     <mat-icon mat-list-icon *ngIf="result.type === 'postcode'">holiday_village</mat-icon>
 
@@ -46,4 +44,4 @@
     <div class="map-container">
         <div [id]="'open-layers-map'" #openLayersMap class="open-layers-map"></div>
     </div>
-</div>
+

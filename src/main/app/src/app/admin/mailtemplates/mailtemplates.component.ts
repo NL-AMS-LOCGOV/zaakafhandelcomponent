@@ -82,8 +82,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
 
     verwijderMailtemplate(mailtemplate: Mailtemplate): void {
         this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.mailtemplate.verwijderen.bevestigen'),
+            data: new ConfirmDialogData('msg.mailtemplate.verwijderen.bevestigen',
                 this.mailtemplateBeheerService.deleteMailtemplate(mailtemplate.id)
             )
         }).afterClosed().subscribe(result => {

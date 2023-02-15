@@ -15,6 +15,7 @@ import {ConfirmDialogComponent, ConfirmDialogData} from '../../../shared/confirm
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-bag-adres-zoek',
@@ -32,7 +33,8 @@ export class BagAdresZoekComponent implements OnInit {
     formGroup: FormGroup;
     adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats', 'acties'];
 
-    constructor(private bagService: BAGService, private formBuilder: FormBuilder, private dialog: MatDialog, private translate: TranslateService) { }
+    constructor(private bagService: BAGService, private utilService: UtilService, private formBuilder: FormBuilder, private dialog: MatDialog,
+                private translate: TranslateService) { }
 
     ngOnInit(): void {
         this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
@@ -56,19 +58,20 @@ export class BagAdresZoekComponent implements OnInit {
 
     zoekAdres(): void {
         this.loading = true;
+        this.utilService.setLoading(true);
         this.adressen.data = [];
         this.bagService.listAdressen(
             new ListAdressenParameters(this.postcodeFormField.formControl.value, this.huisnummerFormField.formControl.value))
             .subscribe(adressen => {
                 this.adressen.data = adressen.resultaten;
                 this.loading = false;
+                this.utilService.setLoading(false);
             });
     }
 
     selectAdres(adres: Adres): void {
         this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.bagobject.koppelen.bevestigen'))
+            data: new ConfirmDialogData('msg.bagobject.koppelen.bevestigen')
         }).afterClosed().subscribe(confirmed => {
             if (confirmed) {
                 this.bagObject.emit(adres);

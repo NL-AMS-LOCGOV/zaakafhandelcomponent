@@ -4,7 +4,7 @@
   -->
 
 <zac-skeleton-loader [loading$]="zaak$" [options]="{layout:skeletonLayout.CARD, fields:4, fieldsPerRow:2}">
-    <mat-card class="zaak-gegevens" *ngIf="zaak$ | async as zaak">
+    <mat-card class="zaak-gegevens flex-fill-col" *ngIf="zaak$ | async as zaak">
         <mat-card-header>
             <mat-card-title-group>
                 <mat-card-title>{{'zaak' | translate}} {{zaak.identificatie}}</mat-card-title>

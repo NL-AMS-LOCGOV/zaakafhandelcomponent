@@ -18,6 +18,14 @@ body {
   overscroll-behavior-y: contain;
 }
 
+button.mat-mdc-button-base {
+  margin-right: 6px;
+}
+
+.mat-datepicker-toggle-default-icon {
+  scale: 75%;
+}
+
 .container {
   height: 100%;
 }
@@ -143,6 +151,13 @@ mat-sidenav-container {
 
 .mat-mdc-option {
   font-size: 12px;
+
+  .mdc-list-item__primary-text {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 mat-paginator[sticky] {
