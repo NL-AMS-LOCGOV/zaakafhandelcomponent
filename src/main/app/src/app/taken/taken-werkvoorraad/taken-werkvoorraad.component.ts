@@ -16,7 +16,7 @@ import {MatTable} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
-import {UserWithGroups} from '../../identity/model/user-with-groups';
+import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
@@ -43,7 +43,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
-    ingelogdeMedewerker: UserWithGroups;
+    ingelogdeMedewerker: LoggedInUser;
     expandedRow: TaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
     sorteerVeld = SorteerVeld;

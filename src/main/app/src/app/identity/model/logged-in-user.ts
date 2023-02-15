@@ -5,6 +5,6 @@
 
 import {User} from './user';
 
-export class UserWithGroups extends User {
+export class LoggedInUser extends User {
     groupIds: string[];
 }

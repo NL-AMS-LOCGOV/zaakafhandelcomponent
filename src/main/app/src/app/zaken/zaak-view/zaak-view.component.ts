@@ -25,7 +25,7 @@ import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {UserWithGroups} from '../../identity/model/user-with-groups';
+import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {IdentityService} from '../../identity/identity.service';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -120,7 +120,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakRollenListener: WebsocketListener;
     private zaakBesluitenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
-    private ingelogdeMedewerker: UserWithGroups;
+    private ingelogdeMedewerker: LoggedInUser;
     private dialogSubscriptions: Subscription[] = [];
     private datumPipe = new DatumPipe('nl');
 

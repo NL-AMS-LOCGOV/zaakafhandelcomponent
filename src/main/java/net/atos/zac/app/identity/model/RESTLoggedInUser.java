@@ -7,7 +7,7 @@ package net.atos.zac.app.identity.model;
 
 import java.util.Set;
 
-public class RESTUserWithGroups extends RESTUser {
+public class RESTLoggedInUser extends RESTUser {
 
     public Set<String> groupIds;
 }
