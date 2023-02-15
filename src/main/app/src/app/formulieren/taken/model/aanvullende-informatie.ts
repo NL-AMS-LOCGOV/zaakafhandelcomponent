@@ -31,6 +31,7 @@ import {InputFormField} from '../../../shared/material-form-builder/form-compone
 import {ZakenService} from '../../../zaken/zaken.service';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {ZaakAfzender} from '../../../admin/model/zaakafzender';
+import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -85,6 +86,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .options(this.zakenService.listAfzendersVoorZaak(this.zaak.uuid))
             .optionLabel('mail')
             .optionSuffix('suffix')
+            .optionValue('mail')
             .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
             .validators(Validators.required)
             .build()],
@@ -119,7 +121,8 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .build()
             ]);
         this.getFormField(fields.VERZENDER).formControl.valueChanges.subscribe((afzender: ZaakAfzender) => {
-            this.getFormField(fields.REPLYTO).formControl.setValue(afzender.replyTo);
+            const verzender: SelectFormField = this.getFormField(fields.VERZENDER) as SelectFormField;
+            this.getFormField(fields.REPLYTO).formControl.setValue(verzender.getOption(afzender)?.replyTo);
         });
 
         if (this.opschortenMogelijk()) {
