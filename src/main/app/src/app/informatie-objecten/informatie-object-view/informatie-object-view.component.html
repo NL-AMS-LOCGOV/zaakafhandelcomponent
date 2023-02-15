@@ -18,12 +18,11 @@
     <mat-drawer-content>
         <div class="flex-row flex-wrap flex-col-xl gap-20">
             <mat-card class="w60" appearance="outlined">
-                <mat-card-header>
-                    <mat-card-title>
-                        {{'informatieobject' | translate}}
-                    </mat-card-title>
+                <mat-card-header class="flex-row space-between">
+                    <mat-card-title>{{'informatieobject' | translate}}</mat-card-title>
                     <zac-informatie-object-indicaties [layout]="indicatiesLayout.VIEW" [document]="infoObject"></zac-informatie-object-indicaties>
                 </mat-card-header>
+
                 <mat-card-content>
                     <mat-tab-group mat-stretch-tabs="false">
                         <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
