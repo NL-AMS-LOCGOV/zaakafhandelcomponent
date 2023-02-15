@@ -43,6 +43,7 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.communicatiekanaal = zoekItem.getCommunicatiekanaal();
         restZoekItem.vertrouwelijkheidaanduiding = zoekItem.getVertrouwelijkheidaanduiding();
         restZoekItem.afgehandeld = zoekItem.isAfgehandeld();
+        restZoekItem.groepId = zoekItem.getGroepID();
         restZoekItem.groepNaam = zoekItem.getGroepNaam();
         restZoekItem.behandelaarNaam = zoekItem.getBehandelaarNaam();
         restZoekItem.behandelaarGebruikersnaam = zoekItem.getBehandelaarGebruikersnaam();

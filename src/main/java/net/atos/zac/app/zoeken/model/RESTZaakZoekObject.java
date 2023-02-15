@@ -38,6 +38,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public boolean afgehandeld;
 
+    public String groepId;
+
     public String groepNaam;
 
     public String behandelaarNaam;

@@ -26,7 +26,6 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     filteredGroepen: Observable<Group[]>;
     medewerkers: User[];
     filteredMedewerkers: Observable<User[]>;
-    inGroep: boolean = true;
     subscriptions$: Subscription[] = [];
 
     constructor(public translate: TranslateService, public identityService: IdentityService) {
@@ -38,13 +37,22 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
 
         this.subscriptions$.push(
             this.data.groep.valueChanges.subscribe((value) => {
-                if (this.data.groep.valid && this.data.groep.dirty) {
-                    this.data.medewerker.setValue(null);
-                    this.getMedewerkers();
+                if (!this.data.groep.dirty) {
+                    return;
                 }
+
+                if (this.data.groep.valid) {
+                    this.data.medewerker.enable();
+                    this.getMedewerkers();
+                } else if (!this.data.groep.value) {
+                    this.data.medewerker.disable();
+                }
+                this.data.medewerker.setValue(null);
             })
         );
-        this.getMedewerkers(this.data.medewerker.defaultValue?.id);
+        if (!this.data.groep.value) {
+            this.data.medewerker.disable();
+        }
     }
 
     ngOnDestroy() {
@@ -74,20 +82,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
             });
     }
 
-    inGroepChanged($event: MouseEvent) {
-        $event.stopPropagation();
-        this.inGroep = !this.inGroep;
-        this.getMedewerkers();
-    }
-
     private getMedewerkers(defaultMedewerkerId?: string) {
         this.medewerkers = [];
-        let observable: Observable<User[]>;
-        if (this.inGroep && this.data.groep.value) {
-            observable = this.identityService.listUsersInGroup(this.data.groep.value.id);
-        } else {
-            observable = this.identityService.listUsers();
-        }
+        let observable: Observable<User[]> = this.identityService.listUsersInGroup(this.data.groep.value.id);
         observable.pipe(tap(value => value.sort(OrderUtil.orderBy('naam'))))
                   .subscribe(medewerkers => {
                       this.medewerkers = medewerkers;

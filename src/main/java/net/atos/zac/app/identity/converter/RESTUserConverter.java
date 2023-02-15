@@ -9,7 +9,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import net.atos.zac.app.identity.model.RESTLoggedInUser;
 import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.User;
 
@@ -33,6 +35,14 @@ public class RESTUserConverter {
         final RESTUser restUser = new RESTUser();
         restUser.id = user.getId();
         restUser.naam = user.getFullName();
+        return restUser;
+    }
+
+    public RESTLoggedInUser convertLoggedInUser(final LoggedInUser user) {
+        final RESTLoggedInUser restUser = new RESTLoggedInUser();
+        restUser.id = user.getId();
+        restUser.naam = user.getFullName();
+        restUser.groupIds = user.getGroupIds();
         return restUser;
     }
 

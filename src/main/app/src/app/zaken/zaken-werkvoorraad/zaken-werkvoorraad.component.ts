@@ -18,7 +18,7 @@ import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
-import {User} from '../../identity/model/user';
+import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 
@@ -44,7 +44,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
-    ingelogdeMedewerker: User;
+    ingelogdeMedewerker: LoggedInUser;
     expandedRow: ZaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
     sorteerVeld = SorteerVeld;
@@ -166,7 +166,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(zaakZoekObject: ZaakZoekObject): boolean {
-        return zaakZoekObject.rechten.toekennen && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== zaakZoekObject.behandelaarGebruikersnaam;
+        return zaakZoekObject.rechten.toekennen &&
+            this.ingelogdeMedewerker &&
+            this.ingelogdeMedewerker.id !== zaakZoekObject.behandelaarGebruikersnaam &&
+            this.ingelogdeMedewerker.groupIds.indexOf(zaakZoekObject.groepId) >= 0;
     }
 
     openVerdelenScherm(): void {
