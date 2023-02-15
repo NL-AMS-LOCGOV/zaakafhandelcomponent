@@ -13,7 +13,7 @@
     </ng-container>
 
     <div class="flex-row justify-start" *ngIf="config">
-        <button mat-flat-button color="accent"
+        <button mat-raised-button color="accent"
                 *ngIf="config.partialButtonText || config.partialButtonIcon"
                 [disabled]="formGroup.invalid||submitting"
                 id="partial_button"
@@ -27,7 +27,7 @@
             </mat-icon>
             {{config.partialButtonText | translate}}
         </button>
-        <button mat-flat-button color="primary"
+        <button mat-raised-button color="primary"
                 [disabled]="formGroup.invalid||submitting"
                 id="opslaan_button"
                 type="submit">
@@ -39,7 +39,7 @@
             </mat-icon>
             {{config.saveButtonText | translate}}
         </button>
-        <button mat-flat-button
+        <button mat-raised-button
                 *ngIf="config.cancelButtonText || config.cancelButtonIcon"
                 [disabled]="submitting"
                 id="annuleren_button"
