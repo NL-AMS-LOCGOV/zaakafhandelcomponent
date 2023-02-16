@@ -9,7 +9,9 @@
                 [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'"
                 [required]="data.required">
         <mat-select-trigger>
-            {{(data.optionLabel && data.formControl.value ? data.formControl.value[data.optionLabel] : data.formControl.value) | translate}}
+            {{(data.optionLabel && data.formControl.value && data.formControl.value[data.optionLabel]
+                ? data.formControl.value[data.optionLabel]
+                : data.formControl.value) | translate}}
         </mat-select-trigger>
         <mat-option [value]="" *ngIf="!data.required">
             {{data.label + '.-geen-' | translate}}

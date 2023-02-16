@@ -10,7 +10,9 @@
     <mat-icon matSuffix *ngIf="isSearching()">search</mat-icon>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
         <mat-select-trigger>
-            {{(data.optionLabel && data.formControl.value ? data.formControl.value[data.optionLabel] : data.formControl.value) | translate}}
+            {{(data.optionLabel && data.formControl.value && data.formControl.value[data.optionLabel]
+                ? data.formControl.value[data.optionLabel]
+                : data.formControl.value) | translate}}
         </mat-select-trigger>
         <mat-option *ngFor="let option of filteredOptions | async"
                     [value]="data.optionValue ? option[data.optionValue] : option">

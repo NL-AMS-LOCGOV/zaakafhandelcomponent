@@ -16,6 +16,7 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
 
     optionsChanged$ = new EventEmitter<void>();
     private options$: Observable<any[]>;
+    private valueOptions: any[];
     public optionLabel: string | null;
     public optionSuffix: string | null;
     public optionValue: string | null;
@@ -27,21 +28,43 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
 
     compareWithFn = (object1: any, object2: any): boolean => {
         if (object1 && object2) {
-            return this.optionLabel ? object1[this.optionLabel] === object2[this.optionLabel] : object1 === object2;
+            return this.optionValue
+                ? this.compare(object1, object2, this.optionValue)
+                : this.optionLabel
+                    ? this.compare(object1, object2, this.optionLabel)
+                    : object1 === object2;
         }
         return false;
     };
+
+    private compare(object1: any, object2: any, field: string): boolean {
+        return object1 === object2[field] || object1[field] === object2 || object1[field] === object2[field];
+    }
+
+    getOption(value: any) {
+        for (const option of this.valueOptions) {
+            if (this.compareWithFn(value, option)) {
+                return option;
+            }
+        }
+        return null;
+    }
 
     get options(): Observable<any[]> {
         return this.options$;
     }
 
     set options(options: Observable<any[]>) {
+        this.valueOptions = [];
         this.options$ = options.pipe(
             tap({
                 subscribe: () => this.loading$.emit(true),
                 next: () => this.loading$.emit(false)
-            }), tap(value => value.sort(OrderUtil.orderBy(this.optionLabel))));
+            }),
+            tap(value => {
+                this.valueOptions = value;
+                value.sort(OrderUtil.orderBy(this.optionLabel));
+            }));
         this.optionsChanged$.next();
     }
 }
