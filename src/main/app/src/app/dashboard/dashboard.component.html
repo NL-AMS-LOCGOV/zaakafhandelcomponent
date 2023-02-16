@@ -2,7 +2,7 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<div>
+
     <div class="flex-row justify-end items-start">
         <mat-slide-toggle class="mode-slider" color="primary"
                           id="dashboardEdit_toggle"
@@ -30,8 +30,8 @@
             </ng-container>
         </mat-menu>
     </div>
-</div>
-<div class="grid-padding" cdkDropListGroup>
+
+<div class="cards" [ngClass]="editmode?'edit-mode':'view-mode'" cdkDropListGroup>
     <ng-container *ngFor="let column of grid">
         <div *ngIf="editmode||0<column.length" class="grid-column-{{editmode? '3' : width}}"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"

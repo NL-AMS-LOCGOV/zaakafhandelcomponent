@@ -432,10 +432,10 @@
                                 <ng-container matColumnDef="expandedTaakDetail">
                                     <td mat-cell *matCellDef="let row" colspan="9">
                                         <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
-                                            <div class="flex-row flex-wrap gap-10 flex-fill">
-                                                <zac-static-text class="flex-1 w50" [label]="'uitkomst' | translate"
+                                            <div class="flex-row flex-wrap gap-10">
+                                                <zac-static-text [label]="'uitkomst' | translate"
                                                                  [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
-                                                <zac-static-text class="flex-1 w50" [label]="'bijlage' | translate"
+                                                <zac-static-text [label]="'bijlage' | translate"
                                                                  *ngIf="row.data.taakinformatie?.bijlagen"
                                                                  [value]="row.data.taakinformatie?.bijlagen"></zac-static-text>
                                                 <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"

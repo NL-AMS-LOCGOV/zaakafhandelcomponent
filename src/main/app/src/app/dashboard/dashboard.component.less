@@ -3,27 +3,28 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-.grid-padding {
+::ng-deep .dashboard-card .table-wrapper {
+  overflow-x: auto;
+}
+
+.cards {
   padding: 0 16px;
 }
 
-.grid-column-3 {
-  margin: 6px;
-  display: inline-block;
-  vertical-align: top;
-  min-height: 60px;
-  width: calc(33% - 12px);
-  min-width: calc(33% - 12px);
+.view-mode {
+  .grid-column-2 {
+    @media (max-width: 959px) {
+      display: block;
+      width: 100%;
+    }
+  }
 
-}
-
-.grid-column-2 {
-  margin: 6px;
-  display: inline-block;
-  vertical-align: top;
-  min-height: 60px;
-  width: calc(50% - 12px);
-  min-width: calc(50% - 12px);
+  .grid-column-3 {
+    @media (max-width: 1279px) {
+      display: block;
+      width: 100%;
+    }
+  }
 }
 
 .grid-column-1 {
@@ -32,7 +33,22 @@
   vertical-align: top;
   min-height: 60px;
   width: 100%;
-  min-width: 100%;
+}
+
+.grid-column-2 {
+  margin: 6px;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 60px;
+  width: calc(50% - 12px);
+}
+
+.grid-column-3 {
+  margin: 6px;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 60px;
+  width: calc(33% - 12px);
 }
 
 .draggable {
