@@ -3,8 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="flex-wrap">
-    <mat-card class="flex-1">
+    <mat-card>
         <mat-card-header class="flex-row">
             <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
             <mat-slide-toggle *ngIf="heeftGerelateerdeZaken"
@@ -68,14 +67,16 @@
 
                     <ng-container matColumnDef="url" stickyEnd>
                         <th mat-header-cell *matHeaderCellDef>
-                            <button mat-flat-button
-                                    id="downloadZip_button"
-                                    (click)="downloadAlsZip()"
-                                    [disabled]="downloadAlsZipSelection.isEmpty()"
-                                    title="{{ 'actie.downloaden.zip' | translate}}">
-                                <mat-icon>folder_zip</mat-icon>
-                            </button>
-                            {{downloadAlsZipSelection.selected.length}}
+                            <div class="flex-row items-center">
+                                <button mat-icon-button
+                                        id="downloadZip_button"
+                                        (click)="downloadAlsZip()"
+                                        [disabled]="downloadAlsZipSelection.isEmpty()"
+                                        title="{{ 'actie.downloaden.zip' | translate}}">
+                                    <mat-icon>folder_zip</mat-icon>
+                                </button>
+                                {{downloadAlsZipSelection.selected.length}}
+                            </div>
                         </th>
                         <td mat-cell *matCellDef="let row">
                             <div class="flex-row">
@@ -126,4 +127,3 @@
             </div>
         </mat-card-content>
     </mat-card>
-</div>

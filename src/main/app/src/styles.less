@@ -68,18 +68,19 @@ mat-sidenav-container {
 }
 
 .table-wrapper {
+  overflow-x: auto;
+
   table {
     width: 100%;
 
     th {
-      padding: 0 10px;
+      padding-left: 10px;
       border-bottom-width: 1px;
       color: rgba(0, 0, 0, 0.54);
 
       mat-form-field {
         font-size: 12px;
         width: 100%;
-        padding: 5px;
 
         .mat-mdc-floating-label {
           font-size: 12px;
@@ -100,27 +101,22 @@ mat-sidenav-container {
       height: 0;
     }
 
-    tr.row {
+    tr.cdk-row {
       &:not(.expanded-row):hover {
         background: @table-hover-background-color;
       }
 
-      &:not(.expanded-row):active {
-        background: @table-active-background-color;
-      }
-
       & td {
-        padding: 0 10px;
+        padding: 0 0 0 10px;
         border-bottom-width: 0;
       }
     }
-    tr {
-      &.mat-mdc-row.document-preview {
-        height: 0;
 
-        & td {
-          border: none;
-        }
+    tr.mat-mdc-row.document-preview {
+      height: 0;
+
+      & td {
+        border: none;
       }
     }
   }
@@ -219,10 +215,6 @@ mat-paginator[sticky] {
     &.tablet-bottom-toolbar {
       height: calc(100% - 108px);
     }
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
   }
 }
 
