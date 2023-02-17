@@ -19,6 +19,7 @@ import {SelectFormField} from '../../shared/material-form-builder/form-component
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {ZaakRelatietype} from '../model/zaak-relatietype';
+import {ZaakKoppelDialogGegevens} from '../model/zaak-koppel-dialog-gegevens';
 
 @Component({
     templateUrl: 'zaak-koppelen-dialog.component.html'
@@ -40,7 +41,7 @@ export class ZaakKoppelenDialogComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<ZaakKoppelenDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ZaakKoppelGegevens,
+        @Inject(MAT_DIALOG_DATA) public data: ZaakKoppelDialogGegevens,
         private mfbService: MaterialFormBuilderService,
         private zakenService: ZakenService,
         private utilService: UtilService,
@@ -53,7 +54,7 @@ export class ZaakKoppelenDialogComponent implements OnInit {
 
         forkJoin([
             this.zakenService.readZaak(this.data.bronZaakUuid),
-            this.zakenService.readZaakByID(this.data.doelZaakUuid)])
+            this.zakenService.readZaakByID(this.data.doelZaakIdentificatie)])
         .subscribe(([bronZaak, doelZaak]) => {
             this.bronZaak = bronZaak;
             this.doelZaak = doelZaak;
@@ -177,10 +178,10 @@ export class ZaakKoppelenDialogComponent implements OnInit {
     koppel(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.koppelZaak(this.bronZaak, this.doelZaak, this.getRelatieTypeBron(), this.getRelatieTypeDoel());
+        this.koppelZaak(this.bronZaak, this.doelZaak, this.getRelatieType(), this.getRelatieTypeReverse());
     }
 
-    private getRelatieTypeBron(): ZaakRelatietype {
+    private getRelatieType(): ZaakRelatietype {
         if (this.isSoortHoofdDeelZaak()) {
             return this.hoofddeelZaakSelectFormField.formControl.value.value;
         }
@@ -190,19 +191,19 @@ export class ZaakKoppelenDialogComponent implements OnInit {
         return null;
     }
 
-    private getRelatieTypeDoel(): ZaakRelatietype {
+    private getRelatieTypeReverse(): ZaakRelatietype {
         if (this.isSoortRelevanteZaak()) {
             return this.relevanteZaakDoelSelectFormField.formControl.value?.value;
         }
         return null;
     }
 
-    private koppelZaak(bronZaak: Zaak, doelZaak: Zaak, relatieTypeBron: ZaakRelatietype, relatieTypeDoel: ZaakRelatietype) {
+    private koppelZaak(bronZaak: Zaak, doelZaak: Zaak, relatieType: ZaakRelatietype, relatieTypeReverse: ZaakRelatietype) {
         const zaakKoppelGegevens = new ZaakKoppelGegevens();
-        zaakKoppelGegevens.bronZaakUuid = bronZaak.uuid;
-        zaakKoppelGegevens.doelZaakUuid = doelZaak.uuid;
-        zaakKoppelGegevens.bronRelatieType = relatieTypeBron;
-        zaakKoppelGegevens.doelRelatieType = relatieTypeDoel;
+        zaakKoppelGegevens.zaakUuid = doelZaak.uuid;
+        zaakKoppelGegevens.teKoppelenZaakUuid = bronZaak.uuid;
+        zaakKoppelGegevens.relatieType = relatieType;
+        zaakKoppelGegevens.reverseRelatieType = relatieTypeReverse;
         this.zakenService.koppelZaak(zaakKoppelGegevens).subscribe({
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)

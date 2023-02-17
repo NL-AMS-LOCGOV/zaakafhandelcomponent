@@ -9,12 +9,12 @@ import {Subject} from 'rxjs';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {ActionBarAction, ActionEntityType} from '../../core/actionbar/model/action-bar-action';
 import {ActionIcon} from '../../shared/edit/action-icon';
-import {ZaakKoppelGegevens} from '../model/zaak-koppel-gegevens';
 import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
+import {ZaakKoppelDialogGegevens} from '../model/zaak-koppel-dialog-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -57,15 +57,17 @@ export class ZaakKoppelenService {
         if (!onInit) {
             SessionStorageUtil.setItem('teKoppelenZaken', teKoppelenZaken);
         }
-        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, ActionEntityType.ZAAK, zaak.identificatie,
-            new ActionIcon('link', 'actie.zaak.koppelen', editAction), dismiss, () => this.isKoppelenToegestaan(zaak.identificatie));
+        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, ActionEntityType.ZAAK,
+            zaak.identificatie,
+            new ActionIcon('link', 'actie.zaak.koppelen', editAction), dismiss,
+            () => this.isKoppelenToegestaan(zaak.identificatie));
         this.utilService.addAction(action);
     }
 
     private openDialog(zaak: Zaak, nieuwZaakID: string) {
-        const zaakKoppelGegevens = new ZaakKoppelGegevens();
+        const zaakKoppelGegevens = new ZaakKoppelDialogGegevens();
         zaakKoppelGegevens.bronZaakUuid = zaak.uuid;
-        zaakKoppelGegevens.doelZaakUuid = nieuwZaakID;
+        zaakKoppelGegevens.doelZaakIdentificatie = nieuwZaakID;
 
         this.dialog.open(ZaakKoppelenDialogComponent, {
             data: zaakKoppelGegevens

@@ -57,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -928,9 +931,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {
         const zaakOntkoppelGegevens: ZaakOntkoppelGegevens = new ZaakOntkoppelGegevens();
-        zaakOntkoppelGegevens.teOntkoppelenZaakUUID = this.zaak.uuid;
-        zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie = gerelateerdeZaak.identificatie;
-        zaakOntkoppelGegevens.zaakRelatietype = gerelateerdeZaak.relatieType;
+        zaakOntkoppelGegevens.zaakUuid = this.zaak.uuid;
+        zaakOntkoppelGegevens.gekoppeldeZaakIdentificatie = gerelateerdeZaak.identificatie;
+        zaakOntkoppelGegevens.relatietype = gerelateerdeZaak.relatieType;
 
         this.dialog.open(ZaakOntkoppelenDialogComponent, {
             data: zaakOntkoppelGegevens
