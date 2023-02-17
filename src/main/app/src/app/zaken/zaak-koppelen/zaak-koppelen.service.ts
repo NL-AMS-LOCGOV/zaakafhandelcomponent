@@ -65,7 +65,7 @@ export class ZaakKoppelenService {
     private openDialog(zaak: Zaak, nieuwZaakID: string) {
         const zaakKoppelGegevens = new ZaakKoppelGegevens();
         zaakKoppelGegevens.bronZaakUuid = zaak.uuid;
-        zaakKoppelGegevens.identificatie = nieuwZaakID;
+        zaakKoppelGegevens.doelZaakUuid = nieuwZaakID;
 
         this.dialog.open(ZaakKoppelenDialogComponent, {
             data: zaakKoppelGegevens

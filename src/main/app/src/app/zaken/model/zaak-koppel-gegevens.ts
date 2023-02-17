@@ -7,6 +7,7 @@ import {ZaakRelatietype} from './zaak-relatietype';
 
 export class ZaakKoppelGegevens {
     bronZaakUuid: string;
-    identificatie: string;
-    relatieType: ZaakRelatietype;
+    doelZaakUuid: string;
+    bronRelatieType: ZaakRelatietype;
+    doelRelatieType: ZaakRelatietype;
 }

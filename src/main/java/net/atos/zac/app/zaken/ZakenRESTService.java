@@ -626,14 +626,14 @@ public class ZakenRESTService {
     @PATCH
     @Path("/zaak/koppel")
     public void koppelZaak(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
-        final Zaak teKoppelenZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
-        final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
-        assertPolicy(policyService.readZaakRechten(teKoppelenZaak).getWijzigen() &&
-                             policyService.readZaakRechten(koppelenAanZaak).getWijzigen());
-
-        switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
+        final Zaak bronZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
+        final Zaak doelZaak = zrcClientService.readZaak(zaakKoppelGegevens.doelZaakUuid);
+        assertPolicy(policyService.readZaakRechten(bronZaak).getWijzigen() &&
+                             policyService.readZaakRechten(doelZaak).getWijzigen());
+        // TODO #2204
+        switch (zaakKoppelGegevens.bronRelatieType) {
+            case DEELZAAK -> koppelHoofdEnDeelzaak(doelZaak, bronZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(bronZaak, doelZaak.getUuid());
         }
     }
 
