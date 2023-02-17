@@ -72,15 +72,19 @@
     </div>
     <div class="notitieFooter">
         <mat-form-field class="textareaNotitie">
+
+            <button (click)="maakNotitieAan(notitieTekst.value)" aria-label="Opslaan" color="primary"
+                    matSuffix
+                    id="notitieOpslaan_button" mat-mini-fab
+                    title="{{ 'actie.opslaan' | translate }}"
+                    [disabled]="notitieTekst.value.length == 0 || geselecteerdeNotitieId != null">
+                <mat-icon>send</mat-icon>
+            </button>
             <mat-label>{{ 'actie.notitie.aanmaken' | translate }}</mat-label>
             <textarea #notitieTekst cdkAutosizeMaxRows="2" cdkAutosizeMinRows="2" cdkTextareaAutosize matInput
                       id="nieuwe_notitie_aanmaken" maxlength="1000" [disabled]="geselecteerdeNotitieId != null"></textarea>
+
         </mat-form-field>
-        <button (click)="maakNotitieAan(notitieTekst.value)" aria-label="Opslaan" color="primary"
-                id="notitieOpslaan_button" mat-mini-fab
-                title="{{ 'actie.opslaan' | translate }}"
-                [disabled]="notitieTekst.value.length == 0 || geselecteerdeNotitieId != null">
-            <mat-icon>send</mat-icon>
-        </button>
+
     </div>
 </div>

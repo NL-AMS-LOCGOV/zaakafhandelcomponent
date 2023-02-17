@@ -6,7 +6,7 @@
 <form [formGroup]="formGroup" (ngSubmit)="submit()">
     <ng-container *ngFor="let row of data">
         <div class="flex-row flex-col-md flex-wrap gap-5 flex-fill">
-            <div class="flex-1" *ngFor="let tile of row">
+            <div class="flex-1" [ngClass]="tile.fieldType | lowercase" *ngFor="let tile of row">
                 <mfb-form-field [field]="tile"></mfb-form-field>
             </div>
         </div>
