@@ -11,9 +11,9 @@
     <mfb-form-field *ngIf="isSoortHoofdDeelZaak()"
                     [field]="hoofddeelZaakSelectFormField"></mfb-form-field>
     <mfb-form-field *ngIf="isSoortRelevanteZaak()"
-                    [field]="relevanteZaakBronSelectFormField"></mfb-form-field>
+                    [field]="relevanteZaakReadonlyFormField"></mfb-form-field>
     <mfb-form-field *ngIf="isSoortRelevanteZaak()"
-                    [field]="relevanteZaakDoelSelectFormField"></mfb-form-field>
+                    [field]="relevanteZaakSelectFormField"></mfb-form-field>
     <zac-static-text [label]="bronZaak?.identificatie"
                      [value]="bronZaak?.omschrijving"
                      [maxLength]="100"></zac-static-text>
