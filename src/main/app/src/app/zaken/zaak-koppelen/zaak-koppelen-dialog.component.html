@@ -3,19 +3,36 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<h1 mat-dialog-title>{{'title.zaak.koppelen' | translate:{doel: teKoppelenZaak?.identificatie} }}</h1>
+<h1 mat-dialog-title>{{'title.zaak.koppelen' | translate:{zaak: bronZaak?.identificatie} }}</h1>
 
 <div mat-dialog-content>
-    <mfb-form-field *ngIf="koppelSelectFormField" [field]="koppelSelectFormField"></mfb-form-field>
-    <div *ngIf="!loading && koppelKeuzes.length === 0">{{'msg.zaak.koppelen.niet.toegestaan' | translate}}</div>
+    <mfb-form-field *ngIf="isSoortKiesbaar()"
+                    [field]="soortRadioFormField"></mfb-form-field>
+    <mfb-form-field *ngIf="isSoortHoofdDeelZaak()"
+                    [field]="hoofddeelZaakSelectFormField"></mfb-form-field>
+    <mfb-form-field *ngIf="isSoortRelevanteZaak()"
+                    [field]="relevanteZaakBronSelectFormField"></mfb-form-field>
+    <mfb-form-field *ngIf="isSoortRelevanteZaak()"
+                    [field]="relevanteZaakDoelSelectFormField"></mfb-form-field>
+    <zac-static-text [label]="bronZaak?.identificatie"
+                     [value]="bronZaak?.omschrijving"
+                     [maxLength]="100"></zac-static-text>
+    <zac-static-text [label]="doelZaak?.identificatie"
+                     [value]="doelZaak?.omschrijving"
+                     [maxLength]="100"></zac-static-text>
+    <div *ngIf="!isKoppelenToegestaan() && !loading">
+        {{'msg.zaak.koppelen.niet.toegestaan' | translate}}
+    </div>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="koppelSelectFormField && koppelSelectFormField.formControl.invalid || loading || this.koppelKeuzes.length === 0 "
-            mat-button color="primary" (click)="koppel()" id="zakenKoppelen_button">
+    <button [disabled]="!isValid() || loading" mat-button color="primary"
+            (click)="koppel()" id="zakenKoppelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
         {{'actie.koppelen' | translate}}
     </button>
-    <button [disabled]="loading" autofocus mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+    <button [disabled]="loading" autofocus mat-button (click)="close()">
+        {{'actie.annuleren' | translate}}
+    </button>
 </div>

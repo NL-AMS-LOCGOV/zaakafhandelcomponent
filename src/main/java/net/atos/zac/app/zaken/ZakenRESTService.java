@@ -18,6 +18,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,12 +57,15 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.AardRelatie;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.GeometryZaakPatch;
 import net.atos.client.zgw.zrc.model.HoofdzaakZaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.NietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RelevanteZaak;
+import net.atos.client.zgw.zrc.model.RelevantezaakZaakPatch;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
@@ -625,31 +629,40 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("/zaak/koppel")
-    public void koppelZaak(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
-        final Zaak teKoppelenZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
-        final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
-        assertPolicy(policyService.readZaakRechten(teKoppelenZaak).getWijzigen() &&
-                             policyService.readZaakRechten(koppelenAanZaak).getWijzigen());
+    public void koppelZaak(final RESTZaakKoppelGegevens gegevens) {
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUuid);
+        final Zaak teKoppelenZaak = zrcClientService.readZaak(gegevens.teKoppelenZaakUuid);
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen() &&
+                             policyService.readZaakRechten(teKoppelenZaak).getWijzigen());
 
-        switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
+        switch (gegevens.relatieType) {
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, zaak);
+            case DEELZAAK -> koppelHoofdEnDeelzaak(zaak, teKoppelenZaak);
+            case VERVOLG -> koppelRelevantezaken(zaak, teKoppelenZaak, AardRelatie.VERVOLG);
+            case ONDERWERP -> koppelRelevantezaken(zaak, teKoppelenZaak, AardRelatie.ONDERWERP);
+            case BIJDRAGE -> koppelRelevantezaken(zaak, teKoppelenZaak, AardRelatie.BIJDRAGE);
+        }
+        switch (gegevens.reverseRelatieType) {
+            case VERVOLG -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.VERVOLG);
+            case ONDERWERP -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.ONDERWERP);
+            case BIJDRAGE -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.BIJDRAGE);
         }
     }
 
     @PATCH
     @Path("/zaak/ontkoppel")
-    public void ontkoppelZaak(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
-        final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(
-                zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie);
-        final Zaak teOntkoppelenZaak = zrcClientService.readZaak(zaakOntkoppelGegevens.teOntkoppelenZaakUUID);
-        assertPolicy(policyService.readZaakRechten(ontkoppelenVanZaak).getWijzigen() &&
-                             policyService.readZaakRechten(teOntkoppelenZaak).getWijzigen());
-        switch (zaakOntkoppelGegevens.zaakRelatietype) {
-            case DEELZAAK -> ontkoppelHoofdEnDeelzaak(ontkoppelenVanZaak.getUuid(), teOntkoppelenZaak.getUuid(),
-                                                      zaakOntkoppelGegevens.reden);
-            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(teOntkoppelenZaak.getUuid(), ontkoppelenVanZaak.getUuid(),
-                                                       zaakOntkoppelGegevens.reden);
+    public void ontkoppelZaak(final RESTZaakOntkoppelGegevens gegevens) {
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUuid);
+        final Zaak gekoppeldeZaak = zrcClientService.readZaakByID(gegevens.gekoppeldeZaakIdentificatie);
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen() &&
+                             policyService.readZaakRechten(gekoppeldeZaak).getWijzigen());
+
+        switch (gegevens.relatietype) {
+            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(gekoppeldeZaak, zaak, gegevens.reden);
+            case DEELZAAK -> ontkoppelHoofdEnDeelzaak(zaak, gekoppeldeZaak, gegevens.reden);
+            case VERVOLG -> ontkoppelRelevantezaken(zaak, gekoppeldeZaak, AardRelatie.VERVOLG, gegevens.reden);
+            case ONDERWERP -> ontkoppelRelevantezaken(zaak, gekoppeldeZaak, AardRelatie.ONDERWERP, gegevens.reden);
+            case BIJDRAGE -> ontkoppelRelevantezaken(zaak, gekoppeldeZaak, AardRelatie.BIJDRAGE, gegevens.reden);
         }
     }
 
@@ -1006,22 +1019,55 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
-        final HoofdzaakZaakPatch deelzaakPatch = new HoofdzaakZaakPatch(hoofdzaak.getUrl());
-        zrcClientService.patchZaak(deelzaakUUID, deelzaakPatch);
-        System.out.println("koppelHoofdEnDeelzaak ZAAK.updated " + hoofdzaak.getUuid());
+    private void koppelHoofdEnDeelzaak(final Zaak hoofdZaak, final Zaak deelZaak) {
+        final HoofdzaakZaakPatch zaakPatch = new HoofdzaakZaakPatch(hoofdZaak.getUrl());
+        zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdzaak.getUuid(), false);
-        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
+        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
     }
 
-    private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
-        final HoofdzaakZaakPatch deelzaakPatch = new HoofdzaakZaakPatch(null);
-        zrcClientService.patchZaak(deelzaakUUID, deelzaakPatch, reden);
+    private void ontkoppelHoofdEnDeelzaak(final Zaak hoofdZaak, final Zaak deelZaak, final String reden) {
+        final HoofdzaakZaakPatch zaakPatch = new HoofdzaakZaakPatch(null);
+        zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdzaakUUID, false);
-        eventingService.send(ZAAK.updated(hoofdzaakUUID));
+        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
+    }
+
+    private void koppelRelevantezaken(final Zaak zaak, final Zaak andereZaak, final AardRelatie aardRelatie) {
+        final RelevantezaakZaakPatch zaakPatch = new RelevantezaakZaakPatch(
+                addRelevanteZaak(zaak.getRelevanteAndereZaken(), andereZaak.getUrl(), aardRelatie));
+        zrcClientService.patchZaak(zaak.getUuid(), zaakPatch);
+    }
+
+    private void ontkoppelRelevantezaken(final Zaak zaak, final Zaak andereZaak, final AardRelatie aardRelatie,
+            final String reden) {
+        final RelevantezaakZaakPatch zaakPatch = new RelevantezaakZaakPatch(
+                removeRelevanteZaak(zaak.getRelevanteAndereZaken(), andereZaak.getUrl(), aardRelatie));
+        zrcClientService.patchZaak(zaak.getUuid(), zaakPatch, reden);
+    }
+
+    private List<RelevanteZaak> addRelevanteZaak(final List<RelevanteZaak> relevanteZaken, URI andereZaak,
+            final AardRelatie aardRelatie) {
+        final RelevanteZaak relevanteZaak = new RelevanteZaak(andereZaak, aardRelatie);
+        if (relevanteZaken != null) {
+            relevanteZaken.add(relevanteZaak);
+            return relevanteZaken;
+        }
+        return List.of(relevanteZaak);
+    }
+
+    private List<RelevanteZaak> removeRelevanteZaak(final List<RelevanteZaak> relevanteZaken, URI andereZaak,
+            final AardRelatie aardRelatie) {
+        if (relevanteZaken != null) {
+            relevanteZaken.removeAll(relevanteZaken.stream()
+                                             .filter(zaak -> zaak.getAardRelatie() == aardRelatie &&
+                                                     zaak.getUrl().equals(andereZaak))
+                                             .toList());
+        }
+        return relevanteZaken;
     }
 }
