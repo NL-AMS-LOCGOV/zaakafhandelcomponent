@@ -108,11 +108,12 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
         this.medewerkerGroepFormField = this.getMedewerkerGroupFormField();
 
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
-                                                         .styleClass('form-field-not-disabled-view')
+                                                         .styleClass('input-fake-enabled')
                                                          .icon(this.initiatorToevoegenIcon)
+                                                         .disabled()
                                                          .label('initiator')
                                                          .build();
-        this.initiatorField.formControl.disable({onlySelf: true});
+        this.initiatorField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                .optionLabel('naam').options(communicatiekanalen)
@@ -133,11 +134,12 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                                                           .build();
 
         this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie')
-                                                       .styleClass('form-field-not-disabled-view')
+                                                       .styleClass('input-fake-enabled')
                                                        .icon(this.locatieToevoegenIcon)
+                                                       .disabled()
                                                        .label('locatie')
                                                        .build();
-        this.locatieField.formControl.disable({onlySelf: true});
+        this.locatieField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
         this.createZaakFields = [
             [titel],
