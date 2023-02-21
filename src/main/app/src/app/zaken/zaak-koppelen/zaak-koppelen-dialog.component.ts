@@ -20,6 +20,8 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {TranslateService} from '@ngx-translate/core';
 import {ZaakRelatietype} from '../model/zaak-relatietype';
 import {ZaakKoppelDialogGegevens} from '../model/zaak-koppel-dialog-gegevens';
+import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 
 @Component({
     templateUrl: 'zaak-koppelen-dialog.component.html'
@@ -31,13 +33,14 @@ export class ZaakKoppelenDialogComponent implements OnInit {
     doelZaak: Zaak;
     soortRadioFormField: RadioFormField;
     hoofddeelZaakSelectFormField: SelectFormField;
-    relevanteZaakBronSelectFormField: SelectFormField;
-    relevanteZaakDoelSelectFormField: SelectFormField;
+    relevanteZaakReadonlyFormField: ReadonlyFormField;
+    relevanteZaakSelectFormField: SelectFormField;
     readonly soortOptions: string[] = [];
     readonly HOOFDDEEL: string = 'relatieSoort.hoofddeelZaak';
     readonly RELEVANTE: string = 'relatieSoort.relevanteZaak';
     hoofddeelZaakKeuzes: { label: string, value: ZaakRelatietype }[] = [];
-    relevanteZaakKeuzes: { label: string, lebal: string, value: ZaakRelatietype }[] = [];
+    relevanteZaakBronKeuzes: { label: string, value: ZaakRelatietype }[] = [];
+    relevanteZaakDoelKeuzes: { label: string, value: ZaakRelatietype }[] = [];
 
     constructor(
         public dialogRef: MatDialogRef<ZaakKoppelenDialogComponent>,
@@ -59,37 +62,18 @@ export class ZaakKoppelenDialogComponent implements OnInit {
             this.bronZaak = bronZaak;
             this.doelZaak = doelZaak;
 
-            if (!bronZaak.isDeelzaak && !doelZaak.isHoofdzaak && !doelZaak.isDeelzaak) {
-                this.hoofddeelZaakKeuzes.push({
-                    label: this.label(ZaakRelatietype.HOOFDZAAK, bronZaak, doelZaak),
-                    value: ZaakRelatietype.HOOFDZAAK
-                });
+            if (!doelZaak.isDeelzaak && !doelZaak.isHoofdzaak && !bronZaak.isDeelzaak) {
+                this.optie(this.hoofddeelZaakKeuzes, ZaakRelatietype.HOOFDZAAK, bronZaak, doelZaak);
             }
-
-            if (!bronZaak.isDeelzaak && !bronZaak.isHoofdzaak && !doelZaak.isDeelzaak) {
-                this.hoofddeelZaakKeuzes.push({
-                    label: this.label(ZaakRelatietype.DEELZAAK, bronZaak, doelZaak),
-                    value: ZaakRelatietype.DEELZAAK
-                });
+            if (!doelZaak.isDeelzaak && !bronZaak.isHoofdzaak && !bronZaak.isDeelzaak) {
+                this.optie(this.hoofddeelZaakKeuzes, ZaakRelatietype.DEELZAAK, bronZaak, doelZaak);
             }
-
-            this.relevanteZaakKeuzes.push({
-                label: this.label(ZaakRelatietype.VERVOLG, bronZaak, doelZaak),
-                lebal: this.label(ZaakRelatietype.VERVOLG, doelZaak, bronZaak),
-                value: ZaakRelatietype.VERVOLG
-            });
-
-            this.relevanteZaakKeuzes.push({
-                label: this.label(ZaakRelatietype.BIJDRAGE, bronZaak, doelZaak),
-                lebal: this.label(ZaakRelatietype.BIJDRAGE, doelZaak, bronZaak),
-                value: ZaakRelatietype.BIJDRAGE
-            });
-
-            this.relevanteZaakKeuzes.push({
-                label: this.label(ZaakRelatietype.ONDERWERP, bronZaak, doelZaak),
-                lebal: this.label(ZaakRelatietype.ONDERWERP, doelZaak, bronZaak),
-                value: ZaakRelatietype.ONDERWERP
-            });
+            this.optie(this.relevanteZaakBronKeuzes, ZaakRelatietype.VERVOLG, bronZaak, doelZaak);
+            this.optie(this.relevanteZaakDoelKeuzes, ZaakRelatietype.VERVOLG, doelZaak, bronZaak);
+            this.optie(this.relevanteZaakBronKeuzes, ZaakRelatietype.BIJDRAGE, bronZaak, doelZaak);
+            this.optie(this.relevanteZaakDoelKeuzes, ZaakRelatietype.BIJDRAGE, doelZaak, bronZaak);
+            this.optie(this.relevanteZaakBronKeuzes, ZaakRelatietype.ONDERWERP, bronZaak, doelZaak);
+            this.optie(this.relevanteZaakDoelKeuzes, ZaakRelatietype.ONDERWERP, doelZaak, bronZaak);
 
             if (0 < this.hoofddeelZaakKeuzes.length) {
                 this.hoofddeelZaakSelectFormField = new SelectFormFieldBuilder(
@@ -103,21 +87,18 @@ export class ZaakKoppelenDialogComponent implements OnInit {
                 this.soortOptions.push(this.HOOFDDEEL);
             }
 
-            if (0 < this.relevanteZaakKeuzes.length) {
-                this.relevanteZaakBronSelectFormField = new SelectFormFieldBuilder(
-                    this.relevanteZaakKeuzes.length === 1 ? this.relevanteZaakKeuzes[0] : null)
+            if (0 < this.relevanteZaakBronKeuzes.length) {
+                this.relevanteZaakReadonlyFormField = new ReadonlyFormFieldBuilder(
+                    this.relevanteZaakBronKeuzes[0].label)
                 .id('relevantebronkeuze')
-                .label('relatieType.koppelen')
-                .optionLabel('label')
-                .validators(Validators.required)
-                .options(this.relevanteZaakKeuzes).build();
+                .label('relatieType.koppelen').build();
 
-                this.relevanteZaakDoelSelectFormField = new SelectFormFieldBuilder(
-                    this.relevanteZaakKeuzes.length === 1 ? this.relevanteZaakKeuzes[0] : null)
-                .id('relevantetekoppelenkeuze')
+                this.relevanteZaakSelectFormField = new SelectFormFieldBuilder(
+                    this.relevanteZaakDoelKeuzes.length == 1 ? this.relevanteZaakDoelKeuzes[0] : null)
+                .id('relevantedoelkeuze')
                 .label('relatieType.koppelen.terug')
-                .optionLabel('lebal')
-                .options(this.relevanteZaakKeuzes).build();
+                .optionLabel('label')
+                .options(this.relevanteZaakDoelKeuzes).build();
 
                 this.soortOptions.push(this.RELEVANTE);
             }
@@ -134,9 +115,30 @@ export class ZaakKoppelenDialogComponent implements OnInit {
         });
     }
 
-    private label(relatieType: ZaakRelatietype, bron: Zaak, doel: Zaak): string {
-        return this.translate.instant('relatieType.koppelen.' + relatieType,
-            {bron: bron.identificatie, doel: doel.identificatie});
+    private optie(opties: { label: string, value: ZaakRelatietype }[], type: ZaakRelatietype, bron: Zaak, doel: Zaak): void {
+        if (this.koppelbaar(type, bron, doel)) {
+            opties.push({
+                label: this.label(type, bron, doel),
+                value: type
+            });
+        }
+    }
+
+    private koppelbaar(type: ZaakRelatietype, andere: Zaak, onderhanden: Zaak): boolean {
+        if (type == ZaakRelatietype.HOOFDZAAK) {
+            return this.koppelbaar(ZaakRelatietype.DEELZAAK, onderhanden, andere);
+        }
+        for (const zaaktypeRelatie of onderhanden.zaaktype.zaaktypeRelaties) {
+            if (zaaktypeRelatie.zaaktypeUuid == andere.zaaktype.uuid && zaaktypeRelatie.relatieType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private label(type: ZaakRelatietype, andere: Zaak, onderhanden: Zaak): string {
+        return type + ': ' + this.translate.instant('relatieType.koppelen.' + type,
+            {andereZaak: andere.identificatie, onderhandenZaak: onderhanden.identificatie});
     }
 
     isKoppelenToegestaan(): boolean {
@@ -162,8 +164,7 @@ export class ZaakKoppelenDialogComponent implements OnInit {
                 return this.hoofddeelZaakSelectFormField.formControl.valid;
             }
             if (this.isSoortRelevanteZaak()) {
-                return this.relevanteZaakBronSelectFormField.formControl.valid &&
-                    this.relevanteZaakDoelSelectFormField.formControl.valid;
+                return this.relevanteZaakSelectFormField.formControl.valid;
             }
         }
         return false;
@@ -186,14 +187,14 @@ export class ZaakKoppelenDialogComponent implements OnInit {
             return this.hoofddeelZaakSelectFormField.formControl.value.value;
         }
         if (this.isSoortRelevanteZaak()) {
-            return this.relevanteZaakBronSelectFormField.formControl.value.value;
+            return this.relevanteZaakBronKeuzes[0].value;
         }
         return null;
     }
 
     private getRelatieTypeReverse(): ZaakRelatietype {
         if (this.isSoortRelevanteZaak()) {
-            return this.relevanteZaakDoelSelectFormField.formControl.value?.value;
+            return this.relevanteZaakSelectFormField.formControl.value?.value;
         }
         return null;
     }

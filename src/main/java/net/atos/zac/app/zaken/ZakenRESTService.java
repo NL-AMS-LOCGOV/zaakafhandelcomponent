@@ -642,10 +642,12 @@ public class ZakenRESTService {
             case ONDERWERP -> koppelRelevantezaken(zaak, teKoppelenZaak, AardRelatie.ONDERWERP);
             case BIJDRAGE -> koppelRelevantezaken(zaak, teKoppelenZaak, AardRelatie.BIJDRAGE);
         }
-        switch (gegevens.reverseRelatieType) {
-            case VERVOLG -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.VERVOLG);
-            case ONDERWERP -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.ONDERWERP);
-            case BIJDRAGE -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.BIJDRAGE);
+        if (gegevens.reverseRelatieType != null) {
+            switch (gegevens.reverseRelatieType) {
+                case VERVOLG -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.VERVOLG);
+                case ONDERWERP -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.ONDERWERP);
+                case BIJDRAGE -> koppelRelevantezaken(teKoppelenZaak, zaak, AardRelatie.BIJDRAGE);
+            }
         }
     }
 
@@ -1054,18 +1056,21 @@ public class ZakenRESTService {
             final AardRelatie aardRelatie) {
         final RelevanteZaak relevanteZaak = new RelevanteZaak(andereZaak, aardRelatie);
         if (relevanteZaken != null) {
-            relevanteZaken.add(relevanteZaak);
+            if (relevanteZaken.stream()
+                    .noneMatch(zaak -> zaak.is(andereZaak, aardRelatie))) {
+                relevanteZaken.add(relevanteZaak);
+            }
             return relevanteZaken;
+        } else {
+            return List.of(relevanteZaak);
         }
-        return List.of(relevanteZaak);
     }
 
     private List<RelevanteZaak> removeRelevanteZaak(final List<RelevanteZaak> relevanteZaken, URI andereZaak,
             final AardRelatie aardRelatie) {
         if (relevanteZaken != null) {
             relevanteZaken.removeAll(relevanteZaken.stream()
-                                             .filter(zaak -> zaak.getAardRelatie() == aardRelatie &&
-                                                     zaak.getUrl().equals(andereZaak))
+                                             .filter(zaak -> zaak.is(andereZaak, aardRelatie))
                                              .toList());
         }
         return relevanteZaken;
