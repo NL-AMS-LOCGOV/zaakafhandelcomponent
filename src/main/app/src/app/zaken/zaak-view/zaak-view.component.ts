@@ -57,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -77,6 +80,7 @@ import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-opt
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
+import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -379,8 +383,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         if (this.zaak.rechten.wijzigen) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_MAKEN;
+                this.maakDocument();
             }, 'note_add'));
 
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
@@ -444,6 +447,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.createKoppelingenMenuItems();
             this.updateMargins();
         });
+    }
+
+    private maakDocument(): void {
+        const documentCreatieGegeven = new DocumentCreatieGegevens();
+        documentCreatieGegeven.zaakUUID = this.zaak.uuid;
+        this.informatieObjectenService.createDocument(documentCreatieGegeven)
+            .subscribe((documentCreatieResponse) => {
+                if (documentCreatieResponse.redirectURL) {
+                    window.open(documentCreatieResponse.redirectURL);
+                } else {
+                    this.dialog.open(NotificationDialogComponent,
+                        {data: new NotificationDialogData(documentCreatieResponse.message)});
+                }
+            });
     }
 
     private createKoppelingenMenuItems(): void {
@@ -911,16 +928,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.updateZaak();
-    }
-
-    documentAanmakenStarten(redirectUrl: string): void {
-        this.sluitSidenav();
-        window.open(redirectUrl);
-    }
-
-    documentAanmakenNietMogelijk(melding: string): void {
-        this.sluitSidenav();
-        this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
     }
 
     startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {

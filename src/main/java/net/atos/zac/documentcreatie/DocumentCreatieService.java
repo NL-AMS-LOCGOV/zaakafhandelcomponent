@@ -94,8 +94,6 @@ public class DocumentCreatieService {
         final Registratie registratie = new Registratie();
         registratie.bronorganisatie = BRON_ORGANISATIE;
         registratie.zaak = zrcClientService.createUrlExternToZaak(documentCreatieGegevens.getZaak().getUuid());
-        registratie.informatieobjecttype = ztcClientService.createUrlExternToInformatieobjecttype(documentCreatieGegevens.getInformatieobjecttype());
-        registratie.titel = documentCreatieGegevens.getTitel();
         registratie.informatieobjectStatus = documentCreatieGegevens.getInformatieobjectStatus();
         registratie.creatiedatum = LocalDate.now();
         registratie.auditToelichting = AUDIT_TOELICHTING;

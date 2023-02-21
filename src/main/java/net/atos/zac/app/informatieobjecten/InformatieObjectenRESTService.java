@@ -507,9 +507,7 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClientService.readZaak(restDocumentCreatieGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(zaak,
-                                                                                            restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);
-        documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
         final DocumentCreatieResponse documentCreatieResponse = documentCreatieService.creeerDocumentAttendedSD(
                 documentCreatieGegevens);
         return new RESTDocumentCreatieResponse(documentCreatieResponse.getRedirectUrl(),
