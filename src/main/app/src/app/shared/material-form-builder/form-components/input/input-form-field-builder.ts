@@ -27,6 +27,11 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    disabled() {
+        this.formField.formControl.disable();
+        return this;
+    }
+
     maxlength(maxlength: number, showCount: boolean = true): this {
         this.formField.maxlength = maxlength;
         this.formField.showCount = showCount;
