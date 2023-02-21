@@ -123,7 +123,7 @@ export class UtilService {
             this.translate.instant(action, params),
             {
                 panelClass: ['mat-snackbar'],
-                duration: durationSeconden != null ? durationSeconden * 100000 : null
+                duration: durationSeconden != null ? durationSeconden * 1000 : null
             }
         ).onAction();
     }
