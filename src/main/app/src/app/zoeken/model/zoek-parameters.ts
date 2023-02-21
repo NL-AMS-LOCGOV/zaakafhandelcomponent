@@ -40,7 +40,7 @@ export class ZoekParameters implements ZoekFilters {
         if (zoekFilters.filters) {
             for (const field in zoekFilters.filters) {
                 if (zoekFilters.filters.hasOwnProperty(field)) {
-                    if (zoekFilters.filters[field] != null) {
+                    if (0 < zoekFilters.filters[field]?.waarden?.length) {
                         return true;
                     }
                 }
