@@ -36,7 +36,7 @@ import net.atos.zac.documentcreatie.model.WizardRequest;
 @ApplicationScoped
 public class DocumentCreatieService {
 
-    private static final String AUDIT_TOELICHTING = "Document gecreëerd in SmartDocuments";
+    private static final String AUDIT_TOELICHTING = "Door SmartDocuments";
 
     @Inject
     @RestClient
