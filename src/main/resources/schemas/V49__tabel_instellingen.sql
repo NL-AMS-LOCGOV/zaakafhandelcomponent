@@ -15,5 +15,5 @@ CREATE TABLE ${schema}.tabel_instellingen
 
 CREATE SEQUENCE ${schema}.sq_tabel_instellingen START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 
-CREATE INDEX idx_zoekopdracht_id_lijst_enum ON ${schema}.tabel_instellingen USING btree (id_lijst_enum);
-CREATE INDEX idx_zoekopdracht_id_medewerker ON ${schema}.tabel_instellingen USING btree (id_medewerker);
+CREATE INDEX idx_tabel_instellingen_id_lijst_enum ON ${schema}.tabel_instellingen USING btree (id_lijst_enum);
+CREATE INDEX idx_tabel_instellingen_id_medewerker ON ${schema}.tabel_instellingen USING btree (id_medewerker);
