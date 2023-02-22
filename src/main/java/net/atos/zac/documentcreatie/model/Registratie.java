@@ -14,10 +14,6 @@ public class Registratie {
 
     public URI zaak;
 
-    public String titel;
-
-    public URI informatieobjecttype;
-
     public InformatieobjectStatus informatieobjectStatus;
 
     public String bronorganisatie;
