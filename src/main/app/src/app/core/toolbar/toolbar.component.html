@@ -19,7 +19,7 @@
                     matBadge="!" matBadgeColor="warn" matBadgeSize="small"
                     color="primary"
                     title="{{ 'title.dashboard' | translate }}" aria-label="Dashboard">
-                <mat-icon mat-list-icon>home</mat-icon>
+                <mat-icon>home</mat-icon>
             </button>
 
             <button *ngIf="this.overigeRechten.startenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
@@ -34,21 +34,18 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #zakenMenu="matMenu">
-                <button routerLink="/zaken/werkvoorraad" id="zakenWerkvoorraad_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>source</mat-icon>
+                <a routerLink="/zaken/werkvoorraad" id="zakenWerkvoorraad_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>source</mat-icon>
                     <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
-                </button>
-                <button routerLink="/zaken/mijn" id="zakenMijn_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>folder_shared</mat-icon>
+                </a>
+                <a routerLink="/zaken/mijn" id="zakenMijn_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>folder_shared</mat-icon>
                     <span>{{ 'title.zaken.mijn' | translate }}</span>
-                </button>
-                <button routerLink="/zaken/afgehandeld" id="zakenAfgehandeld_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>rule_folder</mat-icon>
+                </a>
+                <a routerLink="/zaken/afgehandeld" id="zakenAfgehandeld_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>rule_folder</mat-icon>
                     <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
-                </button>
+                </a>
             </mat-menu>
 
             <button *ngIf="this.werklijstRechten.zakenTaken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
@@ -58,16 +55,14 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #takenMenu="matMenu">
-                <button routerLink="/taken/werkvoorraad" id="takenWerkvoorraad_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>description</mat-icon>
+                <a routerLink="/taken/werkvoorraad" id="takenWerkvoorraad_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>description</mat-icon>
                     <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
-                </button>
-                <button routerLink="/taken/mijn" id="takenMijn_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>contact_page</mat-icon>
+                </a>
+                <a routerLink="/taken/mijn" id="takenMijn_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>contact_page</mat-icon>
                     <span>{{ 'title.taken.mijn' | translate }}</span>
-                </button>
+                </a>
             </mat-menu>
 
             <button *ngIf="this.werklijstRechten.documentenInbox || this.werklijstRechten.documentenOntkoppeld" [matMenuTriggerFor]="documentenMenu"
@@ -78,16 +73,16 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #documentenMenu="matMenu">
-                <button *ngIf="this.werklijstRechten.documentenOntkoppeld" routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>inbox</mat-icon>
+                <a *ngIf="this.werklijstRechten.documentenOntkoppeld"
+                   routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>inbox</mat-icon>
                     <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
-                </button>
-                <button *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
-                        routerLinkActive="active">
-                    <mat-icon mat-list-icon>drive_file_move_outline</mat-icon>
+                </a>
+                <a *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
+                   routerLinkActive="active">
+                    <mat-icon>drive_file_move_outline</mat-icon>
                     <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
-                </button>
+                </a>
             </mat-menu>
         </div>
 
