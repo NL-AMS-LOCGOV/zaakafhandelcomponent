@@ -6,6 +6,7 @@
 package net.atos.zac.util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -40,5 +41,9 @@ public final class DateTimeConverterUtil {
 
     public static Date convertToDate(final String isoString) {
         return StringUtils.isNotBlank(isoString) ? convertToDate(ZonedDateTime.parse(isoString)) : null;
+    }
+
+    public static LocalDateTime convertToLocalDateTime(final ZonedDateTime zonedDateTime) {
+        return zonedDateTime != null ? zonedDateTime.withZoneSameInstant(DEFAULT_ZONE_ID).toLocalDateTime() : null;
     }
 }
