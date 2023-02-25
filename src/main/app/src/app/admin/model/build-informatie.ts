@@ -4,6 +4,7 @@
  */
 
 export class BuildInformatie {
+    commit: string;
     buildId: string;
     buildDatumTijd: string;
     versienummer: string;

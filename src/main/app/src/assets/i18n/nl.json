@@ -703,6 +703,7 @@
   "healthCheck.build_informatie.versienummer": "Versienummer",
   "healthCheck.build_informatie.build_id": "Build id",
   "healthCheck.build_informatie.build_datum_tijd": "Build tijdstip",
+  "healthCheck.build_informatie.commit": "Commit",
   " 9 ": ">>--> Zoeken <--<<",
   "zoeken.filter.type": "Type",
   "zoeken.filter.zaaktype": "Zaaktype",

@@ -53,6 +53,10 @@ public class HealthCheckService {
     private Optional<String> buildId;
 
     @Inject
+    @ConfigProperty(name = "COMMIT")
+    private Optional<String> commit;
+
+    @Inject
     @ConfigProperty(name = "VERSIENUMMER")
     private Optional<String> versienummer;
 
@@ -99,6 +103,7 @@ public class HealthCheckService {
         }
         return new BuildInformatie(
                 // Take only the part of the build id which is displayed in the GCP Cloud Build History
+                commit.orElse(null),
                 buildId.map(id -> substringBefore(id, "-")).orElse(null),
                 buildDatumTijd,
                 versienummer.orElse(null));

@@ -9,6 +9,7 @@ steps:
       '--tag', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}:${_VERSION}',
       '--build-arg', 'versienummer=${_VERSION}',
       '--build-arg', 'buildId=$BUILD_ID',
+      '--build-arg', 'commit=$SHORT_SHA',
       '--file', 'Containerfile',
       '.'
     ]
