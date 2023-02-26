@@ -39,6 +39,9 @@ public class HealthCheckService {
 
     private static final String BUILD_TIMESTAMP_FILE = "/build_timestamp.txt";
 
+    // See usage in Containerfile
+    private static final String UNKNOWN = "UNKNOWN";
+
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -103,10 +106,10 @@ public class HealthCheckService {
         }
         return new BuildInformatie(
                 // Take only the part of the build id which is displayed in the GCP Cloud Build History
-                commit.orElse(null),
-                buildId.map(id -> substringBefore(id, "-")).orElse(null),
+                commit.filter(commit -> !UNKNOWN.equals(commit)).orElse(null),
+                buildId.filter(buildId -> !UNKNOWN.equals(buildId)).map(id -> substringBefore(id, "-")).orElse(null),
                 buildDatumTijd,
-                versienummer.orElse(null));
+                versienummer.filter(versienummer -> !UNKNOWN.equals(versienummer)).orElse(null));
     }
 
     private void controleerZaaktypeStatustypeInrichting(final ZaaktypeInrichtingscheck zaaktypeInrichtingscheck) {
