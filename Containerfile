@@ -23,4 +23,4 @@ EXPOSE 8080 9990
 ARG buildId
 ARG commit
 ARG versienummer
-ENV BUILD_ID=${buildId:-UNKNOWN} COMMIT=${commit:-UNKNOWN} VERSIENUMMER=${versienummer:-UNKNOWN}
+ENV BUILD_ID=$buildId COMMIT=$commit VERSIENUMMER=$versienummer
