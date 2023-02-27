@@ -13,7 +13,7 @@ import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter
 import {HealthCheckService} from '../health-check.service';
 import {ZaaktypeInrichtingscheck} from '../model/zaaktype-inrichtingscheck';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {BuildInformatie} from '../model/build-informatie';
+import {VersionLayout} from '../../shared/version/version.component';
 
 @Component({
     templateUrl: './inrichtingscheck.component.html',
@@ -32,6 +32,7 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild(MatSort) sort: MatSort;
 
+    readonly versionLayout = VersionLayout;
     dataSource: MatTableDataSource<ZaaktypeInrichtingscheck> = new MatTableDataSource<ZaaktypeInrichtingscheck>();
     loadingZaaktypes: boolean = true;
     loadingCommunicatiekanaal: boolean = true;
@@ -42,7 +43,6 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
     filterValue: string = '';
     bestaatCommunicatiekanaalEformulier: boolean;
     ztcCacheTime: string;
-    buildInformatie: BuildInformatie = new BuildInformatie();
 
     constructor(private healtCheckService: HealthCheckService, public utilService: UtilService) {
         super(utilService);
@@ -86,10 +86,6 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
         this.checkZaaktypes();
         this.healtCheckService.readZTCCacheTime().subscribe(value => {
             this.ztcCacheTime = value;
-        });
-
-        this.healtCheckService.readBuildInformatie().subscribe(buildInformatie => {
-            this.buildInformatie = buildInformatie;
         });
     }
 

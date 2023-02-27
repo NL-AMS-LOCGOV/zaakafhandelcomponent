@@ -49,6 +49,7 @@ import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filt
 import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
 import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
 import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
+import {VersionComponent} from './version/version.component';
 
 @NgModule({
     declarations: [
@@ -83,6 +84,7 @@ import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-objec
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
+        VersionComponent
     ],
     imports: [
         FormsModule,
@@ -132,6 +134,7 @@ import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-objec
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
+        VersionComponent
     ],
     providers: [
         Title,

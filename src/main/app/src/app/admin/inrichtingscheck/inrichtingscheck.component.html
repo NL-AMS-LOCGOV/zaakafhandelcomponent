@@ -189,23 +189,7 @@
             </mat-card-content>
         </mat-card>
 
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>
-                    {{'healthCheck.build_informatie' | translate}}
-                </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>
-                    {{'healthCheck.build_informatie.versienummer' | translate}}
-                    :{{ buildInformatie.versienummer | empty}}<br>
-                    {{'healthCheck.build_informatie.commit' | translate}}: {{ buildInformatie.commit | empty}}<br>
-                    {{'healthCheck.build_informatie.build_id' | translate}}: {{ buildInformatie.buildId | empty}}<br>
-                    {{'healthCheck.build_informatie.build_datum_tijd' | translate}}: {{
-                    buildInformatie.buildDatumTijd | empty}}
-                </p>
-            </mat-card-content>
-        </mat-card>
+        <zac-version [layout]="versionLayout.VERBOSE"></zac-version>
 
     </mat-sidenav-content>
 </mat-sidenav-container>
