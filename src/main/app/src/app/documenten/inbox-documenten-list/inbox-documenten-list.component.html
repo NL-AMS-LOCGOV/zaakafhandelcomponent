@@ -27,7 +27,7 @@
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
                     <zac-zoekopdracht class="flex-row justify-end"
-                                      [werklijst]="werklijst"
+                                      [werklijst]="getWerklijst()"
                                       [zoekFilters]="listParameters"
                                       [filtersChanged]="clearZoekopdracht"
                                       (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
@@ -92,7 +92,8 @@
     </div>
     <mat-paginator #paginator
                    [pageIndex]="0"
-                   [pageSize]="listParameters.maxResults"
+                   (page)="paginatorChanged($event)"
+                   [pageSize]="aantalPerPagina"
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    sticky>
     </mat-paginator>

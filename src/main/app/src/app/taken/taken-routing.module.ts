@@ -9,14 +9,15 @@ import {TaakViewComponent} from './taak-view/taak-view.component';
 import {TaakResolver} from './taak.resolver';
 import {TakenMijnComponent} from './taken-mijn/taken-mijn.component';
 import {TakenWerkvoorraadComponent} from './taken-werkvoorraad/taken-werkvoorraad.component';
+import {TabelGegevensResolver} from '../shared/dynamic-table/datasource/tabel-gegevens-resolver.service';
 
 const routes: Routes = [
     {
         path: 'taken', children: [
             {path: '', redirectTo: 'werkvoorraad', pathMatch: 'full'},
-            {path: 'werkvoorraad', component: TakenWerkvoorraadComponent},
-            {path: 'mijn', component: TakenMijnComponent},
-            {path: ':id', component: TaakViewComponent, resolve: {taak: TaakResolver}},
+            {path: 'werkvoorraad', component: TakenWerkvoorraadComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
+            {path: 'mijn', component: TakenMijnComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
+            {path: ':id', component: TaakViewComponent, resolve: {taak: TaakResolver}}
         ]
     }
 ];

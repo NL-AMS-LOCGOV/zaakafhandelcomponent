@@ -12,6 +12,7 @@ import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.servi
 import {Werklijst} from './model/werklijst';
 import {Zoekopdracht} from './model/zoekopdracht';
 import {DashboardCardInstelling} from '../dashboard/model/dashboard-card-instelling';
+import {TabelGegevens} from '../shared/dynamic-table/model/tabel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -53,8 +54,8 @@ export class GebruikersvoorkeurenService {
         );
     }
 
-    readAantalPerPagina(werklijst: Werklijst): Observable<number> {
-        return this.http.get<number>(`${this.basepath}/aantal-per-pagina/${werklijst}`).pipe(
+    readTabelGegevens(werklijst: Werklijst): Observable<TabelGegevens> {
+        return this.http.get<TabelGegevens>(`${this.basepath}/tabel-gegevens/${werklijst}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

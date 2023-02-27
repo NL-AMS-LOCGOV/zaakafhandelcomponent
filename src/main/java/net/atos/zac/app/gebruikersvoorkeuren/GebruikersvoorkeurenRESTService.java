@@ -23,13 +23,16 @@ import javax.ws.rs.core.MediaType;
 import net.atos.zac.app.gebruikersvoorkeuren.converter.RESTDashboardCardInstellingConverter;
 import net.atos.zac.app.gebruikersvoorkeuren.converter.RESTZoekopdrachtConverter;
 import net.atos.zac.app.gebruikersvoorkeuren.model.RESTDashboardCardInstelling;
+import net.atos.zac.app.gebruikersvoorkeuren.model.RESTTabelGegevens;
 import net.atos.zac.app.gebruikersvoorkeuren.model.RESTZoekopdracht;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.gebruikersvoorkeuren.GebruikersvoorkeurenService;
 import net.atos.zac.gebruikersvoorkeuren.model.TabelInstellingen;
 import net.atos.zac.gebruikersvoorkeuren.model.Werklijst;
 import net.atos.zac.gebruikersvoorkeuren.model.Zoekopdracht;
 import net.atos.zac.gebruikersvoorkeuren.model.ZoekopdrachtListParameters;
+import net.atos.zac.policy.PolicyService;
 
 @Singleton
 @Path("gebruikersvoorkeuren")
@@ -48,6 +51,12 @@ public class GebruikersvoorkeurenRESTService {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private PolicyService policyService;
+
+    @Inject
+    private RESTRechtenConverter rechtenConverter;
 
     @GET
     @Path("zoekopdracht/{lijstID}")
@@ -84,9 +93,13 @@ public class GebruikersvoorkeurenRESTService {
     }
 
     @GET
-    @Path("aantal-per-pagina/{werklijst}")
-    public int readAantalItemsPerPagina(@PathParam("werklijst") final Werklijst werklijst) {
-        return gebruikersvoorkeurenService.readTabelInstellingen(werklijst, loggedInUserInstance.get().getId()).getAantalPerPagina();
+    @Path("tabel-gegevens/{werklijst}")
+    public RESTTabelGegevens readTabelGegevens(@PathParam("werklijst") final Werklijst werklijst) {
+        final RESTTabelGegevens restTabelGegevens = new RESTTabelGegevens();
+        final TabelInstellingen tabelInstellingen = gebruikersvoorkeurenService.readTabelInstellingen(werklijst, loggedInUserInstance.get().getId());
+        restTabelGegevens.aantalPerPagina = tabelInstellingen.getAantalPerPagina();
+        restTabelGegevens.werklijstRechten = rechtenConverter.convert(policyService.readWerklijstRechten());
+        return restTabelGegevens;
     }
 
     @PUT

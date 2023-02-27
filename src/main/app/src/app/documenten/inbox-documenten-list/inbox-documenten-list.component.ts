@@ -22,12 +22,15 @@ import {InboxDocumentListParameters} from '../model/inbox-document-list-paramete
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     templateUrl: './inbox-documenten-list.component.html',
     styleUrls: ['./inbox-documenten-list.component.less']
 })
-export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
+export class InboxDocumentenListComponent extends WerklijstComponent implements OnInit, AfterViewInit {
 
     isLoadingResults = true;
     dataSource: MatTableDataSource<InboxDocument> = new MatTableDataSource<InboxDocument>();
@@ -38,16 +41,19 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     listParameters: InboxDocumentListParameters;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
-    werklijst = Werklijst.INBOX_DOCUMENTEN;
 
     constructor(private inboxDocumentenService: InboxDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
-                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
+                public gebruikersvoorkeurenService: GebruikersvoorkeurenService, public route: ActivatedRoute) {
+        super();
+    }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.listParameters = SessionStorageUtil.getItem(Werklijst.INBOX_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
         this.utilService.setTitle('title.documenten.inboxDocumenten');
     }
@@ -145,5 +151,9 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         } else {
             this.filterChange.emit();
         }
+    }
+
+    getWerklijst(): Werklijst {
+        return Werklijst.INBOX_DOCUMENTEN;
     }
 }

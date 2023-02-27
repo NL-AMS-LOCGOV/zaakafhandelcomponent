@@ -21,13 +21,18 @@ import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {ActivatedRoute} from '@angular/router';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
     styleUrls: ['./zaken-mijn.component.less'],
     animations: [detailExpand]
 })
-export class ZakenMijnComponent implements AfterViewInit, OnInit {
+export class ZakenMijnComponent extends WerklijstComponent implements AfterViewInit, OnInit {
+
     readonly indicatiesLayout = IndicatiesLayout;
     dataSource: ZakenMijnDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -42,11 +47,14 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService) {
-        this.dataSource = new ZakenMijnDatasource(this.zoekenService, this.utilService);
+    constructor(private zakenService: ZakenService, public gebruikersvoorkeurenService: GebruikersvoorkeurenService, public route: ActivatedRoute,
+                private zoekenService: ZoekenService, public utilService: UtilService) {
+        super();
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
+        this.dataSource = new ZakenMijnDatasource(this.zoekenService, this.utilService);
         this.utilService.setTitle('title.zaken.mijn');
         this.dataSource.initColumns(this.defaultColumns());
     }
@@ -86,5 +94,9 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
 
     filtersChange(): void {
         this.dataSource.filtersChanged();
+    }
+
+    getWerklijst(): Werklijst {
+        return Werklijst.MIJN_ZAKEN;
     }
 }

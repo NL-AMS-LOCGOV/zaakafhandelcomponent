@@ -15,7 +15,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {LoggedInUser} from '../../identity/model/logged-in-user';
@@ -26,21 +26,22 @@ import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verde
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
-import {PolicyService} from '../../policy/policy.service';
-import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
     styleUrls: ['./zaken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
+export class ZakenWerkvoorraadComponent extends WerklijstComponent implements AfterViewInit, OnInit {
     readonly indicatiesLayout = IndicatiesLayout;
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
-    rechten = new WerklijstRechten();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -54,18 +55,17 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService) {
+    constructor(private zakenService: ZakenService, public gebruikersvoorkeurenService: GebruikersvoorkeurenService, public route: ActivatedRoute,
+                private zoekenService: ZoekenService, public utilService: UtilService, public dialog: MatDialog, private identityService: IdentityService) {
+        super();
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.policyService.readWerklijstRechten().subscribe(rechten => {
-            this.rechten = rechten;
-            this.dataSource.initColumns(this.defaultColumns());
-        });
+        this.dataSource.initColumns(this.defaultColumns());
     }
 
     defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
@@ -87,10 +87,14 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             [ZoekenColumn.INDICATIES, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
-        if (!this.rechten.zakenTakenVerdelen) {
+        if (!this.werklijstRechten.zakenTakenVerdelen) {
             columns.delete(ZoekenColumn.SELECT);
         }
         return columns;
+    }
+
+    getWerklijst(): Werklijst {
+        return Werklijst.WERKVOORRAAD_ZAKEN;
     }
 
     ngAfterViewInit(): void {
@@ -138,7 +142,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return `actie.${this.selection.isSelected(row) ? 'deselecteren' : 'selecteren'}`;
     }
 
-    pageChange(): void {
+    paginatorChanged($event: PageEvent): void {
+        super.paginatorChanged($event);
         this.selection.clear();
     }
 

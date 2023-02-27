@@ -241,8 +241,9 @@
     <div class="pagination-wrapper">
         <zac-export-button [zoekParameters]="this.dataSource.zoekParameters"
                            [filename]="'title.taken.werkvoorraad' | translate"></zac-export-button>
-        <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
-                       (page)="pageChange()" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+        <mat-paginator (page)="paginatorChanged($event)" #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page"
+                       [pageSize]="aantalPerPagina"
+                       [pageSizeOptions]="[10, 25, 50, 100]" sticky>
         </mat-paginator>
     </div>
 </div>

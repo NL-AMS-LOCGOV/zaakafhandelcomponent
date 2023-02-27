@@ -11,15 +11,16 @@ import {ZaakIdentificatieResolver} from './zaak-identificatie-resolver.service';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
+import {TabelGegevensResolver} from '../shared/dynamic-table/datasource/tabel-gegevens-resolver.service';
 
 const routes: Routes = [
     {
         path: 'zaken', children: [
             {path: '', redirectTo: 'werkvoorraad', pathMatch: 'full'},
-            {path: 'mijn', component: ZakenMijnComponent},
-            {path: 'werkvoorraad', component: ZakenWerkvoorraadComponent},
+            {path: 'mijn', component: ZakenMijnComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
+            {path: 'werkvoorraad', component: ZakenWerkvoorraadComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
             {path: 'create', component: ZaakCreateComponent},
-            {path: 'afgehandeld', component: ZakenAfgehandeldComponent},
+            {path: 'afgehandeld', component: ZakenAfgehandeldComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
             {path: ':zaakIdentificatie', component: ZaakViewComponent, resolve: {zaak: ZaakIdentificatieResolver}}
         ]
     }
