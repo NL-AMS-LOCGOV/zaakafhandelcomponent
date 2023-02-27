@@ -1,12 +1,12 @@
 steps:
-#  - id: create build timestamp
+  #  - id: create build timestamp
   #    name: 'ubuntu'
   #    args: [ 'bash', '-c', 'date > _BUILD_DATUM_TIJD; echo ($cat _BUILD_DATUM_TIJD)' ]
   - id: docker build
     name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '--tag', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}',
+      '--tag', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}:${_VERSION}',
       '--build-arg', 'versienummer=${_VERSION}',
       '--build-arg', 'buildId=$BUILD_ID',
       '--build-arg', 'commit=$SHORT_SHA',
@@ -15,22 +15,13 @@ steps:
     ]
   - id: docker push
     name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}' ]
-  - id: Deploy to GKE
-    name: 'gcr.io/cloud-builders/kubectl'
-    env:
-      - CLOUDSDK_COMPUTE_ZONE=europe-west4-a
-      - CLOUDSDK_CONTAINER_CLUSTER=develop
-    args: [ 'rollout', 'restart', 'deployment', '${_DEPLOYMENT}' ]
+    args: [ 'push', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}:${_VERSION}' ]
 images:
   - europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}:${_VERSION}
 timeout: 900s
-options:
-  dynamic_substitutions: true
 substitutions:
   _REPOSITORY: common-ground
   _DEPLOYMENT: zaakafhandelcomponent
-  _VERSION: latest
 tags:
   - '${_DEPLOYMENT}'
   - '${_VERSION}'

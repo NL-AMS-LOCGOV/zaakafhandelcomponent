@@ -19,7 +19,8 @@
                 <mat-expansion-panel hideToggle>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            <button (click)="clearZTCCache($event)" [disabled]="loadingZaaktypes" mat-flat-button color="primary">
+                            <button (click)="clearZTCCache($event)" [disabled]="loadingZaaktypes" mat-flat-button
+                                    color="primary">
                                 <mat-icon>{{loadingZaaktypes ? 'sync_lock' : 'sync'}}</mat-icon>
                                 {{'healthCheck.synchroniseer.ztc.button' | translate }}</button>
                         </mat-panel-title>
@@ -28,11 +29,13 @@
                         </mat-panel-description>
                         <mat-icon>help</mat-icon>
                     </mat-expansion-panel-header>
-                    <p>{{'healthCheck.synchroniseer.ztc.uitleg.1' | translate}}<br/>{{'healthCheck.synchroniseer.ztc.uitleg.2' | translate}}</p>
+                    <p>{{'healthCheck.synchroniseer.ztc.uitleg.1' | translate}}
+                        <br/>{{'healthCheck.synchroniseer.ztc.uitleg.2' | translate}}</p>
 
                 </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
+
         <mat-card>
             <mat-card-header>
                 <mat-card-title>
@@ -51,7 +54,8 @@
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="zaaktypeOmschrijving">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header="zaaktypeOmschrijving">{{'zaaktypeOmschrijving'|translate}} </th>
+                            <th mat-header-cell *matHeaderCellDef
+                                mat-sort-header="zaaktypeOmschrijving">{{'zaaktypeOmschrijving'|translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.zaaktype.omschrijving}} </td>
                         </ng-container>
                         <ng-container matColumnDef="zaaktypeDoel">
@@ -61,7 +65,8 @@
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="beginGeldigheid">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header="beginGeldigheid">{{'begin.geldigheid'|translate}} </th>
+                            <th mat-header-cell *matHeaderCellDef
+                                mat-sort-header="beginGeldigheid">{{'begin.geldigheid'|translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.zaaktype.beginGeldigheid | datum}} </td>
                         </ng-container>
                         <ng-container matColumnDef="valide">
@@ -76,7 +81,8 @@
                         </ng-container>
                         <ng-container matColumnDef="expandedTitle">
                             <td mat-cell *matCellDef="let row">
-                                <div class="detail flex-col" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                                <div class="detail flex-col"
+                                     [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                                     <div *ngIf="!row.zaakafhandelParametersValide">{{'zaakafhandelparameters' | translate}}</div>
                                     <div *ngIf="!row.statustypeIntakeAanwezig">{{'statustype' | translate}}</div>
                                     <div *ngIf="!row.statustypeInBehandelingAanwezig">{{'statustype' | translate}}</div>
@@ -94,7 +100,8 @@
                         </ng-container>
                         <ng-container matColumnDef="expandedDetail">
                             <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplay.length -3">
-                                <div class="detail flex-col" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                                <div class="detail flex-col"
+                                     [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                                     <div *ngIf="!row.zaakafhandelParametersValide">{{'healthCheck.zaaktype.zaakafhandelParametersOngeldig' | translate}}</div>
                                     <div *ngIf="!row.statustypeIntakeAanwezig">{{'healthCheck.zaaktype.geenStatustypeIntakeAanwezig' | translate}}</div>
                                     <div *ngIf="!row.statustypeInBehandelingAanwezig">
@@ -135,16 +142,17 @@
                         <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
                         <tr mat-header-row *matHeaderRowDef="['valideFilter', 'zoekFilter']"></tr>
                         <tr (click)="!row.valide ? (expandedRow = expandedRow === row ? null : row): null"
-                            [class]="row.valide ? 'ok':'error'" class="main-row" mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-                        <tr mat-row *matRowDef="let row; columns: ['expandedPrefix','expandedTitle','expandedDetail']" class="detail-row"></tr>
+                            [class]="row.valide ? 'ok':'error'" class="main-row" mat-row
+                            *matRowDef="let row; columns: columnsToDisplay;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['expandedPrefix','expandedTitle','expandedDetail']"
+                            class="detail-row"></tr>
                     </table>
-
-
                 </div>
                 <p *ngIf="dataSource.data.length === 0 && !loadingZaaktypes">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                 <p *ngIf="dataSource.data.length === 0 && loadingZaaktypes">{{'msg.loading' | translate}}</p>
             </mat-card-content>
         </mat-card>
+
         <mat-card>
             <mat-card-header>
                 <mat-card-title>
@@ -156,9 +164,12 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <mat-icon *ngIf="loadingCommunicatiekanaal">hourglass_empty</mat-icon>
-                            <mat-icon *ngIf="!loadingCommunicatiekanaal && bestaatCommunicatiekanaalEformulier" color="primary">check_circle_outline
+                            <mat-icon *ngIf="!loadingCommunicatiekanaal && bestaatCommunicatiekanaalEformulier"
+                                      color="primary">check_circle_outline
                             </mat-icon>
-                            <mat-icon *ngIf="!loadingCommunicatiekanaal && !bestaatCommunicatiekanaalEformulier" color="warn">error_outline</mat-icon>
+                            <mat-icon *ngIf="!loadingCommunicatiekanaal && !bestaatCommunicatiekanaalEformulier"
+                                      color="warn">error_outline
+                            </mat-icon>
                             <div>{{'healthCheck.communicatiekanaal.e-formulier' | translate}}</div>
                         </mat-panel-title>
                         <mat-panel-description>
@@ -177,5 +188,24 @@
                 </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    {{'healthCheck.build_informatie' | translate}}
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    {{'healthCheck.build_informatie.versienummer' | translate}}
+                    :{{ buildInformatie.versienummer | empty}}<br>
+                    {{'healthCheck.build_informatie.commit' | translate}}: {{ buildInformatie.commit | empty}}<br>
+                    {{'healthCheck.build_informatie.build_id' | translate}}: {{ buildInformatie.buildId | empty}}<br>
+                    {{'healthCheck.build_informatie.build_datum_tijd' | translate}}: {{
+                    buildInformatie.buildDatumTijd | empty}}
+                </p>
+            </mat-card-content>
+        </mat-card>
+
     </mat-sidenav-content>
 </mat-sidenav-container>
