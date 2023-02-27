@@ -26,6 +26,7 @@ import net.atos.zac.app.gebruikersvoorkeuren.model.RESTDashboardCardInstelling;
 import net.atos.zac.app.gebruikersvoorkeuren.model.RESTZoekopdracht;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.gebruikersvoorkeuren.GebruikersvoorkeurenService;
+import net.atos.zac.gebruikersvoorkeuren.model.TabelInstellingen;
 import net.atos.zac.gebruikersvoorkeuren.model.Werklijst;
 import net.atos.zac.gebruikersvoorkeuren.model.Zoekopdracht;
 import net.atos.zac.gebruikersvoorkeuren.model.ZoekopdrachtListParameters;
@@ -80,6 +81,24 @@ public class GebruikersvoorkeurenRESTService {
     @Path("zoekopdracht/{werklijst}/actief")
     public void removeZoekopdrachtActief(@PathParam("werklijst") final Werklijst werklijst) {
         gebruikersvoorkeurenService.removeActief(new ZoekopdrachtListParameters(werklijst, loggedInUserInstance.get().getId()));
+    }
+
+    @GET
+    @Path("aantal-per-pagina/{werklijst}")
+    public int readAantalItemsPerPagina(@PathParam("werklijst") final Werklijst werklijst) {
+        return gebruikersvoorkeurenService.readTabelInstellingen(werklijst, loggedInUserInstance.get().getId()).getAantalPerPagina();
+    }
+
+    @PUT
+    @Path("aantal-per-pagina/{werklijst}/{aantal}")
+    public void updateAantalItemsPerPagina(@PathParam("werklijst") final Werklijst werklijst, @PathParam("aantal") final int aantal) {
+        if (aantal <= 100 && aantal > 0) {
+            final TabelInstellingen tabelInstellingen = new TabelInstellingen();
+            tabelInstellingen.setAantalPerPagina(aantal);
+            tabelInstellingen.setLijstID(werklijst);
+            tabelInstellingen.setMedewerkerID(loggedInUserInstance.get().getId());
+            gebruikersvoorkeurenService.updateTabelInstellingen(tabelInstellingen);
+        }
     }
 
     @GET
