@@ -67,6 +67,7 @@
             <mat-card class="zaken-card w50 flex-grow">
                 <mat-card-header class="flex-row space-between">
                     <mat-card-title>{{zaak.identificatie}}</mat-card-title>
+                    <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
                     <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
@@ -74,9 +75,7 @@
                         <mat-tab label="{{'gegevens.algemeen' | translate}}">
                             <div id="algemeneGegevens_tab" class="content flex-row flex-wrap">
 
-                                <div class="flex">
-                                    <zac-static-text [label]="'zaaktype' | translate"
-                                                     [value]="zaak.zaaktype.omschrijving"></zac-static-text>
+                                <div class="flex w33 w50-md w100-sm">
                                     <zac-static-text [label]="'status' | translate"
                                                      [value]="zaak.status | empty:'naam'"
                                                      [icon]="zaak.status?.toelichting ? toolTipIcon : null"
@@ -88,36 +87,42 @@
                                                      [readonly]="!zaak.rechten.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
                                     </zac-edit-select>
+                                    <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
+                                                     [reasonField]="editFormFields.get('reden')"
+                                                     [readonly]="!zaak.rechten.wijzigen"
+                                                     (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
+                                    </zac-edit-select>
+                                </div>
+                                <div class="flex w33 w50-md w100-sm">
+
                                     <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
                                                                 [reasonField]="editFormFields.get('reden')"
                                                                 [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
                                                                 (onSave)="editToewijzing($event)">
                                     </zac-edit-groep-behandelaar>
+                                    <zac-static-text *ngIf="zaak.archiefNominatie"
+                                                     [label]="'archiefNominatie.datum.'+zaak.archiefNominatie | translate"
+                                                     [value]="zaak.archiefActiedatum | datum | empty"></zac-static-text>
+
                                 </div>
-                                <div class="flex-grow">
+                                <div class="flex w33 w50-md w100-sm">
                                     <zac-static-text [label]="'registratiedatum' | translate"
                                                      [value]="zaak.registratiedatum | datum"></zac-static-text>
-                                    <zac-static-text *ngIf="zaak.einddatum" [label]="'einddatum' | translate"
-                                                     [value]="zaak.einddatum | datum"></zac-static-text>
                                     <zac-static-text [label]="'resultaat' | translate"
                                                      [value]="zaak.resultaat?.resultaattype | empty:'naam'"
                                                      [icon]="zaak.resultaat?.toelichting ? toolTipIcon : null"
                                                      [matTooltip]="zaak.resultaat?.toelichting"
                                                      [attr.role]="zaak.resultaat?.toelichting ? 'tooltip' : null"
                                                      [attr.aria-label]="zaak.resultaat?.toelichting"></zac-static-text>
-                                    <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
-                                                     [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="!zaak.rechten.wijzigen"
-                                                     (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
-                                    </zac-edit-select>
+                                    <zac-static-text *ngIf="zaak.einddatum" [label]="'einddatum' | translate"
+                                                     [value]="zaak.einddatum | datum"></zac-static-text>
 
-                                    <zac-static-text *ngIf="zaak.archiefNominatie"
-                                                     [label]="'archiefNominatie.datum.'+zaak.archiefNominatie | translate"
-                                                     [value]="zaak.archiefActiedatum | datum | empty"></zac-static-text>
+                                </div>
+
+                                <div class="flex-1 w100">
                                     <zac-static-text [label]="'locatie' | translate"
                                                      [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
                                                      (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
-
                                 </div>
 
                                 <div class="flex-1 w100">

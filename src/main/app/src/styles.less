@@ -13,6 +13,7 @@ html, body {
 
 body {
   --mdc-radio-state-layer-size: 24px;
+  --mdc-typography-button-letter-spacing: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   overscroll-behavior-y: contain;
@@ -309,10 +310,19 @@ mat-paginator[sticky] {
   }
 }
 
+.mdc-tab {
+  padding-left: 16px;
+  padding-right: 16px;
+}
 .mat-mdc-tab-nav-bar, .mat-mdc-tab-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  .mat-icon {
+    padding-right: 10px;
+  }
 }
 
 .tooltip-list {
   white-space: pre;
 }
+

@@ -4,8 +4,8 @@
   -->
 
 <div *ngIf="!editing">
-    <div class="static-text flex-row flex-wrap flex-col-xs" [class.readonly]="readonly" (click)="edit()">
-        <div class="flex-1 w33 w100-sm">
+    <div class="static-text w100 datum-groep flex-row flex-wrap flex-col-xs" [class.readonly]="readonly" (click)="edit()">
+        <div class="flex-1 w33 w50-md">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
@@ -14,7 +14,7 @@
                 {{startDatumField.formControl.defaultValue | datum}}
             </div>
         </div>
-        <div class="flex-1 w33 w100-sm">
+        <div class="inner-static-text flex-1 w33 w50-md">
             <label class="static-text-label">
                 {{einddatumGeplandField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex-1 w33 w100-sm">
+        <div class="inner-static-text flex-1 w33 w50-md">
             <label class="static-text-label">
                 {{uiterlijkeEinddatumAfdoeningField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
