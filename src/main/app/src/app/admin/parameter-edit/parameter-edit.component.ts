@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ActivatedRoute} from '@angular/router';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {forkJoin} from 'rxjs';
+import {forkJoin, Subscription} from 'rxjs';
 import {CaseDefinition} from '../model/case-definition';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {Group} from '../../identity/model/group';
@@ -39,12 +39,13 @@ import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 import {ZaakAfzender} from '../model/zaakafzender';
 import {MatTableDataSource} from '@angular/material/table';
 import {ReplyTo} from '../model/replyto';
+import {switchMap, tap} from 'rxjs/operators';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
     styleUrls: ['./parameter-edit.component.less']
 })
-export class ParameterEditComponent extends AdminComponent implements OnInit {
+export class ParameterEditComponent extends AdminComponent implements OnInit, OnDestroy {
 
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -78,6 +79,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     mailtemplates: Mailtemplate[];
     replyTos: ReplyTo[];
     loading: boolean;
+    defaultGroepSubscription$: Subscription;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService,
@@ -123,6 +125,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     ngOnInit(): void {
         this.mailOpties = this.utilService.getEnumAsSelectList('statusmail.optie', ZaakStatusmailOptie);
         this.setupMenu('title.parameters.wijzigen');
+    }
+
+    ngOnDestroy(): void {
+        super.ngOnDestroy();
+        this.defaultGroepSubscription$.unsubscribe();
     }
 
     caseDefinitionChanged(event: MatSelectChange): void {
@@ -177,6 +184,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             uiterlijkeEinddatumAfdoeningWaarschuwing: [this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing],
             productaanvraagtype: [this.parameters.productaanvraagtype]
         });
+        this.defaultGroepSubscription$ = this.algemeenFormGroup.controls.defaultGroepId.valueChanges.pipe(
+            switchMap(groepId => this.identityService.listUsersInGroup(groepId).pipe(
+                tap(medewerkers => this.medewerkers = medewerkers)
+            ))
+        ).subscribe();
         this.createHumanTasksForm();
         this.createUserEventListenerForm();
         this.createMailForm();

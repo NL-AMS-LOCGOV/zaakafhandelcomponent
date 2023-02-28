@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-FileCopyrightText: 2022 - 2023 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <div (click)="edit()" *ngIf="!editing" class="view">
@@ -43,13 +43,13 @@
 
     <div class="form-buttons">
         <div>
-            <button (click)="assignToMe()" *ngIf="showAssignToMe" color="accent" id="behandelaarKenAanMijToe_button"
+            <button (click)="assignToMe()" [hidden]="!showAssignToMe" color="accent" id="behandelaarKenAanMijToe_button"
                     mat-mini-fab
                     title="{{'actie.mij.toekennen' | translate}}">
                 <mat-icon>person_add_alt_1</mat-icon>
             </button>
 
-            <button (click)="release()" *ngIf="getFormControl('medewerker').defaultValue" color="accent" id="behandelaarVrijgeven_button"
+            <button (click)="release()" [hidden]="!showRelease" color="accent" id="behandelaarVrijgeven_button"
                     mat-mini-fab
                     title="{{'actie.vrijgeven' | translate}}">
                 <mat-icon>person_remove_alt</mat-icon>

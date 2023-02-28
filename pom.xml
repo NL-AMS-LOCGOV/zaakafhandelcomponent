@@ -10,12 +10,13 @@
 
     <groupId>net.atos.common-ground</groupId>
     <artifactId>zaakafhandelcomponent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>${packaging.type}</packaging>
 
     <name>Zaakafhandelcomponent</name>
 
     <properties>
+        <revision>latest-SNAPSHOT</revision>
         <maven.compiler.release>17</maven.compiler.release>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

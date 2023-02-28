@@ -13,6 +13,7 @@ import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter
 import {HealthCheckService} from '../health-check.service';
 import {ZaaktypeInrichtingscheck} from '../model/zaaktype-inrichtingscheck';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {VersionLayout} from '../../shared/version/version.component';
 
 @Component({
     templateUrl: './inrichtingscheck.component.html',
@@ -31,6 +32,7 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild(MatSort) sort: MatSort;
 
+    readonly versionLayout = VersionLayout;
     dataSource: MatTableDataSource<ZaaktypeInrichtingscheck> = new MatTableDataSource<ZaaktypeInrichtingscheck>();
     loadingZaaktypes: boolean = true;
     loadingCommunicatiekanaal: boolean = true;
@@ -76,13 +78,13 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
             return dataString.indexOf(filter.trim().toLowerCase()) !== -1;
         };
 
-        this.healtCheckService.getBestaatCommunicatiekanaalEformulier().subscribe(value => {
+        this.healtCheckService.readBestaatCommunicatiekanaalEformulier().subscribe(value => {
             this.loadingCommunicatiekanaal = false;
             this.bestaatCommunicatiekanaalEformulier = value;
         });
 
         this.checkZaaktypes();
-        this.healtCheckService.getZTCCacheTime().subscribe(value => {
+        this.healtCheckService.readZTCCacheTime().subscribe(value => {
             this.ztcCacheTime = value;
         });
     }
@@ -99,7 +101,7 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
 
     clearZTCCache($event: MouseEvent) {
         $event.stopPropagation();
-        this.healtCheckService.clearZTCCache().subscribe(value => {
+        this.healtCheckService.clearZTCCaches().subscribe(value => {
             this.ztcCacheTime = value;
             this.checkZaaktypes();
         });
