@@ -247,6 +247,6 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     getFileTooltip(filetype: string): string {
-        return filetype.toUpperCase() + '-' + this.translate.instant('bestand');
+        return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
 }

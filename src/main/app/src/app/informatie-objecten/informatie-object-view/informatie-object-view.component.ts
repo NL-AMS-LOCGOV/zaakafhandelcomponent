@@ -223,7 +223,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     getFileTooltip(filetype: string): string {
-        return filetype.toUpperCase() + '-' + this.translate.instant('bestand');
+        return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
 
     private updateVersieInformatie(): void {
