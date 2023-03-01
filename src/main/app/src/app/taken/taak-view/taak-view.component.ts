@@ -38,6 +38,13 @@ import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formu
 import {Observable, share} from 'rxjs';
 import {Zaak} from '../../zaken/model/zaak';
 import {ZakenService} from '../../zaken/zaken.service';
+import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -69,8 +76,15 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     private ingelogdeMedewerker: User;
     readonly TaakStatusAfgerond = TaakStatus.Afgerond;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private zakenService: ZakenService, public utilService: UtilService,
-                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
+    constructor(private route: ActivatedRoute,
+                private takenService: TakenService,
+                private zakenService: ZakenService,
+                private informatieObjectenService: InformatieObjectenService,
+                public utilService: UtilService,
+                private dialog: MatDialog,
+                private websocketService: WebsocketService,
+                private taakFormulierenService: TaakFormulierenService,
+                private identityService: IdentityService,
                 protected translate: TranslateService) {
         super();
     }
@@ -163,8 +177,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         if (this.taak.rechten.wijzigen) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_MAKEN;
+                this.maakDocument();
             }, 'note_add'));
 
             if (this.taak.status !== TaakStatus.Afgerond) {
@@ -174,6 +187,21 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'upload_file'));
             }
         }
+    }
+
+    private maakDocument(): void {
+        const documentCreatieGegeven = new DocumentCreatieGegevens();
+        documentCreatieGegeven.zaakUUID = this.taak.zaakUuid;
+        documentCreatieGegeven.taskId = this.taak.id;
+        this.informatieObjectenService.createDocument(documentCreatieGegeven)
+            .subscribe((documentCreatieResponse) => {
+                if (documentCreatieResponse.redirectURL) {
+                    window.open(documentCreatieResponse.redirectURL);
+                } else {
+                    this.dialog.open(NotificationDialogComponent,
+                        {data: new NotificationDialogData(documentCreatieResponse.message)});
+                }
+            });
     }
 
     private loadHistorie(): void {
@@ -259,11 +287,5 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.taak.taakdocumenten.push(informatieobject.uuid);
         this.formulier.refreshTaakdocumenten();
-    }
-
-    documentAangemaakt(redirectUrl: string): void {
-        this.action = null;
-        this.actionsSidenav.close();
-        window.open(redirectUrl);
     }
 }

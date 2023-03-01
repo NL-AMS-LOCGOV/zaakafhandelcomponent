@@ -65,8 +65,8 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status',
-            InformatieobjectStatus);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectListExceptFor('informatieobject.status',
+            InformatieobjectStatus, [InformatieobjectStatus.GEARCHIVEERD]);
 
         const inhoudField = new FileFormFieldBuilder()
         .id('bestandsnaam')
@@ -90,45 +90,57 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         const taal = new SelectFormFieldBuilder({
             naam: this.translateService.instant(this.infoObject.taal.naam),
             value: this.infoObject.taal
-        }).id('taal').label('taal')
-          .optionLabel('naam').options(this.configuratieService.listTalen())
-          .validators(Validators.required)
-          .build();
+        })
+        .id('taal')
+        .label('taal')
+        .optionLabel('naam')
+        .options(this.configuratieService.listTalen())
+        .validators(Validators.required)
+        .build();
 
         const status = new SelectFormFieldBuilder(this.infoObject.status ? {
-            label: this.translateService.instant(
-                'informatieobject.status.' + this.infoObject.status),
+            label: this.translateService.instant('informatieobject.status.' + this.infoObject.status),
             value: this.infoObject.status
-        } : null).id('status').label('status')
-                 .validators(Validators.required)
-                 .optionLabel('label').options(informatieobjectStatussen)
-                 .build();
+        } : null)
+        .id('status')
+        .label('status')
+        .validators(Validators.required)
+        .optionLabel('label')
+        .options(informatieobjectStatussen)
+        .build();
 
-        const verzenddatum = new DateFormFieldBuilder(this.infoObject.verzenddatum).id('verzenddatum')
-                                                                                   .label('verzenddatum')
-                                                                                   .build();
+        const verzenddatum = new DateFormFieldBuilder(this.infoObject.verzenddatum)
+        .id('verzenddatum')
+        .label('verzenddatum')
+        .build();
 
-        const ontvangstDatum = new DateFormFieldBuilder(this.infoObject.ontvangstdatum).id('ontvangstdatum')
-                                                                                       .label('ontvangstdatum')
-                                                                                       .hint('msg.document.ontvangstdatum.hint')
-                                                                                       .build();
+        const ontvangstDatum = new DateFormFieldBuilder(this.infoObject.ontvangstdatum)
+        .id('ontvangstdatum')
+        .label('ontvangstdatum')
+        .hint('msg.document.ontvangstdatum.hint')
+        .build();
 
-        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
-                                                                               .validators(Validators.required)
-                                                                               .build();
+        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam)
+        .id('auteur').label('auteur')
+        .validators(Validators.required)
+        .build();
 
         const vertrouwelijk = new SelectFormFieldBuilder({
             label: this.translateService.instant(
                 'vertrouwelijkheidaanduiding.' + this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()),
             value: this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()
-        }).id('vertrouwelijkheidaanduiding')
-          .label('vertrouwelijkheidaanduiding')
-          .optionLabel('label')
-          .options(vertrouwelijkheidsAanduidingen)
-          .validators(Validators.required)
-          .build();
+        })
+        .id('vertrouwelijkheidaanduiding')
+        .label('vertrouwelijkheidaanduiding')
+        .optionLabel('label')
+        .options(vertrouwelijkheidsAanduidingen)
+        .validators(Validators.required)
+        .build();
 
-        const toelichting = new InputFormFieldBuilder().id('toelichting').label('toelichting').build();
+        const toelichting = new InputFormFieldBuilder()
+        .id('toelichting')
+        .label('toelichting')
+        .build();
 
         let vorigeBestandsnaam = null;
         inhoudField.fileUploaded.subscribe(bestandsnaam => {
@@ -144,7 +156,8 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
             if (value && verzenddatum.formControl.enabled) {
                 status.formControl.setValue(
                     informatieobjectStatussen.find(
-                        option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus, InformatieobjectStatus.DEFINITIEF)));
+                        option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus,
+                            InformatieobjectStatus.DEFINITIEF)));
                 status.formControl.disable();
                 verzenddatum.formControl.disable();
             } else if (!value && verzenddatum.formControl.disabled) {
@@ -163,9 +176,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         if (ontvangstDatum.formControl.value) {
             verzenddatum.formControl.disable();
-            //TODO (zie Issue #2021): window.setTimeout verwijderen als angular versie >= 15
-            // Bug in Angular 14 zorgt dat .disable() op sommige formControls pas werkt na repaint
-            window.setTimeout(() => status.formControl.disable());
+            status.formControl.disable();
         }
         if (verzenddatum.formControl.value) {
             ontvangstDatum.formControl.disable();
@@ -186,7 +197,9 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
             Object.keys(formGroup.controls).forEach((key) => {
                 const control = formGroup.controls[key];
                 const value = control.value;
-                if (key === 'status' || key === 'vertrouwelijkheidaanduiding') {
+                if (key === 'status') {
+                    nieuweVersie[key] = this.infoObject[key] = InformatieobjectStatus[value.value];
+                } else if (key === 'vertrouwelijkheidaanduiding') {
                     nieuweVersie[key] = this.infoObject[key] = value.value.toUpperCase();
                 } else {
                     nieuweVersie[key] = this.infoObject[key] = value;

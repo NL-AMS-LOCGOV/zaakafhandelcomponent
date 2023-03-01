@@ -4,9 +4,9 @@
  */
 
 export enum ZaakRelatietype {
-    DEELZAAK = 'DEELZAAK',
     HOOFDZAAK = 'HOOFDZAAK',
+    DEELZAAK = 'DEELZAAK',
     VERVOLG = 'VERVOLG',
-    RELEVANT = 'RELEVANT',
+    ONDERWERP = 'ONDERWERP',
     BIJDRAGE = 'BIJDRAGE'
 }

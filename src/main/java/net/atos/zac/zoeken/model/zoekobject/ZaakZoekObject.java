@@ -55,6 +55,12 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_registratiedatum")
     private Date registratiedatum;
 
+    @Field("zaak_archiefNominatie")
+    private String archiefNominatie;
+
+    @Field("zaak_archiefActiedatum")
+    private Date archiefActiedatum;
+
     @Field("zaak_startdatum")
     private Date startdatum;
 
@@ -412,6 +418,22 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setStatusToelichting(final String statusToelichting) {
         this.statusToelichting = statusToelichting;
+    }
+
+    public String getArchiefNominatie() {
+        return archiefNominatie;
+    }
+
+    public void setArchiefNominatie(final String archiefNominatie) {
+        this.archiefNominatie = archiefNominatie;
+    }
+
+    public Date getArchiefActiedatum() {
+        return archiefActiedatum;
+    }
+
+    public void setArchiefActiedatum(final Date archiefActiedatum) {
+        this.archiefActiedatum = archiefActiedatum;
     }
 
     public long getAantalOpenstaandeTaken() {

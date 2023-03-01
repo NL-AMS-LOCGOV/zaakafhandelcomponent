@@ -9,6 +9,7 @@ import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.servi
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ZaaktypeInrichtingscheck} from './model/zaaktype-inrichtingscheck';
+import {BuildInformatie} from './model/build-informatie';
 
 @Injectable({
     providedIn: 'root'
@@ -26,22 +27,27 @@ export class HealthCheckService {
         );
     }
 
-    getBestaatCommunicatiekanaalEformulier(): Observable<boolean> {
+    readBestaatCommunicatiekanaalEformulier(): Observable<boolean> {
         return this.http.get<ZaaktypeInrichtingscheck[]>(`${this.basepath}/bestaat-communicatiekanaal-eformulier`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    clearZTCCache(): Observable<string> {
+    clearZTCCaches(): Observable<string> {
         return this.http.delete<string>(`${this.basepath}/ztc-cache`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    getZTCCacheTime(): Observable<string> {
+    readZTCCacheTime(): Observable<string> {
         return this.http.get<string>(`${this.basepath}/ztc-cache`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
+    readBuildInformatie(): Observable<BuildInformatie> {
+        return this.http.get<string>(`${this.basepath}/build-informatie`).pipe(
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
 }

@@ -12,18 +12,15 @@ import {InformatieObjectAddComponent} from './informatie-object-add/informatie-o
 import {InformatieObjectEditComponent} from './informatie-object-edit/informatie-object-edit.component';
 import {RouteReuseStrategy} from '@angular/router';
 import {RouteReuseStrategyService} from './route-reuse-strategy.service';
-import {InformatieObjectCreateComponent} from './informatie-object-create/informatie-object-create.component';
 
 @NgModule({
     declarations: [
         InformatieObjectViewComponent,
         InformatieObjectEditComponent,
         InformatieObjectAddComponent,
-        InformatieObjectCreateComponent
     ],
     exports: [
-        InformatieObjectAddComponent,
-        InformatieObjectCreateComponent
+        InformatieObjectAddComponent
     ],
     imports: [
         SharedModule,

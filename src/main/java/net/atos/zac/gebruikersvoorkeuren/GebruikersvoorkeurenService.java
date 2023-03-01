@@ -25,6 +25,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.zac.gebruikersvoorkeuren.model.DashboardCardInstelling;
+import net.atos.zac.gebruikersvoorkeuren.model.TabelInstellingen;
+import net.atos.zac.gebruikersvoorkeuren.model.Werklijst;
 import net.atos.zac.gebruikersvoorkeuren.model.Zoekopdracht;
 import net.atos.zac.gebruikersvoorkeuren.model.ZoekopdrachtListParameters;
 import net.atos.zac.signalering.SignaleringenService;
@@ -76,6 +78,32 @@ public class GebruikersvoorkeurenService {
         query.where(builder.and(predicates.toArray(new Predicate[0])));
         final TypedQuery<Zoekopdracht> emQuery = entityManager.createQuery(query);
         return emQuery.getResultList();
+    }
+
+    public TabelInstellingen readTabelInstellingen(final Werklijst lijstID, final String medewerkerID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<TabelInstellingen> query = builder.createQuery(TabelInstellingen.class);
+        final Root<TabelInstellingen> root = query.from(TabelInstellingen.class);
+        final List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get(TabelInstellingen.LIJST_ID), lijstID));
+        predicates.add(builder.equal(root.get(TabelInstellingen.MEDEWERKER_ID), medewerkerID));
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        final List<TabelInstellingen> resultList = entityManager.createQuery(query).getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            final TabelInstellingen tabelInstellingen = new TabelInstellingen();
+            tabelInstellingen.setLijstID(lijstID);
+            tabelInstellingen.setMedewerkerID(medewerkerID);
+            tabelInstellingen.setAantalPerPagina(TabelInstellingen.DEFAULT_AANTAL_PER_PAGINA);
+            return tabelInstellingen;
+        }
+    }
+
+    public TabelInstellingen updateTabelInstellingen(final TabelInstellingen tabelInstellingen) {
+        final TabelInstellingen bestaandeTabelInstellingen = readTabelInstellingen(tabelInstellingen.getLijstID(), tabelInstellingen.getMedewerkerID());
+        bestaandeTabelInstellingen.setAantalPerPagina(tabelInstellingen.getAantalPerPagina());
+        return entityManager.merge(tabelInstellingen);
     }
 
     private boolean existsZoekopdracht(final Zoekopdracht zoekopdracht) {

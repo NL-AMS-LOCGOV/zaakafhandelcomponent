@@ -6,7 +6,8 @@
 import {ZaakRelatietype} from './zaak-relatietype';
 
 export class ZaakKoppelGegevens {
-    bronZaakUuid: string;
-    identificatie: string;
+    zaakUuid: string;
+    teKoppelenZaakUuid: string;
     relatieType: ZaakRelatietype;
+    reverseRelatieType: ZaakRelatietype;
 }

@@ -42,4 +42,8 @@ public class RelevanteZaak {
     public AardRelatie getAardRelatie() {
         return aardRelatie;
     }
+
+    public boolean is(final URI url, final AardRelatie aardRelatie) {
+        return this.aardRelatie == aardRelatie && this.url.equals(url);
+    }
 }

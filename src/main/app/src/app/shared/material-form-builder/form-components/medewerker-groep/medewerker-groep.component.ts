@@ -52,6 +52,8 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         );
         if (!this.data.groep.value) {
             this.data.medewerker.disable();
+        } else {
+            this.getMedewerkers();
         }
     }
 

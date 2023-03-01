@@ -20,9 +20,7 @@ import javax.inject.Inject;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
@@ -68,10 +66,6 @@ public class ZTCClientService implements Caching {
     @Inject
     @RestClient
     private ZTCClient ztcClient;
-
-    @Inject
-    @ConfigProperty(name = "ZGW_API_URL_EXTERN")
-    private String zgwApiUrlExtern;
 
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
@@ -334,10 +328,6 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_INFORMATIEOBJECTTYPE)
     public Informatieobjecttype readInformatieobjecttype(final UUID informatieobjecttypeUUID) {
         return ztcClient.informatieObjectTypeRead(informatieobjecttypeUUID);
-    }
-
-    public URI createUrlExternToInformatieobjecttype(final UUID informatieobjecttypeUUID) {
-        return UriBuilder.fromUri(zgwApiUrlExtern).path(ZTCClient.class).path(ZTCClient.class, "informatieObjectTypeRead").build(informatieobjecttypeUUID);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE)

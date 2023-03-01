@@ -1,0 +1,38 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<div *ngIf="layout != versionLayout.VERBOSE" class="version">
+    <mat-chip class="flex-row"
+              [matTooltip]="'healthCheck.build_informatie.build' | translate:{
+                build: buildInformatie.buildId,
+                timestamp: (buildInformatie.buildDatumTijd | datum: 'short')
+            }">
+        <mat-icon>construction</mat-icon>
+        <span class="label">
+            {{'healthCheck.build_informatie.version' | translate:{
+            version: buildInformatie.versienummer
+        } }}</span>
+    </mat-chip>
+</div>
+
+<mat-card *ngIf="layout == versionLayout.VERBOSE" class="version">
+    <mat-card-header>
+        <mat-card-title>
+            {{'healthCheck.build_informatie' | translate}}
+            <mat-icon class="icon">construction</mat-icon>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <p>{{'healthCheck.build_informatie.version' | translate:{
+            version: buildInformatie.versienummer
+        } }}</p>
+        <p>{{'healthCheck.build_informatie.build' | translate:{
+            build: buildInformatie.buildId,
+            timestamp: (buildInformatie.buildDatumTijd | datum: 'short')
+        } }}</p>
+        <p>{{'healthCheck.build_informatie.commit' | translate:{
+            commit: buildInformatie.commit
+        } }}</p>
+    </mat-card-content>
+</mat-card>

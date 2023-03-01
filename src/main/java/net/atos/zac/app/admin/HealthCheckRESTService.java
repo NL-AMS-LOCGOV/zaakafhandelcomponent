@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.converter.RESTZaaktypeOverzichtConverter;
+import net.atos.zac.app.admin.model.RESTBuildInformatie;
 import net.atos.zac.app.admin.model.RESTZaaktypeInrichtingscheck;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.HealthCheckService;
@@ -51,7 +52,7 @@ public class HealthCheckRESTService {
 
     @GET
     @Path("bestaat-communicatiekanaal-eformulier")
-    public boolean bestaatCommunicatiekanaalEformulier() {
+    public boolean readBestaatCommunicatiekanaalEformulier() {
         return healthCheckService.bestaatCommunicatiekanaalEformulier();
     }
 
@@ -71,8 +72,14 @@ public class HealthCheckRESTService {
 
     @GET
     @Path("ztc-cache")
-    public ZonedDateTime getZTCCacheTime() {
+    public ZonedDateTime readZTCCacheTime() {
         return ztcClientService.readCacheTime();
+    }
+
+    @GET
+    @Path("build-informatie")
+    public RESTBuildInformatie readBuildInformatie() {
+        return new RESTBuildInformatie(healthCheckService.readBuildInformatie());
     }
 
     private List<Zaaktype> listZaaktypes() {

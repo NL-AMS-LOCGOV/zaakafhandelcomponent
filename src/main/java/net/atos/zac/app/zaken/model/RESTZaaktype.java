@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
@@ -40,6 +41,8 @@ public class RESTZaaktype {
     public boolean verlengingMogelijk;
 
     public Integer verlengingstermijn;
+
+    public List<RESTZaaktypeRelatie> zaaktypeRelaties;
 
     public RESTZaakafhandelParameters zaakafhandelparameters;
 }

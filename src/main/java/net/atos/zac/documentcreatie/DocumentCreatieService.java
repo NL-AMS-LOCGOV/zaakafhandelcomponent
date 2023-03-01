@@ -36,7 +36,7 @@ import net.atos.zac.documentcreatie.model.WizardRequest;
 @ApplicationScoped
 public class DocumentCreatieService {
 
-    private static final String AUDIT_TOELICHTING = "Document gecreëerd in SmartDocuments";
+    private static final String AUDIT_TOELICHTING = "Door SmartDocuments";
 
     @Inject
     @RestClient
@@ -94,8 +94,6 @@ public class DocumentCreatieService {
         final Registratie registratie = new Registratie();
         registratie.bronorganisatie = BRON_ORGANISATIE;
         registratie.zaak = zrcClientService.createUrlExternToZaak(documentCreatieGegevens.getZaak().getUuid());
-        registratie.informatieobjecttype = ztcClientService.createUrlExternToInformatieobjecttype(documentCreatieGegevens.getInformatieobjecttype());
-        registratie.titel = documentCreatieGegevens.getTitel();
         registratie.informatieobjectStatus = documentCreatieGegevens.getInformatieobjectStatus();
         registratie.creatiedatum = LocalDate.now();
         registratie.auditToelichting = AUDIT_TOELICHTING;

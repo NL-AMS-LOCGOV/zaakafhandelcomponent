@@ -27,4 +27,10 @@ export class InputComponent extends FormComponent implements OnInit {
     iconClick($event: MouseEvent, icon: ActionIcon): void {
         icon.iconClicked.next(null);
     }
+
+    clicked(): void {
+        if (this.data.clicked.observed) {
+            this.data.clicked.next(null);
+        }
+    }
 }

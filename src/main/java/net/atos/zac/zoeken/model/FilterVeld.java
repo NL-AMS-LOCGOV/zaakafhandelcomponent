@@ -25,6 +25,9 @@ public enum FilterVeld {
     ZAAK_GROEP("zaak_groepNaam"),
     ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving"),
     ZAAK_INDICATIES("zaak_indicaties"),
+    ZAAK_COMMUNICATIEKANAAL("zaak_communicatiekanaal"),
+    ZAAK_VERTROUWELIJKHEIDAANDUIDING("zaak_vertrouwelijkheidaanduiding"),
+    ZAAK_ARCHIEF_NOMINATIE("zaak_archiefNominatie"),
 
     TAAK_NAAM("taak_naam"),
     TAAK_STATUS("taak_status"),

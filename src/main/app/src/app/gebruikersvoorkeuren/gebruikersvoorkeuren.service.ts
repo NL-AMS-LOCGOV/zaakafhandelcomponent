@@ -53,6 +53,18 @@ export class GebruikersvoorkeurenService {
         );
     }
 
+    readAantalPerPagina(werklijst: Werklijst): Observable<number> {
+        return this.http.get<number>(`${this.basepath}/aantal-per-pagina/${werklijst}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    updateAantalPerPagina(werklijst: Werklijst, aantal: number): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/aantal-per-pagina/${werklijst}/${aantal}`, {}).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     listDashboardCards(): Observable<DashboardCardInstelling[]> {
         return this.http.get<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard/actief`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))

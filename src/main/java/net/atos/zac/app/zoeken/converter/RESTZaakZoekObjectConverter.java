@@ -33,6 +33,8 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.identificatie = zoekItem.getIdentificatie();
         restZoekItem.omschrijving = zoekItem.getOmschrijving();
         restZoekItem.toelichting = zoekItem.getToelichting();
+        restZoekItem.archiefNominatie = zoekItem.getArchiefNominatie();
+        restZoekItem.archiefActiedatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getArchiefActiedatum());
         restZoekItem.registratiedatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getRegistratiedatum());
         restZoekItem.startdatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getStartdatum());
         restZoekItem.einddatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getEinddatum());
