@@ -21,7 +21,9 @@ export class FacetFilterComponent implements OnInit, OnChanges {
 
     /* veld: prefix */
     public VERTAALBARE_FACETTEN = {
-        indicaties: 'indicatie.'
+        indicaties: 'indicatie.',
+        vertrouwelijkheidaanduiding: 'vertrouwelijkheidaanduiding.',
+        archiefNominatie: 'archiefNominatie.'
     };
 
     getFilters(): FilterResultaat[] {

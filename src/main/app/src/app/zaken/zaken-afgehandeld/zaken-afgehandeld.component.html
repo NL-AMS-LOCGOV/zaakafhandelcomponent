@@ -100,6 +100,51 @@
             <td mat-cell *matCellDef="let row">{{ row.groepNaam | empty}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="vertrouwelijkheidaanduiding">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_VERTROUWELIJKHEIDAANDUIDING">
+                {{ 'vertrouwelijkheidaanduiding' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.vertrouwelijkheidaanduiding ? ('vertrouwelijkheidaanduiding.' + row.vertrouwelijkheidaanduiding | translate) : '-'}}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="vertrouwelijkheidaanduiding_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="vertrouwelijkheidaanduiding"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_VERTROUWELIJKHEIDAANDUIDING"
+                                  [opties]="this.dataSource.beschikbareFilters.ZAAK_VERTROUWELIJKHEIDAANDUIDING"
+                                  (changed)="dataSource.zoekParameters.filters.ZAAK_VERTROUWELIJKHEIDAANDUIDING = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
+        </ng-container>
+
+        <ng-container matColumnDef="communicatiekanaal">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_COMMUNICATIEKANAAL">
+                {{ 'communicatiekanaal' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.communicatiekanaal | empty}}</td>
+        </ng-container>
+        <ng-container matColumnDef="communicatiekanaal_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="communicatiekanaal"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_COMMUNICATIEKANAAL"
+                                  [opties]="this.dataSource.beschikbareFilters.ZAAK_COMMUNICATIEKANAAL"
+                                  (changed)="dataSource.zoekParameters.filters.ZAAK_COMMUNICATIEKANAAL = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
+        </ng-container>
+
+        <ng-container matColumnDef="registratiedatum_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-date-range-filter label="registratiedatum"
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_REGISTRATIEDATUM"
+                                       (changed)="dataSource.zoekParameters.datums.ZAAK_REGISTRATIEDATUM = $event; filtersChange()">
+                </zac-date-range-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="registratiedatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_REGISTRATIEDATUM">{{ 'registratiedatum' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.registratiedatum | datum | empty }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="startdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="startdatum"
@@ -174,6 +219,34 @@
             <td mat-cell *matCellDef="let row">{{ row.uiterlijkeEinddatumAfdoening | dagen | empty }} </td>
         </ng-container>
 
+        <ng-container matColumnDef="archiefActiedatum_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-date-range-filter label="archiefActiedatum"
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_ARCHIEF_ACTIEDATUM"
+                                       (changed)="dataSource.zoekParameters.datums.ZAAK_ARCHIEF_ACTIEDATUM = $event; filtersChange()">
+                </zac-date-range-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="archiefActiedatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_ARCHIEF_ACTIEDATUM">{{ 'archiefActiedatum' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.archiefActiedatum | datum | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="archiefNominatie">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_ARCHIEF_NOMINATIE">
+                {{ 'archiefNominatie' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.archiefNominatie ? ('archiefNominatie.datum.' + row.archiefNominatie | translate) : '-'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="archiefNominatie_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="archiefNominatie"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_ARCHIEF_NOMINATIE"
+                                  [opties]="this.dataSource.beschikbareFilters.ZAAK_ARCHIEF_NOMINATIE"
+                                  (changed)="dataSource.zoekParameters.filters.ZAAK_ARCHIEF_NOMINATIE = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
+        </ng-container>
+
         <ng-container matColumnDef="toelichting_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-tekst-filter [value]="dataSource.zoekParameters.zoeken.ZAAK_TOELICHTING"
@@ -233,6 +306,13 @@
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.GROEP" [value]="row.groepNaam"
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="zoekenColumn.REGISTRATIEDATUM" [value]="row.registratiedatum | datum"
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="zoekenColumn.COMMUNICATIEKANAAL" [value]="row.communicatiekanaal"
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="zoekenColumn.VERTROUWELIJKHEIDAANDUIDING"
+                                             [value]="row.vertrouwelijkheidaanduiding ? ('vertrouwelijkheidaanduiding.'+row.vertrouwelijkheidaanduiding | translate) : '-'"
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.ZAAKTYPE" [value]="row.zaaktypeOmschrijving"
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.STATUS" [value]="row.statustypeOmschrijving"
@@ -240,6 +320,11 @@
                             <zac-static-text *ngSwitchCase="zoekenColumn.BEHANDELAAR" [value]="row.behandelaarNaam"
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.RESULTAAT" [value]="row.resultaattypeOmschrijving"
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="zoekenColumn.ARCHIEF_NOMINATIE"
+                                             [value]="row.archiefNominatie ? ( 'archiefNominatie.datum.'+row.archiefNominatie | translate ) : '-'"
+                                             class="flex-1 w33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="zoekenColumn.ARCHIEF_ACTIEDATUM" [value]="row.archiefActiedatum | datum"
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchDefault [label]="column | translate" [value]="row[column] | translate"
                                              class="flex-1 w33"></zac-static-text>
