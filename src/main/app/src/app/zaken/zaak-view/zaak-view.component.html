@@ -72,7 +72,10 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group mat-stretch-tabs="false">
-                        <mat-tab label="{{'gegevens.algemeen' | translate}}">
+                        <mat-tab>
+                            <ng-template mat-tab-label>
+                                <mat-icon>topic</mat-icon>
+                                {{'gegevens.algemeen' | translate}}</ng-template>
                             <div id="algemeneGegevens_tab" class="content flex-row flex-wrap">
 
                                 <div class="flex w33 w50-md w100-sm">
@@ -167,7 +170,10 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0" label="{{'gerelateerdeZaken' | translate}}">
+                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0">
+                            <ng-template mat-tab-label>
+                                <mat-icon>account_tree</mat-icon>
+                                {{'gerelateerdeZaken' | translate}}</ng-template>
                             <div id="gerelateerdeZaken_tab" class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.gerelateerdeZaken">
                                     <ng-container *ngFor="let column of gerelateerdeZaakColumns" [matColumnDef]="column">
@@ -196,7 +202,11 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="historie.data.length > 0" label="{{'historie' | translate}}">
+                        <mat-tab *ngIf="historie.data.length > 0">
+                            <ng-template mat-tab-label>
+                                <mat-icon>history</mat-icon>
+                                {{'historie' | translate}}
+                            </ng-template>
                             <div id="historie_tab" class="table-wrapper historie-table">
                                 <table mat-table [dataSource]="historie" matSort #historieSort="matSort">
                                     <ng-container matColumnDef="datum">
@@ -251,7 +261,11 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="betrokkenen.data.length > 0" label="{{'betrokkenen' | translate}}">
+                        <mat-tab *ngIf="betrokkenen.data.length > 0">
+                            <ng-template mat-tab-label>
+                                <mat-icon>groups</mat-icon>
+                                {{'betrokkenen' | translate}}
+                            </ng-template>
                             <div id="betrokkenen_tab" class="table-wrapper betrokkenen-table">
                                 <table mat-table [dataSource]="betrokkenen" matSort>
                                     <ng-container matColumnDef="roltype">
@@ -321,7 +335,11 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="adressen.data.length > 0" label="{{'bagobjecten' | translate}}">
+                        <mat-tab *ngIf="adressen.data.length > 0">
+                            <ng-template mat-tab-label>
+                                <mat-icon>gps_fixed</mat-icon>
+                                {{'bagobjecten' | translate}}
+                            </ng-template>
                             <div id="bagobjecten_tab" class="table-wrapper bagobjecten-table">
                                 <table mat-table [dataSource]="adressen" matSort>
                                     <ng-container matColumnDef="straat">
