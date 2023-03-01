@@ -41,7 +41,8 @@
                                     <zac-static-text [label]="'bestandsnaam' | translate"
                                                      [value]="infoObject.bestandsnaam">
                                         <span position="content-before"
-                                              class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"></span>
+                                              class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"
+                                              [title]="getFileTooltip(getFileIcon(infoObject.bestandsnaam).type)">&nbsp;</span>
                                     </zac-static-text>
                                 </div>
                                 <div class="w33 w50-sm">

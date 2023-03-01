@@ -219,17 +219,11 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     getFileIcon(filename) {
-        const extension = filename.split('.').pop();
-        const obj = FileIcon.fileIcons.filter(row => {
-            if (row.type === extension) {
-                return true;
-            }
-        });
-        if (obj.length > 0) {
-            return obj[0];
-        } else {
-            return {type: 'unknown', icon: 'fa-file-circle-question', color: ''};
-        }
+        return FileIcon.getIconByBestandsnaam(filename);
+    }
+
+    getFileTooltip(filetype: string): string {
+        return filetype.toUpperCase() + '-' + this.translate.instant('bestand');
     }
 
     private updateVersieInformatie(): void {
