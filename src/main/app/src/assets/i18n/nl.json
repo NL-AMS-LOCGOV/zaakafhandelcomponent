@@ -318,8 +318,6 @@
   "dashboard.card.MIJN_ZAKEN_NIEUW": "Recent aan mij toegewezen zaken",
   "dashboard.card.MIJN_ZAKEN_WAARSCHUWING": "Mijn binnenkort verlopende zaken",
   "gegevens.mail.afzender.GEMEENTE": "E-mailadres van de gemeente",
-  "gegevens.mail.afzender.GROEP": "E-mailadres van de groep",
-  "gegevens.mail.afzender.BEHANDELAAR": "E-mailadres van de behandelaar",
   "gegevens.mail.afzender.MEDEWERKER": "E-mailadres van de medewerker",
   "gerelateerde.zaak.identificatie": "Zaaknummer",
   "gerelateerde.zaak.zaaktypeOmschrijving": "Zaaktype",
