@@ -107,6 +107,11 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             zaakZoekObject.setIndicatie(ZaakIndicatie.OPSCHORTING, true);
         }
 
+        if (zaak.getArchiefnominatie() != null) {
+            zaakZoekObject.setArchiefNominatie(zaak.getArchiefnominatie().getValue());
+        }
+        zaakZoekObject.setArchiefActiedatum(DateTimeConverterUtil.convertToDate(zaak.getArchiefactiedatum()));
+
         zaakZoekObject.setIndicatie(ZaakIndicatie.DEELZAAK, zaak.isDeelzaak());
         zaakZoekObject.setIndicatie(ZaakIndicatie.HOOFDZAAK, zaak.is_Hoofdzaak());
 
