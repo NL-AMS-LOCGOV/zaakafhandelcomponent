@@ -121,7 +121,10 @@ export class UtilService {
         return this.snackbar.open(
             this.translate.instant(message, params),
             this.translate.instant(action, params),
-            durationSeconden != null ? {duration: durationSeconden * 1000} : null
+            {
+                panelClass: ['mat-snackbar'],
+                duration: durationSeconden != null ? durationSeconden * 1000 : null
+            }
         ).onAction();
     }
 
