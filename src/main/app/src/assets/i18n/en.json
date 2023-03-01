@@ -318,8 +318,6 @@
   "dashboard.card.MIJN_ZAKEN_NIEUW": "Cases recently assigned to me",
   "dashboard.card.MIJN_ZAKEN_WAARSCHUWING": "My cases that will soon expire",
   "gegevens.mail.afzender.GEMEENTE": "E-mail address of the municipality",
-  "gegevens.mail.afzender.GROEP": "E-mail address of the group",
-  "gegevens.mail.afzender.BEHANDELAAR": "E-mail address of the handler",
   "gegevens.mail.afzender.MEDEWERKER": "E-mail address of the employee",
   "gerelateerde.zaak.identificatie": "Case number",
   "gerelateerde.zaak.zaaktypeOmschrijving": "Case type",
