@@ -11,5 +11,9 @@ public class RESTTabelGegevens {
 
     public int aantalPerPagina;
 
+    public int[] pageSizeOptions;
+
     public RESTWerklijstRechten werklijstRechten;
+
+
 }

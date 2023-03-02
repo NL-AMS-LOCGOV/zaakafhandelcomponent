@@ -7,5 +7,6 @@ import {WerklijstRechten} from '../../../policy/model/werklijst-rechten';
 
 export class TabelGegevens {
     aantalPerPagina: number;
+    pageSizeOptions: number[];
     werklijstRechten: WerklijstRechten;
 }

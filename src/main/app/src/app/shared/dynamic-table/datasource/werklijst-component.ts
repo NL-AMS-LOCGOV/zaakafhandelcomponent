@@ -18,6 +18,7 @@ export abstract class WerklijstComponent implements OnInit {
     abstract gebruikersvoorkeurenService: GebruikersvoorkeurenService;
     abstract route: ActivatedRoute;
     aantalPerPagina: number;
+    pageSizeOptions: number[];
     werklijstRechten: WerklijstRechten;
 
     protected constructor() {
@@ -27,6 +28,7 @@ export abstract class WerklijstComponent implements OnInit {
         this.route.data.subscribe(data => {
             const tabelGegevens: TabelGegevens = data.tabelGegevens;
             this.aantalPerPagina = tabelGegevens.aantalPerPagina;
+            this.pageSizeOptions = tabelGegevens.pageSizeOptions;
             this.werklijstRechten = tabelGegevens.werklijstRechten;
         });
     }

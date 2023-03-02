@@ -95,7 +95,7 @@ public class GebruikersvoorkeurenService {
             final TabelInstellingen tabelInstellingen = new TabelInstellingen();
             tabelInstellingen.setLijstID(lijstID);
             tabelInstellingen.setMedewerkerID(medewerkerID);
-            tabelInstellingen.setAantalPerPagina(TabelInstellingen.DEFAULT_AANTAL_PER_PAGINA);
+            tabelInstellingen.setAantalPerPagina(TabelInstellingen.AANTAL_PER_PAGINA_DEFAULT);
             return tabelInstellingen;
         }
     }

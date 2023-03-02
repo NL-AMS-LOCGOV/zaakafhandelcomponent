@@ -98,6 +98,7 @@ public class GebruikersvoorkeurenRESTService {
         final RESTTabelGegevens restTabelGegevens = new RESTTabelGegevens();
         final TabelInstellingen tabelInstellingen = gebruikersvoorkeurenService.readTabelInstellingen(werklijst, loggedInUserInstance.get().getId());
         restTabelGegevens.aantalPerPagina = tabelInstellingen.getAantalPerPagina();
+        restTabelGegevens.pageSizeOptions = TabelInstellingen.PAGE_SIZE_OPTIONS;
         restTabelGegevens.werklijstRechten = rechtenConverter.convert(policyService.readWerklijstRechten());
         return restTabelGegevens;
     }
@@ -105,7 +106,7 @@ public class GebruikersvoorkeurenRESTService {
     @PUT
     @Path("aantal-per-pagina/{werklijst}/{aantal}")
     public void updateAantalItemsPerPagina(@PathParam("werklijst") final Werklijst werklijst, @PathParam("aantal") final int aantal) {
-        if (aantal <= 100 && aantal > 0) {
+        if (aantal <= TabelInstellingen.AANTAL_PER_PAGINA_MAX && aantal >= TabelInstellingen.AANTAL_PER_PAGINA_MIN) {
             final TabelInstellingen tabelInstellingen = new TabelInstellingen();
             tabelInstellingen.setAantalPerPagina(aantal);
             tabelInstellingen.setLijstID(werklijst);
