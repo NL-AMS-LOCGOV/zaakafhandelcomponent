@@ -346,7 +346,7 @@
         <zac-export-button [zoekParameters]="this.dataSource.zoekParameters"
                            [filename]="'title.zaken.afgehandeld' | translate"></zac-export-button>
         <mat-paginator (page)="paginatorChanged($event)" #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page"
-                       [pageSize]="aantalPerPagina" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+                       [pageSize]="aantalPerPagina" [pageSizeOptions]="pageSizeOptions" sticky>
         </mat-paginator>
     </div>
 </div>

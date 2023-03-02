@@ -5,11 +5,17 @@
 
 package net.atos.zac.app.gebruikersvoorkeuren.model;
 
+import java.util.List;
+
 import net.atos.zac.app.policy.model.RESTWerklijstRechten;
 
 public class RESTTabelGegevens {
 
     public int aantalPerPagina;
 
+    public List<Integer> pageSizeOptions;
+
     public RESTWerklijstRechten werklijstRechten;
+
+
 }

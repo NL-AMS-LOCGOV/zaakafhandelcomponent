@@ -313,7 +313,7 @@
                            [filename]="'title.zaken.mijn' | translate"></zac-export-button>
         <mat-paginator (page)="paginatorChanged($event)" #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page"
                        [pageSize]="aantalPerPagina"
-                       [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+                       [pageSizeOptions]="pageSizeOptions" sticky>
         </mat-paginator>
     </div>
 </div>

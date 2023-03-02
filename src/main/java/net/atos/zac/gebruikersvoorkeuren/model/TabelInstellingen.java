@@ -6,6 +6,8 @@ package net.atos.zac.gebruikersvoorkeuren.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,7 +33,14 @@ public class TabelInstellingen {
     /** Naam van property: {@link TabelInstellingen#lijstID} */
     public static final String LIJST_ID = "lijstID";
 
-    public static final int DEFAULT_AANTAL_PER_PAGINA = 25;
+    public static final int AANTAL_PER_PAGINA_DEFAULT = 25;
+
+    public static final int AANTAL_PER_PAGINA_MAX = 100;
+
+    public static final int AANTAL_PER_PAGINA_MIN = 10;
+
+    public static final List<Integer> PAGE_SIZE_OPTIONS = List.of(AANTAL_PER_PAGINA_MIN, AANTAL_PER_PAGINA_DEFAULT, 50, AANTAL_PER_PAGINA_MAX);
+
 
     @Id
     @GeneratedValue(generator = "sq_tabel_instellingen", strategy = GenerationType.SEQUENCE)
@@ -47,8 +56,8 @@ public class TabelInstellingen {
     @Column(name = "id_medewerker", nullable = false)
     private String medewerkerID;
 
-    @Min(10)
-    @Max(100)
+    @Min(AANTAL_PER_PAGINA_MIN)
+    @Max(AANTAL_PER_PAGINA_MAX)
     @Column(name = "aantal_per_pagina", nullable = false)
     private int aantalPerPagina;
 
