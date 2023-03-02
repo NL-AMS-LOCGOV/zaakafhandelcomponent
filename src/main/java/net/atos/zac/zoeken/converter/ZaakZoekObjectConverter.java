@@ -70,7 +70,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setUiterlijkeEinddatumAfdoening(
                 DateTimeConverterUtil.convertToDate(zaak.getUiterlijkeEinddatumAfdoening()));
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
-        zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
+        zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toString());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
         zgwApiService.findInitiatorForZaak(zaak).ifPresent(zaakZoekObject::setInitiator);
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
@@ -106,6 +106,11 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             zaakZoekObject.setRedenOpschorting(zaak.getOpschorting().getReden());
             zaakZoekObject.setIndicatie(ZaakIndicatie.OPSCHORTING, true);
         }
+
+        if (zaak.getArchiefnominatie() != null) {
+            zaakZoekObject.setArchiefNominatie(zaak.getArchiefnominatie().toString());
+        }
+        zaakZoekObject.setArchiefActiedatum(DateTimeConverterUtil.convertToDate(zaak.getArchiefactiedatum()));
 
         zaakZoekObject.setIndicatie(ZaakIndicatie.DEELZAAK, zaak.isDeelzaak());
         zaakZoekObject.setIndicatie(ZaakIndicatie.HOOFDZAAK, zaak.is_Hoofdzaak());

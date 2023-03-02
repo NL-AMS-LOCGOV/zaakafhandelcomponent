@@ -26,8 +26,6 @@ public class ZaakAfzender {
 
     public enum Speciaal {
         GEMEENTE,
-        GROEP,
-        BEHANDELAAR,
         MEDEWERKER;
 
         public boolean is(final String name) {

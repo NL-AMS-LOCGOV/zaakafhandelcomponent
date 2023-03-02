@@ -15,6 +15,7 @@ public enum DatumVeld {
     ZAAK_REGISTRATIEDATUM("zaak_registratiedatum"),
     ZAAK_PUBLICATIEDATUM("zaak_publicatiedatum"),
     ZAAK_STATUS_DATUM_GEZET("zaak_statusDatumGezet"),
+    ZAAK_ARCHIEF_ACTIEDATUM("zaak_archiefActiedatum"),
 
     TAAK_CREATIEDATUM("taak_creatiedatum"),
     TAAK_TOEKENNINGSDATUM("taak_toekenningsdatum"),

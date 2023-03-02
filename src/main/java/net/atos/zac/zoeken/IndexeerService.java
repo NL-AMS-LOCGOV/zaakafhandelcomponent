@@ -338,7 +338,7 @@ public class IndexeerService {
             }
             for (final SolrDocument document : response.getResults()) {
                 final String objectId = String.valueOf(document.get("id"));
-                markItemForRemovalFromSolrIndex(objectId, type);
+                entityManager.persist(new ZoekIndexEntity(objectId, type, REMOVE));
             }
             final String nextCursorMark = response.getNextCursorMark();
             if (cursorMark.equals(nextCursorMark)) {

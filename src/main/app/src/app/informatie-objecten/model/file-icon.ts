@@ -49,4 +49,18 @@ export class FileIcon {
     compare(other: FileIcon) {
         return this.type.localeCompare(other.type);
     }
+
+    static getIconByBestandsnaam(bestandsnaam) {
+        const extension = bestandsnaam.split('.').pop();
+        const obj = FileIcon.fileIcons.filter(row => {
+            if (row.type === extension) {
+                return true;
+            }
+        });
+        if (obj.length > 0) {
+            return obj[0];
+        } else {
+            return {type: 'unknown', icon: 'fa-file-circle-question', color: ''};
+        }
+    }
 }

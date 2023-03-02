@@ -28,6 +28,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public LocalDate einddatum;
 
+    public LocalDate archiefActiedatum;
+
     public LocalDate uiterlijkeEinddatumAfdoening;
 
     public LocalDate publicatiedatum;
@@ -35,6 +37,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
     public String communicatiekanaal;
 
     public String vertrouwelijkheidaanduiding;
+
+    public String archiefNominatie;
 
     public boolean afgehandeld;
 

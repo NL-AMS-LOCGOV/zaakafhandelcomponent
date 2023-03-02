@@ -34,6 +34,7 @@ import {Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
+import {FileIcon} from '../../informatie-objecten/model/file-icon';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -239,5 +240,13 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                     this.downloadAlsZipSelection.deselect(document);
             });
         }
+    }
+
+    getFileIcon(filename: string): FileIcon | { color: string, icon: string, type: string } {
+        return FileIcon.getIconByBestandsnaam(filename);
+    }
+
+    getFileTooltip(filetype: string): string {
+        return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
 }
