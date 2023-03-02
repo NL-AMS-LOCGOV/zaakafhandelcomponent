@@ -13,7 +13,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {IdentityService} from '../../identity/identity.service';
 import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {LoggedInUser} from '../../identity/model/logged-in-user';
@@ -26,20 +26,19 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
-import {PolicyService} from '../../policy/policy.service';
-import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
     styleUrls: ['./taken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
-
+export class TakenWerkvoorraadComponent extends WerklijstComponent implements AfterViewInit, OnInit {
     selection = new SelectionModel<TaakZoekObject>(true, []);
     dataSource: TakenWerkvoorraadDatasource;
-    rechten = new WerklijstRechten();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
@@ -51,19 +50,19 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     fataledatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+    constructor(public route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog, private zoekenService: ZoekenService,
-                private policyService: PolicyService) {
+                public gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
+        super();
         this.dataSource = new TakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.policyService.readWerklijstRechten().subscribe(rechten => {
-            this.rechten = rechten;
-            this.dataSource.initColumns(this.defaultColumns());
-        });
+        this.dataSource.initColumns(this.defaultColumns());
+
     }
 
     ngAfterViewInit(): void {
@@ -180,13 +179,18 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
-        if (!this.rechten.zakenTakenVerdelen) {
+        if (!this.werklijstRechten.zakenTakenVerdelen) {
             columns.delete(ZoekenColumn.SELECT);
         }
         return columns;
     }
 
-    pageChange(): void {
+    getWerklijst(): Werklijst {
+        return Werklijst.WERKVOORRAAD_TAKEN;
+    }
+
+    paginatorChanged($event: PageEvent): void {
+        super.paginatorChanged($event);
         this.selection.clear();
     }
 

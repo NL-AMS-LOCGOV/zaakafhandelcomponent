@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -45,7 +47,8 @@ public class TabelInstellingen {
     @Column(name = "id_medewerker", nullable = false)
     private String medewerkerID;
 
-    @NotBlank
+    @Min(10)
+    @Max(100)
     @Column(name = "aantal_per_pagina", nullable = false)
     private int aantalPerPagina;
 

@@ -20,13 +20,17 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {ActivatedRoute} from '@angular/router';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
     styleUrls: ['./zaken-afgehandeld.component.less'],
     animations: [detailExpand]
 })
-export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
+export class ZakenAfgehandeldComponent extends WerklijstComponent implements AfterViewInit, OnInit {
 
     dataSource: ZakenAfgehandeldDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -41,12 +45,14 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService,
-                public utilService: UtilService) {
+    constructor(private zakenService: ZakenService, public gebruikersvoorkeurenService: GebruikersvoorkeurenService, public route: ActivatedRoute,
+                private zoekenService: ZoekenService, public utilService: UtilService) {
+        super();
         this.dataSource = new ZakenAfgehandeldDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.utilService.setTitle('title.zaken.afgehandeld');
         this.dataSource.initColumns(this.defaultColumns());
     }
@@ -67,6 +73,10 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
             [ZoekenColumn.RESULTAAT, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
+    }
+
+    getWerklijst(): Werklijst {
+        return Werklijst.AFGEHANDELDE_ZAKEN;
     }
 
     ngAfterViewInit(): void {

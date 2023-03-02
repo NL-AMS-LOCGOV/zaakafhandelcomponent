@@ -100,10 +100,10 @@ public class GebruikersvoorkeurenService {
         }
     }
 
-    public TabelInstellingen updateTabelInstellingen(final TabelInstellingen tabelInstellingen) {
+    public void updateTabelInstellingen(final TabelInstellingen tabelInstellingen) {
         final TabelInstellingen bestaandeTabelInstellingen = readTabelInstellingen(tabelInstellingen.getLijstID(), tabelInstellingen.getMedewerkerID());
         bestaandeTabelInstellingen.setAantalPerPagina(tabelInstellingen.getAantalPerPagina());
-        return entityManager.merge(tabelInstellingen);
+        entityManager.merge(bestaandeTabelInstellingen);
     }
 
     private boolean existsZoekopdracht(final Zoekopdracht zoekopdracht) {

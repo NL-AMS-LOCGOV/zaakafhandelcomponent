@@ -23,14 +23,15 @@ import {User} from '../../identity/model/user';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
-import {PolicyService} from '../../policy/policy.service';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
     styleUrls: ['./ontkoppelde-documenten-list.component.less']
 })
-export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit {
+export class OntkoppeldeDocumentenListComponent extends WerklijstComponent implements OnInit, AfterViewInit {
 
     isLoadingResults = true;
     dataSource: MatTableDataSource<OntkoppeldDocument> = new MatTableDataSource<OntkoppeldDocument>();
@@ -44,8 +45,6 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
-    werklijst = Werklijst.ONTKOPPELDE_DOCUMENTEN;
-    werklijstRechten = new WerklijstRechten();
 
     constructor(private ontkoppeldeDocumentenService: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
@@ -53,12 +52,14 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 public dialog: MatDialog,
                 private translate: TranslateService,
                 private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
-                private policyService: PolicyService) { }
+                public gebruikersvoorkeurenService: GebruikersvoorkeurenService, public route: ActivatedRoute) {
+        super();
+    }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
         this.listParameters = SessionStorageUtil.getItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
-        this.policyService.readWerklijstRechten().subscribe(rechten => this.werklijstRechten = rechten);
     }
 
     ngAfterViewInit(): void {
@@ -159,4 +160,9 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
     };
+
+    getWerklijst(): Werklijst {
+        return Werklijst.ONTKOPPELDE_DOCUMENTEN;
+    }
+
 }

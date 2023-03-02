@@ -23,13 +23,16 @@ import {ActivatedRoute} from '@angular/router';
 
 import {TakenMijnDatasource} from './taken-mijn-datasource';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
     styleUrls: ['./taken-mijn.component.less'],
     animations: [detailExpand]
 })
-export class TakenMijnComponent implements AfterViewInit, OnInit {
+export class TakenMijnComponent extends WerklijstComponent implements AfterViewInit, OnInit {
 
     dataSource: TakenMijnDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -42,12 +45,15 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     fataledatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, private zoekenService: ZoekenService) {
+    constructor(public route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+                private identityService: IdentityService, private zoekenService: ZoekenService,
+                public gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
+        super();
         this.dataSource = new TakenMijnDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource.initColumns(this.defaultColumns());
     }
@@ -75,6 +81,10 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
             [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
+    }
+
+    getWerklijst(): Werklijst {
+        return Werklijst.WERKVOORRAAD_TAKEN;
     }
 
     resetColumns(): void {
