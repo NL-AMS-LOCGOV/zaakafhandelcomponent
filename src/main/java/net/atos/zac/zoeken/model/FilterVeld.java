@@ -41,7 +41,8 @@ public enum FilterVeld {
     DOCUMENT_INDICATIES("informatieobject_indicaties");
 
     public static final Set<FilterVeld> ZAAK_FACETTEN = Collections.unmodifiableSet(
-            EnumSet.of(ZAAKTYPE, ZAAK_STATUS, BEHANDELAAR, GROEP, ZAAK_RESULTAAT, ZAAK_INDICATIES));
+            EnumSet.of(ZAAKTYPE, ZAAK_STATUS, BEHANDELAAR, GROEP, ZAAK_RESULTAAT, ZAAK_VERTROUWELIJKHEIDAANDUIDING, ZAAK_COMMUNICATIEKANAAL,
+                       ZAAK_ARCHIEF_NOMINATIE, ZAAK_INDICATIES));
 
     public static final Set<FilterVeld> DOCUMENT_FACETTEN = Collections.unmodifiableSet(
             EnumSet.of(DOCUMENT_STATUS, DOCUMENT_TYPE, DOCUMENT_VERGRENDELD_DOOR, ZAAKTYPE, DOCUMENT_INDICATIES));
@@ -51,6 +52,7 @@ public enum FilterVeld {
 
     public static final Set<FilterVeld> FACETTEN = Collections.unmodifiableSet(
             EnumSet.of(TYPE, ZAAKTYPE, TOEGEKEND, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_INDICATIES, ZAAK_RESULTAAT,
+                       ZAAK_VERTROUWELIJKHEIDAANDUIDING, ZAAK_COMMUNICATIEKANAAL, ZAAK_ARCHIEF_NOMINATIE,
                        TAAK_NAAM, TAAK_STATUS, DOCUMENT_STATUS, DOCUMENT_INDICATIES, DOCUMENT_TYPE,
                        DOCUMENT_VERGRENDELD_DOOR));
 

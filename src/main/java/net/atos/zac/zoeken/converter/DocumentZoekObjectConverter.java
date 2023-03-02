@@ -82,7 +82,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         documentZoekObject.setVerzenddatum(DateTimeConverterUtil.convertToDate(informatieobject.getVerzenddatum()));
         documentZoekObject.setOndertekeningDatum(
                 DateTimeConverterUtil.convertToDate(informatieobject.getOntvangstdatum()));
-        documentZoekObject.setVertrouwelijkheidaanduiding(informatieobject.getVertrouwelijkheidaanduiding().toValue());
+        documentZoekObject.setVertrouwelijkheidaanduiding(informatieobject.getVertrouwelijkheidaanduiding().toString());
         documentZoekObject.setAuteur(informatieobject.getAuteur());
         if (informatieobject.getStatus() != null) {
             documentZoekObject.setStatus(informatieobject.getStatus());

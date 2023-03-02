@@ -23,6 +23,8 @@ export class ZaakZoekObject implements ZoekObject {
     publicatiedatum: string;
     communicatiekanaal: string;
     vertrouwelijkheidaanduiding: string;
+    archiefActiedatum: string;
+    archiefNominatie: string;
     afgehandeld: boolean;
     groepId: string;
     groepNaam: string;
