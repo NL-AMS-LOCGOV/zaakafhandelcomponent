@@ -6,6 +6,8 @@ package net.atos.zac.gebruikersvoorkeuren.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -37,7 +39,8 @@ public class TabelInstellingen {
 
     public static final int AANTAL_PER_PAGINA_MIN = 10;
 
-    public static final int[] PAGE_SIZE_OPTIONS = {10, 25, 50, 100};
+    public static final List<Integer> PAGE_SIZE_OPTIONS = List.of(AANTAL_PER_PAGINA_MIN, AANTAL_PER_PAGINA_DEFAULT, 50, AANTAL_PER_PAGINA_MAX);
+
 
     @Id
     @GeneratedValue(generator = "sq_tabel_instellingen", strategy = GenerationType.SEQUENCE)
