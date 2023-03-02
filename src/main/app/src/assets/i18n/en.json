@@ -94,6 +94,7 @@
   "afgerond": "Finished",
   "behandelaar": "Case handler",
   "bestandsnaam": "File name",
+  "bestandstype": "{{type}} file",
   "achternaam": "Surname",
   "voorvoegsel": "Prefix",
   "voornamen": "First names",

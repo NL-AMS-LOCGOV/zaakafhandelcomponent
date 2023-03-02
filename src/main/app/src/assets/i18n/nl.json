@@ -94,6 +94,7 @@
   "auteur": "Auteur",
   "behandelaar": "Behandelaar",
   "bestandsnaam": "Bestandsnaam",
+  "bestandstype": "{{type}}-bestand",
   "achternaam": "Achternaam",
   "voorvoegsel": "Voorvoegsel",
   "voornamen": "Voornamen",
