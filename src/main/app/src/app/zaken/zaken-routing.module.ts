@@ -12,16 +12,40 @@ import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraa
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 import {TabelGegevensResolver} from '../shared/dynamic-table/datasource/tabel-gegevens-resolver.service';
+import {Werklijst} from '../gebruikersvoorkeuren/model/werklijst';
 
 const routes: Routes = [
     {
         path: 'zaken', children: [
-            {path: '', redirectTo: 'werkvoorraad', pathMatch: 'full'},
-            {path: 'mijn', component: ZakenMijnComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
-            {path: 'werkvoorraad', component: ZakenWerkvoorraadComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
+            {
+                path: '',
+                redirectTo: 'werkvoorraad',
+                pathMatch: 'full'
+            },
+            {
+                path: 'mijn',
+                component: ZakenMijnComponent,
+                resolve: {tabelGegevens: TabelGegevensResolver},
+                data: {werklijst: Werklijst.MIJN_ZAKEN}
+            },
+            {
+                path: 'werkvoorraad',
+                component: ZakenWerkvoorraadComponent,
+                resolve: {tabelGegevens: TabelGegevensResolver},
+                data: {werklijst: Werklijst.WERKVOORRAAD_ZAKEN}
+            },
             {path: 'create', component: ZaakCreateComponent},
-            {path: 'afgehandeld', component: ZakenAfgehandeldComponent, resolve: {tabelGegevens: TabelGegevensResolver}},
-            {path: ':zaakIdentificatie', component: ZaakViewComponent, resolve: {zaak: ZaakIdentificatieResolver}}
+            {
+                path: 'afgehandeld',
+                component: ZakenAfgehandeldComponent,
+                resolve: {tabelGegevens: TabelGegevensResolver},
+                data: {werklijst: Werklijst.AFGEHANDELDE_ZAKEN}
+            },
+            {
+                path: ':zaakIdentificatie',
+                component: ZaakViewComponent,
+                resolve: {zaak: ZaakIdentificatieResolver}
+            }
         ]
     }
 ];
