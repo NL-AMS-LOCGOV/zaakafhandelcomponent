@@ -757,16 +757,6 @@ public class ZakenRESTService {
         if (speciaal != null) {
             return switch (speciaal) {
                 case GEMEENTE -> configuratieService.readGemeenteMail();
-                case GROEP -> zgwApiService.findGroepForZaak(zaak)
-                        .map(RolOrganisatorischeEenheid::getIdentificatienummer)
-                        .map(identityService::readGroup)
-                        .map(Group::getEmail)
-                        .orElse(null);
-                case BEHANDELAAR -> zgwApiService.findBehandelaarForZaak(zaak)
-                        .map(RolMedewerker::getIdentificatienummer)
-                        .map(identityService::readUser)
-                        .map(User::getEmail)
-                        .orElse(null);
                 case MEDEWERKER -> loggedInUserInstance.get().getEmail();
             };
         }

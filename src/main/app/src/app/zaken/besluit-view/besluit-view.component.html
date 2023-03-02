@@ -18,7 +18,11 @@
         </mat-expansion-panel-header>
 
         <mat-tab-group mat-stretch-tabs="false">
-            <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
+            <mat-tab id="algemeneGegevens_tab">
+                <ng-template mat-tab-label>
+                    <mat-icon>topic</mat-icon>
+                    {{'gegevens.algemeen' | translate}}
+                </ng-template>
                 <div class="content flex-row flex-wrap">
                     <zac-static-text class="flex-1" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
                     <zac-static-text class="flex-1" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
@@ -31,7 +35,11 @@
                 </div>
             </mat-tab>
 
-            <mat-tab id="historie_tab" label="{{'historie' | translate}}">
+            <mat-tab id="historie_tab">
+                <ng-template mat-tab-label>
+                    <mat-icon>history</mat-icon>
+                    {{'historie' | translate}}
+                </ng-template>
                 <div class="table-wrapper historie-table">
                     <table mat-table [dataSource]="histories[besluit.uuid]" matSort>
                         <ng-container matColumnDef="datum">
