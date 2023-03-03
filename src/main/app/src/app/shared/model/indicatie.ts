@@ -5,12 +5,24 @@
 
 export class Indicatie {
     naam: string;
+    icon: string;
+    outlined: boolean;
     primary: boolean;
     toelichting: string;
 
-    constructor(naam: string, primary: boolean, toelichting: string) {
+    constructor(naam: string, icon: string, toelichting: string) {
         this.naam = naam;
-        this.primary = primary;
+        this.icon = icon;
         this.toelichting = toelichting;
+    }
+
+    temporary(): Indicatie {
+        this.primary = true;
+        return this;
+    }
+
+    alternate(): Indicatie {
+        this.outlined = true;
+        return this;
     }
 }
