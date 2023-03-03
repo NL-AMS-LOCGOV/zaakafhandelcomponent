@@ -12,6 +12,10 @@
             <mat-panel-description>
                 <zac-skeleton-loader [loading$]="persoon$">{{persoon?.naam}}</zac-skeleton-loader>
                 <div>
+                    <button *ngIf="persoon && isWijzigbaar" [title]="'actie.initiator.wijzigen' | translate" mat-icon-button
+                            (click)="$event.stopPropagation(); edit.emit(persoon)">
+                        <mat-icon outlined>change_circle</mat-icon>
+                    </button>
                     <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
                             (click)="$event.stopPropagation(); delete.emit(persoon)">
                         <mat-icon>delete</mat-icon>

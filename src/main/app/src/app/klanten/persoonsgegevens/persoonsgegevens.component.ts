@@ -17,7 +17,9 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 })
 export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
     @Input() isVerwijderbaar: boolean;
+    @Input() isWijzigbaar: boolean;
     @Output() delete = new EventEmitter<Persoon>();
+    @Output() edit = new EventEmitter<Persoon>();
 
     private _bsn: string;
     @Input() set bsn(identificatie: string) {

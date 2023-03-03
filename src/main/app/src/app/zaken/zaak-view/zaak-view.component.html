@@ -51,20 +51,33 @@
     <mat-drawer-content>
 
         <div class="flex-row flex-wrap gap-10">
-
-            <zac-persoongegevens class="w100 flex-grow" *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
+            <zac-zaak-initiator-toevoegen class="w100 flex-1"
+                                          *ngIf="!zaak.initiatorIdentificatieType"
+                                          [toevoegenToegestaan]="zaak.rechten.behandelen"
+                                          (add)="addOrEditZaakInitiator()">
+            </zac-zaak-initiator-toevoegen>
+            <zac-persoongegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
                                  [isVerwijderbaar]="zaak.rechten.behandelen"
-                                 (delete)="deleteInitiator()"></zac-persoongegevens>
-            <zac-bedrijfsgegevens class="w100 flex-grow" *ngIf="zaak.initiatorIdentificatieType==='VN'"
+                                 [isWijzigbaar]="zaak.rechten.behandelen"
+                                 (edit)="addOrEditZaakInitiator()"
+                                 (delete)="deleteInitiator()">
+            </zac-persoongegevens>
+            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='VN'"
                                   [vestigingsnummer]="zaak.initiatorIdentificatie"
                                   [isVerwijderbaar]="zaak.rechten.behandelen"
-                                  (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
-            <zac-bedrijfsgegevens class="w100 flex-grow" *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
+                                  (edit)="addOrEditZaakInitiator()"
+                                  [isWijzigbaar]="zaak.rechten.behandelen"
+                                  (delete)="deleteInitiator()">
+            </zac-bedrijfsgegevens>
+            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
                                   [isVerwijderbaar]="zaak.rechten.behandelen"
-                                  (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
+                                  (edit)="addOrEditZaakInitiator()"
+                                  [isWijzigbaar]="zaak.rechten.behandelen"
+                                  (delete)="deleteInitiator()">
+            </zac-bedrijfsgegevens>
 
 
-            <mat-card class="zaken-card w50 flex-grow">
+            <mat-card class="zaken-card w50 flex-1">
                 <mat-card-header class="flex-row space-between">
                     <mat-card-title>{{zaak.identificatie}}</mat-card-title>
                     <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
@@ -371,7 +384,7 @@
                 </mat-card-content>
             </mat-card>
 
-            <div class="w50 flex-grow flex-col">
+            <div class="w50 flex-1 flex-col">
 
                 <zac-besluit-view class="besluiten" *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"

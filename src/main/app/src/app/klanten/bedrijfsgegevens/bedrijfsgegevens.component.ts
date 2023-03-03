@@ -17,7 +17,9 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 })
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Input() isVerwijderbaar: boolean;
+    @Input() isWijzigbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
+    @Output() edit = new EventEmitter<Bedrijf>();
     skeletonLayout = SkeletonLayout;
 
     private _vestigingsnummer: string;

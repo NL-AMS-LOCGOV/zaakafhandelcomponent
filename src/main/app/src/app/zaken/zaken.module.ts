@@ -33,6 +33,7 @@ import {BesluitViewComponent} from './besluit-view/besluit-view.component';
 import {BesluitEditComponent} from './besluit-edit/besluit-edit.component';
 import {IntakeAfrondenDialogComponent} from './intake-afronden-dialog/intake-afronden-dialog.component';
 import {ZaakdataComponent} from './zaakdata/zaakdata.component';
+import {ZaakInitiatorToevoegenComponent} from './zaak-initiator-toevoegen/zaak-initiator-toevoegen.component';
 
 @NgModule({
     declarations: [
@@ -51,6 +52,7 @@ import {ZaakdataComponent} from './zaakdata/zaakdata.component';
         ZaakKoppelenDialogComponent,
         ZaakOntkoppelenDialogComponent,
         ZakenVrijgevenDialogComponent,
+        ZaakInitiatorToevoegenComponent,
         NotitiesComponent,
         LocatieZoekComponent,
         ZaakDocumentenComponent,

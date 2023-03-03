@@ -1,0 +1,17 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-expansion-panel disabled>
+    <mat-expansion-panel-header>
+        <mat-panel-title>{{'initiator.titel'| translate}}</mat-panel-title>
+        <mat-panel-description>
+            <div class="hide-sm">{{'msg.zaak.geen.initiator' | translate}}</div>
+            <div class="hide-gt-sm">-</div>
+            <button *ngIf="toevoegenToegestaan" (click)="add.emit()" [title]="'actie.initiator.toevoegen' | translate" mat-icon-button>
+                <mat-icon>person_add_alt_1</mat-icon>
+            </button>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+</mat-expansion-panel>
