@@ -53,7 +53,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     heeftGerelateerdeZaken;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
-    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
+    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'bestandsomvang', 'status', 'vertrouwelijkheidaanduiding', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
@@ -248,5 +248,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     getFileTooltip(filetype: string): string {
         return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
+    }
+
+    getBestandsomvang(bestandsomvang: number): string {
+        return bestandsomvang / 1000000 < 1 ? Math.round(bestandsomvang / 1000) + ' kB' :
+            (bestandsomvang / 1000000).toFixed(2) + ' MB';
     }
 }
