@@ -5,20 +5,32 @@
 
 <mat-chip-listbox *ngIf=" layout == Layout.VIEW" [class]="layout.toLowerCase()" selectable="false" class="flex-row">
     <mat-chip-option *ngFor="let indicatie of indicaties"
-                     [color]="indicatie.primary ? 'accent' : null"
                      selectable="false"
+                     [color]="indicatie.primary ? 'accent' : null"
                      [highlighted]="indicatie.primary"
                      [matTooltip]="indicatie.toelichting | empty">
-        {{'indicatie.' + indicatie.naam | translate}}
+        <div class="view">
+            <mat-icon [ngClass]="indicatie.outlined?'material-icons-outlined':null">
+                {{indicatie.icon}}
+            </mat-icon>
+            <span class="label">
+                {{'indicatie.' + indicatie.naam | translate}}
+            </span>
+        </div>
     </mat-chip-option>
 </mat-chip-listbox>
 
-<mat-chip-listbox *ngIf="layout== Layout.WERKLIJST || layout == Layout.ZOEKEN" [class]="layout.toLowerCase()" selectable="false" class="flex-row">
+<mat-chip-listbox *ngIf="layout== Layout.WERKLIJST || layout == Layout.ZOEKEN" [class]="layout.toLowerCase()"
+                  selectable="false" class="flex-row">
     <mat-chip-option *ngFor="let indicatie of indicaties"
-                     [color]="indicatie.primary ? 'accent' : null"
                      selectable="false"
+                     [color]="indicatie.primary ? 'accent' : null"
                      [highlighted]="indicatie.primary"
                      [matTooltip]="('indicatie.'+indicatie.naam | translate)+(indicatie.toelichting ? ': '+ indicatie.toelichting : '')">
-        {{'indicatie.' + indicatie.naam + '.afkorting' | translate}}
+        <div class="werklijst">
+            <mat-icon [ngClass]="indicatie.outlined?'material-icons-outlined':null">
+                {{indicatie.icon}}
+            </mat-icon>
+        </div>
     </mat-chip-option>
 </mat-chip-listbox>

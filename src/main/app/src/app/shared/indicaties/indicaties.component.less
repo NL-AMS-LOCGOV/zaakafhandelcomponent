@@ -3,10 +3,31 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-
 mat-chip-option {
   font-size: 12px;
   font-weight: 500;
+
+  .view {
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+    margin: -4px -12px;
+    padding: 4px 16px;
+
+    mat-icon {
+      position: relative;
+      left: -5px;
+    }
+  }
+
+  .werklijst {
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+    margin: 0 -4px;
+  }
 }
 
 .zoeken {
@@ -15,4 +36,3 @@ mat-chip-option {
     transform: scale(0.85);
   }
 }
-

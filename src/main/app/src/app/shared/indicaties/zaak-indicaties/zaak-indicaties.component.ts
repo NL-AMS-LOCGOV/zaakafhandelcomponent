@@ -44,19 +44,24 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnCh
         indicaties.forEach(indicatie => {
             switch (indicatie) {
                 case ZaakIndicatie.OPSCHORTING:
-                    this.indicaties.push(new Indicatie(indicatie, true, this.getRedenOpschorting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'pause', this.getRedenOpschorting()).temporary());
                     break;
                 case ZaakIndicatie.HEROPEND:
-                    this.indicaties.push(new Indicatie(indicatie, true, this.getStatusToelichting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'restart_alt', this.getStatusToelichting()).temporary());
                     break;
                 case ZaakIndicatie.HOOFDZAAK:
-                    this.indicaties.push(new Indicatie(indicatie, false, this.getHoofdzaakToelichting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'account_tree', this.getHoofdzaakToelichting()));
                     break;
                 case ZaakIndicatie.DEELZAAK:
-                    this.indicaties.push(new Indicatie(indicatie, false, this.getDeelZaakToelichting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'account_tree', this.getDeelZaakToelichting()).alternate());
                     break;
                 case ZaakIndicatie.VERLENGD:
-                    this.indicaties.push(new Indicatie(indicatie, false, this.getRedenVerlenging()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'update', this.getRedenVerlenging()));
                     break;
             }
         });
@@ -72,8 +77,8 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnCh
 
     private getDeelZaakToelichting(): string {
         if (this.zaak) {
-            console.log(this.zaak.gerelateerdeZaken);
-            const hoofdzaakID = this.zaak.gerelateerdeZaken.find(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.HOOFDZAAK).identificatie;
+            const hoofdzaakID = this.zaak.gerelateerdeZaken.find(
+                gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.HOOFDZAAK).identificatie;
             return this.translateService.instant('msg.zaak.relatie', {identificatie: hoofdzaakID});
         }
         return '';
@@ -81,7 +86,8 @@ export class ZaakIndicatiesComponent extends IndicatiesComponent implements OnCh
 
     private getHoofdzaakToelichting(): string {
         if (this.zaak) {
-            const deelzaken = this.zaak.gerelateerdeZaken.filter(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.DEELZAAK);
+            const deelzaken = this.zaak.gerelateerdeZaken.filter(
+                gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.DEELZAAK);
             const toelichting = deelzaken.length === 1 ? 'msg.zaak.relatie' : 'msg.zaak.relaties';
             const args = deelzaken.length === 1 ? {identificatie: deelzaken[0].identificatie} : {aantal: deelzaken.length};
             return this.translateService.instant(toelichting, args);

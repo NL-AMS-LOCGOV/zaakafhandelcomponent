@@ -15,5 +15,6 @@ public enum DocumentIndicatie {
     VERGRENDELD,
     ONDERTEKEND,
     BESLUIT,
-    GEBRUIKSRECHT;
+    GEBRUIKSRECHT,
+    VERZONDEN;
 }

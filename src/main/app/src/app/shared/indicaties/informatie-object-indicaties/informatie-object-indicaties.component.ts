@@ -16,6 +16,7 @@ export enum InformatieobjectIndicatie {
     ONDERTEKEND = 'ONDERTEKEND',
     BESLUIT = 'BESLUIT',
     GEBRUIKSRECHT = 'GEBRUIKSRECHT',
+    VERZONDEN = 'VERZONDEN',
 }
 
 @Component({
@@ -46,16 +47,24 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
         indicaties.forEach(indicatie => {
             switch (indicatie) {
                 case InformatieobjectIndicatie.VERGRENDELD:
-                    this.indicaties.push(new Indicatie(indicatie, true, this.getVergrendeldToelichting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'lock', this.getVergrendeldToelichting()).temporary());
                     break;
                 case InformatieobjectIndicatie.ONDERTEKEND:
-                    this.indicaties.push(new Indicatie(indicatie, false, this.getOndertekeningToelichting()));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'fact_check', this.getOndertekeningToelichting()));
                     break;
                 case InformatieobjectIndicatie.BESLUIT:
-                    this.indicaties.push(new Indicatie(indicatie, false, this.translateService.instant('msg.document.besluit')));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'gavel', this.translateService.instant('msg.document.besluit')));
                     break;
                 case InformatieobjectIndicatie.GEBRUIKSRECHT:
-                    this.indicaties.push(new Indicatie(indicatie, true, ''));
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'privacy_tip', '').temporary());
+                    break;
+                case InformatieobjectIndicatie.VERZONDEN:
+                    this.indicaties.push(
+                        new Indicatie(indicatie, 'local_post_office', ''));
                     break;
             }
         });
@@ -63,17 +72,21 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
 
     private getOndertekeningToelichting(): string {
         if (this.documentZoekObject) {
-            return this.documentZoekObject.ondertekeningSoort + '-' + this.datumPipe.transform(this.documentZoekObject.ondertekeningDatum);
+            return this.documentZoekObject.ondertekeningSoort + '-' + this.datumPipe.transform(
+                this.documentZoekObject.ondertekeningDatum);
         } else {
-            return this.document.ondertekening.soort + '-' + this.datumPipe.transform(this.document.ondertekening.datum);
+            return this.document.ondertekening.soort + '-' + this.datumPipe.transform(
+                this.document.ondertekening.datum);
         }
     }
 
     private getVergrendeldToelichting(): string {
         if (this.documentZoekObject) {
-            return this.translateService.instant('msg.document.vergrendeld', {gebruiker: this.documentZoekObject.vergrendeldDoor});
+            return this.translateService.instant('msg.document.vergrendeld',
+                {gebruiker: this.documentZoekObject.vergrendeldDoor});
         } else {
-            return this.translateService.instant('msg.document.vergrendeld', {gebruiker: this.document.gelockedDoor.naam});
+            return this.translateService.instant('msg.document.vergrendeld',
+                {gebruiker: this.document.gelockedDoor.naam});
         }
     }
 }
