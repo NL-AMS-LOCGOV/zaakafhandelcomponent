@@ -16,7 +16,7 @@
         </zac-informatie-object-edit>
     </mat-drawer>
     <mat-drawer-content>
-        <div class="flex-row flex-wrap flex-col-xl gap-20">
+        <div class="flex-row flex-wrap flex-col-xl gap-10">
             <mat-card class="w60" appearance="outlined">
                 <mat-card-header class="flex-row space-between">
                     <mat-card-title>{{'informatieobject' | translate}}</mat-card-title>
@@ -159,7 +159,7 @@
                 </mat-card-content>
             </mat-card>
 
-            <div class="flex-col flex-grow">
+            <div class="flex-col flex-1">
                 <mat-card class="zaak-gegevens" *ngFor="let zaak of zaakInformatieObjecten">
 
                     <mat-card-header>

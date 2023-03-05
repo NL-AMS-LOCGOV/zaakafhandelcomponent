@@ -57,10 +57,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -467,11 +464,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (this.zaak.rechten.behandelen || this.zaak.rechten.wijzigen) {
             this.menu.push(new HeaderMenuItem('koppelingen'));
             if (this.zaak.rechten.behandelen) {
-                this.menu.push(new ButtonMenuItem(this.zaak.initiatorIdentificatie ?
-                    'actie.initiator.wijzigen' : 'actie.initiator.toevoegen', () => {
-                    this.actionsSidenav.open();
-                    this.action = SideNavAction.ZOEK_INITIATOR;
-                }, 'person_add_alt_1'));
                 this.menu.push(new ButtonMenuItem('actie.betrokkene.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BETROKKENE;
@@ -721,6 +713,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.open();
     }
 
+    addOrEditZaakInitiator(): void {
+        this.action = SideNavAction.ZOEK_INITIATOR;
+        this.actionsSidenav.open();
+    }
+
     private loadLocatie(): void {
         if (this.zaak.zaakgeometrie) {
             switch (this.zaak.zaakgeometrie.type) {
@@ -804,11 +801,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     initiatorGeselecteerd(initiator: Klant): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
+        const melding = this.zaak.initiatorIdentificatie ? 'msg.initiator.gewijzigd' : 'msg.initiator.toegevoegd';
         this.zakenService.updateInitiator(this.zaak, initiator)
             .subscribe(zaak => {
                 this.zaak = zaak;
-                this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: zaak.initiatorIdentificatie});
-                this.setupMenu();
+                this.utilService.openSnackbar(melding, {naam: zaak.initiatorIdentificatie});
                 this.loadHistorie();
             });
     }
@@ -826,7 +823,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.utilService.openSnackbar('msg.initiator.ontkoppelen.uitgevoerd');
                 this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
                     this.zaak = zaak;
-                    this.setupMenu();
                     this.loadHistorie();
                 });
             }
