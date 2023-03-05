@@ -242,6 +242,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
+    getDownloadURL(informatieObject: GekoppeldeZaakEnkelvoudigInformatieobject): string {
+        return this.informatieObjectenService.getDownloadURL(informatieObject.uuid);
+    }
+
     getFileIcon(filename: string): FileIcon | { color: string, icon: string, type: string } {
         return FileIcon.getIconByBestandsnaam(filename);
     }

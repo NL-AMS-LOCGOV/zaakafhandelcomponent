@@ -99,6 +99,11 @@
                                     title="{{ 'actie.document.verplaatsen' | translate}}">
                                 <mat-icon>content_cut</mat-icon>
                             </button>
+                            <a mat-icon-button
+                               [href]="getDownloadURL(row)"
+                               title="{{ 'actie.downloaden' | translate}}">
+                                <mat-icon>download</mat-icon>
+                            </a>
                         </div>
                     </td>
                 </ng-container>
