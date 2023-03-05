@@ -9,8 +9,11 @@ import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
 import {PlanItemsService} from '../plan-items.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {VerzendenBesluitFormulier} from '../../formulieren/taken/model/verzenden-besluit-formulier';
 import {ProcessTaskData} from '../model/process-task-data';
+import {AbstractProcessFormulier} from '../../formulieren/process/abstract-process-formulier';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {ProcessFormulierenService} from '../../formulieren/process/process-formulieren.service';
+import {Zaak} from '../../zaken/model/zaak';
 
 @Component({
     selector: 'zac-process-task-do',
@@ -19,12 +22,14 @@ import {ProcessTaskData} from '../model/process-task-data';
 })
 export class ProcessTaskDoComponent implements OnInit {
 
+    formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
-    formulier: VerzendenBesluitFormulier;
+    private formulier: AbstractProcessFormulier;
     @Input() planItem: PlanItem;
+    @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private planItemsService: PlanItemsService) {
+    constructor(private planItemsService: PlanItemsService, private processFormulierenService: ProcessFormulierenService) {
     }
 
     ngOnInit(): void {
@@ -32,15 +37,16 @@ export class ProcessTaskDoComponent implements OnInit {
         .saveText('actie.starten')
         .cancelText('actie.annuleren')
         .build();
-        this.formulier = new VerzendenBesluitFormulier();
-        this.formulier.initForm();
+        this.formulier = this.processFormulierenService
+                             .getFormulierBuilder(this.planItem.formulierDefinitie)
+                             .form(this.planItem, this.zaak)
+                             .build();
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            const processTaskData = new ProcessTaskData();
+            const processTaskData: ProcessTaskData = this.formulier.getData(formGroup);
             processTaskData.planItemInstanceId = this.planItem.id;
-            processTaskData.data = this.formulier.getData(formGroup);
             this.planItemsService.doProcessTaskPlanItem(processTaskData).subscribe(() => {
                 this.done.emit();
             });

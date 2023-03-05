@@ -4,7 +4,7 @@
   -->
 
 <div class="form">
-    <mfb-form *ngIf="this.formulier.form" (formSubmit)="onFormSubmit($event)" [formFields]="this.formulier.form"
+    <mfb-form *ngIf="this.formItems" (formSubmit)="onFormSubmit($event)" [formFields]="this.formItems"
               [config]="formConfig"></mfb-form>
 </div>
 
