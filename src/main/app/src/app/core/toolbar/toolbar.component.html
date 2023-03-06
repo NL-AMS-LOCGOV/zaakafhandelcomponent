@@ -112,11 +112,12 @@
                     title="{{ 'actie.zoeken' | translate }}">
                 <mat-icon fontIcon="search"></mat-icon>
             </button>
-            <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button
-                    title="{{ 'actie.admin' | translate }}">
-                <mat-icon>settings</mat-icon>
-            </button>
-
+            <div class="settings">
+                <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button
+                        title="{{ 'actie.admin' | translate }}">
+                    <mat-icon>settings</mat-icon>
+                </button>
+            </div>
             <div class="profile flex-col items-center" [matTooltip]="ingelogdeMedewerker?.naam">
                 <button [matMenuTriggerFor]="accountMenu" id="gebruikersProfiel_button" mat-icon-button
                         title="{{ 'toolbar.profiel' | translate }}" aria-label="Gebruikers profiel">
