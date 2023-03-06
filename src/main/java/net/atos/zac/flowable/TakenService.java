@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.bind.annotation.JsonbCreator;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +45,10 @@ public class TakenService {
 
     public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
 
+    public static final String USER_TASK_ASSIGNEE_CHANGED_CUSTOM = "USER_TASK_ASSIGNEE_CHANGED_CUSTOM";
+
+    public static final String USER_TASK_GROUP_CHANGED = "USER_TASK_GROUP_CHANGED";
+
     @Inject
     private TaskService taskService;
 
@@ -55,9 +58,21 @@ public class TakenService {
     @Inject
     private HistoryService historyService;
 
-    public record TaskDescriptionChangedData(String previousDescription, String newDescription) {
-        @JsonbCreator
-        public TaskDescriptionChangedData {
+    public static class ValueChangeData {
+
+        public String oldValue;
+
+        public String newValue;
+
+        public String explanation;
+
+        public ValueChangeData() {
+        }
+
+        public ValueChangeData(final String oldValue, final String newValue, final String explanation) {
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+            this.explanation = explanation;
         }
     }
 
@@ -178,17 +193,23 @@ public class TakenService {
     }
 
     public Task updateTask(final Task task) {
-        final Task originalTask = readOpenTask(task.getId());
+        final String oldDescription = readOpenTask(task.getId()).getDescription();
         taskService.saveTask(task);
-        if (!StringUtils.equals(originalTask.getDescription(), task.getDescription())) {
-            historyService.createHistoricTaskLogEntryBuilder(originalTask)
-                    .type(USER_TASK_DESCRIPTION_CHANGED)
-                    .data(FIELD_VISIBILITY_STRATEGY.toJson(new TaskDescriptionChangedData(
-                            defaultString(originalTask.getDescription(), StringUtils.EMPTY),
-                            defaultString(task.getDescription(), StringUtils.EMPTY))))
+        createHistoricTaskLogEntry(task, USER_TASK_DESCRIPTION_CHANGED, oldDescription, task.getDescription(), null);
+        return readOpenTask(task.getId());
+    }
+
+    private void createHistoricTaskLogEntry(final Task task, final String type, final String oldValue,
+            final String newValue, final String explanation) {
+        if (!StringUtils.equals(oldValue, newValue)) {
+            historyService.createHistoricTaskLogEntryBuilder(task)
+                    .type(type)
+                    .data(FIELD_VISIBILITY_STRATEGY.toJson(new ValueChangeData(
+                            defaultString(oldValue, StringUtils.EMPTY),
+                            defaultString(newValue, StringUtils.EMPTY),
+                            explanation)))
                     .create();
         }
-        return readOpenTask(task.getId());
     }
 
     public HistoricTaskInstance completeTask(final Task Task) {
@@ -200,22 +221,28 @@ public class TakenService {
         return readClosedTask(Task.getId());
     }
 
-    public Task assignTaskToUser(final String taskId, final String userId) {
+    public Task assignTaskToUser(final String taskId, final String userId, final String reason) {
+        final Task task = readOpenTask(taskId);
         if (userId != null) {
             taskService.setAssignee(taskId, userId);
         } else {
             taskService.unclaim(taskId);
         }
+        createHistoricTaskLogEntry(task, USER_TASK_ASSIGNEE_CHANGED_CUSTOM, task.getAssignee(), userId, reason);
         return readOpenTask(taskId);
     }
 
-    public Task assignTaskToGroup(final Task task, final String groupId) {
-        task.getIdentityLinks().stream()
+    public Task assignTaskToGroup(final Task task, final String groupId, final String reden) {
+        final String currentGroupId = task.getIdentityLinks().stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                 .map(IdentityLinkInfo::getGroupId)
-                .forEach(currentGroupId -> taskService.deleteGroupIdentityLink(task.getId(), currentGroupId,
-                                                                               IdentityLinkType.CANDIDATE));
+                .findFirst()
+                .orElse(null);
+        if (currentGroupId != null) {
+            taskService.deleteGroupIdentityLink(task.getId(), currentGroupId, IdentityLinkType.CANDIDATE);
+        }
         taskService.addGroupIdentityLink(task.getId(), groupId, IdentityLinkType.CANDIDATE);
+        createHistoricTaskLogEntry(task, USER_TASK_GROUP_CHANGED, currentGroupId, groupId, reden);
         return readOpenTask(task.getId());
     }
 

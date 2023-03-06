@@ -64,7 +64,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     action: SideNavAction;
 
     historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
-    historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
 
     editFormFields: Map<string, any> = new Map<string, any>();
     fataledatumIcon: TextIcon;
