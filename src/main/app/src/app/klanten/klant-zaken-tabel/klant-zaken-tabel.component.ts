@@ -29,7 +29,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     dataSource: MatTableDataSource<ZaakZoekObject> = new MatTableDataSource<ZaakZoekObject>();
-    columns: string[] = ['identificatie', 'betrokkene', 'status', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
+    columns: string[] = ['identificatie', 'betrokkene', 'status', 'groep', 'behandelaar', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
     filterColumns: string[] = this.columns.map(n => n + '_filter');
     isLoadingResults = true;
     sorteerVeld = SorteerVeld;
