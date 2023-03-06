@@ -6,7 +6,9 @@
 package net.atos.zac.app.taken.converter;
 
 import static javax.json.bind.annotation.JsonbDateFormat.TIME_IN_MILLIS;
+import static net.atos.zac.flowable.TakenService.USER_TASK_ASSIGNEE_CHANGED_CUSTOM;
 import static net.atos.zac.flowable.TakenService.USER_TASK_DESCRIPTION_CHANGED;
+import static net.atos.zac.flowable.TakenService.USER_TASK_GROUP_CHANGED;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 import static net.atos.zac.util.JsonbUtil.JSONB;
@@ -52,66 +54,36 @@ public class RESTTaakHistorieConverter {
     }
 
     private RESTTaakHistorieRegel convert(final HistoricTaskLogEntry historicTaskLogEntry) {
-        final RESTTaakHistorieRegel restTaakHistorieRegel;
-
-        if (historicTaskLogEntry.getType().equals(USER_TASK_DESCRIPTION_CHANGED)) {
-            restTaakHistorieRegel = convertDescriptionChanged(historicTaskLogEntry.getData());
-        } else {
-            restTaakHistorieRegel = switch (HistoricTaskLogEntryType.valueOf(historicTaskLogEntry.getType())) {
-                case USER_TASK_CREATED -> convertCreated();
-                case USER_TASK_COMPLETED -> convertCompleted();
-                case USER_TASK_IDENTITY_LINK_ADDED -> convertIdentityLinkAdded(historicTaskLogEntry.getData());
-                case USER_TASK_IDENTITY_LINK_REMOVED -> convertIdentityLinkRemoved(historicTaskLogEntry.getData());
-                case USER_TASK_ASSIGNEE_CHANGED -> convertAssigneeChanged(historicTaskLogEntry.getData());
-                case USER_TASK_OWNER_CHANGED -> convertOwnerChanged(historicTaskLogEntry.getData());
-                case USER_TASK_DUEDATE_CHANGED -> convertDuedateChanged(historicTaskLogEntry.getData());
-                default -> null;
-            };
-        }
-
+        final RESTTaakHistorieRegel restTaakHistorieRegel = switch (historicTaskLogEntry.getType()) {
+            case USER_TASK_DESCRIPTION_CHANGED ->
+                    convertValueChangeData(TOELICHTING_ATTRIBUUT_LABEL, historicTaskLogEntry.getData());
+            case USER_TASK_ASSIGNEE_CHANGED_CUSTOM ->
+                    convertValueChangeData(BEHANDELAAR_ATTRIBUUT_LABEL, historicTaskLogEntry.getData());
+            case USER_TASK_GROUP_CHANGED ->
+                    convertValueChangeData(GROEP_ATTRIBUUT_LABEL, historicTaskLogEntry.getData());
+            default -> convertData(HistoricTaskLogEntryType.valueOf(historicTaskLogEntry.getType()),
+                                   historicTaskLogEntry.getData());
+        };
         if (restTaakHistorieRegel != null) {
             restTaakHistorieRegel.datumTijd = convertToZonedDateTime(historicTaskLogEntry.getTimeStamp());
         }
-
         return restTaakHistorieRegel;
     }
 
-    private RESTTaakHistorieRegel convertCreated() {
-        return new RESTTaakHistorieRegel(CREATED_ATTRIBUUT_LABEL);
+    private RESTTaakHistorieRegel convertData(final HistoricTaskLogEntryType type, final String data) {
+        return switch (type) {
+            case USER_TASK_CREATED -> new RESTTaakHistorieRegel(CREATED_ATTRIBUUT_LABEL);
+            case USER_TASK_COMPLETED -> new RESTTaakHistorieRegel(COMPLETED_ATTRIBUUT_LABEL);
+            case USER_TASK_OWNER_CHANGED -> convertOwnerChanged(data);
+            case USER_TASK_DUEDATE_CHANGED -> convertDuedateChanged(data);
+            default -> null;
+        };
     }
 
-    private RESTTaakHistorieRegel convertCompleted() {
-        return new RESTTaakHistorieRegel(COMPLETED_ATTRIBUUT_LABEL);
-    }
-
-    private RESTTaakHistorieRegel convertDescriptionChanged(final String data) {
-        final TakenService.TaskDescriptionChangedData descriptionChangedData = JSONB.fromJson(data,
-                                                                                              TakenService.TaskDescriptionChangedData.class);
-        return new RESTTaakHistorieRegel(TOELICHTING_ATTRIBUUT_LABEL,
-                                         descriptionChangedData.previousDescription(),
-                                         descriptionChangedData.newDescription());
-    }
-
-    public static class IdentityLinkData {
-        public String groupId;
-    }
-
-    private String getGroupName(final String groepId) {
-        return groepId == null ? null : identityService.readGroup(groepId).getName();
-    }
-
-    private RESTTaakHistorieRegel convertIdentityLinkAdded(final String data) {
-        final IdentityLinkData identityLinkData = JSONB.fromJson(data, IdentityLinkData.class);
-        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL,
-                                         null,
-                                         getGroupName(identityLinkData.groupId));
-    }
-
-    private RESTTaakHistorieRegel convertIdentityLinkRemoved(final String data) {
-        final IdentityLinkData identityLinkData = JSONB.fromJson(data, IdentityLinkData.class);
-        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL,
-                                         getGroupName(identityLinkData.groupId),
-                                         null);
+    private RESTTaakHistorieRegel convertValueChangeData(final String attribuutLabel, final String data) {
+        final TakenService.ValueChangeData valueChangeData = JSONB.fromJson(data, TakenService.ValueChangeData.class);
+        return new RESTTaakHistorieRegel(attribuutLabel, valueChangeData.oldValue, valueChangeData.newValue,
+                                         valueChangeData.explanation);
     }
 
     public static class AssigneeChangedData {
@@ -120,22 +92,15 @@ public class RESTTaakHistorieConverter {
         public String previousAssigneeId;
     }
 
-    private String getMedewerkerFullName(final String medewerkerId) {
-        return medewerkerId == null ? null : identityService.readUser(medewerkerId).getFullName();
-    }
-
-    private RESTTaakHistorieRegel convertAssigneeChanged(final String data) {
-        final AssigneeChangedData assigneeChangedData = JSONB.fromJson(data, AssigneeChangedData.class);
-        return new RESTTaakHistorieRegel(BEHANDELAAR_ATTRIBUUT_LABEL,
-                                         getMedewerkerFullName(assigneeChangedData.previousAssigneeId),
-                                         getMedewerkerFullName(assigneeChangedData.newAssigneeId));
-    }
-
     private RESTTaakHistorieRegel convertOwnerChanged(final String data) {
         final AssigneeChangedData assigneeChangedData = JSONB.fromJson(data, AssigneeChangedData.class);
         return new RESTTaakHistorieRegel(AANGEMAAKT_DOOR_ATTRIBUUT_LABEL,
                                          getMedewerkerFullName(assigneeChangedData.previousAssigneeId),
-                                         getMedewerkerFullName(assigneeChangedData.newAssigneeId));
+                                         getMedewerkerFullName(assigneeChangedData.newAssigneeId), null);
+    }
+
+    private String getMedewerkerFullName(final String medewerkerId) {
+        return medewerkerId == null ? null : identityService.readUser(medewerkerId).getFullName();
     }
 
     public static class DuedateChangedData {
@@ -150,6 +115,6 @@ public class RESTTaakHistorieConverter {
         final DuedateChangedData duedateChangedData = JSONB.fromJson(data, DuedateChangedData.class);
         return new RESTTaakHistorieRegel(FATALEDATUM_ATTRIBUUT_LABEL,
                                          convertToLocalDate(duedateChangedData.previousDueDate),
-                                         convertToLocalDate(duedateChangedData.newDueDate));
+                                         convertToLocalDate(duedateChangedData.newDueDate), null);
     }
 }

@@ -15,4 +15,6 @@ public class RESTTaakVerdelenGegevens {
 
     public String groepId;
 
+    // ToDo zaakafhandelcomponent-2131
+    public String reden = "Test taak verdelen reden";
 }

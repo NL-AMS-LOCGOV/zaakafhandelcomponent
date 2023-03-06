@@ -8,4 +8,5 @@ export class TaakHistorieRegel {
     attribuutLabel: string;
     oudeWaarde: string;
     nieuweWaarde: string;
+    toelichting: string;
 }
