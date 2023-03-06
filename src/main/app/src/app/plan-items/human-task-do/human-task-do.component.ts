@@ -34,7 +34,11 @@ export class HumanTaskDoComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
+        this.formConfig = new FormConfigBuilder()
+        .saveText('actie.starten')
+        .cancelText('actie.annuleren')
+        .build();
+
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
                                  .startForm(this.planItem, this.zaak).build();
