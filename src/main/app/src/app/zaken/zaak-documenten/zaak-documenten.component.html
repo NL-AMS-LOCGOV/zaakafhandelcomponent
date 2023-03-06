@@ -50,7 +50,7 @@
                         <ng-container *ngIf="column == 'zaakIdentificatie'">{{row[column] | empty}}</ng-container>
                         <ng-container *ngIf="column == 'relatieType'">{{row[column] | empty}}</ng-container>
                         <ng-container *ngIf="column == 'informatieobjectTypeOmschrijving'">{{row[column] | empty}}</ng-container>
-                        <ng-container *ngIf="column == 'bestandsomvang'">{{getBestandsomvang(row[column]) | empty}}</ng-container>
+                        <ng-container *ngIf="column == 'bestandsomvang'">{{row[column] | bestandsomvang | empty}}</ng-container>
                         <ng-container
                                 *ngIf="column == 'status'">{{(row[column] ? 'informatieobject.status.' + row[column] : '')|translate | empty}}</ng-container>
                         <ng-container

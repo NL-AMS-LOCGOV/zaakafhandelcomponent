@@ -249,9 +249,4 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     getFileTooltip(filetype: string): string {
         return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
-
-    getBestandsomvang(bestandsomvang: number): string {
-        return bestandsomvang / 1000000 < 1 ? Math.round(bestandsomvang / 1000) + ' kB' :
-            (bestandsomvang / 1000000).toFixed(2) + ' MB';
-    }
 }

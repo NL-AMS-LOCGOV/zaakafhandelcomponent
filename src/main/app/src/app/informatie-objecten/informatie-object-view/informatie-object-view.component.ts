@@ -56,7 +56,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     action: SideNavAction;
     versieInformatie: string;
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
-    bestandomvang: string;
 
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
 
@@ -86,7 +85,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                     this.toevoegenActies();
                     this.updateVersieInformatie();
                     this.loadZaakInformatieobjecten();
-                    this.updateBestandsomvang();
                 });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
@@ -98,7 +96,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                     this.toevoegenActies();
                     this.loadZaakInformatieobjecten();
                     this.loadHistorie();
-                    this.updateBestandsomvang();
                 });
 
             this.loadHistorie();
@@ -267,11 +264,5 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
             tap(() => this.websocketService.suspendListener(this.documentListener))
         );
-    }
-
-    private updateBestandsomvang(): void {
-        this.bestandomvang = this.infoObject.bestandsomvang / 1000000 < 1 ?
-            Math.round(this.infoObject.bestandsomvang / 1000) + ' kB' :
-            (this.infoObject.bestandsomvang / 1000000).toFixed(2) + ' MB';
     }
 }
