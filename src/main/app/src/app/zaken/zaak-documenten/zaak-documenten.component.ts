@@ -53,7 +53,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     heeftGerelateerdeZaken;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
-    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
+    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'bestandsomvang', 'status', 'vertrouwelijkheidaanduiding', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
