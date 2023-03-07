@@ -14,7 +14,7 @@
                 <div>
                     <button *ngIf="persoon && isWijzigbaar" [title]="'actie.initiator.wijzigen' | translate" mat-icon-button
                             (click)="$event.stopPropagation(); edit.emit(persoon)">
-                        <mat-icon outlined>change_circle</mat-icon>
+                        <mat-icon>edit</mat-icon>
                     </button>
                     <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
                             (click)="$event.stopPropagation(); delete.emit(persoon)">

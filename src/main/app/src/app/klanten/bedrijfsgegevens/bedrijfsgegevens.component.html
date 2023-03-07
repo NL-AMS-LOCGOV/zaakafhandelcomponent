@@ -17,7 +17,7 @@
             <div class="flex-row">
                 <button *ngIf="bedrijf && isWijzigbaar" [title]="'actie.initiator.wijzigen' | translate" mat-icon-button
                         (click)="$event.stopPropagation(); edit.emit(bedrijf)">
-                    <mat-icon outlined>change_circle</mat-icon>
+                    <mat-icon>edit</mat-icon>
                 </button>
                 <button *ngIf="bedrijf && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
                         (click)="$event.stopPropagation(); delete.emit(bedrijf)">
