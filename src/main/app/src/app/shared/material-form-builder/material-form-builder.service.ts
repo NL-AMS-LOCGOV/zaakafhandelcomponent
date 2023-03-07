@@ -26,6 +26,7 @@ import {MedewerkerGroepComponent} from './form-components/medewerker-groep/medew
 import {DividerComponent} from './form-components/divider/divider.component';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
+import {DocumentSelectComponent} from './form-components/document-select/document-select.component';
 
 @Injectable({
     providedIn: 'root'
@@ -77,6 +78,8 @@ export class MaterialFormBuilderService {
                 return DocumentenLijstComponent;
             case FieldType.TAAK_DOCUMENT_UPLOAD:
                 return TaakDocumentUploadComponent;
+            case FieldType.DOCUMENT_SELECT:
+                return DocumentSelectComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }

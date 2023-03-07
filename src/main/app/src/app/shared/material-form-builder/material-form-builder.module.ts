@@ -53,6 +53,7 @@ import {NgxEditorModule} from 'ngx-editor';
 import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-editor/html-editor-variabelen-kies-menu.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
+import {DocumentSelectComponent} from './form-components/document-select/document-select.component';
 
 @NgModule({
     declarations: [
@@ -73,6 +74,7 @@ import {MatListModule} from '@angular/material/list';
         ReadonlyComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
+        DocumentSelectComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent,
@@ -122,6 +124,7 @@ import {MatListModule} from '@angular/material/list';
         GoogleMapsComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
+        DocumentSelectComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent

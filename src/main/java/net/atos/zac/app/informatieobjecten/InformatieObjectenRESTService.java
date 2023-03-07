@@ -46,7 +46,9 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -237,6 +239,26 @@ public class InformatieObjectenRESTService {
         } else {
             throw new IllegalStateException("Zoekparameters hebben geen waarde");
         }
+    }
+
+    @GET
+    @Path("informatieobjecten/zaak/{zaakUuid}/teVerzenden")
+    public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorVerzenden(@PathParam("zaakUuid") final UUID zaakUuid) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        assertPolicy(policyService.readZaakRechten(zaak).getLezen());
+        return zrcClientService.listZaakinformatieobjecten(zaak).stream()
+                .map(zaakinformatieobject -> drcClientService.readEnkelvoudigInformatieobject(zaakinformatieobject.getInformatieobject()))
+                .filter(this::isVerzendenToegestaan)
+                .map(informatieobject -> informatieobjectConverter.convertToREST(informatieobject, zaak)).collect(Collectors.toList());
+    }
+
+    private boolean isVerzendenToegestaan(final EnkelvoudigInformatieobject informatieobject) {
+        return informatieobject.getStatus() == InformatieobjectStatus.DEFINITIEF &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.CONFIDENTIEEL &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.GEHEIM &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.ZEER_GEHEIM &&
+                informatieobject.getOntvangstdatum() == null &&
+                MEDIA_TYPE_PDF.equals(informatieobject.getFormaat());
     }
 
     @POST

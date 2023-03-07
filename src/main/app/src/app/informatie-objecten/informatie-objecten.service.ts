@@ -112,6 +112,11 @@ export class InformatieObjectenService {
                    );
     }
 
+    listInformatieobjectenVoorVerzenden(zaakUuid: string): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten/zaak/${zaakUuid}/teVerzenden`)
+                   .pipe(catchError(err => this.foutAfhandelingService.foutAfhandelen(err)));
+    }
+
     listHistorie(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/informatieobject/${uuid}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))

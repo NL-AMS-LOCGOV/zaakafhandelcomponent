@@ -27,6 +27,7 @@ import {ActionBarComponent} from './core/actionbar/action-bar.component';
 import {SignaleringenModule} from './signaleringen/signaleringen.module';
 import {ZoekenModule} from './zoeken/zoeken.module';
 import {GebruikersvoorkeurenModule} from './gebruikersvoorkeuren/gebruikersvoorkeuren.module';
+import {MatIconRegistry} from '@angular/material/icon';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -73,7 +74,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
 export class AppModule {
     static injector: Injector;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector, iconRegistry: MatIconRegistry) {
         AppModule.injector = injector;
+        iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
     }
 }

@@ -114,7 +114,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
     viewInitialized = false;
-    toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
+    toolTipIcon = new TextIcon(Conditionals.always, 'info', 'toolTip_icon', '', 'pointer', true);
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
 
     private zaakListener: WebsocketListener;
@@ -387,6 +387,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
+
+            this.menu.push(new ButtonMenuItem('actie.document.verzenden', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_VERZENDEN;
+            }, 'local_post_office'));
         }
 
         if (this.zaak.isOpen && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.behandelen) {
@@ -684,7 +689,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private updateZaak(): void {
+    public updateZaak(): void {
+        console.log('update-zaak');
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });

@@ -23,33 +23,33 @@
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
             <button *ngIf="hasSearched && zoekType === ZoekType.ZAC" [title]="'actie.zoekopdracht.wissen'|translate"
                     (click)="reset()" mat-icon-button matSuffix id="wissen-button">
-                <mat-icon fontIcon="backspace"></mat-icon>
+                <mat-icon outlined>backspace</mat-icon>
             </button>
             <button *ngIf="!hasSearched && zoekType === ZoekType.ZAC"
                     (click)="zoek.emit()"
                     mat-icon-button matSuffix
                     id="zoeken-button"
                     [title]="'actie.zoeken' | translate">
-                <mat-icon fontIcon="search"></mat-icon>
+                <mat-icon outlined>search</mat-icon>
             </button>
             <span *ngIf="zoekType === ZoekType.ZAC" class="separator" matSuffix></span>
             <button mat-icon-button type="button" matSuffix id="zac-button"
                     title="{{'actie.zoeken.zac' | translate}}"
                     [color]="zoekType === ZoekType.ZAC ? 'primary' : null"
                     (click)="setZoektype(ZoekType.ZAC)">
-                <mat-icon fontIcon="cases"></mat-icon>
+                <mat-icon>cases</mat-icon>
             </button>
             <button mat-icon-button type="button" matSuffix id="personen-button"
                     title="{{'actie.zoeken.persoon' | translate}}"
                     [color]="zoekType === ZoekType.PERSONEN ? 'primary' : null"
                     (click)="setZoektype(ZoekType.PERSONEN)">
-                <mat-icon fontIcon="person"></mat-icon>
+                <mat-icon>person</mat-icon>
             </button>
             <button mat-icon-button type="button" matSuffix id="bedrijven-button"
                     title="{{'actie.zoeken.bedrijf' | translate}}"
                     [color]="zoekType === ZoekType.BEDRIJVEN ? 'primary' : null"
                     (click)="setZoektype(ZoekType.BEDRIJVEN)">
-                <mat-icon fontIcon="domain"></mat-icon>
+                <mat-icon>domain</mat-icon>
             </button>
             <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
         </mat-form-field>
