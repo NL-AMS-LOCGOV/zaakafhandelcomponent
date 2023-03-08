@@ -49,7 +49,9 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     }
 
     private loadZaken(): Observable<ZoekResultaat<ZaakZoekObject>> {
-        this.zoekParameters.zoeken = {};
+        if (!this.zoekParameters.zoeken) {
+            this.zoekParameters.zoeken = {};
+        }
         if (this.betrokkeneSelectControl.value) {
             this.zoekParameters.zoeken[this.betrokkeneSelectControl.value] = this.klantIdentificatie;
         } else {
