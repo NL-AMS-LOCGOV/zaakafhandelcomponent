@@ -27,7 +27,13 @@
                     <zac-static-text class="flex-1" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
                     <zac-static-text class="flex-1" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
                     <zac-static-text class="flex-1" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
-                    <zac-static-text class="flex-1" [label]="'vervaldatum' | translate" [value]="besluit.vervaldatum | datum"></zac-static-text>
+                    <zac-static-text class="flex-1"
+                                     [label]="'vervaldatum' | translate"
+                                     [value]="besluit.vervaldatum | datum"
+                                     [icon]="besluit.vervalreden ? toolTipIcon : null"
+                                     [matTooltip]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"
+                                     [attr.role]="besluit.vervalreden ? 'tooltip' : null"
+                                     [attr.aria-label]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"></zac-static-text>
                     <zac-static-text class="w100 flex-1" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
                     <mfb-form-field class="flex" *ngIf="besluitInformatieobjecten[besluit.uuid]"
                                     [field]="besluitInformatieobjecten[besluit.uuid]"></mfb-form-field>
