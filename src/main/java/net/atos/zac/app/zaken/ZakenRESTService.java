@@ -840,6 +840,9 @@ public class ZakenRESTService {
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
         besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
+        if (besluit.getVervaldatum() == null) {
+            besluit.setVervalreden(null);
+        }
         besluit = brcClientService.updateBesluit(besluit, restBesluitWijzgenGegevens.reden);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());

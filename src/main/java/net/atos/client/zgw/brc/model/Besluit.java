@@ -79,6 +79,7 @@ public class Besluit {
     /**
      * De omschrijving die aangeeft op grond waarvan het besluit is of komt te vervallen.
      */
+    @JsonbProperty(nillable = true)
     private Vervalreden vervalreden;
 
     /**
