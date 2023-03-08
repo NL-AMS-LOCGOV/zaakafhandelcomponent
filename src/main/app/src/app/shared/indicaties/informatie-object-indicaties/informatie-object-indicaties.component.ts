@@ -64,7 +64,7 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
                     break;
                 case InformatieobjectIndicatie.VERZONDEN:
                     this.indicaties.push(
-                        new Indicatie(indicatie, 'local_post_office', ''));
+                        new Indicatie(indicatie, 'local_post_office', this.getVerzondenToelichting()));
                     break;
             }
         });
@@ -77,6 +77,14 @@ export class InformatieObjectIndicatiesComponent extends IndicatiesComponent imp
         } else {
             return this.document.ondertekening.soort + '-' + this.datumPipe.transform(
                 this.document.ondertekening.datum);
+        }
+    }
+
+    private getVerzondenToelichting(): string {
+        if (this.documentZoekObject) {
+            return this.datumPipe.transform(this.documentZoekObject.verzenddatum);
+        } else {
+            return this.datumPipe.transform(this.document.verzenddatum);
         }
     }
 

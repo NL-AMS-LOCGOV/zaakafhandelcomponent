@@ -588,6 +588,8 @@
   "msg.document.verplaatsen.uitgevoerd": "Het document is verplaatst",
   "msg.document.verwijderen.bevestigen": "Document \"<i>{{document}}</i>\" verwijderen?",
   "msg.document.verwijderen.uitgevoerd": "Document \"{{document}}\" is verwijderd",
+  "msg.documenten.verzenden.uitgevoerd": "De documenten zijn gemarkeerd als verzonden",
+  "msg.document.verzenden.uitgevoerd": "Het document is gemarkeerd als verzonden",
   "msg.error.required": "Het {{label}}-veld is niet ingevuld. Vul de vereiste gegevens in!",
   "msg.error.teklein": "Het {{label}}-veld bevat een te kleine waarde. Vul minimaal {{min}} in!",
   "msg.error.tegroot": "Het {{label}}-veld bevat een te grote waarde. Vul maximaal {{max}} in!",

@@ -78,6 +78,9 @@ public class RESTEnkelvoudigInformatieobject {
         if (isBesluitDocument) {
             indicaties.add(DocumentIndicatie.BESLUIT);
         }
+        if (verzenddatum != null) {
+            indicaties.add(DocumentIndicatie.VERZONDEN);
+        }
         return indicaties;
     }
 

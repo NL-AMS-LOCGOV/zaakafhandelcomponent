@@ -17,6 +17,8 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {MatDrawer} from '@angular/material/sidenav';
 import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 import {DocumentSelectFormField} from '../../shared/material-form-builder/form-components/document-select/document-select-form-field';
+import {DocumentVerzendGegevens} from '../model/document-verzend-gegevens';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 @Component({
     selector: 'zac-informatie-verzenden',
@@ -57,15 +59,30 @@ export class InformatieObjectVerzendenComponent implements OnInit, OnChanges {
         .label('verzenddatum')
         .build();
 
-        this.fields = [[this.documentSelectFormField], [verzendDatum]];
+        const toelichtingField = new TextareaFormFieldBuilder()
+        .id('toelichting')
+        .label('toelichting')
+        .validators(Validators.required)
+        .maxlength(1000)
+        .build();
+
+        this.fields = [[this.documentSelectFormField], [verzendDatum], [toelichtingField]];
 
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            this.sideNav.close();
-            // todo rest-call verzenden
-
+            const gegevens = new DocumentVerzendGegevens();
+            gegevens.verzenddatum = formGroup.controls['verzenddatum'].value;
+            gegevens.informatieobjecten = formGroup.controls['documenten'].value ? formGroup.controls['documenten'].value.split(';') : [];
+            gegevens.zaakUuid = this.zaak.uuid;
+            gegevens.toelichting = formGroup.controls['toelichting'].value;
+            this.informatieObjectenService.verzenden(gegevens).subscribe(() => {
+                this.utilService.openSnackbar(
+                    gegevens.informatieobjecten.length > 1 ? 'msg.documenten.verzenden.uitgevoerd' : 'msg.document.verzenden.uitgevoerd');
+                this.documentVerzonden.emit();
+                this.sideNav.close();
+            });
         } else {
             this.sideNav.close();
         }

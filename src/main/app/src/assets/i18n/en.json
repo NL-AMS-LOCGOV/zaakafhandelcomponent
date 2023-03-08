@@ -588,6 +588,8 @@
   "msg.document.verplaatsen.uitgevoerd": "The document has been moved",
   "msg.document.verwijderen.bevestigen": "Delete document \"<i>{{document}}</i>\"?",
   "msg.document.verwijderen.uitgevoerd": "Document \"{{document}}\" has been deleted",
+  "msg.documenten.verzenden.uitgevoerd": "The documents have been marked as sent",
+  "msg.document.verzenden.uitgevoerd": "The document has been marked as sent",
   "msg.error.required": "The {{label}} field is empty. Enter the required data!",
   "msg.error.teklein": "The {{label}} field contains a value that is too small. Enter at least {{min}}!",
   "msg.error.tegroot": "The {{label}} field contains a value that is too large. Enter at most {{max}}!",

@@ -18,6 +18,7 @@ import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-inf
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
 import {DocumentCreatieResponse} from './model/document-creatie-response';
 import {DocumentVerwijderenGegevens} from './model/document-verwijderen-gegevens';
+import {DocumentVerzendGegevens} from './model/document-verzend-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -114,6 +115,11 @@ export class InformatieObjectenService {
 
     listInformatieobjectenVoorVerzenden(zaakUuid: string): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten/zaak/${zaakUuid}/teVerzenden`)
+                   .pipe(catchError(err => this.foutAfhandelingService.foutAfhandelen(err)));
+    }
+
+    verzenden(gegevens: DocumentVerzendGegevens): Observable<void> {
+        return this.http.post<DocumentCreatieResponse>(`${this.basepath}/informatieobjecten/verzenden`, gegevens)
                    .pipe(catchError(err => this.foutAfhandelingService.foutAfhandelen(err)));
     }
 
