@@ -34,7 +34,7 @@
                                      [matTooltip]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"
                                      [attr.role]="besluit.vervalreden ? 'tooltip' : null"
                                      [attr.aria-label]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"></zac-static-text>
-                    <zac-static-text class="w100 flex-1" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
+                    <zac-static-text class="w100 flex-1" [label]="'besluitToelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
                     <mfb-form-field class="flex" *ngIf="besluitInformatieobjecten[besluit.uuid]"
                                     [field]="besluitInformatieobjecten[besluit.uuid]"></mfb-form-field>
 

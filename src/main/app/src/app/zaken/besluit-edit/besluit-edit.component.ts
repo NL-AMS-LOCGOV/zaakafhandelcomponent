@@ -52,7 +52,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                                                 .build();
         const besluittypeField = new InputFormFieldBuilder(this.besluit.besluittype.naam).id('besluittype').label('besluit').build();
         besluittypeField.formControl.disable();
-        const toelichtingField = new TextareaFormFieldBuilder(this.besluit.toelichting).id('toelichting').label('toelichting').maxlength(1000).build();
+        const toelichtingField = new TextareaFormFieldBuilder(this.besluit.toelichting).id('toelichting').label('besluitToelichting').maxlength(1000).build();
         const ingangsdatumField = new DateFormFieldBuilder(this.besluit.ingangsdatum).id('ingangsdatum').label('ingangsdatum').validators(Validators.required)
                                                                                      .build();
         const vervaldatumField = new DateFormFieldBuilder(this.besluit.vervaldatum).id('vervaldatum').label('vervaldatum')
@@ -63,7 +63,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                  .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
                                                                  .build();
         const redenField = new InputFormFieldBuilder().id('reden')
-                                                      .label('reden')
+                                                      .label('wijziging.reden')
                                                       .maxlength(80)
                                                       .validators(Validators.required)
                                                       .build();
