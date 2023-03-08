@@ -690,7 +690,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     public updateZaak(): void {
-        console.log('update-zaak');
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
