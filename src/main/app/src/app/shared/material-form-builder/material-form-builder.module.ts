@@ -34,7 +34,6 @@ import {PipesModule} from '../pipes/pipes.module';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
-import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
@@ -54,6 +53,7 @@ import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-edit
 import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
 import {DocumentSelectComponent} from './form-components/document-select/document-select.component';
+import {DocumentOndertekenenComponent} from './form-components/document-ondertekenen/document-ondertekenen.component';
 
 @NgModule({
     declarations: [
@@ -73,8 +73,8 @@ import {DocumentSelectComponent} from './form-components/document-select/documen
         FormFieldDirective,
         ReadonlyComponent,
         AutocompleteComponent,
-        DocumentenLijstComponent,
         DocumentSelectComponent,
+        DocumentOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent,
@@ -123,8 +123,8 @@ import {DocumentSelectComponent} from './form-components/document-select/documen
         TextareaComponent,
         GoogleMapsComponent,
         AutocompleteComponent,
-        DocumentenLijstComponent,
         DocumentSelectComponent,
+        DocumentOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent

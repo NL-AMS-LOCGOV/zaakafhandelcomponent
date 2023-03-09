@@ -16,7 +16,6 @@ import {TakenService} from '../../../taken/taken.service';
 import * as moment from 'moment/moment';
 import {RadioFormFieldBuilder} from '../../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {HiddenFormFieldBuilder} from '../../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
-import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {HtmlEditorFormFieldBuilder} from '../../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
 import {MailtemplateService} from '../../../mailtemplate/mailtemplate.service';
@@ -32,6 +31,7 @@ import {ZakenService} from '../../../zaken/zaken.service';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
+import {DocumentSelectFieldBuilder} from '../../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -109,7 +109,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .id(fields.DATUMGEVRAAGD)
             .label(fields.DATUMGEVRAAGD)
             .build()],
-            [new DocumentenLijstFieldBuilder()
+            [new DocumentSelectFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
             .documenten(documenten).build()],

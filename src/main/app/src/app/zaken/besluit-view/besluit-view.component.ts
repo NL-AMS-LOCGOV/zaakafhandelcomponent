@@ -6,12 +6,12 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 
 import {Besluit} from '../model/besluit';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {DocumentenLijstFormField} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-form-field';
 import {of} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {ZakenService} from '../zaken.service';
+import {DocumentSelectFormField} from '../../shared/material-form-builder/form-components/document-select/document-select-form-field';
+import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 @Component({
     selector: 'zac-besluit-view',
@@ -24,7 +24,7 @@ export class BesluitViewComponent implements OnInit, OnChanges {
     @Output() besluitWijzigen = new EventEmitter<Besluit>();
     histories: Record<string, MatTableDataSource<HistorieRegel>> = {};
 
-    besluitInformatieobjecten: Record<string, DocumentenLijstFormField> = {};
+    besluitInformatieobjecten: Record<string, DocumentSelectFormField> = {};
 
     constructor(private zakenService: ZakenService) {}
 
@@ -37,7 +37,7 @@ export class BesluitViewComponent implements OnInit, OnChanges {
     ngOnChanges() {
         for (const key in this.besluitInformatieobjecten) {
             if (this.besluitInformatieobjecten.hasOwnProperty(key)) {
-                this.besluitInformatieobjecten[key].documentenChanged.emit(of(this.getBesluit(key).informatieobjecten));
+                this.besluitInformatieobjecten[key].updateDocumenten(of(this.getBesluit(key).informatieobjecten));
             }
         }
 
@@ -55,12 +55,12 @@ export class BesluitViewComponent implements OnInit, OnChanges {
 
         if (!this.besluitInformatieobjecten[uuid]) {
             const besluit = this.getBesluit(uuid);
-            this.besluitInformatieobjecten[uuid] = new DocumentenLijstFieldBuilder().id('documenten')
-                                                                                    .label('documenten')
-                                                                                    .documenten(of(besluit.informatieobjecten))
-                                                                                    .verbergStatus()
-                                                                                    .readonly(true)
-                                                                                    .build();
+            this.besluitInformatieobjecten[uuid] = new DocumentSelectFieldBuilder().id('documenten')
+                                                                                   .label('documenten')
+                                                                                   .documenten(of(besluit.informatieobjecten))
+                                                                                   .removeColumn('status')
+                                                                                   .readonly(true)
+                                                                                   .build();
         }
     }
 

@@ -8,7 +8,6 @@ import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/fo
 import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
-import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
@@ -18,6 +17,7 @@ import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/f
 import {ZakenService} from '../../../zaken/zaken.service';
 import {ZaakafhandelParametersService} from '../../../admin/zaakafhandel-parameters.service';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
+import {DocumentSelectFieldBuilder} from '../../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 export class Advies extends AbstractTaakFormulier {
 
@@ -50,8 +50,8 @@ export class Advies extends AbstractTaakFormulier {
         this.form.push(
             [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
                                            .maxlength(1000).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(documenten).build()]
+            [new DocumentSelectFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
+                                             .documenten(documenten).build()]
         );
     }
 
@@ -65,7 +65,7 @@ export class Advies extends AbstractTaakFormulier {
             .id(fields.VRAAG)
             .label(fields.VRAAG)
             .build()],
-            [new DocumentenLijstFieldBuilder()
+            [new DocumentSelectFieldBuilder()
             .id(fields.RELEVANTE_DOCUMENTEN)
             .label(fields.RELEVANTE_DOCUMENTEN)
             .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))

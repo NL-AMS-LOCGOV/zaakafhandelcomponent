@@ -28,13 +28,13 @@ export class DocumentSelectComponent extends FormComponent implements OnInit, Do
     datumPipe = new DatumPipe('nl');
     loading = false;
 
-    constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
+    constructor(public translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
         super();
     }
 
     ngOnInit(): void {
         this.documenten = this.data.documenten;
-        if (this.data.readonly) {
+        if (this.data.readonly && !this.data.documentenChecked) {
             this.data.removeColumn('select');
         }
         this.ophalenDocumenten();
@@ -80,5 +80,17 @@ export class DocumentSelectComponent extends FormComponent implements OnInit, Do
             this.documenten = this.data.documenten;
             this.ophalenDocumenten();
         }
+    }
+
+    toonFilterVeld(): boolean {
+        return !this.data.readonly;
+    }
+
+    selectDisabled(document): boolean {
+        return this.data.readonly;
+    }
+
+    isSelected(document): boolean {
+        return this.selection.isSelected(document);
     }
 }

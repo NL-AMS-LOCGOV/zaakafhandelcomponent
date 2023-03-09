@@ -12,10 +12,10 @@ export class DocumentSelectFieldBuilder extends AbstractFormFieldBuilder {
 
     readonly formField: DocumentSelectFormField;
 
-    constructor(value?: any) {
+    constructor() {
         super();
         this.formField = new DocumentSelectFormField();
-        this.formField.initControl(value);
+        this.formField.initControl();
     }
 
     documenten(documenten: Observable<EnkelvoudigInformatieobject[]>): this {
@@ -30,6 +30,11 @@ export class DocumentSelectFieldBuilder extends AbstractFormFieldBuilder {
 
     removeColumn(column: 'select' | 'titel' | 'documentType' | 'status' | 'versie' | 'auteur' | 'creatiedatum' | 'bestandsomvang' | 'url'): this {
         this.formField.removeColumn(column);
+        return this;
+    }
+
+    selectLabel(label: string): this {
+        this.formField.selectLabel = label;
         return this;
     }
 }

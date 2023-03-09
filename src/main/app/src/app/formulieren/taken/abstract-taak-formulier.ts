@@ -15,9 +15,9 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {Zaak} from '../../zaken/model/zaak';
+import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 export abstract class AbstractTaakFormulier {
 
@@ -103,14 +103,16 @@ export abstract class AbstractTaakFormulier {
             });
         });
 
-        this.form.push(
-            [new DocumentenLijstFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
-                                              .label(AbstractTaakFormulier.BIJLAGEN_FIELD)
-                                              .documenten(this.getTaakdocumenten())
-                                              .readonly(true)
-                                              .build()]);
+        const taakDocumenten$ = this.getTaakdocumenten();
 
-        this.getTaakdocumenten().subscribe(taakDocumenten => {
+        this.form.push(
+            [new DocumentSelectFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
+                                             .label(AbstractTaakFormulier.BIJLAGEN_FIELD)
+                                             .documenten(taakDocumenten$)
+                                             .readonly(true)
+                                             .build()]);
+
+        taakDocumenten$.subscribe(taakDocumenten => {
             this.taakDocumenten = taakDocumenten;
         });
     }

@@ -19,12 +19,12 @@ import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluit} from '../model/besluit';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from '../model/besluit-wijzigen-gegevens';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 @Component({
     selector: 'zac-besluit-edit',
@@ -57,11 +57,11 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                                      .build();
         const vervaldatumField = new DateFormFieldBuilder(this.besluit.vervaldatum).id('vervaldatum').label('vervaldatum')
                                                                                    .minDate(ingangsdatumField.formControl.value).build();
-        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten')
-                                                                 .documentenChecked(
-                                                                     this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
-                                                                 .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
-                                                                 .build();
+        const documentenField = new DocumentSelectFieldBuilder().id('documenten').label('documenten')
+                                                                .documentenChecked(
+                                                                    this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
+                                                                .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
+                                                                .build();
         const redenField = new InputFormFieldBuilder().id('reden')
                                                       .label('reden')
                                                       .maxlength(80)
@@ -80,7 +80,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
         });
 
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            documentenField.setDocumenten$(this.listInformatieObjecten(value.id));
+            documentenField.updateDocumenten(this.listInformatieObjecten(value.id));
         });
 
     }

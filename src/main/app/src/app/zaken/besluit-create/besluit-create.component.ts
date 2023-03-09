@@ -21,9 +21,9 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluittype} from '../model/besluittype';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
 
 @Component({
     selector: 'zac-besluit-create',
@@ -54,7 +54,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         const toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000).build();
         const ingangsdatumField = new DateFormFieldBuilder(moment()).id('ingangsdatum').label('ingangsdatum').validators(Validators.required).build();
         const vervaldatumField = new DateFormFieldBuilder().id('vervaldatum').label('vervaldatum').minDate(ingangsdatumField.formControl.value).build();
-        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten').build();
+        const documentenField = new DocumentSelectFieldBuilder().id('documenten').label('documenten').build();
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
 
         resultaattypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
@@ -70,7 +70,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
                 const zoekparameters = new InformatieobjectZoekParameters();
                 zoekparameters.zaakUUID = this.zaak.uuid;
                 zoekparameters.besluittypeUUID = value.id;
-                documentenField.setDocumenten$(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
+                documentenField.updateDocumenten(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
             }
         });
     }

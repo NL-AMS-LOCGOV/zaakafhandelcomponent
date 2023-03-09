@@ -14,6 +14,7 @@ export class DocumentSelectFormField extends AbstractFormControlField {
     documenten: Observable<EnkelvoudigInformatieobject[]>;
     documentenChecked: string[];
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
+    selectLabel = '';
 
     constructor() {
         super();
