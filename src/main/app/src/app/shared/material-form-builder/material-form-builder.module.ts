@@ -52,8 +52,8 @@ import {NgxEditorModule} from 'ngx-editor';
 import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-editor/html-editor-variabelen-kies-menu.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
-import {DocumentSelectComponent} from './form-components/document-select/document-select.component';
-import {DocumentOndertekenenComponent} from './form-components/document-ondertekenen/document-ondertekenen.component';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 
 @NgModule({
     declarations: [
@@ -73,8 +73,8 @@ import {DocumentOndertekenenComponent} from './form-components/document-ondertek
         FormFieldDirective,
         ReadonlyComponent,
         AutocompleteComponent,
-        DocumentSelectComponent,
-        DocumentOndertekenenComponent,
+        DocumentenLijstComponent,
+        DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent,
@@ -123,8 +123,8 @@ import {DocumentOndertekenenComponent} from './form-components/document-ondertek
         TextareaComponent,
         GoogleMapsComponent,
         AutocompleteComponent,
-        DocumentSelectComponent,
-        DocumentOndertekenenComponent,
+        DocumentenLijstComponent,
+        DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent

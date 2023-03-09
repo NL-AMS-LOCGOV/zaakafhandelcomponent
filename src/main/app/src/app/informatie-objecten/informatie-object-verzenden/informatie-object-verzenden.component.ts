@@ -15,8 +15,8 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {MatDrawer} from '@angular/material/sidenav';
-import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
-import {DocumentSelectFormField} from '../../shared/material-form-builder/form-components/document-select/document-select-form-field';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DocumentenLijstFormField} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-form-field';
 import {DocumentVerzendGegevens} from '../model/document-verzend-gegevens';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
@@ -35,7 +35,7 @@ export class InformatieObjectVerzendenComponent implements OnInit, OnChanges {
 
     fields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
-    private documentSelectFormField: DocumentSelectFormField;
+    private documentSelectFormField: DocumentenLijstFormField;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -45,7 +45,7 @@ export class InformatieObjectVerzendenComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.verzenden').cancelText('actie.annuleren').build();
 
-        this.documentSelectFormField = new DocumentSelectFieldBuilder()
+        this.documentSelectFormField = new DocumentenLijstFieldBuilder()
         .id('documenten')
         .label('documenten')
         .removeColumn('status')

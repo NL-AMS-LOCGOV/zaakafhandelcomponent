@@ -17,7 +17,7 @@ import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {Zaak} from '../../zaken/model/zaak';
-import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 export abstract class AbstractTaakFormulier {
 
@@ -106,11 +106,11 @@ export abstract class AbstractTaakFormulier {
         const taakDocumenten$ = this.getTaakdocumenten();
 
         this.form.push(
-            [new DocumentSelectFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
-                                             .label(AbstractTaakFormulier.BIJLAGEN_FIELD)
-                                             .documenten(taakDocumenten$)
-                                             .readonly(true)
-                                             .build()]);
+            [new DocumentenLijstFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
+                                              .label(AbstractTaakFormulier.BIJLAGEN_FIELD)
+                                              .documenten(taakDocumenten$)
+                                              .readonly(true)
+                                              .build()]);
 
         taakDocumenten$.subscribe(taakDocumenten => {
             this.taakDocumenten = taakDocumenten;

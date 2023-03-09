@@ -6,16 +6,16 @@
 import {Component, DoCheck, OnInit} from '@angular/core';
 import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
 import {TranslateService} from '@ngx-translate/core';
-import {DocumentSelectComponent} from '../document-select/document-select.component';
-import {DocumentOndertekenenFormField} from './document-ondertekenen-form-field';
+import {DocumentenLijstComponent} from '../documenten-lijst/documenten-lijst.component';
+import {DocumentenOndertekenenFormField} from './documenten-ondertekenen-form-field';
 
 @Component({
-    templateUrl: '../document-select/document-select.component.html',
-    styleUrls: ['../document-select/document-select.component.less']
+    templateUrl: '../documenten-lijst/documenten-lijst.component.html',
+    styleUrls: ['../documenten-lijst/documenten-lijst.component.less']
 })
-export class DocumentOndertekenenComponent extends DocumentSelectComponent implements OnInit, DoCheck {
+export class DocumentenOndertekenenComponent extends DocumentenLijstComponent implements OnInit, DoCheck {
 
-    data: DocumentOndertekenenFormField;
+    data: DocumentenOndertekenenFormField;
 
     constructor(public translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
         super(translate, informatieObjectenService);

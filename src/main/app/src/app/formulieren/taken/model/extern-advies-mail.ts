@@ -22,7 +22,7 @@ import {ZakenService} from '../../../zaken/zaken.service';
 import {HiddenFormFieldBuilder} from '../../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
 import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {DocumentSelectFieldBuilder} from '../../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 export class ExternAdviesMail extends AbstractTaakFormulier {
 
@@ -91,7 +91,7 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             .validators(Validators.required)
             .mailtemplateBody(mailtemplate)
             .build()],
-            [new DocumentSelectFieldBuilder()
+            [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
             .documenten(documenten).build()]

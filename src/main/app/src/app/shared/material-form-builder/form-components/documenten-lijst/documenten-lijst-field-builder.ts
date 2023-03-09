@@ -6,15 +6,15 @@
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {DocumentSelectFormField} from './document-select-form-field';
+import {DocumentenLijstFormField} from './documenten-lijst-form-field';
 
-export class DocumentSelectFieldBuilder extends AbstractFormFieldBuilder {
+export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
 
-    readonly formField: DocumentSelectFormField;
+    readonly formField: DocumentenLijstFormField;
 
     constructor() {
         super();
-        this.formField = new DocumentSelectFormField();
+        this.formField = new DocumentenLijstFormField();
         this.formField.initControl();
     }
 

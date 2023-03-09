@@ -12,16 +12,16 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
 import {DatumPipe} from '../../../pipes/datum.pipe';
 import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
 import {TranslateService} from '@ngx-translate/core';
-import {DocumentSelectFormField} from './document-select-form-field';
+import {DocumentenLijstFormField} from './documenten-lijst-form-field';
 import {Observable} from 'rxjs';
 
 @Component({
-    templateUrl: './document-select.component.html',
-    styleUrls: ['./document-select.component.less']
+    templateUrl: './documenten-lijst.component.html',
+    styleUrls: ['./documenten-lijst.component.less']
 })
-export class DocumentSelectComponent extends FormComponent implements OnInit, DoCheck {
+export class DocumentenLijstComponent extends FormComponent implements OnInit, DoCheck {
 
-    data: DocumentSelectFormField;
+    data: DocumentenLijstFormField;
     documenten: Observable<EnkelvoudigInformatieobject[]>;
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();

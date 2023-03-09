@@ -8,9 +8,9 @@ import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class DocumentSelectFormField extends AbstractFormControlField {
+export class DocumentenLijstFormField extends AbstractFormControlField {
 
-    fieldType = FieldType.DOCUMENT_SELECT;
+    fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten: Observable<EnkelvoudigInformatieobject[]>;
     documentenChecked: string[];
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];

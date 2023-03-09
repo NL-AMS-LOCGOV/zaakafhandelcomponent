@@ -16,8 +16,8 @@ import {Observable, of} from 'rxjs';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 import {Goedkeuring} from '../goedkeuring.enum';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {DocumentSelectFieldBuilder} from '../../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
-import {DocumentOndertekenenFieldBuilder} from '../../../shared/material-form-builder/form-components/document-ondertekenen/document-ondertekenen-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DocumentenOndertekenenFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-ondertekenen/documenten-ondertekenen-field-builder';
 
 export class Goedkeuren extends AbstractTaakFormulier {
 
@@ -51,8 +51,8 @@ export class Goedkeuren extends AbstractTaakFormulier {
             [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
                                            .maxlength(1000)
                                            .build()],
-            [new DocumentSelectFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                             .documenten(documenten).build()]
+            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
+                                              .documenten(documenten).build()]
         );
     }
 
@@ -66,12 +66,12 @@ export class Goedkeuren extends AbstractTaakFormulier {
             [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
                                                                             .label(fields.VRAAG)
                                                                             .build()],
-            [new DocumentOndertekenenFieldBuilder().id(fields.ONDERTEKENEN)
-                                                   .label(fields.ONDERTEKENEN)
-                                                   .readonly(this.readonly)
-                                                   .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                                   .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
-                                                   .build()],
+            [new DocumentenOndertekenenFieldBuilder().id(fields.ONDERTEKENEN)
+                                                     .label(fields.ONDERTEKENEN)
+                                                     .readonly(this.readonly)
+                                                     .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                                     .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
+                                                     .build()],
             [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
                 this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
                                                                                       .label(fields.GOEDKEUREN)

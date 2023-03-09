@@ -33,7 +33,7 @@ import {InputFormField} from '../../shared/material-form-builder/form-components
 import {KlantenService} from '../../klanten/klanten.service';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
-import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-mail-create',
@@ -116,7 +116,7 @@ export class MailCreateComponent implements OnInit {
         .mailtemplateBody(mailtemplate)
         .validators(Validators.required)
         .build();
-        this.bijlagenFormField = new DocumentSelectFieldBuilder()
+        this.bijlagenFormField = new DocumentenLijstFieldBuilder()
         .id(this.fieldNames.BIJLAGEN)
         .label(this.fieldNames.BIJLAGEN)
         .documenten(documenten)

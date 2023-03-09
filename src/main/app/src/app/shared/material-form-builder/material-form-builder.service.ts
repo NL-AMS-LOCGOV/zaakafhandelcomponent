@@ -25,8 +25,8 @@ import {MedewerkerGroepComponent} from './form-components/medewerker-groep/medew
 import {DividerComponent} from './form-components/divider/divider.component';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
-import {DocumentSelectComponent} from './form-components/document-select/document-select.component';
-import {DocumentOndertekenenComponent} from './form-components/document-ondertekenen/document-ondertekenen.component';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 
 @Injectable({
     providedIn: 'root'
@@ -76,13 +76,12 @@ export class MaterialFormBuilderService {
                 return GoogleMapsComponent;
             case FieldType.TAAK_DOCUMENT_UPLOAD:
                 return TaakDocumentUploadComponent;
-            case FieldType.DOCUMENT_SELECT:
-                return DocumentSelectComponent;
-            case FieldType.DOCUMENT_ONDERTEKENEN:
-                return DocumentOndertekenenComponent;
+            case FieldType.DOCUMENTEN_LIJST:
+                return DocumentenLijstComponent;
+            case FieldType.DOCUMENTEN_ONDERTEKENEN:
+                return DocumentenOndertekenenComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }
     }
 }
-

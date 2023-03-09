@@ -31,7 +31,7 @@ import {ZakenService} from '../../../zaken/zaken.service';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {DocumentSelectFieldBuilder} from '../../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -109,7 +109,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .id(fields.DATUMGEVRAAGD)
             .label(fields.DATUMGEVRAAGD)
             .build()],
-            [new DocumentSelectFieldBuilder()
+            [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
             .documenten(documenten).build()],

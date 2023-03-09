@@ -29,7 +29,7 @@ import {KlantenService} from '../../klanten/klanten.service';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
-import {DocumentSelectFieldBuilder} from '../../shared/material-form-builder/form-components/document-select/document-select-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -94,7 +94,7 @@ export class OntvangstbevestigingComponent implements OnInit {
         .validators(Validators.required)
         .mailtemplateBody(mailtemplate)
         .build();
-        const bijlagen = new DocumentSelectFieldBuilder()
+        const bijlagen = new DocumentenLijstFieldBuilder()
         .id('bijlagen')
         .label('bijlagen')
         .documenten(documenten)
