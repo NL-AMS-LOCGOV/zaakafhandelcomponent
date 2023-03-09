@@ -47,8 +47,8 @@
                     <td mat-cell *matCellDef="let document"> {{document.creatiedatum}} </td>
                 </ng-container>
                 <ng-container matColumnDef="bestandsomvang">
-                    <th mat-header-cell *matHeaderCellDef> {{'grootte' | translate}} (MB)</th>
-                    <td mat-cell *matCellDef="let document"> {{document.bestandsomvang / 1000000 | number}} </td>
+                    <th mat-header-cell *matHeaderCellDef> {{'bestandsomvang' | translate}}</th>
+                    <td mat-cell *matCellDef="let document"> {{document.bestandsomvang | bestandsomvang}} </td>
                 </ng-container>
                 <ng-container matColumnDef="url" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef></th>
