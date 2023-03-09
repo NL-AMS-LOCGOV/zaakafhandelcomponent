@@ -53,6 +53,7 @@ import {NgxEditorModule} from 'ngx-editor';
 import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-editor/html-editor-variabelen-kies-menu.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
+import {DocumentIconModule} from '../document-titel/document-icon.module';
 
 @NgModule({
     declarations: [
@@ -105,7 +106,8 @@ import {MatListModule} from '@angular/material/list';
         MatDividerModule,
         NgxEditorModule,
         MatMenuModule,
-        MatListModule
+        MatListModule,
+        DocumentIconModule
     ],
     exports: [
         FormComponent,
