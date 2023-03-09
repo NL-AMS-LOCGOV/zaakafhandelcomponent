@@ -95,6 +95,7 @@
   "behandelaar": "Behandelaar",
   "bestandsnaam": "Bestandsnaam",
   "bestandstype": "{{type}}-bestand",
+  "bestandstype.onbekend": "Onbekend bestand",
   "achternaam": "Achternaam",
   "voorvoegsel": "Voorvoegsel",
   "voornamen": "Voornamen",

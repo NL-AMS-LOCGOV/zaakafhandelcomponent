@@ -20,7 +20,9 @@ export class DocumentIconComponent {
     }
 
     getFileTooltip(filetype: string): string {
-        return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
+        return filetype === 'unknown' ?
+            this.translate.instant('bestandstype.onbekend') :
+            this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
 
 }
