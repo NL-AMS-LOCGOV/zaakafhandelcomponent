@@ -80,7 +80,7 @@
                 </a>
                 <a *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
                    routerLinkActive="active">
-                    <mat-icon>drive_file_move_outline</mat-icon>
+                    <mat-icon outlined>drive_file_move</mat-icon>
                     <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
                 </a>
             </mat-menu>
@@ -98,19 +98,19 @@
                         (click)="resetSearch()"
                         mat-icon-button matSuffix
                         id="wissen-button">
-                    <mat-icon fontIcon="backspace"></mat-icon>
+                    <mat-icon outlined>backspace</mat-icon>
                 </button>
                 <button mat-icon-button type="button" matSuffix id="zoeken-button"
                         title="{{'actie.zoeken' | translate}}"
                         (click)="zoekenSideNav.open()">
-                    <mat-icon fontIcon="search"></mat-icon>
+                    <mat-icon>search</mat-icon>
                 </button>
             </mat-form-field>
             <button *ngIf="this.overigeRechten.zoeken" mat-mini-fab class="hide-gt-sm"
                     (click)="zoekenSideNav.open()"
                     color="primary"
                     title="{{ 'actie.zoeken' | translate }}">
-                <mat-icon fontIcon="search"></mat-icon>
+                <mat-icon outlined>search</mat-icon>
             </button>
             <div class="settings">
                 <button *ngIf="this.overigeRechten.beheren" routerLink="/admin" id="admin_button" mat-icon-button

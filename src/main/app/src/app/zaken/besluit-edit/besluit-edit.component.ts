@@ -19,12 +19,12 @@ import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluit} from '../model/besluit';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from '../model/besluit-wijzigen-gegevens';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-besluit-edit',
@@ -80,7 +80,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
         });
 
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            documentenField.setDocumenten$(this.listInformatieObjecten(value.id));
+            documentenField.updateDocumenten(this.listInformatieObjecten(value.id));
         });
 
     }

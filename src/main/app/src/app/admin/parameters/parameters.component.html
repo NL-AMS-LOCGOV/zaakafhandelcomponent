@@ -14,7 +14,7 @@
                     <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort" matSortActive="geldig" matSortDirection="desc">
                         <ng-container matColumnDef="valide_filter">
                             <th mat-header-cell *matHeaderCellDef>
-                                <zac-toggle-filter unCheckedIcon="error_outline" [selected]="filterParameters.valide"
+                                <zac-toggle-filter unCheckedIcon="error" [selected]="filterParameters.valide"
                                                    (changed)="filterParameters.valide = $event;applyFilter()"></zac-toggle-filter>
                             </th>
                         </ng-container>
@@ -73,8 +73,8 @@
                         <ng-container matColumnDef="valide">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header="valide"></th>
                             <td mat-cell *matCellDef="let row">
-                                <mat-icon *ngIf="row.valide" color="primary">check_circle_outline</mat-icon>
-                                <mat-icon *ngIf="!row.valide" color="warn">error_outline</mat-icon>
+                                <mat-icon outlined *ngIf="row.valide" color="primary">check_circle</mat-icon>
+                                <mat-icon outlined *ngIf="!row.valide" color="warn">error</mat-icon>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="omschrijving">

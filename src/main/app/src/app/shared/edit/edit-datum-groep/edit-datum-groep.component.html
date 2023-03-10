@@ -73,13 +73,13 @@
                         (click)="opschorten()"
                         title="{{ isHervat ? ('msg.zaak.opschorten.niet.toegestaan' | translate:{reden: opschortReden}) : ('actie.zaak.opschorten' | translate)}}">
                     <mat-icon class="play-icon">play_arrow</mat-icon>
-                    <mat-icon class="play-button">pause_circle_outline</mat-icon>
+                    <mat-icon outlined class="play-button">pause_circle</mat-icon>
                 </button>
             </div>
             <div *ngIf="actieHervatten" class="play-control">
                 <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
                     <mat-icon class="play-icon">pause</mat-icon>
-                    <mat-icon class="play-button">play_circle_outline</mat-icon>
+                    <mat-icon outlined class="play-button">play_circle</mat-icon>
                 </button>
             </div>
         </div>

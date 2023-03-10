@@ -72,8 +72,8 @@
                         <ng-container matColumnDef="valide">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header="valide"></th>
                             <td mat-cell *matCellDef="let row">
-                                <mat-icon *ngIf="row.valide" color="primary">check_circle_outline</mat-icon>
-                                <mat-icon *ngIf="!row.valide" color="warn">error_outline</mat-icon>
+                                <mat-icon outlined *ngIf="row.valide" color="primary">check_circle</mat-icon>
+                                <mat-icon outlined *ngIf="!row.valide" color="warn">error</mat-icon>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="expandedPrefix">
@@ -135,7 +135,7 @@
                         </ng-container>
                         <ng-container matColumnDef="valideFilter">
                             <th mat-header-cell *matHeaderCellDef colspan="2">
-                                <zac-toggle-filter unCheckedIcon="error_outline" [selected]="valideFilter"
+                                <zac-toggle-filter unCheckedIcon="error" [selected]="valideFilter"
                                                    (changed)="valideFilter = $event; applyFilter()"></zac-toggle-filter>
                             </th>
                         </ng-container>
@@ -164,11 +164,11 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <mat-icon *ngIf="loadingCommunicatiekanaal">hourglass_empty</mat-icon>
-                            <mat-icon *ngIf="!loadingCommunicatiekanaal && bestaatCommunicatiekanaalEformulier"
-                                      color="primary">check_circle_outline
+                            <mat-icon outlined *ngIf="!loadingCommunicatiekanaal && bestaatCommunicatiekanaalEformulier"
+                                      color="primary">check_circle
                             </mat-icon>
-                            <mat-icon *ngIf="!loadingCommunicatiekanaal && !bestaatCommunicatiekanaalEformulier"
-                                      color="warn">error_outline
+                            <mat-icon outlined *ngIf="!loadingCommunicatiekanaal && !bestaatCommunicatiekanaalEformulier"
+                                      color="warn">error
                             </mat-icon>
                             <div>{{'healthCheck.communicatiekanaal.e-formulier' | translate}}</div>
                         </mat-panel-title>

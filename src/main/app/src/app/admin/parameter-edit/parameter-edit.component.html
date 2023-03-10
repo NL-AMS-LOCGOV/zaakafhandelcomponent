@@ -105,11 +105,11 @@
                                                  class="flex-col" hideToggle>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        <mat-icon *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">
-                                            check_circle_outline
+                                        <mat-icon outlined *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">
+                                            check_circle
                                         </mat-icon>
-                                        <mat-icon *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">
-                                            error_outline
+                                        <mat-icon outlined *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">
+                                            error
                                         </mat-icon>
                                         <span [ngClass]="{'disabled': !getHumanTaskControl(humanTaskParameter, 'actief').value}">
                                             {{humanTaskParameter.planItemDefinition.naam}}

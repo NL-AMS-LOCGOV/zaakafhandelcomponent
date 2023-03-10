@@ -21,7 +21,6 @@ import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {Zaak} from '../../zaken/model/zaak';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {TranslateService} from '@ngx-translate/core';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
@@ -30,6 +29,7 @@ import {KlantenService} from '../../klanten/klanten.service';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',

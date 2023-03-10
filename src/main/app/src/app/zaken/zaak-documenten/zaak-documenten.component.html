@@ -38,7 +38,7 @@
                         <span class="fa-solid {{getFileIcon(row.bestandsnaam).icon}} {{getFileIcon(row.bestandsnaam).color}}"
                               [title]="getFileTooltip(getFileIcon(row.bestandsnaam).type)"></span>
                         {{row.titel | empty}}
-                        <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" class="material-icons-outlined">plagiarism</mat-icon>
+                        <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" outlined>plagiarism</mat-icon>
                         <mat-icon *ngIf="row.startformulier" title="{{'startformulier' | translate}}" class="gold-star">star</mat-icon>
                     </td>
                 </ng-container>
