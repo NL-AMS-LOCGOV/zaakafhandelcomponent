@@ -27,7 +27,7 @@
                 <ng-container matColumnDef="titel">
                     <th mat-header-cell *matHeaderCellDef> {{'titel' | translate}} </th>
                     <td mat-cell *matCellDef="let document">
-                        <zac-document-icon [document]="document"></zac-document-icon>
+                        <zac-document-icon [bestandsnaam]="document.bestandsnaam"></zac-document-icon>
                         {{document.titel}}
                     </td>
                 </ng-container>

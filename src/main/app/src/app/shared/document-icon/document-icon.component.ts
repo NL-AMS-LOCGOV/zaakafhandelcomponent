@@ -1,5 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {FileIcon} from '../../informatie-objecten/model/file-icon';
 import {TranslateService} from '@ngx-translate/core';
 
@@ -10,7 +9,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class DocumentIconComponent {
 
-    @Input() document: EnkelvoudigInformatieobject;
+    @Input() bestandsnaam: string;
 
     constructor(private translate: TranslateService) {
     }

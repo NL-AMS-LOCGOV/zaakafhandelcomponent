@@ -40,7 +40,7 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'bestandsnaam' | translate"
                                                      [value]="infoObject.bestandsnaam">
-                                        <zac-document-icon position="content-before" [document]="infoObject"></zac-document-icon>
+                                        <zac-document-icon position="content-before" [bestandsnaam]="infoObject.bestandsnaam"></zac-document-icon>
                                         <span position="content-before">&nbsp;</span>
                                     </zac-static-text>
                                 </div>
