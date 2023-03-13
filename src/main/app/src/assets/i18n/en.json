@@ -309,6 +309,8 @@
   "action.entityType.ZAAK": "Case",
   "archiefActiedatum": "Archive action date",
   "archiefNominatie": "Archive nomination",
+  "archiefNominatie.-kies-": "- Select a archive nomination -",
+  "archiefNominatie.-geen-": "- No archive nomination -",
   "archiefNominatie.BLIJVEND_BEWAREN": "Keep permanently",
   "archiefNominatie.VERNIETIGEN": "Destroy",
   "archiefNominatie.datum.BLIJVEND_BEWAREN": "Archival date",
