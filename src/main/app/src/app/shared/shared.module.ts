@@ -96,8 +96,7 @@ import {DocumentIconModule} from './document-icon/document-icon.module';
         MaterialFormBuilderModule.forRoot(),
         TranslateModule,
         PdfJsViewerModule,
-        NgxSkeletonLoaderModule.forRoot({animation: 'pulse'}),
-        DocumentIconModule
+        NgxSkeletonLoaderModule.forRoot({animation: 'pulse'})
     ],
     exports: [
         BrowserAnimationsModule,
