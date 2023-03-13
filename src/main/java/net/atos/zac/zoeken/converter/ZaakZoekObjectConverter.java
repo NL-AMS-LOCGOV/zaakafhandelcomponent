@@ -71,7 +71,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
                 DateTimeConverterUtil.convertToDate(zaak.getUiterlijkeEinddatumAfdoening()));
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toString());
-        zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
+        zaakZoekObject.setAfgehandeld(!zaak.isOpen());
         zgwApiService.findInitiatorForZaak(zaak).ifPresent(zaakZoekObject::setInitiator);
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
