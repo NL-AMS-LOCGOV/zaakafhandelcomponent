@@ -25,12 +25,12 @@
             <button (click)="assignToMe()" *ngIf="showAssignToMe" color="accent" id="behandelaarKenAanMijToe_button"
                     mat-mini-fab
                     title="{{'actie.mij.toekennen' | translate}}">
-                <mat-icon>person_add_alt_1</mat-icon>
+                <mat-icon outlined>person_add</mat-icon>
             </button>
             <button (click)="release()" *ngIf="formField.formControl.defaultValue" color="accent" id="behandelaarVrijgeven_button"
                     mat-mini-fab
                     title="{{'actie.vrijgeven' | translate}}">
-                <mat-icon>person_remove_alt</mat-icon>
+                <mat-icon outlined>person_remove</mat-icon>
             </button>
         </div>
         <div>

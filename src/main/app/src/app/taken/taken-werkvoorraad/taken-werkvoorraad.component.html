@@ -192,7 +192,7 @@
                     </a>
                     <button mat-icon-button [id]="'kenTaakAanMijToe_' + row.identificatie +'_button'" title="{{ 'actie.mij.toekennen' | translate }}"
                             (click)="assignToMe(row, $event)" *ngIf="showAssignToMe(row)">
-                        <mat-icon>person_add_alt_1</mat-icon>
+                        <mat-icon outlined>person_add</mat-icon>
                     </button>
                 </div>
             </td>
