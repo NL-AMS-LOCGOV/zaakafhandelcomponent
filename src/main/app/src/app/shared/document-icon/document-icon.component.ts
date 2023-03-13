@@ -3,6 +3,7 @@ import {FileIcon} from '../../informatie-objecten/model/file-icon';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
+    standalone: true,
     selector: 'zac-document-icon',
     templateUrl: './document-icon.component.html',
     styleUrls: ['./document-icon.component.less']
