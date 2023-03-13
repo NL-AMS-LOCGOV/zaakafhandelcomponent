@@ -35,9 +35,8 @@
                     <th mat-sort-header mat-header-cell *matHeaderCellDef> {{'titel' | translate}} </th>
                     <td mat-cell *matCellDef="let row" (click)="documentPreviewRow = documentPreviewRow === row ? null : row"
                         [ngClass]="{'pointer': isPreviewBeschikbaar(row.formaat)}">
-                        <span class="fa-solid {{getFileIcon(row.bestandsnaam).icon}} {{getFileIcon(row.bestandsnaam).color}}"
-                              [title]="getFileTooltip(getFileIcon(row.bestandsnaam).type)"></span>
-                        {{row.titel | empty}}
+                        <zac-document-icon [bestandsnaam]="row.bestandsnaam"></zac-document-icon>
+                        {{row.titel}}
                         <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" outlined>plagiarism</mat-icon>
                         <mat-icon *ngIf="row.startformulier" title="{{'startformulier' | translate}}" class="gold-star">star</mat-icon>
                     </td>

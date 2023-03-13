@@ -95,6 +95,7 @@
   "behandelaar": "Case handler",
   "bestandsnaam": "File name",
   "bestandstype": "{{type}} file",
+  "bestandstype.onbekend": "Unknown file",
   "achternaam": "Surname",
   "voorvoegsel": "Prefix",
   "voornamen": "First names",
