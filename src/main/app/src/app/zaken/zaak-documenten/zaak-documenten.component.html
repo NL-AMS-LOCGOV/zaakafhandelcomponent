@@ -37,7 +37,7 @@
                         [ngClass]="{'pointer': isPreviewBeschikbaar(row.formaat)}">
                         <zac-document-icon [document]="row"></zac-document-icon>
                         {{row.titel}}
-                        <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" class="material-icons-outlined">plagiarism</mat-icon>
+                        <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" outlined>plagiarism</mat-icon>
                         <mat-icon *ngIf="row.startformulier" title="{{'startformulier' | translate}}" class="gold-star">star</mat-icon>
                     </td>
                 </ng-container>

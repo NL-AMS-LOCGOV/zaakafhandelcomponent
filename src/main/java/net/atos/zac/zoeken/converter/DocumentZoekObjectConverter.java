@@ -104,6 +104,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         documentZoekObject.setIndicatie(DocumentIndicatie.VERGRENDELD, informatieobject.getLocked());
         documentZoekObject.setIndicatie(DocumentIndicatie.GEBRUIKSRECHT, informatieobject.getIndicatieGebruiksrecht());
         documentZoekObject.setIndicatie(DocumentIndicatie.BESLUIT, brcClientService.isInformatieObjectGekoppeldAanBesluit(informatieobject.getUrl()));
+        documentZoekObject.setIndicatie(DocumentIndicatie.VERZONDEN, informatieobject.getVerzenddatum() != null);
         if (informatieobject.getLocked()) {
             final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.readLock(
                     informatieobject.getUUID());

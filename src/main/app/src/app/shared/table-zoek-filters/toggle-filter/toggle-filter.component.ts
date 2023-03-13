@@ -13,7 +13,7 @@ import {ToggleSwitchOptions} from './toggle-switch-options';
 })
 export class ToggleFilterComponent {
     @Input() selected: ToggleSwitchOptions = ToggleSwitchOptions.INDETERMINATE;
-    @Input() checkedIcon: string = 'check_circle_outline';
+    @Input() checkedIcon: string = 'check_circle';
     @Input() unCheckedIcon: string = 'cancel';
     @Input() indeterminateIcon: string = 'radio_button_unchecked';
     @Output() changed = new EventEmitter<ToggleSwitchOptions>();

@@ -10,7 +10,7 @@
                      [highlighted]="indicatie.primary"
                      [matTooltip]="indicatie.toelichting | empty">
         <div class="view">
-            <mat-icon [ngClass]="indicatie.outlined?'material-icons-outlined':null">
+            <mat-icon [attr.outlined]="indicatie.outlined">
                 {{indicatie.icon}}
             </mat-icon>
             <span class="label">
@@ -28,7 +28,7 @@
                      [highlighted]="indicatie.primary"
                      [matTooltip]="('indicatie.'+indicatie.naam | translate)+(indicatie.toelichting ? ': '+ indicatie.toelichting : '')">
         <div class="werklijst">
-            <mat-icon [ngClass]="indicatie.outlined?'material-icons-outlined':null">
+            <mat-icon [attr.outlined]="indicatie.outlined">
                 {{indicatie.icon}}
             </mat-icon>
         </div>

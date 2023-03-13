@@ -11,12 +11,14 @@ export class TextIcon {
     id: string;
     title: string;
     styleClass: string;
+    outlined: boolean;
 
-    constructor(showIcon: ConditionalFn, icon: string, id: string, title: string, styleClass: string) {
+    constructor(showIcon: ConditionalFn, icon: string, id: string, title: string, styleClass: string, outlined?: boolean) {
         this.showIcon = showIcon;
         this.icon = icon;
         this.id = id;
         this.title = title;
         this.styleClass = styleClass;
+        this.outlined = outlined;
     }
 }

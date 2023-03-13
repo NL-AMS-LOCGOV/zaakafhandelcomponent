@@ -20,8 +20,7 @@
     <div *ngIf="zoekopdrachten.length" class="filter-control">
         <button *ngIf="!actieveZoekopdracht && !actieveFilters"
                 mat-icon-button [matMenuTriggerFor]="filterMenu" id="selecteerZoekopdrachtButton">
-            <mat-icon class="material-icons-outlined"
-                      title="{{ 'actie.zoekopdracht.selecteer' | translate }}">
+            <mat-icon outlined title="{{ 'actie.zoekopdracht.selecteer' | translate }}">
                 filter_alt
             </mat-icon>
         </button>
@@ -39,8 +38,9 @@
     </div>
     <button [disabled]="actieveZoekopdracht!=null"
             mat-icon-button (click)="saveSearch()" id="saveZoekopdrachtButton">
-        <mat-icon title="{{ (actieveZoekopdracht ? actieveZoekopdracht.naam: 'actie.zoekopdracht.opslaan') | translate }}">
-            {{ actieveZoekopdracht ? 'star' : 'star_outline' }}
+        <mat-icon [attr.outlined]="actieveZoekopdracht"
+                  title="{{ (actieveZoekopdracht ? actieveZoekopdracht.naam: 'actie.zoekopdracht.opslaan') | translate }}">
+            star
         </mat-icon>
     </button>
     <mat-menu class="filter-menu" #filterMenu="matMenu" xPosition="before">

@@ -34,7 +34,6 @@ import {PipesModule} from '../pipes/pipes.module';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
-import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
@@ -53,6 +52,8 @@ import {NgxEditorModule} from 'ngx-editor';
 import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-editor/html-editor-variabelen-kies-menu.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 import {DocumentIconModule} from '../document-icon/document-icon.module';
 
 @NgModule({
@@ -74,6 +75,7 @@ import {DocumentIconModule} from '../document-icon/document-icon.module';
         ReadonlyComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
+        DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent,
@@ -124,6 +126,7 @@ import {DocumentIconModule} from '../document-icon/document-icon.module';
         GoogleMapsComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
+        DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent

@@ -1,38 +1,34 @@
 /*
- * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-FileCopyrightText: 2023 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
 import {FieldType} from '../../model/field-type.enum';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {EventEmitter} from '@angular/core';
 import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
 export class DocumentenLijstFormField extends AbstractFormControlField {
 
     fieldType = FieldType.DOCUMENTEN_LIJST;
-    documenten$: Observable<EnkelvoudigInformatieobject[]>;
-    documentenChanged = new EventEmitter<Observable<EnkelvoudigInformatieobject[]>>();
-    documentenCheckedVoorOndertekenen: string[];
+    documenten: Observable<EnkelvoudigInformatieobject[]>;
     documentenChecked: string[];
-
-    ondertekenen: boolean;
-    verbergStatus: boolean;
+    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
+    selectLabel = '';
 
     constructor() {
         super();
     }
 
-    /**
-     * implements own readonly view, dont use the default read-only-component
-     */
     hasReadonlyView() {
         return true;
     }
 
-    setDocumenten$(documenten: Observable<EnkelvoudigInformatieobject[]>) {
-        this.documentenChanged.emit(documenten);
+    updateDocumenten(documenten: Observable<EnkelvoudigInformatieobject[]>) {
+        this.documenten = documenten;
     }
 
+    removeColumn(id: string) {
+        this.columns.splice(this.columns.indexOf(id), 1);
+    }
 }

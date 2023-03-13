@@ -21,9 +21,9 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluittype} from '../model/besluittype';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-besluit-create',
@@ -70,7 +70,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
                 const zoekparameters = new InformatieobjectZoekParameters();
                 zoekparameters.zaakUUID = this.zaak.uuid;
                 zoekparameters.besluittypeUUID = value.id;
-                documentenField.setDocumenten$(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
+                documentenField.updateDocumenten(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
             }
         });
     }

@@ -13,6 +13,7 @@
         <read-more *ngIf="maxLength" [maxLength]="maxLength" text="{{value | empty}}"></read-more>
         <ng-container *ngIf="!maxLength">{{value | empty}}</ng-container>
         <mat-icon class="label-icon"
+                  [attr.outlined]="icon.outlined"
                   [ngClass]="icon.styleClass"
                   *ngIf="hasIcon"
                   (click)="iconClicked.emit()"

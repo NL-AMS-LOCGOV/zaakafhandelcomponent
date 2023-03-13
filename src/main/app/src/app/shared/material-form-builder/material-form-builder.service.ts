@@ -18,7 +18,6 @@ import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
-import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
 import {RadioComponent} from './form-components/radio/radio.component';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
@@ -26,6 +25,8 @@ import {MedewerkerGroepComponent} from './form-components/medewerker-groep/medew
 import {DividerComponent} from './form-components/divider/divider.component';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 
 @Injectable({
     providedIn: 'root'
@@ -73,13 +74,14 @@ export class MaterialFormBuilderService {
                 return CheckboxComponent;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
-            case FieldType.DOCUMENTEN_LIJST:
-                return DocumentenLijstComponent;
             case FieldType.TAAK_DOCUMENT_UPLOAD:
                 return TaakDocumentUploadComponent;
+            case FieldType.DOCUMENTEN_LIJST:
+                return DocumentenLijstComponent;
+            case FieldType.DOCUMENTEN_ONDERTEKENEN:
+                return DocumentenOndertekenenComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }
     }
 }
-

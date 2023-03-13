@@ -46,7 +46,9 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -64,6 +66,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieResponse;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerwijderenGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerzendGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
@@ -102,6 +105,8 @@ public class InformatieObjectenRESTService {
     private static final String MEDIA_TYPE_PDF = "application/pdf";
 
     private static final String TOELICHTING_PDF = "Geconverteerd naar PDF";
+
+    private static final String PREFIX_VERZENDEN_TOELICHTING = "Per post";
 
     @Inject
     private DRCClientService drcClientService;
@@ -237,6 +242,53 @@ public class InformatieObjectenRESTService {
         } else {
             throw new IllegalStateException("Zoekparameters hebben geen waarde");
         }
+    }
+
+    @GET
+    @Path("informatieobjecten/zaak/{zaakUuid}/teVerzenden")
+    public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorVerzenden(@PathParam("zaakUuid") final UUID zaakUuid) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        assertPolicy(policyService.readZaakRechten(zaak).getLezen());
+        return zrcClientService.listZaakinformatieobjecten(zaak).stream()
+                .map(zaakinformatieobject -> drcClientService.readEnkelvoudigInformatieobject(zaakinformatieobject.getInformatieobject()))
+                .filter(this::isVerzendenToegestaan)
+                .filter(informatieobject -> policyService.readDocumentRechten(informatieobject, zaak).getWijzigen())
+                .map(informatieobject -> informatieobjectConverter.convertToREST(informatieobject, zaak)).collect(Collectors.toList());
+    }
+
+
+    @POST
+    @Path("informatieobjecten/verzenden")
+    public void verzenden(final RESTDocumentVerzendGegevens gegevens) {
+        final List<EnkelvoudigInformatieobject> informatieobjecten = gegevens.informatieobjecten.stream()
+                .map(uuid -> drcClientService.readEnkelvoudigInformatieobject(uuid)).toList();
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUuid);
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
+        informatieobjecten.forEach(informatieobject -> assertPolicy(isVerzendenToegestaan(informatieobject)));
+        informatieobjecten.forEach(informatieobject -> {
+            final boolean tempLock = !informatieobject.getLocked();
+            try {
+                final EnkelvoudigInformatieobjectWithInhoudAndLock informatieobjectUpdate = new EnkelvoudigInformatieobjectWithInhoudAndLock();
+                informatieobjectUpdate.setLock(getLock(informatieobject));
+                informatieobjectUpdate.setVerzenddatum(gegevens.verzenddatum);
+                drcClientService.updateEnkelvoudigInformatieobject(informatieobject.getUUID(),
+                                                                   String.format("%s: %s", PREFIX_VERZENDEN_TOELICHTING, gegevens.toelichting),
+                                                                   informatieobjectUpdate);
+            } finally {
+                if (tempLock) {
+                    enkelvoudigInformatieObjectLockService.deleteLock(informatieobject.getUUID());
+                }
+            }
+        });
+    }
+
+    private boolean isVerzendenToegestaan(final EnkelvoudigInformatieobject informatieobject) {
+        return informatieobject.getStatus() == InformatieobjectStatus.DEFINITIEF &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.CONFIDENTIEEL &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.GEHEIM &&
+                informatieobject.getVertrouwelijkheidaanduiding() != Vertrouwelijkheidaanduiding.ZEER_GEHEIM &&
+                informatieobject.getOntvangstdatum() == null &&
+                MEDIA_TYPE_PDF.equals(informatieobject.getFormaat());
     }
 
     @POST
@@ -434,18 +486,15 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/update")
     public RESTEnkelvoudigInformatieobject updateEnkelvoudigInformatieobject(
             final RESTEnkelvoudigInformatieObjectVersieGegevens enkelvoudigInformatieObjectVersieGegevens) {
-        final EnkelvoudigInformatieobject document = drcClientService.readEnkelvoudigInformatieobject(
-                enkelvoudigInformatieObjectVersieGegevens.uuid);
-        assertPolicy(policyService.readDocumentRechten(document, zrcClientService.readZaak(
-                enkelvoudigInformatieObjectVersieGegevens.zaakUuid)).getWijzigen());
+        final EnkelvoudigInformatieobject document = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieObjectVersieGegevens.uuid);
+        assertPolicy(policyService.readDocumentRechten(document, zrcClientService.readZaak(enkelvoudigInformatieObjectVersieGegevens.zaakUuid)).getWijzigen());
         final boolean tempLock = !document.getLocked();
         try {
-            final RESTFileUpload file = (RESTFileUpload) httpSession.get()
-                    .getAttribute("FILE_" + enkelvoudigInformatieObjectVersieGegevens.zaakUuid);
+            final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + enkelvoudigInformatieObjectVersieGegevens.zaakUuid);
             EnkelvoudigInformatieobjectWithInhoudAndLock updatedDocument =
                     informatieobjectConverter.convert(enkelvoudigInformatieObjectVersieGegevens, getLock(document), file);
-            updatedDocument = drcClientService.updateEnkelvoudigInformatieobject(
-                    document.getUUID(), enkelvoudigInformatieObjectVersieGegevens.toelichting, updatedDocument);
+            updatedDocument = drcClientService.updateEnkelvoudigInformatieobject(document.getUUID(),
+                                                                                 enkelvoudigInformatieObjectVersieGegevens.toelichting, updatedDocument);
             return informatieobjectConverter.convertToREST(updatedDocument);
         } finally {
             if (tempLock) {

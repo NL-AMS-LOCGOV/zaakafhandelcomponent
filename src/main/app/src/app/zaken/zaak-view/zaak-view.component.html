@@ -23,6 +23,12 @@
                                    [sideNav]="actionsSidenav"
                                    [zaak]="zaak"
                                    (document)="documentToegevoegd($event)"></zac-informatie-object-add>
+
+        <zac-informatie-verzenden *ngSwitchCase="sideNavAction.DOCUMENT_VERZENDEN"
+                                  [sideNav]="actionsSidenav"
+                                  [zaak]="zaak"
+                                  (documentVerzonden)="updateZaak()"></zac-informatie-verzenden>
+
         <zac-human-task-do *ngSwitchCase="sideNavAction.TAAK_STARTEN"
                            (done)="taakGestart()"
                            [zaak]="zaak"
