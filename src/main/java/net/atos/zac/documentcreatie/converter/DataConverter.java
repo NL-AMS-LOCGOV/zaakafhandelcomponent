@@ -7,7 +7,7 @@ package net.atos.zac.documentcreatie.converter;
 
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.aanvraag.ProductAanvraagService.OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG;
+import static net.atos.zac.aanvraag.ProductaanvraagService.OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
@@ -39,7 +39,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.aanvraag.ProductAanvraagService;
+import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.model.AanvragerData;
 import net.atos.zac.documentcreatie.model.Data;
@@ -99,7 +99,7 @@ public class DataConverter {
     private IdentityService identityService;
 
     @Inject
-    private ProductAanvraagService productAanvraagService;
+    private ProductaanvraagService productaanvraagService;
 
     public Data createData(final DocumentCreatieGegevens documentCreatieGegevens, final LoggedInUser loggedInUser) {
         final Data data = new Data();
@@ -257,7 +257,7 @@ public class DataConverter {
         listParameters.setZaak(zaak);
         listParameters.setObjectType(OVERIGE);
         return zrcClientService.listZaakobjecten(listParameters).getResults().stream()
-                .filter(zo -> OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG.equals(zo.getObjectTypeOverige()))
+                .filter(zo -> OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG.equals(zo.getObjectTypeOverige()))
                 .findAny()
                 .map(this::convertToStartformulierData)
                 .orElse(null);
@@ -265,10 +265,10 @@ public class DataConverter {
 
     private StartformulierData convertToStartformulierData(final Zaakobject zaakobject) {
         final var productAaanvraagObject = objectsClientService.readObject(getUUID(zaakobject.getObject()));
-        final var productAanvraag = productAanvraagService.getProductaanvraag(productAaanvraagObject);
+        final var productAanvraag = productaanvraagService.getProductaanvraag(productAaanvraagObject);
         final var startformulierData = new StartformulierData();
         startformulierData.productAanvraagtype = productAanvraag.getType();
-        startformulierData.data = productAanvraagService.getFormulierData(productAaanvraagObject);
+        startformulierData.data = productaanvraagService.getFormulierData(productAaanvraagObject);
         return startformulierData;
     }
 

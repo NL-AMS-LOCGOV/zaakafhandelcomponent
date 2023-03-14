@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.client.or.objecttype.ObjecttypesClientService;
-import net.atos.zac.aanvraag.ProductAanvraagService;
+import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -66,7 +66,7 @@ public class NotificatieReceiver {
     private EventingService eventingService;
 
     @Inject
-    private ProductAanvraagService productAanvraagService;
+    private ProductaanvraagService productaanvraagService;
 
     @Inject
     private ConfiguratieService configuratieService;
@@ -99,7 +99,7 @@ public class NotificatieReceiver {
             handleWebsockets(notificatie);
             if (!configuratieService.isLocalDevelopment()) {
                 handleSignaleringen(notificatie);
-                handleProductAanvraag(notificatie);
+                handleProductaanvraag(notificatie);
                 handleIndexering(notificatie);
                 handleInboxDocumenten(notificatie);
                 handleZaaktype(notificatie);
@@ -131,23 +131,25 @@ public class NotificatieReceiver {
 
     private void handleSignaleringen(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
+                                           notificatie.getResourceInfo())
                     .forEach(eventingService::send);
         }
     }
 
-    private void handleProductAanvraag(final Notificatie notificatie) {
-        if (isProductAanvraag(notificatie)) {
-            productAanvraagService.verwerkProductAanvraag(notificatie.getResourceUrl());
+    private void handleProductaanvraag(final Notificatie notificatie) {
+        if (isProductaanvraag(notificatie)) {
+            productaanvraagService.verwerkProductaanvraag(notificatie.getResourceUrl());
         }
     }
 
-    private boolean isProductAanvraag(final Notificatie notificatie) {
+    private boolean isProductaanvraag(final Notificatie notificatie) {
         final String producttypeUri = notificatie.getProperties().get(OBJECTTYPE_KENMERK);
         if (notificatie.getResource() != OBJECT || notificatie.getAction() != CREATE || isEmpty(producttypeUri)) {
             return false;
         }
-        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
+        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(
+                objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
     }
 
     private void handleIndexering(final Notificatie notificatie) {
