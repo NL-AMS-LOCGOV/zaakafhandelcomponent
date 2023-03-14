@@ -9,8 +9,10 @@ import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -19,7 +21,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import net.atos.client.kvk.KVKClientService;
-import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.vrl.VRLClientService;
@@ -32,7 +33,6 @@ import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
-import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaakobject;
@@ -43,6 +43,7 @@ import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.util.JsonbUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -50,22 +51,24 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 @ApplicationScoped
 public class ProductAanvraagService {
 
-    public static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
-
     public static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
 
-    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT = "naamEvenement";
-
-    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT =
-            "omschrijvingEvenement";
-
     private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
+
+    private static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
     private static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
 
     private static final String ROL_TOELICHTING = "Overgenomen vanuit de product aanvraag";
+
+    private static final String FORMULIER_DATA = "data";
+
+    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT = "naamEvenement";
+
+    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT =
+            "omschrijvingEvenement";
 
     @Inject
     private ObjectsClientService objectsClientService;
@@ -98,8 +101,9 @@ public class ProductAanvraagService {
     private CMMNService cmmnService;
 
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
-        final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
-        final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
+        final var productAanvraagObject = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
+        final var productAanvraag = getProductaanvraag(productAanvraagObject);
+        final var formulierData = getFormulierData(productAanvraagObject);
 
         final Optional<UUID> zaaktypeUUID = zaakafhandelParameterBeheerService.findZaaktypeUUIDByProductaanvraagType(
                 productAanvraag.getType());
@@ -113,12 +117,11 @@ public class ProductAanvraagService {
         var zaak = new Zaak();
         final var zaaktype = ztcClientService.readZaaktype(zaaktypeUUID.get());
         zaak.setZaaktype(zaaktype.getUrl());
-        zaak.setOmschrijving((String) productAanvraag.getData()
-                .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
-        zaak.setToelichting((String) productAanvraag.getData()
-                .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT));
-
-        zaak.setStartdatum(object.getRecord().getStartAt());
+        zaak.setOmschrijving(
+                (String) formulierData.get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
+        zaak.setToelichting(
+                (String) formulierData.get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT));
+        zaak.setStartdatum(productAanvraagObject.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
         final Optional<CommunicatieKanaal> communicatiekanaal = vrlClientService.findCommunicatiekanaal(
@@ -135,34 +138,27 @@ public class ProductAanvraagService {
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
         pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
-        if (productAanvraag.getBsn() != null || productAanvraag.getKvk() != null) {
-            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), zaak.getUrl(),
-                         zaak.getZaaktype());
+        if (isNotBlank(productAanvraag.getBsn())) {
+            addInitiator(productAanvraag.getBsn(), zaak.getUrl(), zaak.getZaaktype());
         }
 
-        cmmnService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
+        cmmnService.startCase(zaak, zaaktype, zaakafhandelParameters, formulierData);
     }
 
-    private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
-        if (bsn != null) {
-            final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
-            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator,
-                                                                                       ROL_TOELICHTING,
-                                                                                       new NatuurlijkPersoon(bsn));
-            zrcClientService.createRol(rolNatuurlijkPersoon);
-        } else {
-            final Optional<ResultaatItem> hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
-            if (hoofdvestiging.isPresent()) {
-                final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
-                final RolVestiging rolVestiging = new RolVestiging(zaak, initiator, ROL_TOELICHTING,
-                                                                   new net.atos.client.zgw.zrc.model.Vestiging(
-                                                                           hoofdvestiging.get().getVestigingsnummer()));
-                zrcClientService.createRol(rolVestiging);
-            } else {
-                LOG.warning(() -> String.format("Geen hoofdvestiging gevonden voor bedrijf met kvk nummer '%s'",
-                                                kvkNummer));
-            }
-        }
+    public ProductaanvraagDenhaag getProductaanvraag(final ORObject productAanvraagObject) {
+        return JsonbUtil.JSONB.fromJson(JsonbUtil.JSONB.toJson(productAanvraagObject.getRecord().getData()),
+                                        ProductaanvraagDenhaag.class);
+    }
+
+    public Map<String, Object> getFormulierData(final ORObject productAanvraagObject) {
+        return (Map<String, Object>) productAanvraagObject.getRecord().getData().get(FORMULIER_DATA);
+    }
+
+    private void addInitiator(final String bsn, final URI zaak, final URI zaaktype) {
+        final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
+        final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator, ROL_TOELICHTING,
+                                                                                   new NatuurlijkPersoon(bsn));
+        zrcClientService.createRol(rolNatuurlijkPersoon);
     }
 
     private void pairProductAanvraagWithZaak(final URI productAanvraagUrl, final URI zaakUrl) {
@@ -174,7 +170,7 @@ public class ProductAanvraagService {
         zrcClientService.createZaakobject(zaakobject);
     }
 
-    private void pairAanvraagPDFWithZaak(final ProductAanvraag productAanvraag, final URI zaakUrl) {
+    private void pairAanvraagPDFWithZaak(final ProductaanvraagDenhaag productAanvraag, final URI zaakUrl) {
         final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
         zaakInformatieobject.setInformatieobject(productAanvraag.getPdfUrl());
         zaakInformatieobject.setZaak(zaakUrl);

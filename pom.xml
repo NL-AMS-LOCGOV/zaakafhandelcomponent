@@ -294,6 +294,33 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <sourcePaths>${project.basedir}/src/main/resources/json-schema</sourcePaths>
+                    <outputDirectory>${project.basedir}/src/generated/java</outputDirectory>
+                    <fileExtensions>.schema.json</fileExtensions>
+                    <targetPackage>net.atos.zac.aanvraag</targetPackage>
+                    <annotationStyle>jsonb1</annotationStyle>
+                    <dateType>java.time.LocalDate</dateType>
+                    <timeType>java.time.LocalTime</timeType>
+                    <dateTimeType>java.time.ZonedDateTime</dateTimeType>
+                    <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+                    <includeToString>false</includeToString>
+                    <initializeCollections>false</initializeCollections>
+                    <useCommonsLang3>true</useCommonsLang3>
+                    <includeAdditionalProperties>false</includeAdditionalProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>6.2.1</version>

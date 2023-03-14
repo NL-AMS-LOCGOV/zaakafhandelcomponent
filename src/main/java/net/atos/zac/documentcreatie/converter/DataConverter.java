@@ -28,7 +28,6 @@ import net.atos.client.brp.model.Verblijfplaats;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
-import net.atos.client.or.object.model.ORObject;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -40,7 +39,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.aanvraag.ProductAanvraag;
+import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.model.AanvragerData;
 import net.atos.zac.documentcreatie.model.Data;
@@ -98,6 +97,9 @@ public class DataConverter {
 
     @Inject
     private IdentityService identityService;
+
+    @Inject
+    private ProductAanvraagService productAanvraagService;
 
     public Data createData(final DocumentCreatieGegevens documentCreatieGegevens, final LoggedInUser loggedInUser) {
         final Data data = new Data();
@@ -262,11 +264,11 @@ public class DataConverter {
     }
 
     private StartformulierData convertToStartformulierData(final Zaakobject zaakobject) {
-        final ORObject object = objectsClientService.readObject(getUUID(zaakobject.getObject()));
-        final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        final StartformulierData startformulierData = new StartformulierData();
+        final var productAaanvraagObject = objectsClientService.readObject(getUUID(zaakobject.getObject()));
+        final var productAanvraag = productAanvraagService.getProductaanvraag(productAaanvraagObject);
+        final var startformulierData = new StartformulierData();
         startformulierData.productAanvraagtype = productAanvraag.getType();
-        startformulierData.data = productAanvraag.getData();
+        startformulierData.data = productAanvraagService.getFormulierData(productAaanvraagObject);
         return startformulierData;
     }
 
