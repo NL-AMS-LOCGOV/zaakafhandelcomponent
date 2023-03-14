@@ -50,7 +50,6 @@ import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-f
 import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
 import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 import {VersionComponent} from './version/version.component';
-import {DocumentIconModule} from './document-icon/document-icon.module';
 
 @NgModule({
     declarations: [
@@ -135,8 +134,7 @@ import {DocumentIconModule} from './document-icon/document-icon.module';
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
-        VersionComponent,
-        DocumentIconModule
+        VersionComponent
     ],
     providers: [
         Title,

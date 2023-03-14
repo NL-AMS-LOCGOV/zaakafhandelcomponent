@@ -54,7 +54,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatListModule} from '@angular/material/list';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
-import {DocumentIconModule} from '../document-icon/document-icon.module';
+import {DocumentIconComponent} from '../document-icon/document-icon.component';
 
 @NgModule({
     declarations: [
@@ -109,7 +109,7 @@ import {DocumentIconModule} from '../document-icon/document-icon.module';
         NgxEditorModule,
         MatMenuModule,
         MatListModule,
-        DocumentIconModule
+        DocumentIconComponent
     ],
     exports: [
         FormComponent,
