@@ -27,7 +27,7 @@ export class BesluitViewComponent implements OnInit, OnChanges {
     histories: Record<string, MatTableDataSource<HistorieRegel>> = {};
 
     besluitInformatieobjecten: Record<string, DocumentenLijstFormField> = {};
-    toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
+    toolTipIcon = new TextIcon(Conditionals.always, 'info', 'toolTip_icon', '', 'pointer', true);
 
     constructor(private zakenService: ZakenService) {}
 
