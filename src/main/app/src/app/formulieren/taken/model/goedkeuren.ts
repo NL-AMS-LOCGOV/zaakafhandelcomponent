@@ -6,7 +6,6 @@
 import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {Validators} from '@angular/forms';
-import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {TakenService} from '../../../taken/taken.service';
 import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
@@ -17,6 +16,8 @@ import {Observable, of} from 'rxjs';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 import {Goedkeuring} from '../goedkeuring.enum';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DocumentenOndertekenenFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-ondertekenen/documenten-ondertekenen-field-builder';
 
 export class Goedkeuren extends AbstractTaakFormulier {
 
@@ -65,13 +66,12 @@ export class Goedkeuren extends AbstractTaakFormulier {
             [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
                                                                             .label(fields.VRAAG)
                                                                             .build()],
-            [new DocumentenLijstFieldBuilder().id(fields.ONDERTEKENEN)
-                                              .label(fields.ONDERTEKENEN)
-                                              .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                              .documentenCheckedVoorOndertekenen(this.getDocumentenChecked(fields.ONDERTEKENEN))
-                                              .ondertekenen(true)
-                                              .readonly(true)
-                                              .build()],
+            [new DocumentenOndertekenenFieldBuilder().id(fields.ONDERTEKENEN)
+                                                     .label(fields.ONDERTEKENEN)
+                                                     .readonly(this.readonly)
+                                                     .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                                     .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
+                                                     .build()],
             [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
                 this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
                                                                                       .label(fields.GOEDKEUREN)
@@ -106,6 +106,7 @@ export class Goedkeuren extends AbstractTaakFormulier {
         if (dataElement) {
             return dataElement.split(';');
         }
+        return [];
     }
 
     getGoedkeurenOpties$(): Observable<string[]> {

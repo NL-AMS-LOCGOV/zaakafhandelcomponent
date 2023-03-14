@@ -235,7 +235,7 @@
         <ng-container matColumnDef="archiefNominatie">
             <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_ARCHIEF_NOMINATIE">
                 {{ 'archiefNominatie' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.archiefNominatie ? ('archiefNominatie.datum.' + row.archiefNominatie | translate) : '-'}}</td>
+            <td mat-cell *matCellDef="let row">{{ row.archiefNominatie ? ('archiefNominatie.' + row.archiefNominatie | translate) : '-'}}</td>
         </ng-container>
         <ng-container matColumnDef="archiefNominatie_filter">
             <th mat-header-cell *matHeaderCellDef>
@@ -265,6 +265,23 @@
                                   [filtersChanged]="dataSource.filtersChanged$"
                                   (zoekopdracht)="dataSource.zoekopdrachtChanged($event)"></zac-zoekopdracht>
             </th>
+        </ng-container>
+
+        <ng-container matColumnDef="indicaties_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="indicaties"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_INDICATIES"
+                                  [opties]="dataSource.beschikbareFilters.ZAAK_INDICATIES"
+                                  (changed)="dataSource.zoekParameters.filters.ZAAK_INDICATIES = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="indicaties">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="sorteerVeld.ZAAK_INDICATIES_SORT">{{ 'indicaties' | translate | empty}}</th>
+            <td mat-cell *matCellDef="let row">
+                <zac-zaak-indicaties [layout]="indicatiesLayout.WERKLIJST" [zaakZoekObject]="row"></zac-zaak-indicaties>
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="url" stickyEnd>
@@ -328,6 +345,12 @@
                                              class="flex-1 w33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchDefault [label]="column | translate" [value]="row[column] | translate"
                                              class="flex-1 w33"></zac-static-text>
+                            <div class="flex-1 w33" *ngSwitchCase="zoekenColumn.INDICATIES" class="static-text">
+                                <label class="static-text-label">{{'indicaties' | translate}}</label>
+                                <div class="static-text-content">
+                                    <zac-zaak-indicaties [layout]="indicatiesLayout.WERKLIJST" [zaakZoekObject]="row"></zac-zaak-indicaties>
+                                </div>
+                            </div>
                         </ng-container>
                     </div>
                 </div>

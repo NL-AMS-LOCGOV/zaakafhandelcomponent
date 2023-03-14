@@ -22,7 +22,6 @@ import {IdentityService} from '../../identity/identity.service';
 import {MailService} from '../mail.service';
 import {MailGegevens} from '../model/mail-gegevens';
 import {CustomValidators} from '../../shared/validators/customValidators';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
 import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
@@ -34,6 +33,7 @@ import {InputFormField} from '../../shared/material-form-builder/form-components
 import {KlantenService} from '../../klanten/klanten.service';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-mail-create',

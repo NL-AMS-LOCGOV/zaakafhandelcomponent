@@ -40,9 +40,8 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'bestandsnaam' | translate"
                                                      [value]="infoObject.bestandsnaam">
-                                        <span position="content-before"
-                                              class="fa-solid {{getFileIcon(infoObject.bestandsnaam).icon}} {{getFileIcon(infoObject.bestandsnaam).color}}"
-                                              [title]="getFileTooltip(getFileIcon(infoObject.bestandsnaam).type)">&nbsp;</span>
+                                        <zac-document-icon position="content-before" [bestandsnaam]="infoObject.bestandsnaam"></zac-document-icon>
+                                        <span position="content-before">&nbsp;</span>
                                     </zac-static-text>
                                 </div>
                                 <div class="w33 w50-sm">
@@ -195,7 +194,7 @@
                 <mat-expansion-panel class="w100" expanded="true">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            <mat-icon class="material-icons-outlined">plagiarism</mat-icon>
+                            <mat-icon outlined>plagiarism</mat-icon>
                             {{infoObject.titel}} | {{ 'document.preview' | translate}}
                         </mat-panel-title>
                     </mat-expansion-panel-header>

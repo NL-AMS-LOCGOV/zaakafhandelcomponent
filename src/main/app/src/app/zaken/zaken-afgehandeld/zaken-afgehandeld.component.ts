@@ -24,6 +24,7 @@ import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikers
 import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
 import {ActivatedRoute} from '@angular/router';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -38,6 +39,7 @@ export class ZakenAfgehandeldComponent extends WerklijstComponent implements Aft
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     expandedRow: ZaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
+    readonly indicatiesLayout = IndicatiesLayout;
     sorteerVeld = SorteerVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
@@ -76,6 +78,7 @@ export class ZakenAfgehandeldComponent extends WerklijstComponent implements Aft
             [ZoekenColumn.ARCHIEF_NOMINATIE, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.RESULTAAT, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.INDICATIES, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
     }

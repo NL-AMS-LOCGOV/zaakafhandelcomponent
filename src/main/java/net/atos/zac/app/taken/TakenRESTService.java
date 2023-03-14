@@ -85,7 +85,9 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Produces(MediaType.APPLICATION_JSON)
 public class TakenRESTService {
 
-    private static final String REDEN_HERVATTING = "Aanvullende informatie geleverd";
+    private static final String REDEN_ZAAK_HERVATTEN = "Aanvullende informatie geleverd";
+
+    private static final String REDEN_TAAK_AFGESLOTEN = "Afgesloten";
 
     @Inject
     private TakenService takenService;
@@ -171,12 +173,14 @@ public class TakenRESTService {
             Task task = takenService.readOpenTask(taak.taakId);
             boolean changed = false;
             if (restTaakVerdelenGegevens.behandelaarGebruikersnaam != null) {
-                task = assignTaak(task.getId(), restTaakVerdelenGegevens.behandelaarGebruikersnaam);
+                task = assignTaak(task.getId(), restTaakVerdelenGegevens.behandelaarGebruikersnaam,
+                                  restTaakVerdelenGegevens.reden);
                 changed = true;
             }
 
             if (restTaakVerdelenGegevens.groepId != null) {
-                task = takenService.assignTaskToGroup(task, restTaakVerdelenGegevens.groepId);
+                task = takenService.assignTaskToGroup(task, restTaakVerdelenGegevens.groepId,
+                                                      restTaakVerdelenGegevens.reden);
                 changed = true;
             }
 
@@ -195,7 +199,7 @@ public class TakenRESTService {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taken.forEach(taak -> {
-            final var task = assignTaak(taak.taakId, null);
+            final var task = assignTaak(taak.taakId, null, restTaakVerdelenGegevens.reden);
             taakBehandelaarGewijzigd(task, taak.zaakUuid);
             taakIds.add(task.getId());
         });
@@ -220,12 +224,13 @@ public class TakenRESTService {
         final String groep = taakConverter.extractGroupId(task.getIdentityLinks());
         boolean changed = false;
         if (!StringUtils.equals(behandelaar, restTaakToekennenGegevens.behandelaarId)) {
-            task = assignTaak(task.getId(), restTaakToekennenGegevens.behandelaarId);
+            task = assignTaak(task.getId(), restTaakToekennenGegevens.behandelaarId, restTaakToekennenGegevens.reden);
             changed = true;
         }
 
         if (!StringUtils.equals(groep, restTaakToekennenGegevens.groepId)) {
-            task = takenService.assignTaskToGroup(task, restTaakToekennenGegevens.groepId);
+            task = takenService.assignTaskToGroup(task, restTaakToekennenGegevens.groepId,
+                                                  restTaakToekennenGegevens.reden);
             changed = true;
         }
         if (changed) {
@@ -260,11 +265,11 @@ public class TakenRESTService {
         assertPolicy(takenService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
-            task = takenService.assignTaskToUser(task.getId(), loggedInUserId);
+            task = takenService.assignTaskToUser(task.getId(), loggedInUserId, REDEN_TAAK_AFGESLOTEN);
         }
         createDocuments(restTaak, zaak);
         if (taakVariabelenService.isZaakHervatten(restTaak.taakdata)) {
-            opschortenZaakHelper.hervattenZaak(zaak, REDEN_HERVATTING);
+            opschortenZaakHelper.hervattenZaak(zaak, REDEN_ZAAK_HERVATTEN);
         }
         ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata, zaak);
         taakVariabelenService.setTaakdata(task, restTaak.taakdata);
@@ -297,14 +302,14 @@ public class TakenRESTService {
         Task task = takenService.readOpenTask(restTaakToekennenGegevens.taakId);
         assertPolicy(
                 takenService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getToekennen());
-        task = assignTaak(task.getId(), loggedInUserInstance.get().getId());
+        task = assignTaak(task.getId(), loggedInUserInstance.get().getId(), restTaakToekennenGegevens.reden);
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return task;
     }
 
-    private Task assignTaak(final String taskId, final String assignee) {
-        final Task task = takenService.assignTaskToUser(taskId, assignee);
+    private Task assignTaak(final String taskId, final String assignee, final String reden) {
+        final Task task = takenService.assignTaskToUser(taskId, assignee, reden);
         eventingService.send(
                 SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, task, loggedInUserInstance.get()));
         return task;

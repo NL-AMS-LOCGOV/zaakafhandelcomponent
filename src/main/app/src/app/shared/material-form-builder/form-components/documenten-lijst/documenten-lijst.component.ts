@@ -1,11 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-FileCopyrightText: 2023 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
-import {DocumentenLijstFormField} from './documenten-lijst-form-field';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
@@ -13,63 +12,49 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
 import {DatumPipe} from '../../../pipes/datum.pipe';
 import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
 import {TranslateService} from '@ngx-translate/core';
+import {DocumentenLijstFormField} from './documenten-lijst-form-field';
+import {Observable} from 'rxjs';
 
 @Component({
     templateUrl: './documenten-lijst.component.html',
     styleUrls: ['./documenten-lijst.component.less']
 })
-export class DocumentenLijstComponent extends FormComponent implements OnInit {
+export class DocumentenLijstComponent extends FormComponent implements OnInit, DoCheck {
 
     data: DocumentenLijstFormField;
-    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'ondertekenen', 'url'];
+    documenten: Observable<EnkelvoudigInformatieobject[]>;
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
-    teOndertekenenSelection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
     loading = false;
 
-    constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
+    constructor(public translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
         super();
     }
 
     ngOnInit(): void {
-        if (this.data.readonly) {
-            this.removeColumn('select');
-        }
-        if (!this.data.ondertekenen) {
-            this.removeColumn('ondertekenen');
-        }
-        if (this.data.verbergStatus) {
-            this.removeColumn('status');
+        this.documenten = this.data.documenten;
+        if (this.data.readonly && !this.data.documentenChecked) {
+            this.data.removeColumn('select');
         }
         this.ophalenDocumenten();
-        this.data.documentenChanged.subscribe($documenten => {
-            this.data.documenten$ = $documenten;
-            this.ophalenDocumenten();
-        });
     }
 
     ophalenDocumenten() {
-        if (this.data.documenten$) {
+        if (this.data.documenten) {
             this.loading = true;
             this.dataSource.data = [];
-            this.data.documenten$.subscribe(documenten => {
+            this.data.documenten.subscribe(documenten => {
                 this.selection.clear();
                 for (const document of documenten) {
                     document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
                     document['viewLink'] = `/informatie-objecten/${document.uuid}`;
                     document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
-                    if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid)) {
-                        this.teOndertekenenSelection.toggle(document);
-                    }
                     if (this.data.documentenChecked?.includes(document.uuid)) {
                         this.selection.toggle(document);
                     }
                 }
                 this.dataSource.data = documenten;
-                if (this.teOndertekenenSelection.selected.length > 0) {
-                    this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
-                }
                 if (this.selection.selected.length > 0) {
                     this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
                 }
@@ -90,14 +75,22 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         }
     }
 
-    updateTeOndertekenen($event: MatCheckboxChange, document): void {
-        if ($event) {
-            this.teOndertekenenSelection.toggle(document);
-            this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
+    ngDoCheck(): void {
+        if (this.data.documenten !== this.documenten) {
+            this.documenten = this.data.documenten;
+            this.ophalenDocumenten();
         }
     }
 
-    removeColumn(id: string) {
-        this.columns.splice(this.columns.indexOf(id), 1);
+    toonFilterVeld(): boolean {
+        return !this.data.readonly;
+    }
+
+    selectDisabled(document): boolean {
+        return this.data.readonly;
+    }
+
+    isSelected(document): boolean {
+        return this.selection.isSelected(document);
     }
 }

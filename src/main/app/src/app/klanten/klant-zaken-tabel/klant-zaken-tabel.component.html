@@ -65,6 +65,36 @@
                     <td mat-cell *matCellDef="let object">{{ object.statustypeOmschrijving | empty }}</td>
                 </ng-container>
 
+                <ng-container matColumnDef="groep_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-facet-filter label="groep"
+                                          [filter]="zoekParameters.filters.GROEP"
+                                          [opties]="this.zoekResultaat.filters.GROEP"
+                                          (changed)="zoekParameters.filters.GROEP = $event; filtersChanged()">
+                        </zac-facet-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="groep">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_GROEP">{{ 'groep' | translate }}</th>
+                    <td mat-cell *matCellDef="let object">{{ object.groepNaam | empty }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="behandelaar_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-facet-filter label="behandelaar"
+                                          [filter]="zoekParameters.filters.BEHANDELAAR"
+                                          [opties]="this.zoekResultaat.filters.BEHANDELAAR"
+                                          (changed)="zoekParameters.filters.BEHANDELAAR = $event; filtersChanged()">
+                        </zac-facet-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="behandelaar">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_BEHANDELAAR">{{ 'behandelaar' | translate }}</th>
+                    <td mat-cell *matCellDef="let object">{{ object.behandelaarNaam | empty }}</td>
+                </ng-container>
+
                 <ng-container matColumnDef="startdatum_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-date-range-filter label="startdatum"
