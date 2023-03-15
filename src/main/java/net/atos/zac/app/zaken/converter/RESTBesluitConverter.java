@@ -51,7 +51,9 @@ public class RESTBesluitConverter {
         restBesluit.toelichting = besluit.getToelichting();
         restBesluit.ingangsdatum = besluit.getIngangsdatum();
         restBesluit.vervaldatum = besluit.getVervaldatum();
-        restBesluit.vervalreden = besluit.getVervalreden();
+        if (restBesluit.vervaldatum != null) {
+            restBesluit.vervalreden = besluit.getVervalreden();
+        }
         restBesluit.informatieobjecten = informatieobjectConverter.convertInformatieobjectenToREST(
                 listBesluitInformatieobjecten(besluit));
         return restBesluit;
