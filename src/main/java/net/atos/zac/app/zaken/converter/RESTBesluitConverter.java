@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.brc.model.Besluit;
+import net.atos.client.zgw.brc.model.Vervalreden;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -50,6 +51,9 @@ public class RESTBesluitConverter {
         restBesluit.toelichting = besluit.getToelichting();
         restBesluit.ingangsdatum = besluit.getIngangsdatum();
         restBesluit.vervaldatum = besluit.getVervaldatum();
+        if (restBesluit.vervaldatum != null) {
+            restBesluit.vervalreden = besluit.getVervalreden();
+        }
         restBesluit.informatieobjecten = informatieobjectConverter.convertInformatieobjectenToREST(
                 listBesluitInformatieobjecten(besluit));
         return restBesluit;
@@ -68,6 +72,9 @@ public class RESTBesluitConverter {
         besluit.setDatum(LocalDate.now());
         besluit.setIngangsdatum(besluitToevoegenGegevens.ingangsdatum);
         besluit.setVervaldatum(besluitToevoegenGegevens.vervaldatum);
+        if (besluitToevoegenGegevens.vervaldatum != null) {
+            besluit.setVervalreden(Vervalreden.TIJDELIJK);
+        }
         besluit.setVerantwoordelijkeOrganisatie(ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
         besluit.setToelichting(besluitToevoegenGegevens.toelichting);
         return besluit;

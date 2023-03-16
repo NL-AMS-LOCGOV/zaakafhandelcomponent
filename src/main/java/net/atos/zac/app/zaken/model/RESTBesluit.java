@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import net.atos.client.zgw.brc.model.Vervalreden;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 
 public class RESTBesluit {
@@ -27,6 +28,8 @@ public class RESTBesluit {
     public LocalDate ingangsdatum;
 
     public LocalDate vervaldatum;
+
+    public Vervalreden vervalreden;
 
     public String toelichting;
 

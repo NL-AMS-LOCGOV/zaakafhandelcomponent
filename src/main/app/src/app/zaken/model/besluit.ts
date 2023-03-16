@@ -14,6 +14,7 @@ export class Besluit {
     datum: string;
     ingangsdatum: string;
     vervaldatum: string;
+    vervalreden: string;
     besluittype: Besluittype;
     informatieobjecten: EnkelvoudigInformatieobject[];
 }
