@@ -50,6 +50,7 @@ import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-f
 import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
 import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 import {VersionComponent} from './version/version.component';
+import {SortPipe} from './dynamic-table/pipes/sort.pipe';
 
 @NgModule({
     declarations: [
@@ -84,7 +85,8 @@ import {VersionComponent} from './version/version.component';
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
-        VersionComponent
+        VersionComponent,
+        SortPipe
     ],
     imports: [
         FormsModule,
@@ -134,7 +136,8 @@ import {VersionComponent} from './version/version.component';
         ExportButtonComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
-        VersionComponent
+        VersionComponent,
+        SortPipe
     ],
     providers: [
         Title,

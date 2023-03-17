@@ -6,6 +6,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatSelectionListChange} from '@angular/material/list';
 import {ColumnPickerValue} from './column-picker-value';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'zac-column-picker',
@@ -15,19 +16,26 @@ import {ColumnPickerValue} from './column-picker-value';
 export class ColumnPickerComponent {
 
     @Input() set columnSrc(columns: Map<string, ColumnPickerValue>) {
+        this._selection = [];
         this._columnSrc = columns;
         this._columns = new Map([...columns.keys()]
         .filter(key => columns.get(key) !== ColumnPickerValue.STICKY)
-        .map(key => [key, columns.get(key) === ColumnPickerValue.VISIBLE]));
+        .map(key => {
+            if (columns.get(key) === ColumnPickerValue.VISIBLE) {
+                this._selection.push(key);
+            }
+            return [key, this.translate.instant(key)];
+        }));
     }
 
     @Output() columnsChanged = new EventEmitter<Map<string, ColumnPickerValue>>();
 
     private _columnSrc: Map<string, ColumnPickerValue>;
-    private _columns: Map<string, boolean>;
+    private _columns: Map<string, string>;
+    private _selection: string[];
     private changed: boolean = false;
 
-    constructor() { }
+    constructor(private translate: TranslateService) { }
 
     menuOpened(): void {
         this.changed = false;
@@ -46,7 +54,11 @@ export class ColumnPickerComponent {
         }
     }
 
-    get columns(): Map<string, boolean> {
+    get columns(): Map<string, string> {
         return this._columns;
+    }
+
+    isSelected(column: string): boolean {
+        return this._selection.includes(column);
     }
 }
