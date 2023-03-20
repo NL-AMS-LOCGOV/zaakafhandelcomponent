@@ -25,7 +25,7 @@ import {ZakenService} from '../zaken.service';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
-import {EMPTY, Observable, share} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, share} from 'rxjs';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -59,6 +59,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     informatieObjecten$: Observable<EnkelvoudigInformatieobject[]> = EMPTY;
     skeletonLayout = SkeletonLayout;
+    loading$ = new BehaviorSubject(true);
 
     enkelvoudigInformatieObjecten: MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject> =
         new MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject>();
@@ -138,6 +139,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                                            .pipe(share());
 
             this.informatieObjecten$.subscribe(objecten => {
+                this.loading$.next(false);
                 this.enkelvoudigInformatieObjecten.data = objecten;
             });
         }
