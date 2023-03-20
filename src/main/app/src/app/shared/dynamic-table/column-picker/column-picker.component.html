@@ -10,11 +10,11 @@
 <mat-menu #menu="matMenu">
     <mat-selection-list (selectionChange)="selectionChanged($event)">
         <mat-list-option (click)="$event.stopPropagation()"
-                         [selected]="column.value"
+                         [selected]="isSelected(column.key)"
                          checkboxPosition="before"
                          [value]="column.key"
-                         *ngFor="let column of columns | keyvalue">
-            {{column.key | translate}}
+                         *ngFor="let column of columns | keyvalue | sort:'value'">
+            {{column.value}}
         </mat-list-option>
     </mat-selection-list>
 </mat-menu>
