@@ -309,7 +309,6 @@
                     <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
                     <includeToString>false</includeToString>
                     <initializeCollections>false</initializeCollections>
-                    <useCommonsLang3>true</useCommonsLang3>
                     <includeAdditionalProperties>false</includeAdditionalProperties>
                 </configuration>
                 <executions>
