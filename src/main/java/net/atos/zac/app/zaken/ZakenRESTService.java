@@ -52,6 +52,7 @@ import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.brc.model.BesluitInformatieobject;
+import net.atos.client.zgw.brc.model.Vervalreden;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -844,6 +845,9 @@ public class ZakenRESTService {
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
         besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
+        if (besluit.getVervaldatum() != null) {
+            besluit.setVervalreden(Vervalreden.TIJDELIJK);
+        }
         besluit = brcClientService.updateBesluit(besluit, restBesluitWijzgenGegevens.reden);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());

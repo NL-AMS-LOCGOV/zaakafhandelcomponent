@@ -25,6 +25,9 @@ public enum SorteerVeld {
     ZAAK_OMSCHRIJVING("zaak_omschrijving"),
     ZAAK_TOELICHTING("zaak_toelichting"),
     ZAAK_INDICATIES_SORT("zaak_indicaties_sort"),
+    ZAAK_VERTROUWELIJKHEIDAANDUIDING("zaak_vertrouwelijkheidaanduiding"),
+    ZAAK_ARCHIEF_NOMINATIE("zaak_archiefNominatie"),
+    ZAAK_ARCHIEF_ACTIEDATUM("zaak_archiefActiedatum"),
 
     TAAK_NAAM("taak_naam"),
     TAAK_STATUS("taak_status"),

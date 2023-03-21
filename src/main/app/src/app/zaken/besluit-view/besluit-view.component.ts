@@ -10,6 +10,8 @@ import {of} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {ZakenService} from '../zaken.service';
+import {TextIcon} from '../../shared/edit/text-icon';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 import {DocumentenLijstFormField} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-form-field';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
@@ -25,6 +27,7 @@ export class BesluitViewComponent implements OnInit, OnChanges {
     histories: Record<string, MatTableDataSource<HistorieRegel>> = {};
 
     besluitInformatieobjecten: Record<string, DocumentenLijstFormField> = {};
+    toolTipIcon = new TextIcon(Conditionals.always, 'info', 'toolTip_icon', '', 'pointer', true);
 
     constructor(private zakenService: ZakenService) {}
 
