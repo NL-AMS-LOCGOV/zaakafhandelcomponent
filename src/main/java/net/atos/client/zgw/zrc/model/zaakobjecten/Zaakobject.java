@@ -3,15 +3,21 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.zrc.model;
+package net.atos.client.zgw.zrc.model.zaakobjecten;
 
 import java.net.URI;
 import java.util.UUID;
 
+import javax.json.bind.annotation.JsonbTypeDeserializer;
+
+import net.atos.client.zgw.zrc.model.Objecttype;
+import net.atos.client.zgw.zrc.util.ZaakObjectJsonbDeserializer;
+
 /**
- *
+ * Zaakobject
  */
-public class Zaakobject {
+@JsonbTypeDeserializer(ZaakObjectJsonbDeserializer.class)
+public abstract class Zaakobject {
 
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object

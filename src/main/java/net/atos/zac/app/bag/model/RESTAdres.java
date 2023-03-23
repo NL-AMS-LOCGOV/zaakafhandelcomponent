@@ -5,17 +5,38 @@
 
 package net.atos.zac.app.bag.model;
 
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RESTAdres {
-
-    public URI url;
+public class RESTAdres extends RESTBAGObject {
 
     public String postcode;
 
-    public String huisnummer;
+    public String huisnummerWeergave;
 
-    public String straat;
+    public int huisnummer;
 
-    public String woonplaats;
+    public String huisletter;
+
+    public String huisnummertoevoeging;
+
+    public String openbareRuimteNaam;
+
+    public String woonplaatsNaam;
+
+    public RESTOpenbareRuimte openbareRuimte;
+
+    public RESTNummeraanduiding nummeraanduiding;
+
+    public RESTWoonplaats woonplaats;
+
+    public List<RESTPand> panden = new ArrayList<>();
+
+    @Override
+    public BAGObjectType getBagObjectType() {
+        return BAGObjectType.ADRES;
+    }
+
+    public RESTAdres() {
+    }
 }

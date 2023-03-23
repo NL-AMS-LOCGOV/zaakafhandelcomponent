@@ -7,6 +7,10 @@ package net.atos.zac.app.bag.model;
 
 public class RESTListAdressenParameters {
 
+    public BAGObjectType type;
+
+    public String trefwoorden;
+
     public String postcode;
 
     public Integer huisnummer;

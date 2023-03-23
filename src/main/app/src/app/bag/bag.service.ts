@@ -29,7 +29,8 @@ export class BAGService {
     }
 
     createBAGObject(bagObjectGegevens: BAGObjectGegevens): Observable<void> {
-        return this.http.post<void>(`${this.basepath}`, bagObjectGegevens).pipe(
+
+        return this.http.post<void>(`${this.basepath}/${bagObjectGegevens.bagObject.bagObjectType}`, bagObjectGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

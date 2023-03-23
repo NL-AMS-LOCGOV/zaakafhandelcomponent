@@ -449,7 +449,7 @@
                                 <library>microprofile</library>
                                 <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
-                                <dateLibrary>java8</dateLibrary>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
                                 <disallowAdditionalPropertiesIfNotPresent>false
                                 </disallowAdditionalPropertiesIfNotPresent>
                                 <openApiNullable>false</openApiNullable>

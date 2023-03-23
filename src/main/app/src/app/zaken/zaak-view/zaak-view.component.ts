@@ -67,7 +67,6 @@ import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
 import {ZaakBetrokkene} from '../model/zaak-betrokkene';
 import {Adres} from '../../bag/model/adres';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
-import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
@@ -78,6 +77,7 @@ import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
+import {BAGObject} from '../../bag/model/bagobject';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -870,10 +870,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    adresGeselecteerd(adres: Adres): void {
+    adresGeselecteerd(bagObject: BAGObject): void {
         this.websocketService.suspendListener(this.zaakListener);
         this.actionsSidenav.close();
-        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, adres.url, BAGObjecttype.ADRES))
+        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
             .subscribe(() => {
                 this.utilService.openSnackbar('msg.bagobject.toegevoegd');
                 this.loadHistorie();

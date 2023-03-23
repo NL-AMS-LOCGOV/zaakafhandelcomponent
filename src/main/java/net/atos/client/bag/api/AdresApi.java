@@ -39,6 +39,7 @@ import net.atos.client.bag.model.AdresIOHalCollection;
 import net.atos.client.bag.model.BevraagAdressenParameters;
 import net.atos.client.bag.model.ZoekResultaatHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -60,7 +61,8 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
 @RegisterProviders({
-        @RegisterProvider(RuntimeExceptionMapper.class)
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)
 })
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/adressen")
