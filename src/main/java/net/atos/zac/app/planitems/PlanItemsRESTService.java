@@ -24,7 +24,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.brc.BRCClientService;
@@ -193,14 +192,12 @@ public class PlanItemsRESTService {
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
                             taakVariabelenService.readMailFrom(taakdata)
-                                    .filter(StringUtils::isNotEmpty)
                                     .map(email -> new MailAdres(email, afzender))
                                     .orElse(mailService.getGemeenteMailAdres()),
                             taakVariabelenService.readMailTo(taakdata)
                                     .map(MailAdres::new)
                                     .orElse(null),
                             taakVariabelenService.readMailReplyTo(taakdata)
-                                    .filter(StringUtils::isNotEmpty)
                                     .map(email -> new MailAdres(email, afzender))
                                     .orElse(null),
                             mailTemplate.getOnderwerp(),

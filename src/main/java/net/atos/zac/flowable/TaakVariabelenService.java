@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -166,7 +167,7 @@ public class TaakVariabelenService {
 
     private Optional<String> findTaskDataElement(final Map<String, String> taakData, final String elementName) {
         final String value = taakData.get(elementName);
-        if (value != null) {
+        if (StringUtils.isNotEmpty(value)) {
             return Optional.of(value);
         } else {
             return Optional.empty();
