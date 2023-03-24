@@ -53,7 +53,7 @@ public class ContactmomentenRESTService {
                 klantenClientService.findPersoon(parameters.bsn) :
                 klantenClientService.findVestiging(parameters.vestigingsnummer);
         return klantOptional.map(klant -> listContactmomenten(klant, parameters.page, parameters.pageSize))
-                .orElse(new RESTResultaat<>());
+                .orElseGet(() -> new RESTResultaat<>());
     }
 
     private RESTResultaat<RESTContactmoment> listContactmomenten(final Klant klant, final Integer page,

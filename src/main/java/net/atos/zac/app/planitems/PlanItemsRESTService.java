@@ -186,14 +186,15 @@ public class PlanItemsRESTService {
             final MailTemplate mailTemplate = zaakafhandelParameters.getMailtemplateKoppelingen().stream()
                     .map(MailtemplateKoppeling::getMailTemplate)
                     .filter(template -> template.getMail().equals(mail))
-                    .findFirst().orElse(mailTemplateService.readMailtemplate(mail));
+                    .findFirst()
+                    .orElseGet(() -> mailTemplateService.readMailtemplate(mail));
 
             final String afzender = configuratieService.readGemeenteNaam();
             taakVariabelenService.setMailBody(taakdata, mailService.sendMail(
                     new MailGegevens(
                             taakVariabelenService.readMailFrom(taakdata)
                                     .map(email -> new MailAdres(email, afzender))
-                                    .orElse(mailService.getGemeenteMailAdres()),
+                                    .orElseGet(() -> mailService.getGemeenteMailAdres()),
                             taakVariabelenService.readMailTo(taakdata)
                                     .map(MailAdres::new)
                                     .orElse(null),

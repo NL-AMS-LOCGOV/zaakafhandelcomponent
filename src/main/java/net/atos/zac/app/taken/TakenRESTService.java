@@ -8,11 +8,17 @@ package net.atos.zac.app.taken;
 import static net.atos.zac.app.taken.model.TaakStatus.AFGEROND;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.flowable.TaakVariabelenService.TAAK_DATA_DOCUMENTEN_VERZENDEN_POST;
+import static net.atos.zac.flowable.TaakVariabelenService.TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER;
+import static net.atos.zac.flowable.TaakVariabelenService.TAAK_DATA_TOELICHTING;
+import static net.atos.zac.flowable.TaakVariabelenService.TAAK_DATA_VERZENDDATUM;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +58,7 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectOndertekenService;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectVerzendenService;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
@@ -63,6 +70,7 @@ import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
@@ -136,7 +144,13 @@ public class TakenRESTService {
     private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
 
     @Inject
+    private EnkelvoudigInformatieObjectVerzendenService enkelvoudigInformatieObjectVerzendenService;
+
+    @Inject
     private OpschortenZaakHelper opschortenZaakHelper;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @GET
     @Path("zaak/{zaakUUID}")
@@ -167,7 +181,8 @@ public class TakenRESTService {
     @PUT
     @Path("lijst/verdelen")
     public void verdelenVanuitLijst(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten()
+                .getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taken.forEach(taak -> {
             Task task = takenService.readOpenTask(taak.taakId);
@@ -196,7 +211,8 @@ public class TakenRESTService {
     @PUT
     @Path("lijst/vrijgeven")
     public void vrijgevenVanuitLijst(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten()
+                .getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taken.forEach(taak -> {
             final var task = assignTaak(taak.taakId, null, restTaakVerdelenGegevens.reden);
@@ -208,7 +224,8 @@ public class TakenRESTService {
 
     @PATCH
     @Path("lijst/toekennen/mij")
-    public RESTTaak toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+    public RESTTaak toekennenAanIngelogdeMedewerkerVanuitLijst(
+            final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
         final Task task = ingelogdeMedewerkerToekennenAanTaak(restTaakToekennenGegevens);
         return taakConverter.convert(task);
@@ -271,6 +288,12 @@ public class TakenRESTService {
         if (taakVariabelenService.isZaakHervatten(restTaak.taakdata)) {
             opschortenZaakHelper.hervattenZaak(zaak, REDEN_ZAAK_HERVATTEN);
         }
+        if (restTaak.taakdata.containsKey(TAAK_DATA_DOCUMENTEN_VERZENDEN_POST)) {
+            updateVerzenddatumEnkelvoudigInformatieObjecten(
+                    restTaak.taakdata.get(TAAK_DATA_DOCUMENTEN_VERZENDEN_POST),
+                    restTaak.taakdata.get(TAAK_DATA_VERZENDDATUM),
+                    restTaak.taakdata.get(TAAK_DATA_TOELICHTING));
+        }
         ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata, zaak);
         taakVariabelenService.setTaakdata(task, restTaak.taakdata);
         taakVariabelenService.setTaakinformatie(task, restTaak.taakinformatie);
@@ -284,7 +307,8 @@ public class TakenRESTService {
     @POST
     @Path("upload/{uuid}/{field}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("field") final String field, @PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
+    public Response uploadFile(@PathParam("field") final String field, @PathParam("uuid") final UUID uuid,
+            @MultipartForm final RESTFileUpload data) {
         String fileKey = String.format("_FILE__%s__%s", uuid, field);
         httpSession.get().setAttribute(fileKey, data);
         return Response.ok("\"Success\"").build();
@@ -338,7 +362,8 @@ public class TakenRESTService {
                         zgwApiService.createZaakInformatieobjectForZaak(zaak, document, document.getTitel(),
                                                                         OMSCHRIJVING_TAAK_DOCUMENT,
                                                                         OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
-                restTaak.taakdata.replace(key, UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString());
+                restTaak.taakdata.replace(key,
+                                          UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString());
                 httpSession.removeAttribute(fileKey);
             }
         }
@@ -346,7 +371,7 @@ public class TakenRESTService {
 
     private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata, final Zaak zaak) {
         final Optional<String> ondertekenen = taakVariabelenService.readOndertekeningen(taakdata);
-        ondertekenen.ifPresent(s -> Arrays.stream(s.split(";"))
+        ondertekenen.ifPresent(s -> Arrays.stream(s.split(TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER))
                 .filter(StringUtils::isNotEmpty)
                 .map(UUID::fromString)
                 .map(drcClientService::readEnkelvoudigInformatieobject)
@@ -371,5 +396,21 @@ public class TakenRESTService {
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
+    }
+
+    private void updateVerzenddatumEnkelvoudigInformatieObjecten(final String documenten,
+            final String verzenddatumString,
+            final String toelichting) {
+        final LocalDate verzenddatum = ZonedDateTime.parse(verzenddatumString).toLocalDate();
+        Arrays.stream(documenten.split(TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER))
+                .forEach(documentUUID -> setVerzenddatumEnkelvoudigInformatieObject(UUID.fromString(documentUUID),
+                                                                                    verzenddatum, toelichting));
+    }
+
+    private void setVerzenddatumEnkelvoudigInformatieObject(final UUID uuid, final LocalDate verzenddatum,
+            final String toelichting) {
+        final var informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        enkelvoudigInformatieObjectVerzendenService.verzendenEnkelvoudigInformatieObject(informatieobject, verzenddatum,
+                                                                                         toelichting);
     }
 }

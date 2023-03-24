@@ -100,7 +100,7 @@ public class IdentityService {
         return search(usersDN, filter, USER_ATTRIBUTES).stream()
                 .findAny()
                 .map(this::convertToUser)
-                .orElse(new User(userId));
+                .orElseGet(() -> new User(userId));
     }
 
     public Group readGroup(final String groupId) {
@@ -108,7 +108,7 @@ public class IdentityService {
         return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
                 .findAny()
                 .map(this::convertToGroup)
-                .orElse(new Group(groupId));
+                .orElseGet(() -> new Group(groupId));
 
     }
 

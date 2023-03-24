@@ -17,6 +17,7 @@ public enum DefaultHumanTaskFormulierKoppeling {
     GOEDKEUREN("GOEDKEUREN", FormulierDefinitie.GOEDKEUREN),
     ADVIES_INTERN("ADVIES_INTERN", FormulierDefinitie.ADVIES),
     ADVIES_EXTERN("ADVIES_EXTERN", FormulierDefinitie.EXTERN_ADVIES_VASTLEGGEN),
+    DOCUMENT_VERZENDEN_POST("DOCUMENT_VERZENDEN_POST", FormulierDefinitie.DOCUMENT_VERZENDEN_POST),
     DEFAULT("", FormulierDefinitie.DEFAULT_TAAKFORMULIER);
 
     private final String planItemDefinitionId;
@@ -28,19 +29,17 @@ public enum DefaultHumanTaskFormulierKoppeling {
         this.formulierDefinitie = formulierDefinitie;
     }
 
-    public String getPlanItemDefinitionId() {
-        return planItemDefinitionId;
-    }
-
     public FormulierDefinitie getFormulierDefinitie() {
         return formulierDefinitie;
     }
 
     public static FormulierDefinitie readFormulierDefinitie(final String planItemDefinitionId) {
         return Arrays.stream(values())
-                .filter(humanTaskFormulierKoppeling -> humanTaskFormulierKoppeling.planItemDefinitionId.equals(planItemDefinitionId))
+                .filter(humanTaskFormulierKoppeling -> humanTaskFormulierKoppeling.planItemDefinitionId.equals(
+                        planItemDefinitionId))
                 .map(DefaultHumanTaskFormulierKoppeling::getFormulierDefinitie)
-                .findAny().orElse(DefaultHumanTaskFormulierKoppeling.DEFAULT.getFormulierDefinitie());
+                .findAny()
+                .orElse(DefaultHumanTaskFormulierKoppeling.DEFAULT.getFormulierDefinitie());
     }
 
     public static Set<FormulierVeldDefinitie> readFormulierVeldDefinities(final String planItemDefinitionId) {

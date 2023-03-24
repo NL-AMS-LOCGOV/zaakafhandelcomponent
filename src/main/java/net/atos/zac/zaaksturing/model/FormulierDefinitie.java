@@ -16,7 +16,7 @@ public enum FormulierDefinitie {
     EXTERN_ADVIES_VASTLEGGEN,
     EXTERN_ADVIES_MAIL,
     GOEDKEUREN,
-    VERZENDEN_BESLUIT;
+    DOCUMENT_VERZENDEN_POST;
 
     private final Set<FormulierVeldDefinitie> veldDefinities;
 

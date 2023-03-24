@@ -93,7 +93,8 @@ export class Advies extends AbstractTaakFormulier {
         if (dataElement) {
             const zoekParameters = new InformatieobjectZoekParameters();
             zoekParameters.zaakUUID = this.zaak.uuid;
-            zoekParameters.informatieobjectUUIDs = dataElement.split(';');
+            zoekParameters.informatieobjectUUIDs = dataElement.split(
+                AbstractTaakFormulier.TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER);
             return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
         }
         return of([]);
