@@ -45,13 +45,15 @@ public class EnkelvoudigInformatieObjectOndertekenService {
             enkelvoudigInformatieobjectWithInhoudAndLock.setOndertekening(ondertekening);
             enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(InformatieobjectStatus.DEFINITIEF);
 
-            final var enkelvoudigInformatieObjectLock =
-                    enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObjectUUID)
-                            .orElse(tempLock = enkelvoudigInformatieObjectLockService.createLock(
-                                    enkelvoudigInformatieObjectUUID,
-                                    loggedInUserInstance.get().getId()));
-
-            enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
+            final var enkelvoudigInformatieObjectLock = enkelvoudigInformatieObjectLockService.findLock(
+                    enkelvoudigInformatieObjectUUID);
+            if (enkelvoudigInformatieObjectLock.isPresent()) {
+                enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.get().getLock());
+            } else {
+                tempLock = enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieObjectUUID,
+                                                                             loggedInUserInstance.get().getId());
+                enkelvoudigInformatieobjectWithInhoudAndLock.setLock(tempLock.getLock());
+            }
             drcClientService.updateEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID,
                                                                "Door ondertekenen",
                                                                enkelvoudigInformatieobjectWithInhoudAndLock);

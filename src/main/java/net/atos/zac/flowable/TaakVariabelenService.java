@@ -29,6 +29,16 @@ import org.flowable.task.api.TaskInfo;
 @Transactional
 public class TaakVariabelenService {
 
+    public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
+
+    public static final String TAAK_DATA_DOCUMENTEN_VERZENDEN_POST = "documentenVerzendenPost";
+
+    public static final String TAAK_DATA_VERZENDDATUM = "verzenddatum";
+
+    public static final String TAAK_DATA_TOELICHTING = "toelichting";
+
+    public static final String TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER = ";";
+
     private static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
 
     private static final String TAAK_DATA_ZAAK_HERVATTEN = "zaakHervatten";
@@ -42,8 +52,6 @@ public class TaakVariabelenService {
     private final static String TAAK_DATA_MAIL_BODY = "body";
 
     private static final String TAAK_DATA_MAIL_BIJLAGEN = "bijlagen";
-
-    public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
 
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 

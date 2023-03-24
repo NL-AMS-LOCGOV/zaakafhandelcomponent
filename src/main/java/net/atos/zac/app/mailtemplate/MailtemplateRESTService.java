@@ -51,8 +51,8 @@ public class MailtemplateRESTService {
                 .filter(koppeling -> koppeling.getMailTemplate().getMail().equals(mail))
                 .map(koppeling -> restMailtemplateConverter.convert(koppeling.getMailTemplate()))
                 .findFirst()
-                .orElse(mailTemplateService.findDefaultMailtemplate(mail)
-                                .map(restMailtemplateConverter::convert)
-                                .orElse(null));
+                .orElseGet(() -> mailTemplateService.findDefaultMailtemplate(mail)
+                        .map(restMailtemplateConverter::convert)
+                        .orElse(null));
     }
 }

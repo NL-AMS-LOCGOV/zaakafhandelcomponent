@@ -130,7 +130,7 @@ public class KlantenRESTService {
         return vestiging
                 .map(bedrijfConverter::convert)
                 .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
-                .orElse(new RESTBedrijf());
+                .orElseGet(() -> new RESTBedrijf());
     }
 
     @GET
@@ -138,7 +138,7 @@ public class KlantenRESTService {
     public RESTBedrijf readRechtspersoon(@PathParam("rsin") final String rsin) {
         return kvkClientService.findRechtspersoon(rsin)
                 .map(bedrijfConverter::convert)
-                .orElse(new RESTBedrijf());
+                .orElseGet(() -> new RESTBedrijf());
     }
 
     @PUT

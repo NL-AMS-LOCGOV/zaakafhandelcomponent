@@ -255,14 +255,14 @@ public class MailTemplateHelper {
             final Optional<IngeschrevenPersoonHal> initiator) {
         return initiator
                 .map(persoon -> replaceInitiatorVariabelen(resolvedTekst, getNaam(persoon), getAdres(persoon)))
-                .orElse(replaceInitiatorVariabelenOnbekend(resolvedTekst));
+                .orElseGet(() -> replaceInitiatorVariabelenOnbekend(resolvedTekst));
     }
 
     private static String replaceInitiatorVariabelenResultaatItem(final String resolvedTekst,
             final Optional<ResultaatItem> initiator) {
         return initiator
                 .map(item -> replaceInitiatorVariabelen(resolvedTekst, getNaam(item), getAdres(item)))
-                .orElse(replaceInitiatorVariabelenOnbekend(resolvedTekst));
+                .orElseGet(() -> replaceInitiatorVariabelenOnbekend(resolvedTekst));
     }
 
     private static String getNaam(final IngeschrevenPersoonHal persoon) {
