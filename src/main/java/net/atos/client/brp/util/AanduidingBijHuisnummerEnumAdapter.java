@@ -12,12 +12,12 @@ import net.atos.client.brp.model.AanduidingBijHuisnummerEnum;
 public class AanduidingBijHuisnummerEnumAdapter implements JsonbAdapter<AanduidingBijHuisnummerEnum, String> {
 
     @Override
-    public String adaptToJson(final AanduidingBijHuisnummerEnum aanduidingBijHuisnummerEnum) throws Exception {
+    public String adaptToJson(final AanduidingBijHuisnummerEnum aanduidingBijHuisnummerEnum) {
         return aanduidingBijHuisnummerEnum.toString();
     }
 
     @Override
-    public AanduidingBijHuisnummerEnum adaptFromJson(final String json) throws Exception {
+    public AanduidingBijHuisnummerEnum adaptFromJson(final String json) {
         return AanduidingBijHuisnummerEnum.fromValue(json);
     }
 }

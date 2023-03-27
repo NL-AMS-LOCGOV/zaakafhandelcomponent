@@ -12,12 +12,12 @@ import net.atos.client.brp.model.IndicatieGezagMinderjarigeEnum;
 public class IndicatieGezagMinderjarigeEnumAdapter implements JsonbAdapter<IndicatieGezagMinderjarigeEnum, String> {
 
     @Override
-    public String adaptToJson(final IndicatieGezagMinderjarigeEnum indicatieGezagMinderjarigeEnum) throws Exception {
+    public String adaptToJson(final IndicatieGezagMinderjarigeEnum indicatieGezagMinderjarigeEnum) {
         return indicatieGezagMinderjarigeEnum.toString();
     }
 
     @Override
-    public IndicatieGezagMinderjarigeEnum adaptFromJson(final String json) throws Exception {
+    public IndicatieGezagMinderjarigeEnum adaptFromJson(final String json) {
         return IndicatieGezagMinderjarigeEnum.fromValue(json);
     }
 }

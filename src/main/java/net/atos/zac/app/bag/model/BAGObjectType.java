@@ -6,5 +6,20 @@
 package net.atos.zac.app.bag.model;
 
 public enum BAGObjectType {
-    ADRES;
+    ADRES("adressen"),
+    ADRESSEERBAAR_OBJECT("adresseerbaarObject"),
+    WOONPLAATS("woonplaats"),
+    PAND("panden"),
+    OPENBARE_RUIMTE("openbareRuimte"),
+    NUMMERAANDUIDING("nummeraanduiding");
+
+    public final String expand;
+
+    BAGObjectType(final String expand) {
+        this.expand = expand;
+    }
+
+    public String getExpand() {
+        return expand;
+    }
 }

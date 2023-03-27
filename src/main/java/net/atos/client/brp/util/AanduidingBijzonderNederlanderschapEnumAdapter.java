@@ -12,12 +12,12 @@ import net.atos.client.brp.model.AanduidingBijzonderNederlanderschapEnum;
 public class AanduidingBijzonderNederlanderschapEnumAdapter implements JsonbAdapter<AanduidingBijzonderNederlanderschapEnum, String> {
 
     @Override
-    public String adaptToJson(final AanduidingBijzonderNederlanderschapEnum aanduidingBijzonderNederlanderschapEnum) throws Exception {
+    public String adaptToJson(final AanduidingBijzonderNederlanderschapEnum aanduidingBijzonderNederlanderschapEnum) {
         return aanduidingBijzonderNederlanderschapEnum.toString();
     }
 
     @Override
-    public AanduidingBijzonderNederlanderschapEnum adaptFromJson(final String json) throws Exception {
+    public AanduidingBijzonderNederlanderschapEnum adaptFromJson(final String json) {
         return AanduidingBijzonderNederlanderschapEnum.fromValue(json);
     }
 }

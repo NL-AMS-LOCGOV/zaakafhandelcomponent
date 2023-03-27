@@ -44,8 +44,8 @@ import net.atos.client.zgw.zrc.model.ZaakEigenschap;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
-import net.atos.client.zgw.zrc.model.Zaakobject;
-import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
+import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectListParameters;
 
 /**
  *

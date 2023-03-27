@@ -12,12 +12,12 @@ import net.atos.client.brp.model.OuderAanduidingEnum;
 public class OuderAanduidingEnumAdapter implements JsonbAdapter<OuderAanduidingEnum, String> {
 
     @Override
-    public String adaptToJson(final OuderAanduidingEnum ouderAanduidingEnum) throws Exception {
+    public String adaptToJson(final OuderAanduidingEnum ouderAanduidingEnum) {
         return ouderAanduidingEnum.toString();
     }
 
     @Override
-    public OuderAanduidingEnum adaptFromJson(final String json) throws Exception {
+    public OuderAanduidingEnum adaptFromJson(final String json) {
         return OuderAanduidingEnum.fromValue(json);
     }
 }

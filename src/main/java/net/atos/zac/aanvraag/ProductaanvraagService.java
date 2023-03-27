@@ -5,7 +5,6 @@
 
 package net.atos.zac.aanvraag;
 
-import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
@@ -35,7 +34,7 @@ import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.client.zgw.zrc.model.Zaakobject;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductAanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -162,11 +161,9 @@ public class ProductaanvraagService {
     }
 
     private void pairProductaanvraagWithZaak(final URI productaanvraagUrl, final URI zaakUrl) {
-        final Zaakobject zaakobject = new Zaakobject();
+        final ZaakobjectProductAanvraag zaakobject = new ZaakobjectProductAanvraag();
         zaakobject.setZaak(zaakUrl);
         zaakobject.setObject(productaanvraagUrl);
-        zaakobject.setObjectType(OVERIGE);
-        zaakobject.setObjectTypeOverige(OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG);
         zrcClientService.createZaakobject(zaakobject);
     }
 

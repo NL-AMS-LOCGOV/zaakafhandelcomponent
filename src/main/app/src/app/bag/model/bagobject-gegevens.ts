@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {BAGObjecttype} from './bagobjecttype';
+import {BAGObject} from './bagobject';
 
 export class BAGObjectGegevens {
-    constructor(public zaakUUID: string, public bagObject: string, public bagObjecttype: BAGObjecttype) {}
+    constructor(public zaakUUID: string, public bagObject: BAGObject) {}
 }

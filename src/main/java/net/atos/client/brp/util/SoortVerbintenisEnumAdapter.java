@@ -12,12 +12,12 @@ import net.atos.client.brp.model.SoortVerbintenisEnum;
 public class SoortVerbintenisEnumAdapter implements JsonbAdapter<SoortVerbintenisEnum, String> {
 
     @Override
-    public String adaptToJson(final SoortVerbintenisEnum soortVerbintenisEnum) throws Exception {
+    public String adaptToJson(final SoortVerbintenisEnum soortVerbintenisEnum) {
         return soortVerbintenisEnum.toString();
     }
 
     @Override
-    public SoortVerbintenisEnum adaptFromJson(final String json) throws Exception {
+    public SoortVerbintenisEnum adaptFromJson(final String json) {
         return SoortVerbintenisEnum.fromValue(json);
     }
 }

@@ -14,7 +14,7 @@
     <mat-drawer-content>
 
         <div class="flex-row flex-wrap gap-10">
-            <mat-card *ngIf="formulier" class="taak-formulier w50 flex-1">
+            <mat-card *ngIf="formulier" class="taak-formulier w50 flex">
                 <mat-card-content>
                     <div class="form">
                         <mfb-form (formPartial)="onFormPartial($event)"
@@ -25,7 +25,7 @@
                     </div>
                 </mat-card-content>
             </mat-card>
-            <div class="flex-col flex-1">
+            <div class="flex-col flex">
                 <mat-card class="taak-card">
                     <mat-card-header>
                         <mat-card-title>{{'taak' | translate}}</mat-card-title>

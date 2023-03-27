@@ -5,14 +5,14 @@
 
 import {NgModule} from '@angular/core';
 import {SharedModule} from '../shared/shared.module';
-import {BagAdresZoekComponent} from './zoek/bag-adres-zoek/bag-adres-zoek.component';
+import {BagZoekComponent} from './zoek/bag-zoek/bag-zoek.component';
 
 @NgModule({
     declarations: [
-        BagAdresZoekComponent
+        BagZoekComponent
     ],
     exports: [
-        BagAdresZoekComponent
+        BagZoekComponent
     ],
     imports: [
         SharedModule
