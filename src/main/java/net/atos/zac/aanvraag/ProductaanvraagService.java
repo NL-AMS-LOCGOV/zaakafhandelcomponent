@@ -161,8 +161,7 @@ public class ProductaanvraagService {
     }
 
     private void pairProductaanvraagWithZaak(final URI productaanvraagUrl, final URI zaakUrl) {
-        final ZaakobjectProductAanvraag zaakobject = new ZaakobjectProductAanvraag();
-        zaakobject.setZaak(zaakUrl);
+        final ZaakobjectProductAanvraag zaakobject = new ZaakobjectProductAanvraag(zaakUrl);
         zaakobject.setObject(productaanvraagUrl);
         zrcClientService.createZaakobject(zaakobject);
     }
