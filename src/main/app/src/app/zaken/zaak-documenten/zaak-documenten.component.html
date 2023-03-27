@@ -123,9 +123,12 @@
 
                 <tr class="mat-row" *matNoDataRow>
                     <td class="mat-cell" colspan="10">
-                        <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:skeletonLayout.TABLE}">
+                        <ng-container *ngIf="loading$|async; else noResults">
+                            <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:skeletonLayout.TABLE}"></zac-skeleton-loader>
+                        </ng-container>
+                        <ng-template #noResults>
                             <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                        </zac-skeleton-loader>
+                        </ng-template>
                     </td>
                 </tr>
 
