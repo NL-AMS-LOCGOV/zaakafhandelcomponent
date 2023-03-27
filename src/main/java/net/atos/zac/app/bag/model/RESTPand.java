@@ -18,6 +18,4 @@ public class RESTPand extends RESTBAGObject {
         return BAGObjectType.PAND;
     }
 
-    public RESTPand() {
-    }
 }

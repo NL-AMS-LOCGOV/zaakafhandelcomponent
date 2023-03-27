@@ -22,7 +22,4 @@ public class RESTOpenbareRuimte extends RESTBAGObject {
         return BAGObjectType.OPENBARE_RUIMTE;
     }
 
-    public RESTOpenbareRuimte() {
-        super();
-    }
 }

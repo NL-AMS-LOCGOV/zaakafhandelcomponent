@@ -30,6 +30,4 @@ public class RESTNummeraanduiding extends RESTBAGObject {
         return BAGObjectType.NUMMERAANDUIDING;
     }
 
-    public RESTNummeraanduiding() {
-    }
 }

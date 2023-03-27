@@ -16,6 +16,4 @@ public abstract class RESTBAGObject {
 
     public abstract BAGObjectType getBagObjectType();
 
-    public RESTBAGObject() {
-    }
 }

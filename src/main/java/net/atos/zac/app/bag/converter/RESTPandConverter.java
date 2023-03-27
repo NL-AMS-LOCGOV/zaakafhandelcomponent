@@ -15,10 +15,10 @@ import net.atos.zac.app.bag.model.RESTPand;
 public class RESTPandConverter {
 
     public List<RESTPand> convertToRest(final List<PandIOHalBasis> panden) {
-        if (panden != null) {
-            return panden.stream().map(this::convertToREST).toList();
+        if (panden == null) {
+            return List.of();
         }
-        return List.of();
+        return panden.stream().map(this::convertToREST).toList();
     }
 
     public RESTPand convertToREST(final PandIOHalBasis pandIO) {

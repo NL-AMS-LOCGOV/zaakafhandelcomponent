@@ -37,6 +37,4 @@ public class RESTAdres extends RESTBAGObject {
         return BAGObjectType.ADRES;
     }
 
-    public RESTAdres() {
-    }
 }

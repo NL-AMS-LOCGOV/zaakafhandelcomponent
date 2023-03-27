@@ -12,7 +12,7 @@ import net.atos.client.bag.model.StatusNaamgeving;
 public class StatusNaamgevingEnumAdapter implements JsonbAdapter<StatusNaamgeving, String> {
 
     @Override
-    public String adaptToJson(final StatusNaamgeving statusNaamgeving) throws Exception {
+    public String adaptToJson(final StatusNaamgeving statusNaamgeving) {
         return statusNaamgeving.toString();
     }
 

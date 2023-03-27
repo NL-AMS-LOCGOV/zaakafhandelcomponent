@@ -160,7 +160,7 @@ public class BAGRESTService {
             return zaakobjecten.getResults().stream()
                     .filter(zaakobject -> zaakobject.getObjectType() == ADRES)
                     .map(zaakobject -> bagClientService.readAdres(zaakobject.getObject()))
-                    .map(adres -> adresConverter.convertToREST(adres))
+                    .map(adresConverter::convertToREST)
                     .toList();
         } else {
             return Collections.emptyList();

@@ -18,6 +18,4 @@ public class RESTWoonplaats extends RESTBAGObject {
         return BAGObjectType.WOONPLAATS;
     }
 
-    public RESTWoonplaats() {
-    }
 }

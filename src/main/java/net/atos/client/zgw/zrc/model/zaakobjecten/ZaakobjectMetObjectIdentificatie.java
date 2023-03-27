@@ -14,13 +14,11 @@ import net.atos.client.zgw.zrc.model.Objecttype;
  */
 public abstract class ZaakobjectMetObjectIdentificatie<OBJECT> extends Zaakobject {
 
-
     /**
      * Het generieke object
      * - Required
      */
     private OBJECT objectIdentificatie;
-
 
     public ZaakobjectMetObjectIdentificatie() {
     }
@@ -31,9 +29,7 @@ public abstract class ZaakobjectMetObjectIdentificatie<OBJECT> extends Zaakobjec
     public ZaakobjectMetObjectIdentificatie(final URI zaak, Objecttype objectType, OBJECT objectIdentificatie) {
         super(zaak, objectType);
         this.objectIdentificatie = objectIdentificatie;
-
     }
-
 
     public OBJECT getObjectIdentificatie() {
         return objectIdentificatie;
@@ -52,5 +48,4 @@ public abstract class ZaakobjectMetObjectIdentificatie<OBJECT> extends Zaakobjec
         ZaakobjectMetObjectIdentificatie<OBJECT> zaakobject = (ZaakobjectMetObjectIdentificatie<OBJECT>) other;
         return equalObjectIdentificatie(zaakobject.getObjectIdentificatie());
     }
-
 }

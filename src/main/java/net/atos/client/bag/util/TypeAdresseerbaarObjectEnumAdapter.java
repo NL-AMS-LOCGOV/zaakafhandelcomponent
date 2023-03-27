@@ -12,7 +12,7 @@ import net.atos.client.bag.model.TypeAdresseerbaarObject;
 public class TypeAdresseerbaarObjectEnumAdapter implements JsonbAdapter<TypeAdresseerbaarObject, String> {
 
     @Override
-    public String adaptToJson(final TypeAdresseerbaarObject typeAdresseerbaarObject) throws Exception {
+    public String adaptToJson(final TypeAdresseerbaarObject typeAdresseerbaarObject) {
         return typeAdresseerbaarObject.toString();
     }
 

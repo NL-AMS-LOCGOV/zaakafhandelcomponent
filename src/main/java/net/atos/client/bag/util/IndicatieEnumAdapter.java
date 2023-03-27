@@ -12,7 +12,7 @@ import net.atos.client.bag.model.Indicatie;
 public class IndicatieEnumAdapter implements JsonbAdapter<Indicatie, String> {
 
     @Override
-    public String adaptToJson(final Indicatie indicatie) throws Exception {
+    public String adaptToJson(final Indicatie indicatie) {
         return indicatie.toString();
     }
 
