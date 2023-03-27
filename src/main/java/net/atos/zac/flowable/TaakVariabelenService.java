@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -28,6 +29,16 @@ import org.flowable.task.api.TaskInfo;
 @ApplicationScoped
 @Transactional
 public class TaakVariabelenService {
+
+    public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
+
+    public static final String TAAK_DATA_DOCUMENTEN_VERZENDEN_POST = "documentenVerzendenPost";
+
+    public static final String TAAK_DATA_VERZENDDATUM = "verzenddatum";
+
+    public static final String TAAK_DATA_TOELICHTING = "toelichting";
+
+    public static final String TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER = ";";
 
     private static final String TAAK_DATA_ZAAK_OPSCHORTEN = "zaakOpschorten";
 
@@ -42,8 +53,6 @@ public class TaakVariabelenService {
     private final static String TAAK_DATA_MAIL_BODY = "body";
 
     private static final String TAAK_DATA_MAIL_BIJLAGEN = "bijlagen";
-
-    public static final String TAAK_DATA_ONDERTEKENEN = "ondertekenen";
 
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 
@@ -166,7 +175,7 @@ public class TaakVariabelenService {
 
     private Optional<String> findTaskDataElement(final Map<String, String> taakData, final String elementName) {
         final String value = taakData.get(elementName);
-        if (value != null) {
+        if (StringUtils.isNotEmpty(value)) {
             return Optional.of(value);
         } else {
             return Optional.empty();

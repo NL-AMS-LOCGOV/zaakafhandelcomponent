@@ -106,8 +106,6 @@ public class InformatieObjectenRESTService {
 
     private static final String TOELICHTING_PDF = "Geconverteerd naar PDF";
 
-    private static final String PREFIX_VERZENDEN_TOELICHTING = "Per post";
-
     @Inject
     private DRCClientService drcClientService;
 
@@ -177,6 +175,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private EnkelvoudigInformatieObjectDownloadService enkelvoudigInformatieObjectDownloadService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectVerzendenService enkelvoudigInformatieObjectVerzendenService;
 
     @Inject
     private OfficeConverterClientService officeConverterClientService;
@@ -265,21 +266,10 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUuid);
         assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         informatieobjecten.forEach(informatieobject -> assertPolicy(isVerzendenToegestaan(informatieobject)));
-        informatieobjecten.forEach(informatieobject -> {
-            final boolean tempLock = !informatieobject.getLocked();
-            try {
-                final EnkelvoudigInformatieobjectWithInhoudAndLock informatieobjectUpdate = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-                informatieobjectUpdate.setLock(getLock(informatieobject));
-                informatieobjectUpdate.setVerzenddatum(gegevens.verzenddatum);
-                drcClientService.updateEnkelvoudigInformatieobject(informatieobject.getUUID(),
-                                                                   String.format("%s: %s", PREFIX_VERZENDEN_TOELICHTING, gegevens.toelichting),
-                                                                   informatieobjectUpdate);
-            } finally {
-                if (tempLock) {
-                    enkelvoudigInformatieObjectLockService.deleteLock(informatieobject.getUUID());
-                }
-            }
-        });
+        informatieobjecten.forEach(informatieobject ->
+                                           enkelvoudigInformatieObjectVerzendenService.verzendenEnkelvoudigInformatieObject(
+                                                   informatieobject,
+                                                   gegevens.verzenddatum, gegevens.toelichting));
     }
 
     private boolean isVerzendenToegestaan(final EnkelvoudigInformatieobject informatieobject) {
@@ -494,7 +484,8 @@ public class InformatieObjectenRESTService {
             EnkelvoudigInformatieobjectWithInhoudAndLock updatedDocument =
                     informatieobjectConverter.convert(enkelvoudigInformatieObjectVersieGegevens, getLock(document), file);
             updatedDocument = drcClientService.updateEnkelvoudigInformatieobject(document.getUUID(),
-                                                                                 enkelvoudigInformatieObjectVersieGegevens.toelichting, updatedDocument);
+                                                                                 enkelvoudigInformatieObjectVersieGegevens.toelichting,
+                                                                                 updatedDocument);
             return informatieobjectConverter.convertToREST(updatedDocument);
         } finally {
             if (tempLock) {

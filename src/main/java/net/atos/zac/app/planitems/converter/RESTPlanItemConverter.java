@@ -98,7 +98,6 @@ public class RESTPlanItemConverter {
     }
 
     private RESTPlanItem convertProcessTask(final RESTPlanItem restPlanItem) {
-        restPlanItem.formulierDefinitie = FormulierDefinitie.VERZENDEN_BESLUIT;
         return restPlanItem;
     }
 

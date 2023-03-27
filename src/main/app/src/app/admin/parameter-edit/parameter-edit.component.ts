@@ -506,7 +506,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
     }
 
     getVeldDefinities(formulierDefinitieId: string): FormulierVeldDefinitie[] {
-        return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
+        if (formulierDefinitieId) {
+            return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
+        } else {
+            return [];
+        }
     }
 
     getBeschikbareMailtemplates(mailtemplate: MailtemplateKoppelingMail): any {

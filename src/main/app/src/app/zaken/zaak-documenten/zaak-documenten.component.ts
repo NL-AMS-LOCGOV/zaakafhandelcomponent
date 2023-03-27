@@ -140,6 +140,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
             this.informatieObjecten$.subscribe(objecten => {
                 this.enkelvoudigInformatieObjecten.data = objecten;
             });
+
+            this.zakenService.readZaak(this.zaakUUID).subscribe(zaak => {
+                this.heeftGerelateerdeZaken = 0 < zaak.gerelateerdeZaken.length;
+            });
         }
     }
 
@@ -203,8 +207,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     toggleGekoppeldeZaakDocumenten() {
         this.documentColumns = this.toonGekoppeldeZaakDocumenten ?
-            ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'] :
-            ['downloaden', 'titel', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
+            ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'bestandsomvang', 'status', 'vertrouwelijkheidaanduiding', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'] :
+            ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'bestandsomvang', 'status', 'vertrouwelijkheidaanduiding', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
         this.loadInformatieObjecten();
     }
 

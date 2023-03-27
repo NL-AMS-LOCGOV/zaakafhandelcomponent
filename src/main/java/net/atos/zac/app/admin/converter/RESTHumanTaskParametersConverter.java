@@ -31,9 +31,11 @@ public class RESTHumanTaskParametersConverter {
     private RESTHumanTaskParameters convertHumanTaskDefinition(final RESTPlanItemDefinition humanTaskDefinition,
             final Collection<HumanTaskParameters> humanTaskParametersCollection) {
         return humanTaskParametersCollection.stream()
-                .filter(humanTaskParameters -> humanTaskParameters.getPlanItemDefinitionID().equals(humanTaskDefinition.id))
-                .findAny().map(humanTaskParameters -> convertToRESTHumanTaskParameters(humanTaskParameters, humanTaskDefinition))
-                .orElse(convertToRESTHumanTaskParameters(humanTaskDefinition));
+                .filter(humanTaskParameters -> humanTaskParameters.getPlanItemDefinitionID()
+                        .equals(humanTaskDefinition.id))
+                .findAny()
+                .map(humanTaskParameters -> convertToRESTHumanTaskParameters(humanTaskParameters, humanTaskDefinition))
+                .orElseGet(() -> convertToRESTHumanTaskParameters(humanTaskDefinition));
     }
 
     private RESTHumanTaskParameters convertToRESTHumanTaskParameters(final HumanTaskParameters humanTaskParameters,

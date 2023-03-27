@@ -21,10 +21,11 @@ import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/fo
 
 export abstract class AbstractTaakFormulier {
 
-    public static TAAK_FATALEDATUM: string = 'taakFataledatum';
     public static TAAK_TOEKENNING: string = 'taakToekenning';
-    public static BIJLAGEN_FIELD: string = 'bijlagen';
-    public static ONDERTEKENEN_FIELD: string = 'ondertekenen';
+    protected static TAAK_FATALEDATUM: string = 'taakFataledatum';
+    protected static BIJLAGEN_FIELD: string = 'bijlagen';
+    protected static ONDERTEKENEN_FIELD: string = 'ondertekenen';
+    protected static TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER = ';';
 
     zaak: Zaak;
     taakNaam: string;

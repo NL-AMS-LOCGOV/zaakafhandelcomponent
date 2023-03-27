@@ -19,6 +19,7 @@ import {ExternAdviesMail} from './model/extern-advies-mail';
 import {FormulierDefinitieID} from '../../admin/model/formulier-definitie';
 import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 import {KlantenService} from '../../klanten/klanten.service';
+import {DocumentVerzendenPost} from './model/document-verzenden-post';
 
 @Injectable({
     providedIn: 'root'
@@ -68,6 +69,11 @@ export class TaakFormulierenService {
                     this.zakenService));
             case 'GOEDKEUREN':
                 return new TaakFormulierBuilder(new Goedkeuren(
+                    this.translate,
+                    this.takenService,
+                    this.informatieObjectenService));
+            case 'DOCUMENT_VERZENDEN_POST':
+                return new TaakFormulierBuilder(new DocumentVerzendenPost(
                     this.translate,
                     this.takenService,
                     this.informatieObjectenService));

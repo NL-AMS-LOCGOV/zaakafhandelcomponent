@@ -42,74 +42,85 @@ export class Goedkeuren extends AbstractTaakFormulier {
         super(translate, informatieObjectenService);
     }
 
-    _initStartForm() {
+    protected _initStartForm() {
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
-                                           .maxlength(1000)
-                                           .build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(documenten).build()]
+            [new TextareaFormFieldBuilder()
+            .id(fields.VRAAG)
+            .label(fields.VRAAG)
+            .validators(Validators.required)
+            .maxlength(1000)
+            .build()],
+            [new DocumentenLijstFieldBuilder()
+            .id(fields.RELEVANTE_DOCUMENTEN)
+            .label(fields.RELEVANTE_DOCUMENTEN)
+            .documenten(documenten)
+            .build()]
         );
     }
 
-    _initBehandelForm() {
+    protected _initBehandelForm() {
         const fields = this.fields;
         const goedkeurenDataElement = this.getDataElement(fields.GOEDKEUREN);
         this.form.push(
             [new ParagraphFormFieldBuilder().text(
                 this.translate.instant('msg.goedkeuring.behandelen', {zaaknummer: this.taak.zaakIdentificatie}))
                                             .build()],
-            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
-                                                                            .label(fields.VRAAG)
-                                                                            .build()],
-            [new DocumentenOndertekenenFieldBuilder().id(fields.ONDERTEKENEN)
-                                                     .label(fields.ONDERTEKENEN)
-                                                     .readonly(this.readonly)
-                                                     .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                                     .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
-                                                     .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG))
+            .id(fields.VRAAG)
+            .label(fields.VRAAG)
+            .build()],
+            [new DocumentenOndertekenenFieldBuilder()
+            .id(fields.ONDERTEKENEN)
+            .label(fields.ONDERTEKENEN)
+            .readonly(this.readonly)
+            .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+            .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
+            .build()],
             [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
-                this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
-                                                                                      .label(fields.GOEDKEUREN)
-                                                                                      .options(this.getGoedkeurenOpties$())
-                                                                                      .validators(Validators.required)
-                                                                                      .readonly(this.readonly)
-                                                                                      .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING)).id(fields.TOELICHTING)
-                                                                                  .label(fields.TOELICHTING)
-                                                                                  .validators(Validators.required)
-                                                                                  .readonly(this.readonly)
-                                                                                  .maxlength(1000)
-                                                                                  .build()]
+                this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement)
+            .id(fields.GOEDKEUREN)
+            .label(fields.GOEDKEUREN)
+            .options(this.getGoedkeurenOpties$())
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
+            .id(fields.TOELICHTING)
+            .label(fields.TOELICHTING)
+            .validators(Validators.required)
+            .readonly(this.readonly)
+            .maxlength(1000)
+            .build()]
         );
     }
 
-    getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
+    private getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new InformatieobjectZoekParameters();
             if (dataElement) {
                 zoekParameters.zaakUUID = this.zaak.uuid;
-                zoekParameters.informatieobjectUUIDs = dataElement.split(';');
+                zoekParameters.informatieobjectUUIDs = dataElement.split(
+                    AbstractTaakFormulier.TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER);
                 return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
             }
         }
         return of([]);
     }
 
-    getDocumentenChecked(field: string): string[] {
+    private getDocumentenChecked(field: string): string[] {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
-            return dataElement.split(';');
+            return dataElement.split(AbstractTaakFormulier.TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER);
         }
         return [];
     }
 
-    getGoedkeurenOpties$(): Observable<string[]> {
+    private getGoedkeurenOpties$(): Observable<string[]> {
         return of(Object.keys(Goedkeuring).map(k => this.GOEDKEUREN_ENUM_PREFIX + Goedkeuring[k]));
     }
 
