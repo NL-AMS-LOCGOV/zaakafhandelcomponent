@@ -20,32 +20,21 @@ public abstract class ZaakobjectMetObjectIdentificatie<OBJECT> extends Zaakobjec
      */
     private OBJECT objectIdentificatie;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ZaakobjectMetObjectIdentificatie() {
     }
 
     /**
      * Constructor with required attributes
      */
-    public ZaakobjectMetObjectIdentificatie(final URI zaak, Objecttype objectType, OBJECT objectIdentificatie) {
-        super(zaak, objectType);
+    public ZaakobjectMetObjectIdentificatie(final URI zaak, final URI objectUri, final Objecttype objectType, final OBJECT objectIdentificatie) {
+        super(zaak, objectUri, objectType);
         this.objectIdentificatie = objectIdentificatie;
     }
 
     public OBJECT getObjectIdentificatie() {
         return objectIdentificatie;
-    }
-
-    protected abstract boolean equalObjectIdentificatie(OBJECT other);
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-        ZaakobjectMetObjectIdentificatie<OBJECT> zaakobject = (ZaakobjectMetObjectIdentificatie<OBJECT>) other;
-        return equalObjectIdentificatie(zaakobject.getObjectIdentificatie());
     }
 }

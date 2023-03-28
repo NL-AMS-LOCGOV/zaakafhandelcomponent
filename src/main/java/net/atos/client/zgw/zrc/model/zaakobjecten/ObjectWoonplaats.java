@@ -17,9 +17,15 @@ public class ObjectWoonplaats extends ObjectBAGObject {
      */
     private String woonplaatsNaam;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ObjectWoonplaats() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ObjectWoonplaats(final String identificatie, final String woonplaatsNaam) {
         super(identificatie);
         this.woonplaatsNaam = woonplaatsNaam;

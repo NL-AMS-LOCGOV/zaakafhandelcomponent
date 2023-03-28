@@ -17,9 +17,15 @@ public abstract class ObjectBAGObject {
      */
     private String identificatie;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ObjectBAGObject() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ObjectBAGObject(final String identificatie) {
         this.identificatie = identificatie;
     }

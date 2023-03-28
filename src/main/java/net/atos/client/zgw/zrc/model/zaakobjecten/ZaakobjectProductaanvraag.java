@@ -13,15 +13,21 @@ import net.atos.zac.aanvraag.ProductaanvraagService;
 /**
  * ZaakobjectProductAanvraag
  */
-public class ZaakobjectProductAanvraag extends Zaakobject {
+public class ZaakobjectProductaanvraag extends Zaakobject {
 
     public static final String OBJECT_TYPE_OVERIGE = ProductaanvraagService.OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG;
 
-    public ZaakobjectProductAanvraag() {
+    /**
+     * Constructor for JSONB deserialization
+     */
+    public ZaakobjectProductaanvraag() {
     }
 
-    public ZaakobjectProductAanvraag(final URI zaak) {
-        super(zaak, Objecttype.OVERIGE);
+    /**
+     * Constructor with required attributes
+     */
+    public ZaakobjectProductaanvraag(final URI zaak, final URI productaanvraag) {
+        super(zaak, productaanvraag, Objecttype.OVERIGE);
         setObjectTypeOverige(OBJECT_TYPE_OVERIGE);
     }
 

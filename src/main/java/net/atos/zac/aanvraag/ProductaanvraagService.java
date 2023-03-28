@@ -34,7 +34,7 @@ import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductAanvraag;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -161,8 +161,7 @@ public class ProductaanvraagService {
     }
 
     private void pairProductaanvraagWithZaak(final URI productaanvraagUrl, final URI zaakUrl) {
-        final ZaakobjectProductAanvraag zaakobject = new ZaakobjectProductAanvraag(zaakUrl);
-        zaakobject.setObject(productaanvraagUrl);
+        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaakUrl, productaanvraagUrl);
         zrcClientService.createZaakobject(zaakobject);
     }
 

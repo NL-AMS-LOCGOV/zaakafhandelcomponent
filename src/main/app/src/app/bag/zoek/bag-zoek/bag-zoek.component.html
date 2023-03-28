@@ -39,7 +39,7 @@
         </ng-container>
         <ng-container matColumnDef="type">
             <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'type' | translate}} </th>
-            <td *matCellDef="let bagObject" mat-cell>{{'bagobject.type.' + bagObject.bagObjectType | translate}}</td>
+            <td *matCellDef="let bagObject" mat-cell>{{'objecttype' + bagObject.bagObjectType | translate}}</td>
         </ng-container>
         <ng-container matColumnDef="omschrijving">
             <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'omschrijving' | translate}} </th>

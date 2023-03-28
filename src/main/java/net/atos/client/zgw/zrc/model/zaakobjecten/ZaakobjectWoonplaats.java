@@ -12,11 +12,17 @@ import net.atos.client.zgw.zrc.model.Objecttype;
 /**
  * ZaakobjectWoonplaats
  */
-public class ZaakobjectWoonplaats extends ZaakobjectBAGObject<ObjectWoonplaats> {
+public class ZaakobjectWoonplaats extends ZaakobjectMetObjectIdentificatie<ObjectWoonplaats> {
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ZaakobjectWoonplaats() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ZaakobjectWoonplaats(final URI zaak, final URI bagobjectUri, final ObjectWoonplaats woonplaats) {
         super(zaak, bagobjectUri, Objecttype.WOONPLAATS, woonplaats);
     }
