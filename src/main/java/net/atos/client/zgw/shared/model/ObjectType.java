@@ -30,7 +30,7 @@ import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectAdresWijz
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectNummeraanduidingWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectOpenbareRuimteWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectPandWijziging;
-import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectProductAanvraagWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectProductaanvraagWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectWoonplaatsWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Objecttype;
@@ -130,7 +130,7 @@ public enum ObjectType {
         if (StringUtils.equals(objectTypeOverige, ZaakobjectNummeraanduiding.OBJECT_TYPE_OVERIGE)) {
             return ZaakobjectNummeraanduidingWijziging.class;
         } else if (StringUtils.equals(objectTypeOverige, ZaakobjectProductaanvraag.OBJECT_TYPE_OVERIGE)) {
-            return ZaakobjectProductAanvraagWijziging.class;
+            return ZaakobjectProductaanvraagWijziging.class;
         }
         throw new RuntimeException(String.format("objecttype 'OVERIGE' met objectTypeOverige '%s' wordt niet ondersteund", objectTypeOverige));
     }

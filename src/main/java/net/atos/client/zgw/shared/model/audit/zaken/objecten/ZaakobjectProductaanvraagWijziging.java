@@ -9,7 +9,7 @@ import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 
-public class ZaakobjectProductAanvraagWijziging extends AuditWijziging<ZaakobjectProductaanvraag> {
+public class ZaakobjectProductaanvraagWijziging extends AuditWijziging<ZaakobjectProductaanvraag> {
 
     @Override
     public ObjectType getObjectType() {
