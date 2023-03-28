@@ -152,6 +152,7 @@
   "ontvanger": "Receiver",
   "onderwerp": "Subject",
   "body": "Message",
+  "filter.-alle-": "- All -",
   "filter.alle": "All employees",
   "filter.groep": "Only group members",
   "formaat": "format",

@@ -26,9 +26,9 @@
                 <th mat-header-cell *matHeaderCellDef>
                     <mat-form-field subscriptSizing="dynamic">
                         <mat-select [compareWith]="compareUser"
-                                    (selectionChange)="filtersChanged()" id="ontkoppeldDoor_filter" placeholder="{{'ontkoppeldDoor.-kies-' | translate }}"
+                                    (selectionChange)="filtersChanged()" id="ontkoppeldDoor_filter" placeholder="{{'filter.-alle-' | translate }}"
                                     [(ngModel)]="listParameters.ontkoppeldDoor">
-                            <mat-option>{{'ontkoppeldDoor.-kies-' | translate }}</mat-option>
+                            <mat-option>{{'filter.-alle-' | translate }}</mat-option>
                             <mat-option *ngFor="let value of filterOntkoppeldDoor" [value]="value">{{ value.naam }}</mat-option>
                         </mat-select>
                     </mat-form-field>
