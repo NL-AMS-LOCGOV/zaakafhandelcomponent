@@ -873,7 +873,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     adresGeselecteerd(bagObject: BAGObject): void {
         this.websocketService.suspendListener(this.zaakListener);
-        this.actionsSidenav.close();
         this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
             .subscribe(() => {
                 this.utilService.openSnackbar('msg.bagobject.toegevoegd');

@@ -15,6 +15,7 @@
                           (klantGegevens)="betrokkeneGeselecteerd($event)"
                           [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
         <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
+                      [gekoppeldeBagObjecten]="bagObjecten.data"
                       (bagObject)="adresGeselecteerd($event)"></zac-bag-zoek>
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
                           [huidigeLocatie]="zaakLocatie"

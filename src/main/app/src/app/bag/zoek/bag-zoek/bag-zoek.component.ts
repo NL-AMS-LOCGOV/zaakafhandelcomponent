@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
@@ -23,6 +23,7 @@ import {Adres} from '../../model/adres';
 export class BagZoekComponent implements OnInit {
 
     @Output() bagObject = new EventEmitter<BAGObject>();
+    @Input() gekoppeldeBagObjecten: BAGObject[];
     BAGObjecttype = BAGObjecttype;
     trefwoorden = new FormControl('', [Validators.required, Validators.maxLength(255)]);
 
@@ -54,6 +55,7 @@ export class BagZoekComponent implements OnInit {
             data: new ConfirmDialogData('msg.bagobject.koppelen.bevestigen')
         }).afterClosed().subscribe(confirmed => {
             if (confirmed) {
+                this.gekoppeldeBagObjecten.push(bagObject);
                 this.bagObject.emit(bagObject);
             }
         });
@@ -96,5 +98,12 @@ export class BagZoekComponent implements OnInit {
         childeren.forEach(d => d['child'] = true);
         this.bagObjecten.data.splice(this.bagObjecten.data.indexOf(bagObject) + 1, 0, ...childeren);
         this.table.renderRows();
+    }
+
+    reedsGekoppeld(row: BAGObject): boolean {
+        if (this.gekoppeldeBagObjecten?.length) {
+            return this.gekoppeldeBagObjecten.some(b => b.identificatie === row.identificatie && b.bagObjectType === row.bagObjectType);
+        }
+        return false;
     }
 }
