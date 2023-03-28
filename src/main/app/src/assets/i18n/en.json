@@ -503,6 +503,8 @@
   "actie.downloaden": "Download",
   "actie.downloaden.zip": "Download as zip",
   "actie.export": "Export",
+  "actie.gerelateerde.gegevens.tonen": "Show related data",
+  "actie.gerelateerde.gegevens.verbergen": "Hide related data",
   "actie.initiator.email.toevoegen": "Add initiator email address",
   "actie.initiator.toevoegen": "Assign initiator",
   "actie.initiator.toevoegen.persoon": "Assign person as initiator",

@@ -27,13 +27,14 @@
         <ng-container matColumnDef="expand">
             <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
             <td *matCellDef="let bagObject" mat-cell>
-                <button *ngIf="expandable(bagObject) " mat-icon-button (click)="expand(bagObject)" title="{{ 'actie.uitklappen' | translate}}">
+                <button *ngIf="expandable(bagObject) " mat-icon-button (click)="expand(bagObject)"
+                        title="{{ (bagObject.expanded ? 'actie.gerelateerde.gegevens.verbergen' : 'actie.gerelateerde.gegevens.tonen') | translate}}">
                     <mat-icon>{{bagObject.expanded ? 'expand_more' : 'chevron_right'}}</mat-icon>
                 </button>
             </td>
         </ng-container>
         <ng-container matColumnDef="id">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'id' | translate}} </th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'identificatie' | translate}} </th>
             <td *matCellDef="let bagObject" mat-cell>
                 {{bagObject.identificatie | empty}}</td>
         </ng-container>
