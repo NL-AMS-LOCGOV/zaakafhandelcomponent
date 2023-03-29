@@ -153,8 +153,6 @@ public class ProductaanvraagService {
             inboxProductaanvraag.setAanvraagdocumentUUID(aanvraagDocumentUUID);
             inboxDocumentenService.find(aanvraagDocumentUUID).ifPresent(inboxDocument -> {
                 inboxDocumentenService.delete(inboxDocument.getId());
-                LOG.info(String.format("Aanvraagdocument %s opgeslagen bij productaanvraag: '%s', Document is verwijderd uit de Inbox-documenten.",
-                                       inboxDocument.getId(), productaanvraagObject.getUuid()));
             });
         }
         inboxProductaanvraagService.create(inboxProductaanvraag);
