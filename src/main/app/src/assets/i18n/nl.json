@@ -152,6 +152,7 @@
   "onderwerp": "Onderwerp",
   "body": "Bericht",
   "filter": "Filter",
+  "filter.-alle-": "- Alle -",
   "filter.alle": "Alle medewerkers",
   "filter.groep": "Alleen groepsleden",
   "formaat": "Bestandsformaat",
