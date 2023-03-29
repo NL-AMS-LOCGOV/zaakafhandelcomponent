@@ -18,6 +18,8 @@ import {LoggedInUser} from './model/logged-in-user';
 })
 export class IdentityService {
 
+    public static LOGGED_IN_USER_KEY = 'loggedInUser';
+
     private basepath: string = '/rest/identity';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
@@ -42,13 +44,13 @@ export class IdentityService {
     }
 
     readLoggedInUser(): Observable<LoggedInUser> {
-        const loggedInUser = SessionStorageUtil.getItem('loggedInUser') as LoggedInUser;
+        const loggedInUser = SessionStorageUtil.getItem(IdentityService.LOGGED_IN_USER_KEY) as LoggedInUser;
         if (loggedInUser) {
             return of(loggedInUser);
         }
         return this.http.get<LoggedInUser>(`${this.basepath}/loggedInUser`).pipe(
             tap(user => {
-                SessionStorageUtil.setItem('loggedInUser', user);
+                SessionStorageUtil.setItem(IdentityService.LOGGED_IN_USER_KEY, user);
             }),
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
