@@ -120,6 +120,7 @@ export class MailCreateComponent implements OnInit {
         .id(this.fieldNames.BIJLAGEN)
         .label(this.fieldNames.BIJLAGEN)
         .documenten(documenten)
+        .openInNieuweTab()
         .build();
 
         if (this.zaak.initiatorIdentificatieType && this.zaak.initiatorIdentificatie) {

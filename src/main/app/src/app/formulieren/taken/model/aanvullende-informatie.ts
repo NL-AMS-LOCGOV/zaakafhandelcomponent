@@ -111,7 +111,9 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
-            .documenten(documenten).build()],
+            .documenten(documenten)
+            .openInNieuweTab()
+            .build()],
             [new DateFormFieldBuilder(this.humanTaskData.fataledatum)
             .id(AbstractTaakFormulier.TAAK_FATALEDATUM)
             .minDate(morgen)

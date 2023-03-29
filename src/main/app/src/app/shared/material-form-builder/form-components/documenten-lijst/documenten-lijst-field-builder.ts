@@ -33,6 +33,11 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    openInNieuweTab() {
+        this.formField.openInNieuweTab = true;
+        return this;
+    }
+
     selectLabel(label: string): this {
         this.formField.selectLabel = label;
         return this;

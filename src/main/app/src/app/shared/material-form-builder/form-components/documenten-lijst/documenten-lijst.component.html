@@ -59,7 +59,7 @@
                         <div class="flex-row">
                             <a mat-icon-button
                                [href]="document.viewLink"
-                               target="_blank"
+                               target="{{this.data.openInNieuweTab ? '_blank' : ''}}"
                                title="{{ 'actie.document.bekijken' | translate}}">
                                 <mat-icon>visibility</mat-icon>
                             </a>

@@ -15,6 +15,7 @@ export class DocumentenLijstFormField extends AbstractFormControlField {
     documentenChecked: string[];
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
     selectLabel = '';
+    openInNieuweTab: boolean = false;
 
     constructor() {
         super();

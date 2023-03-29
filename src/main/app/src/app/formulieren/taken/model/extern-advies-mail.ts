@@ -94,6 +94,7 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
+            .openInNieuweTab()
             .documenten(documenten).build()]
         );
 

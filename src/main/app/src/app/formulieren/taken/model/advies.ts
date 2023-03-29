@@ -48,10 +48,18 @@ export class Advies extends AbstractTaakFormulier {
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
-                                           .maxlength(1000).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(documenten).build()]
+            [new TextareaFormFieldBuilder()
+            .id(fields.VRAAG)
+            .label(fields.VRAAG)
+            .validators(Validators.required)
+            .maxlength(1000)
+            .build()],
+            [new DocumentenLijstFieldBuilder()
+            .id(fields.RELEVANTE_DOCUMENTEN)
+            .label(fields.RELEVANTE_DOCUMENTEN)
+            .documenten(documenten)
+            .openInNieuweTab()
+            .build()]
         );
     }
 

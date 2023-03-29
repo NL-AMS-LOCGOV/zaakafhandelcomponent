@@ -58,6 +58,7 @@ export class Goedkeuren extends AbstractTaakFormulier {
             .id(fields.RELEVANTE_DOCUMENTEN)
             .label(fields.RELEVANTE_DOCUMENTEN)
             .documenten(documenten)
+            .openInNieuweTab()
             .build()]
         );
     }
