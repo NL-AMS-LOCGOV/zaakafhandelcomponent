@@ -11,6 +11,10 @@ import net.atos.client.bag.model.AdresIOHal;
 import net.atos.client.bag.model.Indicatie;
 import net.atos.client.bag.model.OpenbareRuimte;
 import net.atos.client.bag.model.OpenbareRuimteIOHalBasis;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectOpenbareRuimte;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectOpenbareRuimte;
+import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
 
 public class RESTOpenbareRuimteConverter {
@@ -39,4 +43,25 @@ public class RESTOpenbareRuimteConverter {
         return restOpenbareRuimte;
     }
 
+    public RESTOpenbareRuimte convertToREST(final ZaakobjectOpenbareRuimte zaakobjectOpenbareRuimte) {
+        if (zaakobjectOpenbareRuimte == null || zaakobjectOpenbareRuimte.getObjectIdentificatie() == null) {
+            return null;
+        }
+        final ObjectOpenbareRuimte openbareRuimte = zaakobjectOpenbareRuimte.getObjectIdentificatie();
+        final RESTOpenbareRuimte restOpenbareRuimte = new RESTOpenbareRuimte();
+        restOpenbareRuimte.url = zaakobjectOpenbareRuimte.getObject();
+        restOpenbareRuimte.identificatie = openbareRuimte.getIdentificatie();
+        restOpenbareRuimte.naam = openbareRuimte.getGorOpenbareRuimteNaam();
+        restOpenbareRuimte.woonplaatsNaam = openbareRuimte.getWplWoonplaatsNaam();
+        return restOpenbareRuimte;
+    }
+
+    public ZaakobjectOpenbareRuimte convertToZaakobject(final RESTBAGObjectGegevens<RESTOpenbareRuimte> gegevens, final Zaak zaak) {
+        final RESTOpenbareRuimte openbareRuimte = gegevens.bagObject;
+        final ObjectOpenbareRuimte objectOpenbareRuimte = new ObjectOpenbareRuimte(
+                openbareRuimte.identificatie,
+                openbareRuimte.naam,
+                openbareRuimte.woonplaatsNaam);
+        return new ZaakobjectOpenbareRuimte(zaak.getUrl(), openbareRuimte.url, objectOpenbareRuimte);
+    }
 }

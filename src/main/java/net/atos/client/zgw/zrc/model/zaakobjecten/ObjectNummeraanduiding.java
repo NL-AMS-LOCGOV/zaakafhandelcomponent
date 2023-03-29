@@ -10,8 +10,6 @@ package net.atos.client.zgw.zrc.model.zaakobjecten;
  */
 public class ObjectNummeraanduiding extends ObjectBAGObject {
 
-    private String identificatie;
-
     private String huisnummerWeergave;
 
     private int huisnummer;
@@ -26,9 +24,15 @@ public class ObjectNummeraanduiding extends ObjectBAGObject {
 
     private String status;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ObjectNummeraanduiding() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ObjectNummeraanduiding(
             final String identificatie,
             final int huisnummer,
@@ -42,14 +46,6 @@ public class ObjectNummeraanduiding extends ObjectBAGObject {
         this.postcode = postcode;
         this.typeAdresseerbaarObject = typeAdresseerbaarObject;
         this.status = status;
-    }
-
-    public String getIdentificatie() {
-        return identificatie;
-    }
-
-    public void setIdentificatie(final String identificatie) {
-        this.identificatie = identificatie;
     }
 
     public String getHuisnummerWeergave() {

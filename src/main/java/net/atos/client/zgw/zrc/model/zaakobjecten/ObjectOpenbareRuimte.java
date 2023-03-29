@@ -24,9 +24,15 @@ public class ObjectOpenbareRuimte extends ObjectBAGObject {
      */
     private String gorOpenbareRuimteNaam;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ObjectOpenbareRuimte() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ObjectOpenbareRuimte(final String identificatie, final String gorOpenbareRuimteNaam, final String wplWoonplaatsNaam) {
         super(identificatie);
         this.wplWoonplaatsNaam = wplWoonplaatsNaam;

@@ -49,9 +49,15 @@ public class ObjectAdres extends ObjectBAGObject {
      */
     private String postcode;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ObjectAdres() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ObjectAdres(final String identificatie, final String wplWoonplaatsNaam, final String gorOpenbareRuimteNaam, final int huisnummer,
             final String huisletter, final String huisnummertoevoeging,
             final String postcode) {

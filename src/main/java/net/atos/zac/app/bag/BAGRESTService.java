@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.bag;
 
-import static net.atos.client.zgw.zrc.model.Objecttype.ADRES;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Arrays;
@@ -29,12 +28,8 @@ import net.atos.client.bag.BAGClientService;
 import net.atos.client.bag.model.BevraagAdressenParameters;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Objecttype;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectAdres;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectNummeraanduiding;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectOpenbareRuimte;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectPand;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectWoonplaats;
 import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectAdres;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectListParameters;
@@ -43,8 +38,13 @@ import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectOpenbareRuimte;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectPand;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectWoonplaats;
 import net.atos.zac.app.bag.converter.RESTAdresConverter;
+import net.atos.zac.app.bag.converter.RESTNummeraanduidingConverter;
+import net.atos.zac.app.bag.converter.RESTOpenbareRuimteConverter;
+import net.atos.zac.app.bag.converter.RESTPandConverter;
+import net.atos.zac.app.bag.converter.RESTWoonplaatsConverter;
 import net.atos.zac.app.bag.model.BAGObjectType;
 import net.atos.zac.app.bag.model.RESTAdres;
+import net.atos.zac.app.bag.model.RESTBAGObject;
 import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTListAdressenParameters;
 import net.atos.zac.app.bag.model.RESTNummeraanduiding;
@@ -70,6 +70,18 @@ public class BAGRESTService {
     private RESTAdresConverter adresConverter;
 
     @Inject
+    private RESTNummeraanduidingConverter nummeraanduidingConverter;
+
+    @Inject
+    private RESTOpenbareRuimteConverter openbareRuimteConverter;
+
+    @Inject
+    private RESTPandConverter pandConverter;
+
+    @Inject
+    private RESTWoonplaatsConverter woonplaatsConverter;
+
+    @Inject
     private PolicyService policyService;
 
     @PUT
@@ -89,11 +101,9 @@ public class BAGRESTService {
     public void createAdres(final RESTBAGObjectGegevens<RESTAdres> bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final RESTAdres adres = bagObjectGegevens.bagObject;
-        ObjectAdres objectAdres = new ObjectAdres(adres.identificatie, adres.woonplaatsNaam, adres.openbareRuimteNaam, adres.huisnummer, adres.huisletter,
-                                                  adres.huisnummertoevoeging, adres.postcode);
-        final ZaakobjectAdres zaakobject = new ZaakobjectAdres(zaak.getUrl(), adres.url, objectAdres);
-        zrcClientService.createZaakobject(zaakobject);
+        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
+            zrcClientService.createZaakobject(adresConverter.convertToZaakobject(bagObjectGegevens, zaak));
+        }
     }
 
     @POST
@@ -101,10 +111,9 @@ public class BAGRESTService {
     public void createWoonplaats(final RESTBAGObjectGegevens<RESTWoonplaats> bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final RESTWoonplaats woonplaats = bagObjectGegevens.bagObject;
-        final ZaakobjectWoonplaats zaakobject = new ZaakobjectWoonplaats(zaak.getUrl(), woonplaats.url,
-                                                                         new ObjectWoonplaats(woonplaats.identificatie, woonplaats.naam));
-        zrcClientService.createZaakobject(zaakobject);
+        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
+            zrcClientService.createZaakobject(woonplaatsConverter.convertToZaakobject(bagObjectGegevens, zaak));
+        }
     }
 
     @POST
@@ -112,11 +121,9 @@ public class BAGRESTService {
     public void createOpenbareRuimte(final RESTBAGObjectGegevens<RESTOpenbareRuimte> bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final RESTOpenbareRuimte openbareRuimte = bagObjectGegevens.bagObject;
-        final ObjectOpenbareRuimte objectOpenbareRuimte = new ObjectOpenbareRuimte(
-                openbareRuimte.identificatie, openbareRuimte.naam, openbareRuimte.woonplaatsNaam);
-        final ZaakobjectOpenbareRuimte zaakobject = new ZaakobjectOpenbareRuimte(zaak.getUrl(), openbareRuimte.url, objectOpenbareRuimte);
-        zrcClientService.createZaakobject(zaakobject);
+        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
+            zrcClientService.createZaakobject(openbareRuimteConverter.convertToZaakobject(bagObjectGegevens, zaak));
+        }
     }
 
     @POST
@@ -124,33 +131,24 @@ public class BAGRESTService {
     public void createPand(final RESTBAGObjectGegevens<RESTPand> bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        final RESTPand pand = bagObjectGegevens.bagObject;
-        final ZaakobjectPand zaakobject = new ZaakobjectPand(zaak.getUrl(), pand.url, new ObjectPand(pand.identificatie));
-        zrcClientService.createZaakobject(zaakobject);
+        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
+            zrcClientService.createZaakobject(pandConverter.convertToZaakobject(bagObjectGegevens, zaak));
+        }
     }
 
     @POST
     @Path("NUMMERAANDUIDING")
     public void createNummeraanduiding(final RESTBAGObjectGegevens<RESTNummeraanduiding> bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
-        final RESTNummeraanduiding nummeraanduiding = bagObjectGegevens.bagObject;
-        final ObjectNummeraanduiding objectNummeraanduiding = new ObjectNummeraanduiding(
-                nummeraanduiding.identificatie,
-                nummeraanduiding.huisnummer,
-                nummeraanduiding.huisletter,
-                nummeraanduiding.huisnummertoevoeging,
-                nummeraanduiding.postcode,
-                nummeraanduiding.typeAdresseerbaarObject != null ? nummeraanduiding.typeAdresseerbaarObject.toString() : null,
-                nummeraanduiding.status != null ? nummeraanduiding.status.toString() : null
-        );
-        final ZaakobjectNummeraanduiding zaakobject = new ZaakobjectNummeraanduiding(zaak.getUrl(), nummeraanduiding.url, objectNummeraanduiding);
-        zrcClientService.createZaakobject(zaakobject);
+        assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
+        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
+            zrcClientService.createZaakobject(nummeraanduidingConverter.convertToZaakobject(bagObjectGegevens, zaak));
+        }
     }
 
-
     @GET
-    @Path("/adres/zaak/{uuid}")
-    public List<RESTAdres> listAdressenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
+    @Path("zaak/{zaakUuid}")
+    public List<RESTBAGObject> listBagobjectenVoorZaak(@PathParam("zaakUuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getLezen());
@@ -158,23 +156,41 @@ public class BAGRESTService {
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {
             return zaakobjecten.getResults().stream()
-                    .filter(zaakobject -> zaakobject.getObjectType() == ADRES)
-                    .map(zaakobject -> bagClientService.readAdres(zaakobject.getObject()))
-                    .map(adresConverter::convertToREST)
+                    .filter(Zaakobject::isBagObject)
+                    .map(this::convertToBAGObject)
                     .toList();
         } else {
             return Collections.emptyList();
         }
     }
 
-
-    private void setObjecttype(final BAGObjectType bagObjecttype, final Zaakobject zaakobject) {
-        switch (bagObjecttype) {
-            case ADRES -> zaakobject.setObjectType(ADRES);
-        }
-    }
-
     private String getExpand(final BAGObjectType... bagObjectTypes) {
         return Arrays.stream(bagObjectTypes).map(BAGObjectType::getExpand).collect(Collectors.joining(","));
+    }
+
+    private RESTBAGObject convertToBAGObject(final Zaakobject zaakobject) {
+        return switch (zaakobject.getObjectType()) {
+            case ADRES -> adresConverter.convertToREST((ZaakobjectAdres) zaakobject);
+            case PAND -> pandConverter.convertToREST((ZaakobjectPand) zaakobject);
+            case WOONPLAATS -> woonplaatsConverter.convertToREST((ZaakobjectWoonplaats) zaakobject);
+            case OPENBARE_RUIMTE -> openbareRuimteConverter.convertToREST((ZaakobjectOpenbareRuimte) zaakobject);
+            case OVERIGE -> nummeraanduidingConverter.convertToREST((ZaakobjectNummeraanduiding) zaakobject); // voor nu alleen nummeraanduiding
+            default -> throw new IllegalStateException("Unexpected objectType: " + zaakobject.getObjectType());
+        };
+    }
+
+    private boolean isNogNietGekoppeld(final RESTBAGObject restbagObject, final Zaak zaak) {
+        final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
+        zaakobjectListParameters.setZaak(zaak.getUrl());
+        zaakobjectListParameters.setObject(restbagObject.url);
+        switch (restbagObject.getBagObjectType()) {
+            case ADRES -> zaakobjectListParameters.setObjectType(Objecttype.ADRES);
+            case ADRESSEERBAAR_OBJECT, NUMMERAANDUIDING -> zaakobjectListParameters.setObjectType(Objecttype.OVERIGE);
+            case WOONPLAATS -> zaakobjectListParameters.setObjectType(Objecttype.WOONPLAATS);
+            case PAND -> zaakobjectListParameters.setObjectType(Objecttype.PAND);
+            case OPENBARE_RUIMTE -> zaakobjectListParameters.setObjectType(Objecttype.OPENBARE_RUIMTE);
+        }
+        final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
+        return zaakobjecten.getResults().isEmpty();
     }
 }

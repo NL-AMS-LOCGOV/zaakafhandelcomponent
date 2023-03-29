@@ -30,14 +30,14 @@ import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectAdresWijz
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectNummeraanduidingWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectOpenbareRuimteWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectPandWijziging;
-import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectProductAanvraagWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectProductaanvraagWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectWoonplaatsWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Objecttype;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectNummeraanduiding;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductAanvraag;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 
 public enum ObjectType {
 
@@ -129,8 +129,8 @@ public enum ObjectType {
     private Class<? extends AuditWijziging<? extends Zaakobject>> getAuditClassObjectOverige(final String objectTypeOverige) {
         if (StringUtils.equals(objectTypeOverige, ZaakobjectNummeraanduiding.OBJECT_TYPE_OVERIGE)) {
             return ZaakobjectNummeraanduidingWijziging.class;
-        } else if (StringUtils.equals(objectTypeOverige, ZaakobjectProductAanvraag.OBJECT_TYPE_OVERIGE)) {
-            return ZaakobjectProductAanvraagWijziging.class;
+        } else if (StringUtils.equals(objectTypeOverige, ZaakobjectProductaanvraag.OBJECT_TYPE_OVERIGE)) {
+            return ZaakobjectProductaanvraagWijziging.class;
         }
         throw new RuntimeException(String.format("objecttype 'OVERIGE' met objectTypeOverige '%s' wordt niet ondersteund", objectTypeOverige));
     }

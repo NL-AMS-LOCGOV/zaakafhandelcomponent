@@ -13,7 +13,11 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import net.atos.client.bag.model.AdresIOHal;
 import net.atos.client.bag.model.Geconstateerd;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectAdres;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectAdres;
 import net.atos.zac.app.bag.model.RESTAdres;
+import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 
 public class RESTAdresConverter {
 
@@ -37,6 +41,9 @@ public class RESTAdresConverter {
         restAdres.url = URI.create(adres.getLinks().getSelf().getHref());
         restAdres.identificatie = adres.getAdresseerbaarObjectIdentificatie();
         restAdres.postcode = adres.getPostcode();
+        restAdres.huisnummer = adres.getHuisnummer();
+        restAdres.huisletter = adres.getHuisletter();
+        restAdres.huisnummertoevoeging = adres.getHuisnummertoevoeging();
         restAdres.huisnummerWeergave = convertToVolledigHuisnummer(adres);
         restAdres.openbareRuimteNaam = adres.getOpenbareRuimteNaam();
         restAdres.woonplaatsNaam = adres.getWoonplaatsNaam();
@@ -52,12 +59,44 @@ public class RESTAdresConverter {
             restAdres.openbareRuimte = openbareRuimteConverter.convertToREST(adres.getEmbedded().getOpenbareRuimte(), adres);
             restAdres.nummeraanduiding = nummeraanduidingConverter.convertToREST(adres.getEmbedded().getNummeraanduiding());
             restAdres.woonplaats = woonplaatsConverter.convertToREST(adres.getEmbedded().getWoonplaats());
-            restAdres.panden = pandConverter.convertToRest(adres.getEmbedded().getPanden());
+            restAdres.panden = pandConverter.convertToREST(adres.getEmbedded().getPanden());
         }
         return restAdres;
     }
 
+
+    public RESTAdres convertToREST(final ZaakobjectAdres zaakobjectAdres) {
+        if (zaakobjectAdres == null || zaakobjectAdres.getObjectIdentificatie() == null) {
+            return null;
+        }
+        final ObjectAdres adres = zaakobjectAdres.getObjectIdentificatie();
+        final RESTAdres restAdres = new RESTAdres();
+        restAdres.url = zaakobjectAdres.getObject();
+        restAdres.identificatie = adres.getIdentificatie();
+        restAdres.postcode = adres.getPostcode();
+        restAdres.huisnummerWeergave = convertToVolledigHuisnummer(adres);
+        restAdres.openbareRuimteNaam = adres.getGorOpenbareRuimteNaam();
+        restAdres.woonplaatsNaam = adres.getWplWoonplaatsNaam();
+        return restAdres;
+    }
+
+    public ZaakobjectAdres convertToZaakobject(final RESTBAGObjectGegevens<RESTAdres> gegevens, final Zaak zaak) {
+        final RESTAdres adres = gegevens.bagObject;
+        ObjectAdres objectAdres = new ObjectAdres(adres.identificatie,
+                                                  adres.woonplaatsNaam,
+                                                  adres.openbareRuimteNaam,
+                                                  adres.huisnummer,
+                                                  adres.huisletter,
+                                                  adres.huisnummertoevoeging,
+                                                  adres.postcode);
+        return new ZaakobjectAdres(zaak.getUrl(), adres.url, objectAdres);
+    }
+
     private String convertToVolledigHuisnummer(final AdresIOHal adresHal) {
         return RESTBAGConverterUtil.getHuisnummerWeergave(adresHal.getHuisnummer(), adresHal.getHuisletter(), adresHal.getHuisnummertoevoeging());
+    }
+
+    private String convertToVolledigHuisnummer(final ObjectAdres objectAdres) {
+        return RESTBAGConverterUtil.getHuisnummerWeergave(objectAdres.getHuisnummer(), objectAdres.getHuisletter(), objectAdres.getHuisnummertoevoeging());
     }
 }

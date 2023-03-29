@@ -12,11 +12,17 @@ import net.atos.client.zgw.zrc.model.Objecttype;
 /**
  * ZaakobjectOpenbareRuimte
  */
-public class ZaakobjectOpenbareRuimte extends ZaakobjectBAGObject<ObjectOpenbareRuimte> {
+public class ZaakobjectOpenbareRuimte extends ZaakobjectMetObjectIdentificatie<ObjectOpenbareRuimte> {
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public ZaakobjectOpenbareRuimte() {
     }
 
+    /**
+     * Constructor with required attributes
+     */
     public ZaakobjectOpenbareRuimte(final URI zaak, final URI bagobjectURI, final ObjectOpenbareRuimte objectOpenbareRuimte) {
         super(zaak, bagobjectURI, Objecttype.OPENBARE_RUIMTE, objectOpenbareRuimte);
     }

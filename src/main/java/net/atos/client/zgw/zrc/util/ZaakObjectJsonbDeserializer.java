@@ -22,7 +22,7 @@ import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectAdres;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectNummeraanduiding;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectOpenbareRuimte;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectPand;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductAanvraag;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectWoonplaats;
 
 public class ZaakObjectJsonbDeserializer implements JsonbDeserializer<Zaakobject> {
@@ -42,8 +42,8 @@ public class ZaakObjectJsonbDeserializer implements JsonbDeserializer<Zaakobject
             case WOONPLAATS:
                 return JSONB.fromJson(jsonObject.toString(), ZaakobjectWoonplaats.class);
             case OVERIGE:
-                if (StringUtils.equals(objecttypeOverige, ZaakobjectProductAanvraag.OBJECT_TYPE_OVERIGE)) {
-                    return JSONB.fromJson(jsonObject.toString(), ZaakobjectProductAanvraag.class);
+                if (StringUtils.equals(objecttypeOverige, ZaakobjectProductaanvraag.OBJECT_TYPE_OVERIGE)) {
+                    return JSONB.fromJson(jsonObject.toString(), ZaakobjectProductaanvraag.class);
                 } else if (StringUtils.equals(objecttypeOverige, ZaakobjectNummeraanduiding.OBJECT_TYPE_OVERIGE)) {
                     return JSONB.fromJson(jsonObject.toString(), ZaakobjectNummeraanduiding.class);
                 }
