@@ -113,7 +113,7 @@
   "objecttype.WOONPLAATS": "City",
   "objecttype.PAND": "Premises",
   "objecttype.OPENBARE_RUIMTE": "Public Space",
-  "objecttype.NUMMERAANDUIDING": "Adress number",
+  "objecttype.NUMMERAANDUIDING": "Address number",
   "bagobjecten": "BAG objects",
   "bagobject.pand.status.BOUWVERGUNNING_VERLEEND": "Building permit granted",
   "bagobject.pand.status.NIET_GEREALISEERD_PAND": "Unrealized Premises",
