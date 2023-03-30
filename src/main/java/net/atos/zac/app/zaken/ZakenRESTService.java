@@ -1024,7 +1024,7 @@ public class ZakenRESTService {
         zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        indexeerService.addOrUpdateZaak(hoofdZaak.getUuid(), false);
         eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
     }
 
@@ -1033,7 +1033,7 @@ public class ZakenRESTService {
         zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        indexeerService.addOrUpdateZaak(hoofdZaak.getUuid(), false);
         eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
     }
 

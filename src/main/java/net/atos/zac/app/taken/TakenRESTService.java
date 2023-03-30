@@ -298,7 +298,7 @@ public class TakenRESTService {
         taakVariabelenService.setTaakdata(task, restTaak.taakdata);
         taakVariabelenService.setTaakinformatie(task, restTaak.taakinformatie);
         final HistoricTaskInstance completedTask = takenService.completeTask(task);
-        indexeerService.addZaak(restTaak.zaakUuid, false);
+        indexeerService.addOrUpdateZaak(restTaak.zaakUuid, false);
         eventingService.send(TAAK.updated(completedTask));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
         return taakConverter.convert(completedTask);
