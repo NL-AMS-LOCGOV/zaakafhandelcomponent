@@ -34,7 +34,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         const browserLanguage = this.translate.getBrowserLang();
         this.translate.use(browserLanguage.match(/nl|en/) ? browserLanguage : 'nl');
         SessionStorageUtil.removeItem(IdentityService.LOGGED_IN_USER_KEY);
-        this.identityService.readLoggedInUser();
     }
 
     ngAfterViewInit(): void {
