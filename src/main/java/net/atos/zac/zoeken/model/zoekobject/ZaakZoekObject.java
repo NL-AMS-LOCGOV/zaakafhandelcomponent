@@ -169,6 +169,12 @@ public class ZaakZoekObject implements ZoekObject {
         this.id = uuid;
     }
 
+    @Override
+    public String getObjectId() {
+        return getUuid();
+    }
+
+    @Override
     public ZoekObjectType getType() {
         return ZoekObjectType.valueOf(type);
     }

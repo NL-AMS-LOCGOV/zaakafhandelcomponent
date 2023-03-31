@@ -5,4 +5,4 @@
 
 package net.atos.zac.zoeken.model.index;
 
-public record HerindexerenInfo(int toevoegen, int herindexeren, int verwijderen) {}
+public record HerindexerenInfo(long toevoegen, long herindexeren, long verwijderen) {}

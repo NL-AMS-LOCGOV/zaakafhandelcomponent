@@ -75,6 +75,6 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
             signaleringEvent.setDelay(SECONDS_TO_DELAY);
             FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
         }
-        FlowableHelper.getInstance().getIndexeerService().addTaak(context.getTaskEntity().getId());
+        FlowableHelper.getInstance().getIndexeerService().addOrUpdateTaak(context.getTaskEntity().getId());
     }
 }

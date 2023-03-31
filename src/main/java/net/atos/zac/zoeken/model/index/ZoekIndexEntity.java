@@ -22,7 +22,11 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(schema = SCHEMA, name = "sq_zoek_index", sequenceName = "sq_zoek_index", allocationSize = 1)
 public class ZoekIndexEntity {
 
-    public static final String UUID = "uuid";
+    public static final String OBJECT_ID = "objectId";
+
+    public static final String TYPE = "type";
+
+    public static final String STATUS = "status";
 
     @Id
     @GeneratedValue(generator = "sq_zoek_index", strategy = GenerationType.SEQUENCE)
