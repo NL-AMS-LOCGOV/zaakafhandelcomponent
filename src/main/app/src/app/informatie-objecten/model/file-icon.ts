@@ -33,11 +33,12 @@ export class FileIcon {
     private static readonly mp4 = new FileIcon('mp4', 'fa-file-video');
     private static readonly mpeg = new FileIcon('mpeg', 'fa-file-video');
     private static readonly wmv = new FileIcon('wmv', 'fa-file-video');
+    private static readonly msg = new FileIcon('msg', 'fa-file-lines');
 
     public static readonly fileIcons = [FileIcon.pdf, FileIcon.txt,
         FileIcon.doc, FileIcon.docx, FileIcon.ods, FileIcon.odt, FileIcon.ppt, FileIcon.pptx, FileIcon.rtf, FileIcon.vsd, FileIcon.xls, FileIcon.xlsx,
         FileIcon.bmp, FileIcon.gif, FileIcon.jpeg, FileIcon.jpg, FileIcon.png,
-        FileIcon.avi, FileIcon.flv, FileIcon.mkv, FileIcon.mov, FileIcon.mp4, FileIcon.mpeg, FileIcon.wmv]
+        FileIcon.avi, FileIcon.flv, FileIcon.mkv, FileIcon.mov, FileIcon.mp4, FileIcon.mpeg, FileIcon.wmv, FileIcon.msg]
     .sort((fileIconA, fileIconB) => fileIconA.compare(fileIconB));
 
     public constructor(public readonly type: string, public readonly icon: string, public readonly color?: string) {}
