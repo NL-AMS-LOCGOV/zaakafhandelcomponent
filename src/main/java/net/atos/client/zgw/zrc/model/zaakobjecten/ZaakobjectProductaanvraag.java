@@ -8,14 +8,13 @@ package net.atos.client.zgw.zrc.model.zaakobjecten;
 import java.net.URI;
 
 import net.atos.client.zgw.zrc.model.Objecttype;
-import net.atos.zac.aanvraag.ProductaanvraagService;
 
 /**
  * ZaakobjectProductAanvraag
  */
 public class ZaakobjectProductaanvraag extends Zaakobject {
 
-    public static final String OBJECT_TYPE_OVERIGE = ProductaanvraagService.OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG;
+    public static final String OBJECT_TYPE_OVERIGE = "ProductAanvraag";
 
     /**
      * Constructor for JSONB deserialization

@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.client.or.objecttype.ObjecttypesClientService;
+import net.atos.client.or.objecttype.model.Objecttype;
 import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
@@ -60,7 +61,7 @@ public class NotificatieReceiver {
 
     private static final String OBJECTTYPE_KENMERK = "objectType";
 
-    private static final String PRODUCTAANVRAAG_OBJECTTYPE_NAME = "ProductAanvraag";
+    private static final String PRODUCTAANVRAAGTYPE_NAAM_DENHAAG = "Productaanvraag-Denhaag";
 
     @Inject
     private EventingService eventingService;
@@ -138,18 +139,18 @@ public class NotificatieReceiver {
     }
 
     private void handleProductaanvraag(final Notificatie notificatie) {
-        if (isProductaanvraag(notificatie)) {
+        if (isProductaanvraagDenHaag(notificatie)) {
             productaanvraagService.verwerkProductaanvraag(notificatie.getResourceUrl());
         }
     }
 
-    private boolean isProductaanvraag(final Notificatie notificatie) {
+    private boolean isProductaanvraagDenHaag(final Notificatie notificatie) {
         final String producttypeUri = notificatie.getProperties().get(OBJECTTYPE_KENMERK);
         if (notificatie.getResource() != OBJECT || notificatie.getAction() != CREATE || isEmpty(producttypeUri)) {
             return false;
         }
-        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(
-                objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
+        final Objecttype objecttype = objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri));
+        return PRODUCTAANVRAAGTYPE_NAAM_DENHAAG.equals(objecttype.getName());
     }
 
     private void handleIndexering(final Notificatie notificatie) {
