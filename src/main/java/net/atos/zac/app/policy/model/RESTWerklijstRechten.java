@@ -13,6 +13,8 @@ public class RESTWerklijstRechten {
 
     public boolean documentenOntkoppeldVerwijderen;
 
+    public boolean productaanvragenInbox;
+
     public boolean zakenTaken;
 
     public boolean zakenTakenVerdelen;

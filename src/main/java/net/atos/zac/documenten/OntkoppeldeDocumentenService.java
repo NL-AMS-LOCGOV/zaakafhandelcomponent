@@ -180,7 +180,7 @@ public class OntkoppeldeDocumentenService {
                                                             DateTimeUtil.convertToDateTime(datumRange.van())));
             }
             if (datumRange.tot() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
+                predicates.add(builder.lessThanOrEqualTo(root.get(veld),
                                                          DateTimeUtil.convertToDateTime(datumRange.tot()).plusDays(1)
                                                                  .minusSeconds(1)));
             }
