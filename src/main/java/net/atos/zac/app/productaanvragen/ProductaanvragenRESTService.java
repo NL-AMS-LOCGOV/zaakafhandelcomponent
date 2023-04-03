@@ -7,18 +7,26 @@ package net.atos.zac.app.productaanvragen;
 
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.zac.aanvraag.InboxProductaanvraagService;
 import net.atos.zac.aanvraag.model.InboxProductaanvraagListParameters;
 import net.atos.zac.aanvraag.model.InboxProductaanvraagResultaat;
@@ -35,6 +43,9 @@ import net.atos.zac.policy.PolicyService;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ProductaanvragenRESTService {
+
+    @Inject
+    private DRCClientService drcClientService;
 
     @Inject
     private InboxProductaanvraagService inboxProductaanvraagService;
@@ -67,4 +78,18 @@ public class ProductaanvragenRESTService {
         return restInboxProductaanvraagResultaat;
     }
 
+    @GET
+    @Path("/{uuid}/aanvraagdocument")
+    public Response readFile(@PathParam("uuid") final UUID uuid) {
+        assertPolicy(policyService.readWerklijstRechten().getProductaanvragenInbox());
+        EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        try (ByteArrayInputStream is = drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
+            return Response.ok(is)
+                    .header("Content-Disposition",
+                            "inline; filename=\"%s\"".formatted(enkelvoudigInformatieobject.getBestandsnaam()))
+                    .header("Content-Type", "application/pdf").build();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

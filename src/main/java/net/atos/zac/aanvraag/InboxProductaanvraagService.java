@@ -41,7 +41,7 @@ public class InboxProductaanvraagService {
     }
 
     public InboxProductaanvraagResultaat list(final InboxProductaanvraagListParameters listParameters) {
-        return new InboxProductaanvraagResultaat(listInboxProductaanvragen(listParameters), 0, listTypes(listParameters));
+        return new InboxProductaanvraagResultaat(query(listParameters), count(listParameters), listTypes(listParameters));
     }
 
     private List<String> listTypes(final InboxProductaanvraagListParameters listParameters) {
@@ -53,7 +53,7 @@ public class InboxProductaanvraagService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    private List<InboxProductaanvraag> listInboxProductaanvragen(final InboxProductaanvraagListParameters listParameters) {
+    private List<InboxProductaanvraag> query(final InboxProductaanvraagListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InboxProductaanvraag> query = builder.createQuery(InboxProductaanvraag.class);
         final Root<InboxProductaanvraag> root = query.from(InboxProductaanvraag.class);
@@ -71,6 +71,19 @@ public class InboxProductaanvraagService {
             emQuery.setMaxResults(listParameters.getPaging().getMaxResults());
         }
         return emQuery.getResultList();
+    }
+
+    private int count(final InboxProductaanvraagListParameters listParameters) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final Root<InboxProductaanvraag> root = query.from(InboxProductaanvraag.class);
+        query.select(builder.count(root));
+        query.where(getWhere(listParameters, root));
+        final Long result = entityManager.createQuery(query).getSingleResult();
+        if (result == null) {
+            return 0;
+        }
+        return result.intValue();
     }
 
     private Predicate getWhere(final InboxProductaanvraagListParameters listParameters, final Root<InboxProductaanvraag> root) {

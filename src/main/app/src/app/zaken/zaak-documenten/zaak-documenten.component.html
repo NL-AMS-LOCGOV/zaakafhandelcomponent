@@ -114,11 +114,8 @@
                         </div>
                     </td>
                 </ng-container>
-                <tr mat-header-row
-                    *matHeaderRowDef="documentColumns"></tr>
-                <tr mat-row
-                    *matRowDef="let row; columns: documentColumns;"
-                    [class.expanded-row]="documentPreviewRow === row"></tr>
+                <tr mat-header-row *matHeaderRowDef="documentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: documentColumns;" [class.expanded-row]="documentPreviewRow === row"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
 
                 <tr class="mat-row" *matNoDataRow>

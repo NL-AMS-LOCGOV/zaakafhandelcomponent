@@ -21,10 +21,13 @@ import {ActivatedRoute} from '@angular/router';
 import {ProductaanvragenService} from '../productaanvragen.service';
 import {InboxProductaanvraag} from '../model/inbox-productaanvraag';
 import {InboxProductaanvraagListParameters} from '../model/inbox-productaanvraag-list-parameters';
+import {detailExpand} from '../../shared/animations/animations';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
     templateUrl: './inbox-productaanvragen-list.component.html',
-    styleUrls: ['./inbox-productaanvragen-list.component.less']
+    styleUrls: ['./inbox-productaanvragen-list.component.less'],
+    animations: [detailExpand]
 })
 export class InboxProductaanvragenListComponent extends WerklijstComponent implements OnInit, AfterViewInit {
 
@@ -32,19 +35,22 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
     dataSource: MatTableDataSource<InboxProductaanvraag> = new MatTableDataSource<InboxProductaanvraag>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['type', 'ontvangstdatum', 'initiator', 'actions'];
-    filterColumns: string[] = ['type_filter', 'ontvangstdatum_filter', 'initiator_filter', 'actions_filter'];
+    displayedColumns: string[] = ['expand', 'type', 'ontvangstdatum', 'initiator', 'actions'];
+    filterColumns: string[] = ['expand_filter', 'type_filter', 'ontvangstdatum_filter', 'initiator_filter', 'actions_filter'];
     listParameters: InboxProductaanvraagListParameters;
+    expandedRow: InboxProductaanvraag | null;
     filterType: string[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
+    previewSrc: SafeUrl = null;
 
     constructor(private productaanvragenService: ProductaanvragenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
                 public gebruikersvoorkeurenService: GebruikersvoorkeurenService,
-                public route: ActivatedRoute) {
+                public route: ActivatedRoute,
+                private sanitizer: DomSanitizer) {
         super();
     }
 
@@ -122,6 +128,16 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
 
     getWerklijst(): Werklijst {
         return Werklijst.INBOX_PRODUCTAANVRAGEN;
+    }
+
+    updateActive(row: InboxProductaanvraag) {
+        if (this.expandedRow === row) {
+            this.expandedRow = null;
+            this.previewSrc = null;
+        } else {
+            this.expandedRow = row;
+            this.previewSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.productaanvragenService.getPDFViewerURL(row.aanvraagdocumentUUID));
+        }
     }
 
 }

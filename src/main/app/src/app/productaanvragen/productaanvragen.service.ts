@@ -31,4 +31,8 @@ export class ProductaanvragenService {
     delete(ip: InboxProductaanvraag): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/${ip.id}`);
     }
+
+    getPDFViewerURL(aanvraagdocumentUUID: string): string {
+        return `${this.basepath}/${aanvraagdocumentUUID}/aanvraagdocument`;
+    }
 }
