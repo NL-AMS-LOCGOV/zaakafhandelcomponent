@@ -21,10 +21,12 @@ public class RESTHumanTaskParametersConverter {
     @Inject
     private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
 
-    public List<RESTHumanTaskParameters> convertHumanTaskParametersCollection(final Collection<HumanTaskParameters> humanTaskParametersCollection,
+    public List<RESTHumanTaskParameters> convertHumanTaskParametersCollection(
+            final Collection<HumanTaskParameters> humanTaskParametersCollection,
             final List<RESTPlanItemDefinition> humanTaskDefinitions) {
         return humanTaskDefinitions.stream()
-                .map(humanTaskDefinition -> convertHumanTaskDefinition(humanTaskDefinition, humanTaskParametersCollection))
+                .map(humanTaskDefinition -> convertHumanTaskDefinition(humanTaskDefinition,
+                                                                       humanTaskParametersCollection))
                 .toList();
     }
 
@@ -47,7 +49,8 @@ public class RESTHumanTaskParametersConverter {
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
         restHumanTaskParameters.formulierDefinitieId = humanTaskParameters.getFormulierDefinitieID();
         restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
-        restHumanTaskParameters.referentieTabellen = convertReferentieTabellen(humanTaskParameters, humanTaskDefinition);
+        restHumanTaskParameters.referentieTabellen = convertReferentieTabellen(humanTaskParameters,
+                                                                               humanTaskDefinition);
         return restHumanTaskParameters;
     }
 
@@ -66,10 +69,14 @@ public class RESTHumanTaskParametersConverter {
     private RESTHumanTaskParameters convertToRESTHumanTaskParameters(final RESTPlanItemDefinition humanTaskDefinition) {
         final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
+        restHumanTaskParameters.actief = false;
+        restHumanTaskParameters.formulierDefinitieId = DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(
+                humanTaskDefinition.id).name();
         return restHumanTaskParameters;
     }
 
-    public List<HumanTaskParameters> convertRESTHumanTaskParameters(final List<RESTHumanTaskParameters> restHumanTaskParametersList) {
+    public List<HumanTaskParameters> convertRESTHumanTaskParameters(
+            final List<RESTHumanTaskParameters> restHumanTaskParametersList) {
         return restHumanTaskParametersList.stream()
                 .map(this::convertRESTHumanTaskParameters)
                 .toList();
@@ -83,7 +90,8 @@ public class RESTHumanTaskParametersConverter {
         humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
         humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroepId);
         humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitieId);
-        humanTaskParameters.setReferentieTabellen(restHumanTaskReferentieTabelConverter.convert(restHumanTaskParameters.referentieTabellen));
+        humanTaskParameters.setReferentieTabellen(
+                restHumanTaskReferentieTabelConverter.convert(restHumanTaskParameters.referentieTabellen));
         return humanTaskParameters;
     }
 }
