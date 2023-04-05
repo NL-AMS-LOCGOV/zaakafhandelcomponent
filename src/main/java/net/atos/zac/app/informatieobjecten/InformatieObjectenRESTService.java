@@ -316,7 +316,7 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        assertPolicy(policyService.readDocumentRechten(informatieobject).getWijzigen() &&
+        assertPolicy(policyService.readDocumentRechten(informatieobject, nieuweZaak).getWijzigen() &&
                              policyService.readZaakRechten(nieuweZaak).getWijzigen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron,
                                                                     nieuweZaak.getIdentificatie());
