@@ -712,7 +712,7 @@
   "msg.zaak.opschorten.niet.toegestaan": "Deze zaak is al eens opgeschort en hervat met als reden '{{reden}}'. De zaak mag niet nogmaals opgeschort worden.",
   "msg.zaak.ontkoppelen.bevestigen": "Zaak ontkoppelen",
   "msg.zaak.ontkoppelen.uitgevoerd": "Zaak is ontkoppeld",
-  "msg.zaak.koppelen.niet.toegestaan": "Er is geen koppeling mogelijk. Er zijn al koppelingen aanwezig op de andere zaak, of op de onderhanden zaak die conflicteren.",
+  "msg.zaak.koppelen.niet.toegestaan": "Er is geen koppeling mogelijk.",
   "msg.zaak.relatie": "Van zaak {{identificatie}}",
   "msg.zaak.relaties": "Van {{aantal}} zaken",
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
