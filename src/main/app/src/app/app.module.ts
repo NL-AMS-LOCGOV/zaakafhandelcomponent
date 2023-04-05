@@ -28,6 +28,7 @@ import {SignaleringenModule} from './signaleringen/signaleringen.module';
 import {ZoekenModule} from './zoeken/zoeken.module';
 import {GebruikersvoorkeurenModule} from './gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 import {MatIconRegistry} from '@angular/material/icon';
+import {ProductaanvragenModule} from './productaanvragen/productaanvragen.module';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -49,6 +50,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
         DocumentenModule,
         MailModule,
         PlanItemsModule,
+        ProductaanvragenModule,
         SignaleringenModule,
         TakenModule,
         AdminModule,

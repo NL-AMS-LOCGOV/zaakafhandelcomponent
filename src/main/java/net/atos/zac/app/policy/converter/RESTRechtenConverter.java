@@ -55,6 +55,7 @@ public class RESTRechtenConverter {
         restWerklijstRechten.documentenInbox = werklijstrechten.getDocumentenInbox();
         restWerklijstRechten.documentenOntkoppeld = werklijstrechten.getDocumentenOntkoppeld();
         restWerklijstRechten.documentenOntkoppeldVerwijderen = werklijstrechten.getDocumentenOntkoppeldVerwijderen();
+        restWerklijstRechten.productaanvragenInbox = werklijstrechten.getProductaanvragenInbox();
         restWerklijstRechten.zakenTaken = werklijstrechten.getZakenTaken();
         restWerklijstRechten.zakenTakenVerdelen = werklijstrechten.getZakenTakenVerdelen();
         return restWerklijstRechten;
