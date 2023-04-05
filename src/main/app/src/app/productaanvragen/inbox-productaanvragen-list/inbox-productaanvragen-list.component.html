@@ -59,7 +59,7 @@
 
             <ng-container matColumnDef="initiator">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'initiator' | translate}}</th>
-                <td mat-cell *matCellDef="let row">{{row.initiator}}</td>
+                <td mat-cell *matCellDef="let row">{{row.initiatorID}}</td>
             </ng-container>
 
             <ng-container matColumnDef="type">
@@ -81,6 +81,9 @@
                            title="{{ 'actie.downloaden' | translate}}">
                             <mat-icon>download</mat-icon>
                         </a>
+                        <button (click)="aanmakenZaak(row)" mat-icon-button title="{{ 'actie.zaak.aanmaken' | translate}}">
+                            <mat-icon>create_new_folder</mat-icon>
+                        </button>
                     </div>
                 </td>
             </ng-container>

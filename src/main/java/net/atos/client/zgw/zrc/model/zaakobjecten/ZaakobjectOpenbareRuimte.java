@@ -26,4 +26,9 @@ public class ZaakobjectOpenbareRuimte extends ZaakobjectMetObjectIdentificatie<O
     public ZaakobjectOpenbareRuimte(final URI zaak, final URI bagobjectURI, final ObjectOpenbareRuimte objectOpenbareRuimte) {
         super(zaak, bagobjectURI, Objecttype.OPENBARE_RUIMTE, objectOpenbareRuimte);
     }
+
+    @Override
+    public String getWaarde() {
+        return getObjectIdentificatie().getIdentificatie();
+    }
 }

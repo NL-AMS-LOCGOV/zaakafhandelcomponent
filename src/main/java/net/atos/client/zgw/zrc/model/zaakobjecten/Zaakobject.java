@@ -165,4 +165,7 @@ public abstract class Zaakobject {
             default -> false;
         };
     }
+
+    @JsonbTransient
+    public abstract String getWaarde();
 }

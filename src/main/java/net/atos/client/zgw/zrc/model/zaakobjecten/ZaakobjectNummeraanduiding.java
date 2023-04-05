@@ -28,4 +28,9 @@ public class ZaakobjectNummeraanduiding extends ZaakobjectMetObjectIdentificatie
         super(zaak, bagObjectUri, Objecttype.OVERIGE, new ObjectOverige<>(nummeraanduiding));
         setObjectTypeOverige(OBJECT_TYPE_OVERIGE);
     }
+
+    @Override
+    public String getWaarde() {
+        return getObjectIdentificatie().overigeData.getIdentificatie();
+    }
 }

@@ -7,6 +7,7 @@ package net.atos.zac.aanvraag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -71,6 +72,15 @@ public class InboxProductaanvraagService {
             emQuery.setMaxResults(listParameters.getPaging().getMaxResults());
         }
         return emQuery.getResultList();
+    }
+
+    public void delete(final Long id) {
+        find(id).ifPresent(entityManager::remove);
+    }
+
+    public Optional<InboxProductaanvraag> find(final long id) {
+        final InboxProductaanvraag inboxProductaanvraag = entityManager.find(InboxProductaanvraag.class, id);
+        return inboxProductaanvraag != null ? Optional.of(inboxProductaanvraag) : Optional.empty();
     }
 
     private int count(final InboxProductaanvraagListParameters listParameters) {
