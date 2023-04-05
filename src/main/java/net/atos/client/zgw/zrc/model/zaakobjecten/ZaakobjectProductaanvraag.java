@@ -7,6 +7,8 @@ package net.atos.client.zgw.zrc.model.zaakobjecten;
 
 import java.net.URI;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.atos.client.zgw.zrc.model.Objecttype;
 
 /**
@@ -30,4 +32,8 @@ public class ZaakobjectProductaanvraag extends Zaakobject {
         setObjectTypeOverige(OBJECT_TYPE_OVERIGE);
     }
 
+    @Override
+    public String getWaarde() {
+        return StringUtils.substringAfterLast(getObject().getPath(), "/");
+    }
 }

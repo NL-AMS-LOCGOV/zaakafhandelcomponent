@@ -47,6 +47,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.or.object.ObjectsClientService;
+import net.atos.client.or.object.model.ORObject;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
@@ -80,6 +82,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Besluittype;
@@ -87,12 +90,15 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.aanvraag.InboxProductaanvraagService;
+import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.app.admin.converter.RESTZaakAfzenderConverter;
 import net.atos.zac.app.admin.model.RESTZaakAfzender;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.KlantenRESTService;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.productaanvragen.model.RESTInboxProductaanvraag;
 import net.atos.zac.app.zaken.converter.RESTBesluitConverter;
 import net.atos.zac.app.zaken.converter.RESTBesluittypeConverter;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
@@ -111,6 +117,7 @@ import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTReden;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.app.zaken.model.RESTZaakAanmaakGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkene;
@@ -215,6 +222,12 @@ public class ZakenRESTService {
 
     @Inject
     private TakenService takenService;
+
+    @Inject
+    private ObjectsClientService objectsClientService;
+
+    @Inject
+    private InboxProductaanvraagService inboxProductaanvraagService;
 
     @Inject
     private ZaakVariabelenService zaakVariabelenService;
@@ -326,7 +339,8 @@ public class ZakenRESTService {
 
     @POST
     @Path("zaak")
-    public RESTZaak createZaak(final RESTZaak restZaak) {
+    public RESTZaak createZaak(final RESTZaakAanmaakGegevens restZaakAanmaakGegevens) {
+        final RESTZaak restZaak = restZaakAanmaakGegevens.zaak;
         assertPolicy(policyService.readOverigeRechten().getStartenZaak() &&
                              loggedInUserInstance.get().isGeautoriseerdZaaktype(restZaak.zaaktype.omschrijving));
         final Zaaktype zaaktype = ztcClientService.readZaaktype(restZaak.zaaktype.uuid);
@@ -344,7 +358,33 @@ public class ZakenRESTService {
         }
         cmmnService.startCase(zaak, zaaktype,
                               zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID()), null);
+
+        if (restZaakAanmaakGegevens.productaanvraag != null) {
+            koppelInboxProductaanvraag(zaak, restZaakAanmaakGegevens.productaanvraag);
+        }
         return zaakConverter.convert(zaak);
+    }
+
+    private void koppelInboxProductaanvraag(final Zaak zaak, final RESTInboxProductaanvraag inboxProductaanvraag) {
+        if (inboxProductaanvraag.aanvraagdocumentUUID != null) {
+            //koppel aanvraagdocument
+            final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
+            EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
+                    inboxProductaanvraag.aanvraagdocumentUUID);
+            zaakInformatieobject.setInformatieobject(enkelvoudigInformatieobject.getUrl());
+            zaakInformatieobject.setZaak(zaak.getUrl());
+            zaakInformatieobject.setTitel(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_TITEL);
+            zaakInformatieobject.setBeschrijving(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
+            zrcClientService.createZaakInformatieobject(zaakInformatieobject, ProductaanvraagService.ZAAK_INFORMATIEOBJECT_REDEN);
+        }
+
+        //koppel productaanvraag (object-registratie) aan de zaak
+        final ORObject productaanvraagObject = objectsClientService.readObject(inboxProductaanvraag.productaanvraagObjectUUID);
+        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaak.getUrl(), productaanvraagObject.getUrl());
+        zrcClientService.createZaakobject(zaakobject);
+
+        //verwijder het verwerkte inbox productaanvraag item
+        inboxProductaanvraagService.delete(inboxProductaanvraag.id);
     }
 
     @PATCH
@@ -789,11 +829,13 @@ public class ZakenRESTService {
     }
 
     @GET
-    @Path("communicatiekanalen")
-    public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
+    @Path("communicatiekanalen/{inclusiefEFormulier}")
+    public List<RESTCommunicatiekanaal> listCommunicatiekanalen(@PathParam("inclusiefEFormulier") final boolean inclusiefEFormulier) {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
-        communicatieKanalen.removeIf(
-                communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
+        if (!inclusiefEFormulier) {
+            communicatieKanalen.removeIf(
+                    communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
+        }
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 

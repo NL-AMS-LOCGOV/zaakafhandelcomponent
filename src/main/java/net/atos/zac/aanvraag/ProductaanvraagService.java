@@ -56,11 +56,11 @@ public class ProductaanvraagService {
 
     private static final Logger LOG = Logger.getLogger(ProductaanvraagService.class.getName());
 
-    private static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
+    public static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
 
-    private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
+    public static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
-    private static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
+    public static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
 
     private static final String ROL_TOELICHTING = "Overgenomen vanuit de product aanvraag";
 

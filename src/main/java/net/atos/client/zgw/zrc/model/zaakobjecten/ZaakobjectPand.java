@@ -7,8 +7,6 @@ package net.atos.client.zgw.zrc.model.zaakobjecten;
 
 import java.net.URI;
 
-import javax.json.bind.annotation.JsonbCreator;
-
 import net.atos.client.zgw.zrc.model.Objecttype;
 
 /**
@@ -25,9 +23,12 @@ public class ZaakobjectPand extends ZaakobjectMetObjectIdentificatie<ObjectPand>
     /**
      * Constructor with all required fields.
      */
-    @JsonbCreator
     public ZaakobjectPand(final URI zaak, final URI bagobjectUri, final ObjectPand pand) {
         super(zaak, bagobjectUri, Objecttype.PAND, pand);
     }
 
+    @Override
+    public String getWaarde() {
+        return getObjectIdentificatie().getIdentificatie();
+    }
 }

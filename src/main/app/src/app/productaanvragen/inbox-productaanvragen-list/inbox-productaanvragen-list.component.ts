@@ -17,7 +17,7 @@ import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
 import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ProductaanvragenService} from '../productaanvragen.service';
 import {InboxProductaanvraag} from '../model/inbox-productaanvraag';
 import {InboxProductaanvraagListParameters} from '../model/inbox-productaanvraag-list-parameters';
@@ -50,6 +50,7 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
                 public dialog: MatDialog,
                 public gebruikersvoorkeurenService: GebruikersvoorkeurenService,
                 public route: ActivatedRoute,
+                private router: Router,
                 private sanitizer: DomSanitizer) {
         super();
     }
@@ -140,4 +141,9 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
         }
     }
 
+    aanmakenZaak(row: InboxProductaanvraag): void {
+        this.router.navigateByUrl('zaken/create', {
+            state: {productaanvraag: row}
+        });
+    }
 }
