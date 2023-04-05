@@ -5,4 +5,9 @@ export class HiddenFormField extends AbstractFormControlField {
     fieldType: FieldType = FieldType.HIDDEN;
 
     constructor() {super();}
+
+    initControl(value?: any) {
+        super.initControl(value);
+        this.label = 'hidden';
+    }
 }

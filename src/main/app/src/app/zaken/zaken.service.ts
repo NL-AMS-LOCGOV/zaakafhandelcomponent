@@ -40,6 +40,7 @@ import {Besluittype} from './model/besluittype';
 import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
 import {ZaakAfzender} from '../admin/model/zaakafzender';
+import {BesluitIntrekkenGegevens} from './model/besluit-intrekken-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -270,6 +271,13 @@ export class ZakenService {
         return this.http.put<BesluitWijzigenGegevens>(`${this.basepath}/besluit`, besluitWijzigenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
+    }
+
+    intrekkenBesluit(besluitIntrekkenGegevens: BesluitIntrekkenGegevens): Observable<Besluit> {
+        return this.http.put<BesluitIntrekkenGegevens>(`${this.basepath}/besluit/intrekken`, besluitIntrekkenGegevens)
+                   .pipe(
+                       catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                   );
     }
 
     listBesluittypes(zaaktypeUuid: string): Observable<Besluittype[]> {
