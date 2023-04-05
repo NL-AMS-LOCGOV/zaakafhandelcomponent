@@ -402,7 +402,8 @@
 
                 <zac-besluit-view class="besluiten" *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
-                                  (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
+                                  (besluitWijzigen)="besluitWijzigen($event)"
+                                  (doIntrekking)="doIntrekking($event)"></zac-besluit-view>
 
                 <mat-card class="taken-card">
                     <mat-card-header>

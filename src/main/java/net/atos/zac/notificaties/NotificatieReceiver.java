@@ -158,20 +158,22 @@ public class NotificatieReceiver {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
                     // Updaten van taak is nodig bij afsluiten zaak
-                    indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
+                    indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getResourceUrl()),
+                                                    notificatie.getAction() == UPDATE);
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+                indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
             } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
-                indexeerService.addInformatieobjectByZaakinformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                indexeerService.addOrUpdateInformatieobjectByZaakinformatieobject(
+                        uuidFromURI(notificatie.getResourceUrl()));
             }
         }
         if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
             if (notificatie.getResource() == INFORMATIEOBJECT) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    indexeerService.addInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.addOrUpdateInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
                 }

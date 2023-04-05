@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2023 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -9,7 +9,8 @@
   This is the JRebel configuration file. It maps the running application to your IDE workspace, enabling JRebel reloading for this project.
   Refer to https://manuals.jrebel.com/jrebel/standalone/config.html for more information.
 -->
-<application generated-by="intellij" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com"
+<application generated-by="intellij" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www.zeroturnaround.com"
              xsi:schemaLocation="http://www.zeroturnaround.com http://update.zeroturnaround.com/jrebel/rebel-2_3.xsd">
 
     <id>zaakafhandelcomponent</id>

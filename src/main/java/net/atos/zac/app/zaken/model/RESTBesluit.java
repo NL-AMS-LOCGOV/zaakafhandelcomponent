@@ -7,11 +7,13 @@ package net.atos.zac.app.zaken.model;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
 import net.atos.client.zgw.brc.model.Vervalreden;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
+import net.atos.zac.zoeken.model.BesluitIndicatie;
 
 public class RESTBesluit {
 
@@ -31,10 +33,19 @@ public class RESTBesluit {
 
     public Vervalreden vervalreden;
 
+    public boolean isIngetrokken;
+
     public String toelichting;
 
     public UUID zaakUuid;
 
     public List<RESTEnkelvoudigInformatieobject> informatieobjecten;
 
+    public EnumSet<BesluitIndicatie> getIndicaties() {
+        final EnumSet<BesluitIndicatie> indicaties = EnumSet.noneOf(BesluitIndicatie.class);
+        if (isIngetrokken) {
+            indicaties.add(BesluitIndicatie.INGETROKKEN);
+        }
+        return indicaties;
+    }
 }

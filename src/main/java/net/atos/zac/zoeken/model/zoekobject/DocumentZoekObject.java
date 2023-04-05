@@ -116,17 +116,22 @@ public class DocumentZoekObject implements ZoekObject {
     public DocumentZoekObject() {
     }
 
-    @Override
-    public ZoekObjectType getType() {
-        return ZoekObjectType.valueOf(type);
-    }
-
     public String getUuid() {
         return uuid;
     }
 
     public void setUuid(final String uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public String getObjectId() {
+        return getUuid();
+    }
+
+    @Override
+    public ZoekObjectType getType() {
+        return ZoekObjectType.valueOf(type);
     }
 
     public void setType(final ZoekObjectType type) {

@@ -109,6 +109,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTBesluit;
+import net.atos.zac.app.zaken.model.RESTBesluitIntrekkenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluitWijzigenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
@@ -880,27 +881,22 @@ public class ZakenRESTService {
 
     @PUT
     @Path("besluit")
-    public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
+    public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzigenGegevens) {
+        Besluit besluit = brcClientService.readBesluit(restBesluitWijzigenGegevens.besluitUuid);
+        final Zaak zaak = zrcClientService.readZaak(besluit.getZaak());
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getBehandelen());
-        Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
-        besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
-        besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
-        besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
-        if (besluit.getVervaldatum() != null) {
-            besluit.setVervalreden(Vervalreden.TIJDELIJK);
-        }
-        besluit = brcClientService.updateBesluit(besluit, restBesluitWijzgenGegevens.reden);
+        besluit = besluitConverter.convertToBesluit(besluit, restBesluitWijzigenGegevens);
+        besluit = brcClientService.updateBesluit(besluit, restBesluitWijzigenGegevens.reden);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
             final Resultaattype resultaattype = ztcClientService.readResultaattype(
-                    restBesluitWijzgenGegevens.resultaattypeUuid);
+                    restBesluitWijzigenGegevens.resultaattypeUuid);
             if (!UriUtil.equal(zaakResultaat.getResultaattype(), resultaattype.getUrl())) {
                 zrcClientService.deleteResultaat(zaakResultaat.getUuid());
-                zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, null);
+                zgwApiService.createResultaatForZaak(zaak, restBesluitWijzigenGegevens.resultaattypeUuid, null);
             }
         }
-        updateBesluitInformatieobjecten(besluit, restBesluitWijzgenGegevens.informatieobjecten);
+        updateBesluitInformatieobjecten(besluit, restBesluitWijzigenGegevens.informatieobjecten);
         // This event should result from a ZAAKBESLUIT CREATED notification on the ZAKEN channel
         // but open_zaak does not send that one, so emulate it here.
         eventingService.send(ScreenEventType.ZAAK_BESLUITEN.updated(zaak));
@@ -930,6 +926,29 @@ public class ZakenRESTService {
                                                                                                 informatieobject.getUrl());
             brcClientService.createBesluitInformatieobject(besluitInformatieobject, WIJZIGEN_BESLUIT_TOELICHTING);
         });
+    }
+
+    @PUT
+    @Path("besluit/intrekken")
+    public RESTBesluit intrekkenBesluit(final RESTBesluitIntrekkenGegevens restBesluitIntrekkenGegevens) {
+        Besluit besluit = brcClientService.readBesluit(restBesluitIntrekkenGegevens.besluitUuid);
+        final Zaak zaak = zrcClientService.readZaak(besluit.getZaak());
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getBehandelen());
+        besluit = besluitConverter.convertToBesluit(besluit, restBesluitIntrekkenGegevens);
+        besluit = brcClientService.updateBesluit(besluit, getIntrekToelichting(besluit.getVervalreden())
+                .formatted(restBesluitIntrekkenGegevens.reden));
+        // This event should result from a ZAAKBESLUIT UPDATED notification on the ZAKEN channel
+        // but open_zaak does not send that one, so emulate it here.
+        eventingService.send(ScreenEventType.ZAAK_BESLUITEN.updated(zaak));
+        return besluitConverter.convertToRESTBesluit(besluit);
+    }
+
+    private String getIntrekToelichting(final Vervalreden vervalreden) {
+        return switch (vervalreden) {
+            case INGETROKKEN_OVERHEID -> "Overheid: %s";
+            case INGETROKKEN_BELANGHEBBENDE -> "Belanghebbende: %s";
+            default -> null;
+        };
     }
 
     @GET
@@ -1066,7 +1085,7 @@ public class ZakenRESTService {
         zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        indexeerService.addOrUpdateZaak(hoofdZaak.getUuid(), false);
         eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
     }
 
@@ -1075,7 +1094,7 @@ public class ZakenRESTService {
         zrcClientService.patchZaak(deelZaak.getUuid(), zaakPatch, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
-        indexeerService.addZaak(hoofdZaak.getUuid(), false);
+        indexeerService.addOrUpdateZaak(hoofdZaak.getUuid(), false);
         eventingService.send(ZAAK.updated(hoofdZaak.getUuid()));
     }
 
