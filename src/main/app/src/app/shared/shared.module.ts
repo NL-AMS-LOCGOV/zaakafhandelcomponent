@@ -51,6 +51,7 @@ import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicat
 import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 import {VersionComponent} from './version/version.component';
 import {SortPipe} from './dynamic-table/pipes/sort.pipe';
+import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/besluit-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -83,6 +84,7 @@ import {SortPipe} from './dynamic-table/pipes/sort.pipe';
         DagenPipe,
         NotificationDialogComponent,
         ExportButtonComponent,
+        BesluitIndicatiesComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
         VersionComponent,
@@ -134,6 +136,7 @@ import {SortPipe} from './dynamic-table/pipes/sort.pipe';
         SkeletonLoaderComponent,
         DagenPipe,
         ExportButtonComponent,
+        BesluitIndicatiesComponent,
         InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
         VersionComponent,

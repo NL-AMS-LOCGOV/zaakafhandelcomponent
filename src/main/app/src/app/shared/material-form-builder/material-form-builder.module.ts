@@ -56,6 +56,7 @@ import {DocumentenLijstComponent} from './form-components/documenten-lijst/docum
 import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 import {DocumentIconComponent} from '../document-icon/document-icon.component';
 import {DragAndDropDirective} from './form-components/file/drag-and-drop.directive';
+import {MessageComponent} from './form-components/message/message.component';
 
 @NgModule({
     declarations: [
@@ -82,7 +83,8 @@ import {DragAndDropDirective} from './form-components/file/drag-and-drop.directi
         ParagraphComponent,
         DividerComponent,
         HiddenComponent,
-        DragAndDropDirective
+        DragAndDropDirective,
+        MessageComponent
     ],
     imports: [
         CommonModule,
@@ -131,7 +133,8 @@ import {DragAndDropDirective} from './form-components/file/drag-and-drop.directi
         DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
-        ParagraphComponent
+        ParagraphComponent,
+        MessageComponent
     ],
     providers: [
         {

@@ -5,7 +5,6 @@
 
 export class BesluitWijzigenGegevens {
     besluitUuid: string;
-    zaakUuid: string;
     resultaattypeUuid: string;
     toelichting: string;
     ingangsdatum: boolean;

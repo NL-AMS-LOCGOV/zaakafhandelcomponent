@@ -57,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -78,6 +81,7 @@ import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 import {BAGObject} from '../../bag/model/bagobject';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
+import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -957,6 +961,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
         this.teWijzigenBesluit = $event;
         this.actionsSidenav.open();
+    }
+
+    doIntrekking($event): void {
+        const gegevens = new BesluitIntrekkenGegevens();
+        gegevens.besluitUuid = $event.uuid;
+        gegevens.vervaldatum = $event.vervaldatum;
+        gegevens.vervalreden = $event.vervalreden.value;
+        gegevens.reden = $event.toelichting;
+        this.zakenService.intrekkenBesluit(gegevens).subscribe(() => {
+            this.utilService.openSnackbar('msg.besluit.ingetrokken');
+        });
     }
 
     betrokkeneGegevensOphalen(betrokkene: ZaakBetrokkene): void {
