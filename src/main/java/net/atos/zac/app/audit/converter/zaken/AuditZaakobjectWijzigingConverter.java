@@ -7,13 +7,16 @@ package net.atos.zac.app.audit.converter.zaken;
 
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.atos.client.zgw.shared.model.ObjectType;
-import net.atos.client.zgw.shared.model.audit.zaken.ZaakobjectWijziging;
-import net.atos.client.zgw.zrc.model.Zaakobject;
+import net.atos.client.zgw.shared.model.audit.AuditWijziging;
+import net.atos.client.zgw.zrc.model.Objecttype;
+import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.zac.app.audit.converter.AbstractAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 
-public class AuditZaakobjectWijzigingConverter extends AbstractAuditWijzigingConverter<ZaakobjectWijziging> {
+public class AuditZaakobjectWijzigingConverter extends AbstractAuditWijzigingConverter<AuditWijziging<Zaakobject>> {
 
     @Override
     public boolean supports(final ObjectType objectType) {
@@ -21,11 +24,32 @@ public class AuditZaakobjectWijzigingConverter extends AbstractAuditWijzigingCon
     }
 
     @Override
-    protected Stream<RESTHistorieRegel> doConvert(final ZaakobjectWijziging wijziging) {
-        return Stream.of(new RESTHistorieRegel("zaakObject", toWaarde(wijziging.getOud()), toWaarde(wijziging.getNieuw())));
+    protected Stream<RESTHistorieRegel> doConvert(final AuditWijziging<Zaakobject> wijziging) {
+        return Stream.of(new RESTHistorieRegel(toAttribuutLabel(wijziging), toWaarde(wijziging.getOud()), toWaarde(wijziging.getNieuw())));
+    }
+
+    private String toAttribuutLabel(final AuditWijziging<Zaakobject> wijziging) {
+        final Objecttype objecttype;
+        final String objecttypeOverige;
+        if (wijziging.getOud() != null) {
+            objecttype = wijziging.getOud().getObjectType();
+            objecttypeOverige = wijziging.getOud().getObjectTypeOverige();
+        } else {
+            objecttype = wijziging.getNieuw().getObjectType();
+            objecttypeOverige = wijziging.getNieuw().getObjectTypeOverige();
+        }
+
+        if (Objecttype.OVERIGE == objecttype) {
+            return "objecttype." + StringUtils.upperCase(objecttypeOverige);
+        }
+        return "objecttype." + objecttype.name();
     }
 
     private String toWaarde(final Zaakobject zaakobject) {
-        return zaakobject != null ? zaakobject.getObjectType().toValue() : null;
+        if (zaakobject == null) {
+            return null;
+        }
+        return zaakobject.getWaarde();
     }
+
 }

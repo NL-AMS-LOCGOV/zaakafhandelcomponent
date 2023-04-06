@@ -1,0 +1,73 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="form">
+    <div class="flex-row flex-col-md gap-10 flex-wrap">
+        <div class="w100">
+
+            <mat-form-field appearance="fill" class="full-width">
+                <button [disabled]="trefwoorden.invalid || loading" mat-icon-button type="button" matSuffix title="{{'zoeken' | translate}}" (click)="zoek()">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <mat-label>{{'trefwoorden' | translate}}</mat-label>
+                <input matInput id="trefwoorden" maxlength="255"
+                       (keyup.enter)="!trefwoorden.valid || zoek()"
+                       [formControl]="trefwoorden">
+                <mat-hint align="end">{{trefwoorden.value.length}}/255</mat-hint>
+            </mat-form-field>
+
+        </div>
+    </div>
+</div>
+
+<div class="table-wrapper">
+    <table mat-table [dataSource]="bagObjecten" matSort>
+        <ng-container matColumnDef="expand">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
+            <td *matCellDef="let bagObject" mat-cell>
+                <button *ngIf="expandable(bagObject) " mat-icon-button (click)="expand(bagObject)"
+                        title="{{ (bagObject.expanded ? 'actie.gerelateerde.gegevens.verbergen' : 'actie.gerelateerde.gegevens.tonen') | translate}}">
+                    <mat-icon>{{bagObject.expanded ? 'expand_more' : 'chevron_right'}}</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="id">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'identificatie' | translate}} </th>
+            <td *matCellDef="let bagObject" mat-cell>
+                {{bagObject.identificatie | empty}}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'type' | translate}} </th>
+            <td *matCellDef="let bagObject" mat-cell>{{'objecttype.' + bagObject.bagObjectType | translate}}</td>
+        </ng-container>
+        <ng-container matColumnDef="omschrijving">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'omschrijving' | translate}} </th>
+            <td *matCellDef="let bagObject" mat-cell [ngSwitch]="bagObject.bagObjectType">
+                <span *ngSwitchCase="BAGObjecttype.ADRES">
+                    {{bagObject.openbareRuimteNaam}} {{bagObject.huisnummerWeergave}}, {{bagObject.postcode}} {{bagObject.woonplaatsNaam}}
+                </span>
+                <span *ngSwitchCase="BAGObjecttype.NUMMERAANDUIDING">{{bagObject.huisnummerWeergave}} ({{bagObject.postcode}})</span>
+                <span *ngSwitchCase="BAGObjecttype.PAND">
+                    {{'bouwjaar' | translate}}: {{bagObject.oorspronkelijkBouwjaar}} ({{'bagobject.pand.status.' + bagObject.status | translate}})
+                </span>
+                <span *ngSwitchCase="BAGObjecttype.OPENBARE_RUIMTE">{{bagObject.naam}} ({{bagObject.type}})</span>
+                <span *ngSwitchCase="BAGObjecttype.WOONPLAATS">{{bagObject.naam}}</span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="acties" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-icon-button color="primary" [disabled]="reedsGekoppeld(row)" (click)="selectBagObject(row)"
+                        title="{{ 'actie.selecteren' | translate}}">
+                    <mat-icon>add_home_work</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+        <tr [ngClass]="bagObject.child ?  'child' : 'parent'" mat-row *matRowDef="let bagObject; columns: columns;"></tr>
+    </table>
+    <p *ngIf="bagObjecten.data.length == 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    <p *ngIf="loading ">{{'msg.loading' | translate}}</p>
+</div>

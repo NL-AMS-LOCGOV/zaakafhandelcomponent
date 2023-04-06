@@ -12,12 +12,12 @@ import net.atos.client.brp.model.SoortAdresEnum;
 public class SoortAdresEnumAdapter implements JsonbAdapter<SoortAdresEnum, String> {
 
     @Override
-    public String adaptToJson(final SoortAdresEnum soortAdresEnum) throws Exception {
+    public String adaptToJson(final SoortAdresEnum soortAdresEnum) {
         return soortAdresEnum.toString();
     }
 
     @Override
-    public SoortAdresEnum adaptFromJson(final String json) throws Exception {
+    public SoortAdresEnum adaptFromJson(final String json) {
         return SoortAdresEnum.fromValue(json);
     }
 }

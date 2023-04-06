@@ -5,14 +5,11 @@
 
 package net.atos.zac.app.bag.model;
 
-import java.net.URI;
 import java.util.UUID;
 
-public class RESTBAGObjectGegevens {
+public class RESTBAGObjectGegevens<E extends RESTBAGObject> {
 
     public UUID zaakUUID;
 
-    public URI bagObject;
-
-    public BAGObjectType bagObjecttype;
+    public E bagObject;
 }

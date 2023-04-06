@@ -78,7 +78,6 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             .build()],
             [new HiddenFormFieldBuilder()
             .id(fields.REPLYTO)
-            .label(fields.REPLYTO)
             .build()],
             [new InputFormFieldBuilder()
             .id(fields.EMAILADRES)
@@ -94,6 +93,7 @@ export class ExternAdviesMail extends AbstractTaakFormulier {
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
+            .openInNieuweTab()
             .documenten(documenten).build()]
         );
 

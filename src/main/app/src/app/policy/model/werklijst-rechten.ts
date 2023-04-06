@@ -7,6 +7,7 @@ export class WerklijstRechten {
     documentenInbox: boolean = false;
     documentenOntkoppeld: boolean = false;
     documentenOntkoppeldVerwijderen: boolean = false;
+    productaanvragenInbox: boolean = false;
     zakenTaken: boolean = false;
     zakenTakenVerdelen: boolean = false;
 }

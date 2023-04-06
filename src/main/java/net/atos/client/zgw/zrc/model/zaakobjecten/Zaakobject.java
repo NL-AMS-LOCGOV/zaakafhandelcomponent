@@ -3,15 +3,24 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.zrc.model;
+package net.atos.client.zgw.zrc.model.zaakobjecten;
 
 import java.net.URI;
 import java.util.UUID;
 
+import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import net.atos.client.zgw.zrc.model.Objecttype;
+import net.atos.client.zgw.zrc.util.ZaakObjectJsonbDeserializer;
+
 /**
- *
+ * Zaakobject
  */
-public class Zaakobject {
+@JsonbTypeDeserializer(ZaakObjectJsonbDeserializer.class)
+public abstract class Zaakobject {
 
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object
@@ -55,14 +64,18 @@ public class Zaakobject {
      */
     private String relatieomschrijving;
 
+    /**
+     * Constructor for JSONB deserialization
+     */
     public Zaakobject() {
     }
 
     /**
      * Constructor with required attributes
      */
-    public Zaakobject(final URI zaak, final Objecttype objectType) {
-        this.zaak = zaak;
+    public Zaakobject(final URI zaakUri, final URI objectUri, final Objecttype objectType) {
+        this.zaak = zaakUri;
+        this.object = objectUri;
         this.objectType = objectType;
     }
 
@@ -121,4 +134,38 @@ public class Zaakobject {
     public void setRelatieomschrijving(final String relatieomschrijving) {
         this.relatieomschrijving = relatieomschrijving;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Zaakobject that = (Zaakobject) o;
+        return new EqualsBuilder().append(zaak, that.zaak).append(object, that.object).append(objectType, that.objectType)
+                .append(objectTypeOverige, that.objectTypeOverige).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zaak != null ? zaak.hashCode() : 0;
+        result = 31 * result + (object != null ? object.hashCode() : 0);
+        result = 31 * result + (objectType != null ? objectType.hashCode() : 0);
+        result = 31 * result + (objectTypeOverige != null ? objectTypeOverige.hashCode() : 0);
+        return result;
+    }
+
+    @JsonbTransient
+    public boolean isBagObject() {
+        return switch (objectType) {
+            case ADRES, PAND, OPENBARE_RUIMTE, WOONPLAATS -> true;
+            case OVERIGE -> ZaakobjectNummeraanduiding.OBJECT_TYPE_OVERIGE.equals(objectTypeOverige);
+            default -> false;
+        };
+    }
+
+    @JsonbTransient
+    public abstract String getWaarde();
 }

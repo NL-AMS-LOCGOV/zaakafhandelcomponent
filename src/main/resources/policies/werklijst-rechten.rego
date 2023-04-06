@@ -11,11 +11,17 @@ werklijst_rechten := {
     "documenten_ontkoppeld": documenten_ontkoppeld,
     "documenten_ontkoppeld_verwijderen": documenten_ontkoppeld_verwijderen,
     "zaken_taken": zaken_taken,
+    "productaanvragen_inbox": productaanvragen_inbox,
     "zaken_taken_verdelen": zaken_taken_verdelen
 }
 
 default documenten_inbox := false
 documenten_inbox {
+    recordmanager.rol in user.rollen
+}
+
+default productaanvragen_inbox := false
+productaanvragen_inbox {
     recordmanager.rol in user.rollen
 }
 

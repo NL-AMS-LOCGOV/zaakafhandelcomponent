@@ -11,6 +11,7 @@ import {Adres} from './model/adres';
 import {Resultaat} from '../shared/model/resultaat';
 import {catchError, Observable} from 'rxjs';
 import {BAGObjectGegevens} from './model/bagobject-gegevens';
+import {BAGObject} from './model/bagobject';
 
 @Injectable({
     providedIn: 'root'
@@ -29,13 +30,13 @@ export class BAGService {
     }
 
     createBAGObject(bagObjectGegevens: BAGObjectGegevens): Observable<void> {
-        return this.http.post<void>(`${this.basepath}`, bagObjectGegevens).pipe(
+        return this.http.post<void>(`${this.basepath}/${bagObjectGegevens.bagObject.bagObjectType}`, bagObjectGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    listAdressenVoorZaak(zaakUuid: string): Observable<Adres[]> {
-        return this.http.get<Adres[]>(`${this.basepath}/adres/zaak/${zaakUuid}`).pipe(
+    listBAGObjectenVoorZaak(zaakUuid: string): Observable<BAGObject[]> {
+        return this.http.get<Adres[]>(`${this.basepath}/zaak/${zaakUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -12,12 +12,12 @@ import net.atos.client.brp.model.RedenOpschortingBijhoudingEnum;
 public class RedenOpschortingBijhoudingEnumAdapter implements JsonbAdapter<RedenOpschortingBijhoudingEnum, String> {
 
     @Override
-    public String adaptToJson(final RedenOpschortingBijhoudingEnum redenOpschortingBijhoudingEnum) throws Exception {
+    public String adaptToJson(final RedenOpschortingBijhoudingEnum redenOpschortingBijhoudingEnum) {
         return redenOpschortingBijhoudingEnum.toString();
     }
 
     @Override
-    public RedenOpschortingBijhoudingEnum adaptFromJson(final String json) throws Exception {
+    public RedenOpschortingBijhoudingEnum adaptFromJson(final String json) {
         return RedenOpschortingBijhoudingEnum.fromValue(json);
     }
 }

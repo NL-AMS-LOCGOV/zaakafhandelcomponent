@@ -55,6 +55,8 @@ import {MatListModule} from '@angular/material/list';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
 import {DocumentIconComponent} from '../document-icon/document-icon.component';
+import {DragAndDropDirective} from './form-components/file/drag-and-drop.directive';
+import {MessageComponent} from './form-components/message/message.component';
 
 @NgModule({
     declarations: [
@@ -80,7 +82,9 @@ import {DocumentIconComponent} from '../document-icon/document-icon.component';
         RadioComponent,
         ParagraphComponent,
         DividerComponent,
-        HiddenComponent
+        HiddenComponent,
+        DragAndDropDirective,
+        MessageComponent
     ],
     imports: [
         CommonModule,
@@ -129,7 +133,8 @@ import {DocumentIconComponent} from '../document-icon/document-icon.component';
         DocumentenOndertekenenComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
-        ParagraphComponent
+        ParagraphComponent,
+        MessageComponent
     ],
     providers: [
         {

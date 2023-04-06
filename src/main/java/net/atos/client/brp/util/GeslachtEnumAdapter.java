@@ -12,7 +12,7 @@ import net.atos.client.brp.model.GeslachtEnum;
 public class GeslachtEnumAdapter implements JsonbAdapter<GeslachtEnum, String> {
 
     @Override
-    public String adaptToJson(final GeslachtEnum geslachtEnum) throws Exception {
+    public String adaptToJson(final GeslachtEnum geslachtEnum) {
         return geslachtEnum.toString();
     }
 

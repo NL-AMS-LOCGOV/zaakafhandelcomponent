@@ -57,7 +57,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -65,9 +68,7 @@ import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppel
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
 import {ZaakBetrokkene} from '../model/zaak-betrokkene';
-import {Adres} from '../../bag/model/adres';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
-import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
@@ -78,6 +79,9 @@ import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
+import {BAGObject} from '../../bag/model/bagobject';
+import {BAGObjecttype} from '../../bag/model/bagobjecttype';
+import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -107,8 +111,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
     betrokkenenColumns: string[] = ['roltype', 'betrokkenegegevens', 'betrokkeneidentificatie', 'roltoelichting', 'actions'];
-    adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
-    adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats'];
+    bagObjecten: MatTableDataSource<BAGObject> = new MatTableDataSource<BAGObject>();
+    bagObjectenColumns: string[] = ['identificatie', 'type', 'omschrijving'];
+    BAGObjecttype = BAGObjecttype;
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
@@ -190,7 +195,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.utilService.disableActionBar(!zaak.rechten.wijzigen);
         this.loadHistorie();
         this.loadBetrokkenen();
-        this.loadAdressen();
+        this.loadBagObjecten();
         this.setEditableFormFields();
         this.setupMenu();
         this.loadLocatie();
@@ -707,9 +712,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private loadAdressen(): void {
-        this.bagService.listAdressenVoorZaak(this.zaak.uuid).subscribe(adressen => {
-            this.adressen.data = adressen;
+    private loadBagObjecten(): void {
+        this.bagService.listBAGObjectenVoorZaak(this.zaak.uuid).subscribe(bagObjecten => {
+            this.bagObjecten.data = bagObjecten;
         });
     }
 
@@ -870,14 +875,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    adresGeselecteerd(adres: Adres): void {
+    adresGeselecteerd(bagObject: BAGObject): void {
         this.websocketService.suspendListener(this.zaakListener);
-        this.actionsSidenav.close();
-        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, adres.url, BAGObjecttype.ADRES))
+        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
             .subscribe(() => {
                 this.utilService.openSnackbar('msg.bagobject.toegevoegd');
                 this.loadHistorie();
-                this.loadAdressen();
+                this.loadBagObjecten();
             });
     }
 
@@ -957,6 +961,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
         this.teWijzigenBesluit = $event;
         this.actionsSidenav.open();
+    }
+
+    doIntrekking($event): void {
+        const gegevens = new BesluitIntrekkenGegevens();
+        gegevens.besluitUuid = $event.uuid;
+        gegevens.vervaldatum = $event.vervaldatum;
+        gegevens.vervalreden = $event.vervalreden.value;
+        gegevens.reden = $event.toelichting;
+        this.zakenService.intrekkenBesluit(gegevens).subscribe(() => {
+            this.utilService.openSnackbar('msg.besluit.ingetrokken');
+        });
     }
 
     betrokkeneGegevensOphalen(betrokkene: ZaakBetrokkene): void {

@@ -87,12 +87,10 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .optionLabel('mail')
             .optionSuffix('suffix')
             .optionValue('mail')
-            .value$(this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid))
             .validators(Validators.required)
             .build()],
             [new HiddenFormFieldBuilder()
             .id(fields.REPLYTO)
-            .label(fields.REPLYTO)
             .build()],
             [new InputFormFieldBuilder()
             .id(fields.EMAILADRES)
@@ -107,12 +105,13 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .build()],
             [new HiddenFormFieldBuilder(moment())
             .id(fields.DATUMGEVRAAGD)
-            .label(fields.DATUMGEVRAAGD)
             .build()],
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)
             .label(fields.BIJLAGEN)
-            .documenten(documenten).build()],
+            .documenten(documenten)
+            .openInNieuweTab()
+            .build()],
             [new DateFormFieldBuilder(this.humanTaskData.fataledatum)
             .id(AbstractTaakFormulier.TAAK_FATALEDATUM)
             .minDate(morgen)
@@ -120,6 +119,11 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .showDays()
             .build()
             ]);
+
+        this.zakenService.readDefaultAfzenderVoorZaak(this.zaak.uuid).subscribe(defaultMail => {
+            this.getFormField(fields.VERZENDER).formControl.setValue(defaultMail.mail);
+        });
+
         this.getFormField(fields.VERZENDER).formControl.valueChanges.subscribe((afzender: ZaakAfzender) => {
             const verzender: SelectFormField = this.getFormField(fields.VERZENDER) as SelectFormField;
             this.getFormField(fields.REPLYTO).formControl.setValue(verzender.getOption(afzender)?.replyTo);

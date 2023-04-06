@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.zrc.model;
+package net.atos.client.zgw.zrc.model.zaakobjecten;
 
 import java.net.URI;
 
 import javax.ws.rs.QueryParam;
+
+import net.atos.client.zgw.zrc.model.Objecttype;
 
 /**
  *

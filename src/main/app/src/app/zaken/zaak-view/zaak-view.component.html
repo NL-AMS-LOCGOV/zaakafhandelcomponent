@@ -14,8 +14,9 @@
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
                           (klantGegevens)="betrokkeneGeselecteerd($event)"
                           [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
-        <zac-bag-adres-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
-                            (bagObject)="adresGeselecteerd($event)"></zac-bag-adres-zoek>
+        <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
+                      [gekoppeldeBagObjecten]="bagObjecten.data"
+                      (bagObject)="adresGeselecteerd($event)"></zac-bag-zoek>
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
                           [huidigeLocatie]="zaakLocatie"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
@@ -353,35 +354,43 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="adressen.data.length > 0">
+                        <mat-tab *ngIf="bagObjecten.data.length > 0">
                             <ng-template mat-tab-label>
                                 <mat-icon>gps_fixed</mat-icon>
                                 {{'bagobjecten' | translate}}
                             </ng-template>
                             <div id="bagobjecten_tab" class="table-wrapper bagobjecten-table">
-                                <table mat-table [dataSource]="adressen" matSort>
-                                    <ng-container matColumnDef="straat">
-                                        <th mat-header-cell *matHeaderCellDef> {{ 'straat' | translate }} </th>
-                                        <td mat-cell *matCellDef="let adres">
-                                            <read-more [text]="adres.straat" [maxLength]="20"></read-more>
+                                <table mat-table [dataSource]="bagObjecten" matSort>
+                                    <ng-container matColumnDef="identificatie">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'identificatie' | translate }} </th>
+                                        <td mat-cell *matCellDef="let bagObject">
+                                            <read-more [text]="bagObject.identificatie" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
-                                    <ng-container matColumnDef="huisnummer">
-                                        <th mat-header-cell *matHeaderCellDef> {{ 'huisnummer' | translate }} </th>
-                                        <td mat-cell *matCellDef="let adres">{{ adres.huisnummer }}</td>
-                                    </ng-container>
-                                    <ng-container matColumnDef="postcode">
-                                        <th mat-header-cell *matHeaderCellDef> {{ 'postcode' | translate }} </th>
-                                        <td mat-cell *matCellDef="let adres">{{ adres.postcode }}</td>
-                                    </ng-container>
-                                    <ng-container matColumnDef="woonplaats">
-                                        <th mat-header-cell *matHeaderCellDef> {{ 'woonplaats' | translate }} </th>
-                                        <td mat-cell *matCellDef="let adres">
-                                            <read-more [text]="adres.woonplaats" [maxLength]="20"></read-more>
+                                    <ng-container matColumnDef="type">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'type' | translate }} </th>
+                                        <td mat-cell *matCellDef="let bagObject">
+                                            {{'objecttype.' + bagObject.bagObjectType | translate}}
                                         </td>
                                     </ng-container>
-                                    <tr mat-header-row *matHeaderRowDef="adressenColumns; sticky: true"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: adressenColumns;"></tr>
+                                    <ng-container matColumnDef="omschrijving">
+                                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'omschrijving' | translate}} </th>
+                                        <td *matCellDef="let bagObject" mat-cell [ngSwitch]="bagObject.bagObjectType">
+                                            <span *ngSwitchCase="BAGObjecttype.ADRES">
+                                                {{bagObject.openbareRuimteNaam}} {{bagObject.huisnummerWeergave}},
+                                                {{bagObject.postcode}} {{bagObject.woonplaatsNaam}}
+                                            </span>
+                                            <span *ngSwitchCase="BAGObjecttype.NUMMERAANDUIDING">
+                                                {{bagObject.huisnummerWeergave}} ({{bagObject.postcode}})
+                                            </span>
+                                            <span *ngSwitchCase="BAGObjecttype.PAND"> {{bagObject.identificatie}}</span>
+                                            <span *ngSwitchCase="BAGObjecttype.OPENBARE_RUIMTE">{{bagObject.naam}} ({{bagObject.woonplaatsNaam}})</span>
+                                            <span *ngSwitchCase="BAGObjecttype.WOONPLAATS">{{bagObject.naam}}</span>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="bagObjectenColumns; sticky: true"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: bagObjectenColumns;"></tr>
                                 </table>
                             </div>
                         </mat-tab>
@@ -393,7 +402,8 @@
 
                 <zac-besluit-view class="besluiten" *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
                                   [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
-                                  (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
+                                  (besluitWijzigen)="besluitWijzigen($event)"
+                                  (doIntrekking)="doIntrekking($event)"></zac-besluit-view>
 
                 <mat-card class="taken-card">
                     <mat-card-header>

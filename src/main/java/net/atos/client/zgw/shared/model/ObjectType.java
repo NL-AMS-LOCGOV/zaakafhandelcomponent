@@ -26,9 +26,18 @@ import net.atos.client.zgw.shared.model.audit.zaken.StatusWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakEigenschapWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
-import net.atos.client.zgw.shared.model.audit.zaken.ZaakobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectAdresWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectNummeraanduidingWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectOpenbareRuimteWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectPandWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectProductaanvraagWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.objecten.ZaakobjectWoonplaatsWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.Objecttype;
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectNummeraanduiding;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 
 public enum ObjectType {
 
@@ -51,7 +60,7 @@ public enum ObjectType {
     ROL("/zaken/api/v1/rollen/", null),
 
     /** http://open-zaak/zaken/api/v1/zaakobjecten/{uuid} */
-    ZAAKOBJECT("/zaken/api/v1/zaakobjecten", ZaakobjectWijziging.class),
+    ZAAKOBJECT("/zaken/api/v1/zaakobjecten", ZaakobjectAdresWijziging.class),
 
     /** http://open-zaak/zaken/api/v1/zaakinformatieobjecten/{uuid} */
     ZAAK_INFORMATIEOBJECT("/zaken/api/v1/zaakinformatieobjecten", ZaakInformatieobjectWijziging.class),
@@ -93,24 +102,36 @@ public enum ObjectType {
     }
 
     public Class<? extends AuditWijziging<? extends Rol<?>>> getAuditClass(final BetrokkeneType betrokkenetype) {
-        switch (betrokkenetype) {
-            case VESTIGING:
-                return RolVestigingWijziging.class;
-            case MEDEWERKER:
-                return RolMedewerkerWijziging.class;
-            case NATUURLIJK_PERSOON:
-                return RolNatuurlijkPersoonWijziging.class;
-            case NIET_NATUURLIJK_PERSOON:
-                return RolNietNatuurlijkPersoonWijziging.class;
-            case ORGANISATORISCHE_EENHEID:
-                return RolOrganisatorischeEenheidWijziging.class;
-            default:
-                throw new RuntimeException(String.format("BetrokkeneType '%s' wordt niet ondersteund", betrokkenetype));
-        }
+        return switch (betrokkenetype) {
+            case VESTIGING -> RolVestigingWijziging.class;
+            case MEDEWERKER -> RolMedewerkerWijziging.class;
+            case NATUURLIJK_PERSOON -> RolNatuurlijkPersoonWijziging.class;
+            case NIET_NATUURLIJK_PERSOON -> RolNietNatuurlijkPersoonWijziging.class;
+            case ORGANISATORISCHE_EENHEID -> RolOrganisatorischeEenheidWijziging.class;
+        };
     }
 
     public Type getAuditClass() {
         return auditClass;
     }
 
+    public Class<? extends AuditWijziging<? extends Zaakobject>> getAuditClass(final Objecttype objectType, final String objectTypeOverige) {
+        return switch (objectType) {
+            case ADRES -> ZaakobjectAdresWijziging.class;
+            case OPENBARE_RUIMTE -> ZaakobjectOpenbareRuimteWijziging.class;
+            case PAND -> ZaakobjectPandWijziging.class;
+            case WOONPLAATS -> ZaakobjectWoonplaatsWijziging.class;
+            case OVERIGE -> getAuditClassObjectOverige(objectTypeOverige);
+            default -> throw new RuntimeException(String.format("objecttype '%s'  wordt niet ondersteund", objectType));
+        };
+    }
+
+    private Class<? extends AuditWijziging<? extends Zaakobject>> getAuditClassObjectOverige(final String objectTypeOverige) {
+        if (StringUtils.equals(objectTypeOverige, ZaakobjectNummeraanduiding.OBJECT_TYPE_OVERIGE)) {
+            return ZaakobjectNummeraanduidingWijziging.class;
+        } else if (StringUtils.equals(objectTypeOverige, ZaakobjectProductaanvraag.OBJECT_TYPE_OVERIGE)) {
+            return ZaakobjectProductaanvraagWijziging.class;
+        }
+        throw new RuntimeException(String.format("objecttype 'OVERIGE' met objectTypeOverige '%s' wordt niet ondersteund", objectTypeOverige));
+    }
 }

@@ -43,6 +43,7 @@ export class DocumentVerzendenPost extends AbstractTaakFormulier {
             .removeColumn('status')
             .validators(Validators.required)
             .documenten(this.informatieObjectenService.listInformatieobjectenVoorVerzenden(this.zaak.uuid))
+            .openInNieuweTab()
             .build()],
             [new TextareaFormFieldBuilder()
             .id(fields.TOELICHTING)

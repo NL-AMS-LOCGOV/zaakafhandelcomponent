@@ -114,18 +114,18 @@
                         </div>
                     </td>
                 </ng-container>
-                <tr mat-header-row
-                    *matHeaderRowDef="documentColumns"></tr>
-                <tr mat-row
-                    *matRowDef="let row; columns: documentColumns;"
-                    [class.expanded-row]="documentPreviewRow === row"></tr>
+                <tr mat-header-row *matHeaderRowDef="documentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: documentColumns;" [class.expanded-row]="documentPreviewRow === row"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
 
                 <tr class="mat-row" *matNoDataRow>
                     <td class="mat-cell" colspan="10">
-                        <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:skeletonLayout.TABLE}">
+                        <ng-container *ngIf="loading$|async; else noResults">
+                            <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:skeletonLayout.TABLE}"></zac-skeleton-loader>
+                        </ng-container>
+                        <ng-template #noResults>
                             <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                        </zac-skeleton-loader>
+                        </ng-template>
                     </td>
                 </tr>
 

@@ -33,7 +33,7 @@ public class BAGClientService {
 
     public List<AdresIOHal> listAdressen(final BevraagAdressenParameters parameters) {
         final AdresIOHalCollectionEmbedded embedded = adresApi.bevraagAdressen(parameters).getEmbedded();
-        if (embedded.getAdressen() != null) {
+        if (embedded != null && embedded.getAdressen() != null) {
             return embedded.getAdressen();
         } else {
             return Collections.emptyList();

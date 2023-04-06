@@ -4,5 +4,5 @@
  */
 
 export class ListAdressenParameters {
-    constructor(public postcode: string, public huisnummer: number) {}
+    constructor(public trefwoorden) {}
 }
