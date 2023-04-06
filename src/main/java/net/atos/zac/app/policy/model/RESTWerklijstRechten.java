@@ -6,14 +6,11 @@
 package net.atos.zac.app.policy.model;
 
 public class RESTWerklijstRechten {
+    public boolean inbox;
 
-    public boolean documentenInbox;
+    public boolean ontkoppeldeDocumentenVerwijderen;
 
-    public boolean documentenOntkoppeld;
-
-    public boolean documentenOntkoppeldVerwijderen;
-
-    public boolean productaanvragenInbox;
+    public boolean inboxProductaanvragenVerwijderen;
 
     public boolean zakenTaken;
 

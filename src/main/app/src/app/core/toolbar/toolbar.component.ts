@@ -101,8 +101,4 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     resetSearch(): void {
         this.zoekenService.reset$.next();
     }
-
-    inboxRechten(): boolean {
-        return this.werklijstRechten.documentenInbox || this.werklijstRechten.documentenOntkoppeld || this.werklijstRechten.productaanvragenInbox;
-    }
 }

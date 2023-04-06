@@ -65,7 +65,7 @@
                 </a>
             </mat-menu>
 
-            <button *ngIf="inboxRechten()" [matMenuTriggerFor]="inboxMenu"
+            <button *ngIf="this.werklijstRechten.inbox" [matMenuTriggerFor]="inboxMenu"
                     id="inbox_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor inboxen">
@@ -73,17 +73,16 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #inboxMenu="matMenu">
-                <a *ngIf="this.werklijstRechten.documentenOntkoppeld"
-                   routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item routerLinkActive="active">
+                <a routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item routerLinkActive="active">
                     <mat-icon>inbox</mat-icon>
                     <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
                 </a>
-                <a *ngIf="this.werklijstRechten.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
+                <a routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
                    routerLinkActive="active">
                     <mat-icon outlined>drive_file_move</mat-icon>
                     <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
                 </a>
-                <a *ngIf="this.werklijstRechten.productaanvragenInbox" routerLink="/productaanvragen/inbox" id="inboxProductaanvragen_button" mat-menu-item
+                <a routerLink="/productaanvragen/inbox" id="inboxProductaanvragen_button" mat-menu-item
                    routerLinkActive="active">
                     <mat-icon>web</mat-icon>
                     <span>{{ 'title.productaanvragen.inboxProductaanvragen' | translate }}</span>

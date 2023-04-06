@@ -23,6 +23,7 @@ import {InboxProductaanvraag} from '../model/inbox-productaanvraag';
 import {InboxProductaanvraagListParameters} from '../model/inbox-productaanvraag-list-parameters';
 import {detailExpand} from '../../shared/animations/animations';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     templateUrl: './inbox-productaanvragen-list.component.html',
@@ -144,6 +145,17 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
     aanmakenZaak(inboxProductaanvraag: InboxProductaanvraag): void {
         this.router.navigateByUrl('zaken/create', {
             state: {inboxProductaanvraag}
+        });
+    }
+
+    inboxProductaanvragenVerwijderen(inboxProductaanvraag: InboxProductaanvraag): void {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData('msg.inboxProductaanvraag.verwijderen.bevestigen', this.inboxProductaanvragenService.delete(inboxProductaanvraag))
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.inboxProductaanvraag.verwijderen.uitgevoerd');
+                this.filterChange.emit();
+            }
         });
     }
 }
