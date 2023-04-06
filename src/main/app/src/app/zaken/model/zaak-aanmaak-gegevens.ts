@@ -7,5 +7,5 @@ import {Zaak} from './zaak';
 import {InboxProductaanvraag} from '../../productaanvragen/model/inbox-productaanvraag';
 
 export class ZaakAanmaakGegevens {
-    constructor(public zaak: Zaak, public productaanvraag?: InboxProductaanvraag) {}
+    constructor(public zaak: Zaak, public inboxProductaanvraag?: InboxProductaanvraag) {}
 }
