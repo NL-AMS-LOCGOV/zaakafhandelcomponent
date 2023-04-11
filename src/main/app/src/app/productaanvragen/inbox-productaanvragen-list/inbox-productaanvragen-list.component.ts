@@ -18,11 +18,12 @@ import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {WerklijstComponent} from '../../shared/dynamic-table/datasource/werklijst-component';
 import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ProductaanvragenService} from '../productaanvragen.service';
+import {InboxProductaanvragenService} from '../inbox-productaanvragen.service';
 import {InboxProductaanvraag} from '../model/inbox-productaanvraag';
 import {InboxProductaanvraagListParameters} from '../model/inbox-productaanvraag-list-parameters';
 import {detailExpand} from '../../shared/animations/animations';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     templateUrl: './inbox-productaanvragen-list.component.html',
@@ -44,7 +45,7 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
     previewSrc: SafeUrl = null;
 
-    constructor(private productaanvragenService: ProductaanvragenService,
+    constructor(private inboxProductaanvragenService: InboxProductaanvragenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
@@ -69,7 +70,7 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
                 this.updateListParameters();
-                return this.productaanvragenService.list(this.listParameters);
+                return this.inboxProductaanvragenService.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
@@ -124,26 +125,37 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
     }
 
     createDefaultParameters(): InboxProductaanvraagListParameters {
-        return new InboxProductaanvraagListParameters('ontvangstdatum', 'desc');
+        return new InboxProductaanvraagListParameters('id', 'desc');
     }
 
     getWerklijst(): Werklijst {
         return Werklijst.INBOX_PRODUCTAANVRAGEN;
     }
 
-    updateActive(row: InboxProductaanvraag) {
-        if (this.expandedRow === row) {
+    updateActive(selectedRow: InboxProductaanvraag) {
+        if (this.expandedRow === selectedRow) {
             this.expandedRow = null;
             this.previewSrc = null;
         } else {
-            this.expandedRow = row;
-            this.previewSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.productaanvragenService.getPDFViewerURL(row.aanvraagdocumentUUID));
+            this.expandedRow = selectedRow;
+            this.previewSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.inboxProductaanvragenService.pdfPreview(selectedRow.aanvraagdocumentUUID));
         }
     }
 
-    aanmakenZaak(row: InboxProductaanvraag): void {
+    aanmakenZaak(inboxProductaanvraag: InboxProductaanvraag): void {
         this.router.navigateByUrl('zaken/create', {
-            state: {productaanvraag: row}
+            state: {inboxProductaanvraag}
+        });
+    }
+
+    inboxProductaanvragenVerwijderen(inboxProductaanvraag: InboxProductaanvraag): void {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData('msg.inboxProductaanvraag.verwijderen.bevestigen', this.inboxProductaanvragenService.delete(inboxProductaanvraag))
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.inboxProductaanvraag.verwijderen.uitgevoerd');
+                this.filterChange.emit();
+            }
         });
     }
 }

@@ -4,10 +4,9 @@
  */
 
 export class WerklijstRechten {
-    documentenInbox: boolean = false;
-    documentenOntkoppeld: boolean = false;
-    documentenOntkoppeldVerwijderen: boolean = false;
-    productaanvragenInbox: boolean = false;
+    inbox: boolean = false;
+    ontkoppeldeDocumentenVerwijderen: boolean = false;
+    inboxProductaanvragenVerwijderen: boolean = false;
     zakenTaken: boolean = false;
     zakenTakenVerdelen: boolean = false;
 }
