@@ -25,7 +25,7 @@
                     </div>
                 </mat-card-content>
             </mat-card>
-            <div class="flex-col flex">
+            <div class="flex-col flex verkorte-taak">
                 <mat-card class="taak-card">
                     <mat-card-header>
                         <mat-card-title>{{'taak' | translate}}</mat-card-title>
@@ -67,7 +67,7 @@
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{'historie' | translate}}">
-                                <div id="historie_tab" class="table-wrapper historie-table">
+                                <div id="historie_tab" class="table-wrapper historie-table taak-formulier">
                                     <table mat-table [dataSource]="historieSrc" matSort #historieSort="matSort" matSortActive="datum"
                                            matSortDirection="desc">
                                         <ng-container matColumnDef="datum">
