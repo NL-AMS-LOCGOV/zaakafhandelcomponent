@@ -360,8 +360,8 @@ public class ZakenRESTService {
         cmmnService.startCase(zaak, zaaktype,
                               zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID()), null);
 
-        if (restZaakAanmaakGegevens.productaanvraag != null) {
-            koppelInboxProductaanvraag(zaak, restZaakAanmaakGegevens.productaanvraag);
+        if (restZaakAanmaakGegevens.inboxProductaanvraag != null) {
+            koppelInboxProductaanvraag(zaak, restZaakAanmaakGegevens.inboxProductaanvraag);
         }
         return zaakConverter.convert(zaak);
     }

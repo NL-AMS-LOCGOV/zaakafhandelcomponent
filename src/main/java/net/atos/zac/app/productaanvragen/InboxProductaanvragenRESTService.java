@@ -15,6 +15,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -39,13 +40,17 @@ import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.policy.PolicyService;
 
 @Singleton
-@Path("productaanvragen")
+@Path("inbox-productaanvragen")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ProductaanvragenRESTService {
+public class InboxProductaanvragenRESTService {
 
     @Inject
     private DRCClientService drcClientService;
+
+
+    @Inject
+    private PolicyService policyService;
 
     @Inject
     private InboxProductaanvraagService inboxProductaanvraagService;
@@ -56,13 +61,10 @@ public class ProductaanvragenRESTService {
     @Inject
     private RESTInboxProductaanvraagListParametersConverter listParametersConverter;
 
-    @Inject
-    private PolicyService policyService;
-
     @PUT
     @Path("")
     public RESTResultaat<RESTInboxProductaanvraag> list(final RESTInboxProductaanvraagListParameters restListParameters) {
-        assertPolicy(policyService.readWerklijstRechten().getProductaanvragenInbox());
+        assertPolicy(policyService.readWerklijstRechten().getInbox());
         final InboxProductaanvraagListParameters listParameters = listParametersConverter.convert(restListParameters);
         final InboxProductaanvraagResultaat resultaat = inboxProductaanvraagService.list(listParameters);
         final RESTInboxProductaanvraagResultaat restInboxProductaanvraagResultaat =
@@ -79,9 +81,9 @@ public class ProductaanvragenRESTService {
     }
 
     @GET
-    @Path("/{uuid}/aanvraagdocument")
-    public Response readFile(@PathParam("uuid") final UUID uuid) {
-        assertPolicy(policyService.readWerklijstRechten().getProductaanvragenInbox());
+    @Path("/{uuid}/pdfPreview")
+    public Response pdfPreview(@PathParam("uuid") final UUID uuid) {
+        assertPolicy(policyService.readWerklijstRechten().getInbox());
         EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
         try (ByteArrayInputStream is = drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
             return Response.ok(is)
@@ -91,5 +93,12 @@ public class ProductaanvragenRESTService {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @DELETE
+    @Path("{id}")
+    public void delete(@PathParam("id") final long id) {
+        PolicyService.assertPolicy(policyService.readWerklijstRechten().getInboxProductaanvragenVerwijderen());
+        inboxProductaanvraagService.delete(id);
     }
 }

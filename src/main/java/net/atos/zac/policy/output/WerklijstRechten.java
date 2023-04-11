@@ -10,13 +10,11 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class WerklijstRechten {
 
-    private final boolean documentenInbox;
+    private final boolean inbox;
 
-    private final boolean documentenOntkoppeld;
+    private final boolean ontkoppeldeDocumentenVerwijderen;
 
-    private final boolean documentenOntkoppeldVerwijderen;
-
-    private final boolean productaanvragenInbox;
+    private final boolean inboxProductaanvragenVerwijderen;
 
     private final boolean zakenTaken;
 
@@ -24,30 +22,28 @@ public class WerklijstRechten {
 
     @JsonbCreator
     public WerklijstRechten(
-            @JsonbProperty("documenten_inbox") final boolean documentenInbox,
-            @JsonbProperty("documenten_ontkoppeld") final boolean documentenOntkoppeld,
-            @JsonbProperty("documenten_ontkoppeld_verwijderen") final boolean documentenOntkoppeldVerwijderen,
-            @JsonbProperty("productaanvragen_inbox") final boolean productaanvragenInbox,
+            @JsonbProperty("inbox") final boolean inbox,
+            @JsonbProperty("ontkoppelde_documenten_verwijderen") final boolean ontkoppeldeDocumentenVerwijderen,
+            @JsonbProperty("inbox_productaanvragen_verwijderen") final boolean inboxProductaanvragenVerwijderen,
             @JsonbProperty("zaken_taken") final boolean zakenTaken,
             @JsonbProperty("zaken_taken_verdelen") final boolean zakenTakenVerdelen) {
-        this.documentenInbox = documentenInbox;
-        this.documentenOntkoppeld = documentenOntkoppeld;
-        this.documentenOntkoppeldVerwijderen = documentenOntkoppeldVerwijderen;
-        this.productaanvragenInbox = productaanvragenInbox;
+        this.inbox = inbox;
+        this.ontkoppeldeDocumentenVerwijderen = ontkoppeldeDocumentenVerwijderen;
+        this.inboxProductaanvragenVerwijderen = inboxProductaanvragenVerwijderen;
         this.zakenTaken = zakenTaken;
         this.zakenTakenVerdelen = zakenTakenVerdelen;
     }
 
-    public boolean getDocumentenInbox() {
-        return documentenInbox;
+    public boolean getInbox() {
+        return inbox;
     }
 
-    public boolean getDocumentenOntkoppeld() {
-        return documentenOntkoppeld;
+    public boolean getInboxProductaanvragenVerwijderen() {
+        return inboxProductaanvragenVerwijderen;
     }
 
-    public boolean getDocumentenOntkoppeldVerwijderen() {
-        return documentenOntkoppeldVerwijderen;
+    public boolean getOntkoppeldeDocumentenVerwijderen() {
+        return ontkoppeldeDocumentenVerwijderen;
     }
 
     public boolean getZakenTaken() {
@@ -58,7 +54,5 @@ public class WerklijstRechten {
         return zakenTakenVerdelen;
     }
 
-    public boolean getProductaanvragenInbox() {
-        return productaanvragenInbox;
-    }
+
 }

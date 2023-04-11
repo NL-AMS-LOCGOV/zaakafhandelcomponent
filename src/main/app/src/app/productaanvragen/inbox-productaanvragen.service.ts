@@ -15,9 +15,9 @@ import {InboxProductaanvraag} from './model/inbox-productaanvraag';
 @Injectable({
     providedIn: 'root'
 })
-export class ProductaanvragenService {
+export class InboxProductaanvragenService {
 
-    private basepath: string = '/rest/productaanvragen';
+    private basepath: string = '/rest/inbox-productaanvragen';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
@@ -32,7 +32,7 @@ export class ProductaanvragenService {
         return this.http.delete<void>(`${this.basepath}/${ip.id}`);
     }
 
-    getPDFViewerURL(aanvraagdocumentUUID: string): string {
-        return `${this.basepath}/${aanvraagdocumentUUID}/aanvraagdocument`;
+    pdfPreview(aanvraagdocumentUUID: string): string {
+        return `${this.basepath}/${aanvraagdocumentUUID}/pdfPreview`;
     }
 }

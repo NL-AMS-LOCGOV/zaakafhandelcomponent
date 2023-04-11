@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-FileCopyrightText: 2023 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -72,13 +72,17 @@
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let row">
                     <div class="flex-row">
+                        <button *ngIf="werklijstRechten.inboxProductaanvragenVerwijderen" mat-icon-button (click)="inboxProductaanvragenVerwijderen(row)"
+                                title="{{ 'actie.verwijderen' | translate}}">
+                            <mat-icon>delete</mat-icon>
+                        </button>
                         <a mat-icon-button [routerLink]="['/informatie-objecten', row.aanvraagdocumentUUID]"
-                           title="{{ 'actie.document.bekijken' | translate}}">
+                           title="{{ 'actie.aanvraagdocument.bekijken' | translate}}">
                             <mat-icon>visibility</mat-icon>
                         </a>
                         <a mat-icon-button
                            [href]="getDownloadURL(row)"
-                           title="{{ 'actie.downloaden' | translate}}">
+                           title="{{ 'actie.aanvraagdocument.downloaden' | translate}}">
                             <mat-icon>download</mat-icon>
                         </a>
                         <button (click)="aanmakenZaak(row)" mat-icon-button title="{{ 'actie.zaak.aanmaken' | translate}}">
@@ -114,7 +118,6 @@
                    (page)="paginatorChanged($event)"
                    [pageIndex]="0"
                    [pageSize]="aantalPerPagina"
-                   [pageSizeOptions]="pageSizeOptions"
-                   sticky>
+                   [pageSizeOptions]="pageSizeOptions" sticky>
     </mat-paginator>
 </div>

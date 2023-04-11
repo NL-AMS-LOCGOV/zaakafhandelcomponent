@@ -67,7 +67,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
     private locatieToevoegenIcon = new ActionIcon('place', 'actie.locatie.toevoegen', new Subject<void>());
     private initiator: Klant;
     private locatie: AddressResult;
-    private productaanvraag: InboxProductaanvraag;
+    private inboxProductaanvraag: InboxProductaanvraag;
     private communicatiekanalen: Observable<{ naam: string; uuid: string }[]>;
     private communicatiekanaalField: SelectFormField;
 
@@ -77,7 +77,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                 private navigation: NavigationService,
                 private klantenService: KlantenService,
                 private utilService: UtilService) {
-        this.productaanvraag = this.router.getCurrentNavigation()?.extras?.state?.productaanvraag;
+        this.inboxProductaanvraag = this.router.getCurrentNavigation()?.extras?.state?.inboxProductaanvraag;
     }
 
     ngOnInit(): void {
@@ -87,7 +87,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
         this.utilService.setTitle('title.zaak.aanmaken');
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
-        this.communicatiekanalen = this.zakenService.listCommunicatiekanalen(this.productaanvraag != null);
+        this.communicatiekanalen = this.zakenService.listCommunicatiekanalen(this.inboxProductaanvraag != null);
         this.vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
@@ -162,8 +162,8 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
             [this.toelichtingField]
         ];
 
-        if (this.productaanvraag) {
-            this.verwerkProductaanvraagGegevens();
+        if (this.inboxProductaanvraag) {
+            this.verwerkInboxProductaanvraagGegevens();
         }
     }
 
@@ -197,7 +197,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                     }
                 }
             });
-            this.zakenService.createZaak(new ZaakAanmaakGegevens(zaak, this.productaanvraag)).subscribe(newZaak => {
+            this.zakenService.createZaak(new ZaakAanmaakGegevens(zaak, this.inboxProductaanvraag)).subscribe(newZaak => {
                 this.router.navigate(['/zaken/', newZaak.identificatie]);
             });
         } else {
@@ -261,20 +261,20 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
         };
     }
 
-    private verwerkProductaanvraagGegevens(): void {
+    private verwerkInboxProductaanvraagGegevens(): void {
         const bsnLength = 9;
         const vestigingsnummerLength = 12;
-        const defaultToelichting = 'Vanuit productaanvraag van type ' + this.productaanvraag.type;
-        if (this.productaanvraag.initiatorID) {
-            if (this.productaanvraag.initiatorID.length === bsnLength) {
-                this.initiatorField.formControl.setValue(this.productaanvraag.initiatorID);
-                this.klantenService.readPersoon(this.productaanvraag.initiatorID).subscribe(initiator => {
+        const defaultToelichting = 'Vanuit productaanvraag van type ' + this.inboxProductaanvraag.type;
+        if (this.inboxProductaanvraag.initiatorID) {
+            if (this.inboxProductaanvraag.initiatorID.length === bsnLength) {
+                this.initiatorField.formControl.setValue(this.inboxProductaanvraag.initiatorID);
+                this.klantenService.readPersoon(this.inboxProductaanvraag.initiatorID).subscribe(initiator => {
                     this.initiator = initiator;
                     this.initiatorField.formControl.setValue(initiator.naam);
                 });
-            } else if (this.productaanvraag.initiatorID.length === vestigingsnummerLength) {
-                this.initiatorField.formControl.setValue(this.productaanvraag.initiatorID);
-                this.klantenService.readVestiging(this.productaanvraag.initiatorID).subscribe(initiator => {
+            } else if (this.inboxProductaanvraag.initiatorID.length === vestigingsnummerLength) {
+                this.initiatorField.formControl.setValue(this.inboxProductaanvraag.initiatorID);
+                this.klantenService.readVestiging(this.inboxProductaanvraag.initiatorID).subscribe(initiator => {
                     this.initiator = initiator;
                     this.initiatorField.formControl.setValue(initiator.naam);
                 });
