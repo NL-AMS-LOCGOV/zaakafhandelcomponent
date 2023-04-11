@@ -138,7 +138,7 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
             this.previewSrc = null;
         } else {
             this.expandedRow = selectedRow;
-            this.previewSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.inboxProductaanvragenService.pdfPreviewURL(selectedRow.aanvraagdocumentUUID));
+            this.previewSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.inboxProductaanvragenService.pdfPreview(selectedRow.aanvraagdocumentUUID));
         }
     }
 

@@ -32,7 +32,7 @@ export class InboxProductaanvragenService {
         return this.http.delete<void>(`${this.basepath}/${ip.id}`);
     }
 
-    pdfPreviewURL(aanvraagdocumentUUID: string): string {
+    pdfPreview(aanvraagdocumentUUID: string): string {
         return `${this.basepath}/${aanvraagdocumentUUID}/pdfPreview`;
     }
 }
