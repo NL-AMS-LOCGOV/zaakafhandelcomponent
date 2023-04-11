@@ -5,10 +5,22 @@
 
 package net.atos.zac.zoeken;
 
-import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.shared.model.SorteerRichting;
-import net.atos.zac.zoeken.model.*;
-import net.atos.zac.zoeken.model.index.ZoekObjectType;
+import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
+import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
+import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
+
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -19,20 +31,16 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
-import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
-import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
+import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.model.FilterResultaat;
+import net.atos.zac.zoeken.model.FilterVeld;
+import net.atos.zac.zoeken.model.SorteerVeld;
+import net.atos.zac.zoeken.model.ZoekObject;
+import net.atos.zac.zoeken.model.ZoekParameters;
+import net.atos.zac.zoeken.model.ZoekResultaat;
+import net.atos.zac.zoeken.model.ZoekVeld;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 @ApplicationScoped
 public class ZoekenService {
@@ -108,11 +116,11 @@ public class ZoekenService {
                             filter.getVeld()));
                 } else {
                     query.addFilterQuery(format("{!tag=%s}%s%s:(%s)", filter,
-                            filterParameters.inverse() ? "-" : StringUtils.EMPTY,
-                            filter.getVeld(),
-                            filterParameters.waarden().stream()
-                                    .map(ZoekenService::quoted)
-                                    .collect(Collectors.joining(" OR "))));
+                                                filterParameters.inverse() ? "-" : StringUtils.EMPTY,
+                                                filter.getVeld(),
+                                                filterParameters.waarden().stream()
+                                                        .map(ZoekenService::quoted)
+                                                        .collect(joining(" OR "))));
                 }
             }
         });

@@ -39,14 +39,15 @@
             <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'geboortedatum' | translate}} </th>
             <td *matCellDef="let persoon" mat-cell>{{persoon.geboortedatum | datum | empty}}</td>
         </ng-container>
-        <ng-container matColumnDef="inschrijfadres">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'inschrijfadres' | translate}} </th>
-            <td *matCellDef="let persoon" mat-cell>{{persoon.inschrijfadres | empty}}</td>
+        <ng-container matColumnDef="verblijfplaats">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'verblijfplaats' | translate}} </th>
+            <td *matCellDef="let persoon" mat-cell>{{persoon.verblijfplaats | empty}}</td>
         </ng-container>
         <ng-container matColumnDef="acties" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-                <button *ngIf="persoon.observed" mat-icon-button color="primary" (click)="selectPersoon(row)" title="{{ 'actie.selecteren' | translate}}">
+                <button *ngIf="persoon.observed" mat-icon-button color="primary" (click)="selectPersoon(row)"
+                        title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>emoji_people</mat-icon>
                 </button>
                 <button *ngIf="!persoon.observed" mat-icon-button

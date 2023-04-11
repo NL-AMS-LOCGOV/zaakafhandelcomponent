@@ -5,6 +5,14 @@
 
 package net.atos.client.brp;
 
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.RAADPLEEG_MET_BURGERSERVICENUMMER;
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.ZOEK_MET_GESLACHTSNAAM_EN_GEBOORTEDATUM;
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.ZOEK_MET_NAAM_EN_GEMEENTE_VAN_INSCHRIJVING;
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.ZOEK_MET_NUMMERAANDUIDING_IDENTIFICATIE;
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.ZOEK_MET_POSTCODE_EN_HUISNUMMER;
+import static net.atos.client.brp.util.PersonenQueryResponseJsonbDeserializer.ZOEK_MET_STRAAT_HUISNUMMER_EN_GEMEENTE_VAN_INSCHRIJVING;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.logging.Logger;
@@ -12,63 +20,50 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.brp.exception.PersoonNotFoundException;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.IngeschrevenPersoonHalCollectieEmbedded;
-import net.atos.client.brp.model.ListPersonenParameters;
+import net.atos.client.brp.model.PersonenQuery;
+import net.atos.client.brp.model.PersonenQueryResponse;
+import net.atos.client.brp.model.Persoon;
+import net.atos.client.brp.model.RaadpleegMetBurgerservicenummer;
+import net.atos.client.brp.model.RaadpleegMetBurgerservicenummerResponse;
+import net.atos.client.brp.model.ZoekMetGeslachtsnaamEnGeboortedatum;
+import net.atos.client.brp.model.ZoekMetNaamEnGemeenteVanInschrijving;
+import net.atos.client.brp.model.ZoekMetNummeraanduidingIdentificatie;
+import net.atos.client.brp.model.ZoekMetPostcodeEnHuisnummer;
+import net.atos.client.brp.model.ZoekMetStraatHuisnummerEnGemeenteVanInschrijving;
 
 @ApplicationScoped
 public class BRPClientService {
 
     private static final Logger LOG = Logger.getLogger(BRPClientService.class.getName());
 
+    private static final String BURGERSERVICENUMMER = "burgerservicenummer";
+
+    private static final String GESLACHT = "geslacht";
+
+    private static final String NAAM = "naam";
+
+    private static final String GEBOORTE = "geboorte";
+
+    private static final String VERBLIJFPLAATS = "verblijfplaats";
+
+    private static final String ADRESSERING = "adressering";
+
+    private static final List<String> FIELDS_PERSOON =
+            List.of(BURGERSERVICENUMMER, GESLACHT, NAAM, GEBOORTE, VERBLIJFPLAATS);
+
+    private static final List<String> FIELDS_PERSOON_BEPERKT =
+            List.of(BURGERSERVICENUMMER, GESLACHT, NAAM, GEBOORTE, ADRESSERING);
+
     @Inject
     @RestClient
-    private IngeschrevenpersonenClient ingeschrevenpersonenClient;
+    private PersonenApi personenApi;
 
-    /**
-     * Vindt personen
-     * <p>
-     * Zoek personen met één van de onderstaande verplichte combinaties van parameters en vul ze evt. aan met parameters uit de andere combinaties.
-     * Default krijg je personen terug die nog in leven zijn, tenzij je de inclusiefoverledenpersonen&#x3D;true opgeeft.
-     * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien.
-     * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature)
-     * <p>
-     * 1. Persoon
-     * - geboorte__datum
-     * -  naam__geslachtsnaam (minimaal 2 karakters, [wildcard toegestaan](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.2.0/features/wildcard.feature)
-     * <p>
-     * 2. Persoon
-     * - verblijfplaats__gemeenteVanInschrijving
-     * - naam__geslachtsnaam (minimaal 2 karakters, [wildcard toegestaan](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.2.0/features/wildcard.feature)
-     * <p>
-     * 3. Persoon
-     * - burgerservicenummer
-     * <p>
-     * 4. Postcode
-     * - verblijfplaats__postcode
-     * - verblijfplaats__huisnummer
-     * <p>
-     * 5. Straat
-     * - verblijfplaats__straat (minimaal 2 karakters, [wildcard toegestaan](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.2.0/features/wildcard.feature) )
-     * - verblijfplaats__gemeenteVanInschrijving
-     * - verblijfplaats__huisnummer
-     * <p>
-     * 6. Adres
-     * - verblijfplaats__nummeraanduidingIdentificatie
-     */
-    public IngeschrevenPersoonHalCollectie listPersonen(final ListPersonenParameters parameters) {
-        try {
-            return ingeschrevenpersonenClient.listPersonen(parameters);
-        } catch (final RuntimeException exception) {
-            LOG.warning(() -> "Error while calling listPersonen: %s".formatted(exception.getMessage()));
-            final var ingeschrevenPersoonHalCollectie = new IngeschrevenPersoonHalCollectie();
-            ingeschrevenPersoonHalCollectie.setEmbedded(new IngeschrevenPersoonHalCollectieEmbedded());
-            return ingeschrevenPersoonHalCollectie;
-        }
+    public PersonenQueryResponse queryPersonen(final PersonenQuery personenQuery) {
+        complementQuery(personenQuery);
+        return personenApi.personen(personenQuery);
     }
 
     /**
@@ -76,34 +71,80 @@ public class BRPClientService {
      * <p>
      * Raadpleeg een (overleden) persoon.
      * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
-     * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature).
      */
-    public Optional<IngeschrevenPersoonHal> findPersoon(final String burgerservicenummer, final String fields) {
+    public Optional<Persoon> findPersoon(final String burgerservicenummer) {
         try {
-            return Optional.of(ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields));
-        } catch (final PersoonNotFoundException exception) {
-            // Nothing to report
+            final var response = (RaadpleegMetBurgerservicenummerResponse) personenApi.personen(
+                    createRaadpleegMetBurgerservicenummerQuery(burgerservicenummer));
+            if (!CollectionUtils.isEmpty(response.getPersonen())) {
+                return Optional.of(response.getPersonen().get(0));
+            } else {
+                return Optional.empty();
+            }
         } catch (final RuntimeException exception) {
             LOG.warning(() -> "Error while calling findPersoon: %s".formatted(exception.getMessage()));
-        }
-        return Optional.empty();
-    }
-
-    public CompletionStage<Optional<IngeschrevenPersoonHal>> findPersoonAsync(final String burgerservicenummer,
-            final String fields) {
-        return ingeschrevenpersonenClient.readPersoonAsync(burgerservicenummer, fields)
-                .handle((persoon, exception) -> handleFindPersoonAsync(persoon, exception));
-    }
-
-    private Optional<IngeschrevenPersoonHal> handleFindPersoonAsync(final IngeschrevenPersoonHal persoon,
-            final Throwable exception) {
-        if (persoon != null) {
-            return Optional.of(persoon);
-        } else {
-            if (!(exception instanceof PersoonNotFoundException)) {
-                LOG.warning(() -> "Error while calling findPersoonAsync: %s".formatted(exception.getMessage()));
-            }
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Vindt een persoon asynchroon
+     * <p>
+     * Raadpleeg een (overleden) persoon.
+     * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
+     */
+    public CompletionStage<Optional<Persoon>> findPersoonAsync(final String burgerservicenummer) {
+        return personenApi.personenAsync(createRaadpleegMetBurgerservicenummerQuery(burgerservicenummer))
+                .handle((response, exception) -> handleFindPersoonAsync(
+                        (RaadpleegMetBurgerservicenummerResponse) response, exception));
+    }
+
+    private Optional<Persoon> handleFindPersoonAsync(final RaadpleegMetBurgerservicenummerResponse response,
+            final Throwable exception) {
+        if (!CollectionUtils.isEmpty(response.getPersonen())) {
+            return Optional.of(response.getPersonen().get(0));
+        } else {
+            LOG.warning(() -> "Error while calling findPersoonAsync: %s".formatted(exception.getMessage()));
+            return Optional.empty();
+        }
+    }
+
+    private static RaadpleegMetBurgerservicenummer createRaadpleegMetBurgerservicenummerQuery(
+            final String burgerservicenummer) {
+        final var query = new RaadpleegMetBurgerservicenummer();
+        complementQuery(query);
+        query.addBurgerservicenummerItem(burgerservicenummer);
+        return query;
+    }
+
+    private static void complementQuery(final PersonenQuery personenQuery) {
+        switch (personenQuery) {
+            case RaadpleegMetBurgerservicenummer query -> {
+                query.setType(RAADPLEEG_MET_BURGERSERVICENUMMER);
+                query.setFields(FIELDS_PERSOON);
+            }
+            case ZoekMetGeslachtsnaamEnGeboortedatum query -> {
+                query.setType(ZOEK_MET_GESLACHTSNAAM_EN_GEBOORTEDATUM);
+                query.setFields(FIELDS_PERSOON_BEPERKT);
+            }
+            case ZoekMetNaamEnGemeenteVanInschrijving query -> {
+                query.setType(ZOEK_MET_NAAM_EN_GEMEENTE_VAN_INSCHRIJVING);
+                query.setFields(FIELDS_PERSOON_BEPERKT);
+            }
+            case ZoekMetNummeraanduidingIdentificatie query -> {
+                query.setType(ZOEK_MET_NUMMERAANDUIDING_IDENTIFICATIE);
+                query.setFields(FIELDS_PERSOON_BEPERKT);
+            }
+            case ZoekMetPostcodeEnHuisnummer query -> {
+                query.setType(ZOEK_MET_POSTCODE_EN_HUISNUMMER);
+                query.setFields(FIELDS_PERSOON_BEPERKT);
+            }
+            case ZoekMetStraatHuisnummerEnGemeenteVanInschrijving query -> {
+                query.setType(ZOEK_MET_STRAAT_HUISNUMMER_EN_GEMEENTE_VAN_INSCHRIJVING);
+                query.setFields(FIELDS_PERSOON_BEPERKT);
+            }
+            case PersonenQuery query -> throw new IllegalStateException(
+                    "Must use one of the subclasses of '%s'".formatted(PersonenQuery.class.getSimpleName()));
         }
     }
 }

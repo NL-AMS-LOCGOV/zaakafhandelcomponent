@@ -5,7 +5,8 @@
 
 package net.atos.zac.app.util;
 
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
+
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -78,7 +79,7 @@ public class UtilRESTService {
     }
 
     private static String body(final Stream<String> utils) {
-        return body(utils.collect(Collectors.joining()));
+        return body(utils.collect(joining()));
     }
 
     private static String body(final String utils) {
@@ -90,7 +91,7 @@ public class UtilRESTService {
     }
 
     private static String ul(final Stream<String> li) {
-        return "<ul>" + li.sorted().collect(Collectors.joining("</li><li>", "<li>", "</li>")) + "</ul>";
+        return "<ul>" + li.sorted().collect(joining("</li><li>", "<li>", "</li>")) + "</ul>";
     }
 
     private static String a(final String url, final String label) {

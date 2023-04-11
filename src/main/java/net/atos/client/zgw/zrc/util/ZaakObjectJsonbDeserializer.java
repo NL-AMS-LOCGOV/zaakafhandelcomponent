@@ -30,8 +30,8 @@ public class ZaakObjectJsonbDeserializer implements JsonbDeserializer<Zaakobject
     @Override
     public Zaakobject deserialize(final JsonParser parser, final DeserializationContext ctx, final Type rtType) {
         final JsonObject jsonObject = parser.getObject();
-        final Objecttype objecttype = Objecttype.fromValue(jsonObject.getJsonString("objectType").getString());
-        final String objecttypeOverige = jsonObject.getJsonString("objectTypeOverige").getString();
+        final Objecttype objecttype = Objecttype.fromValue(jsonObject.getString("objectType"));
+        final String objecttypeOverige = jsonObject.getString("objectTypeOverige");
         switch (objecttype) {
             case ADRES:
                 return JSONB.fromJson(jsonObject.toString(), ZaakobjectAdres.class);

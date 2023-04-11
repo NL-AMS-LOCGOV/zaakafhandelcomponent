@@ -5,13 +5,13 @@
 
 package net.atos.zac.app.bag;
 
+import static java.util.stream.Collectors.joining;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -165,7 +165,9 @@ public class BAGRESTService {
     }
 
     private String getExpand(final BAGObjectType... bagObjectTypes) {
-        return Arrays.stream(bagObjectTypes).map(BAGObjectType::getExpand).collect(Collectors.joining(","));
+        return Arrays.stream(bagObjectTypes)
+                .map(BAGObjectType::getExpand)
+                .collect(joining(","));
     }
 
     private RESTBAGObject convertToBAGObject(final Zaakobject zaakobject) {

@@ -6,7 +6,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
-import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {
+    InputFormFieldBuilder
+} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {ListPersonenParameters} from '../../model/personen/list-personen-parameters';
 import {KlantenService} from '../../klanten.service';
 import {Persoon} from '../../model/personen/persoon';
@@ -37,7 +39,7 @@ export class PersoonZoekComponent implements OnInit {
     huisnummerFormField: AbstractFormControlField;
     formGroup: FormGroup;
     personen: MatTableDataSource<Persoon> = new MatTableDataSource<Persoon>();
-    persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];
+    persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'verblijfplaats', 'acties'];
     loading = false;
 
     constructor(private klantenService: KlantenService, private utilService: UtilService, private formBuilder: FormBuilder, private router: Router) {

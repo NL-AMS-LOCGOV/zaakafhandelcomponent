@@ -24,7 +24,9 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {
+    TextareaFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {IdentityService} from '../../identity/identity.service';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -37,7 +39,9 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {
+    SelectFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
@@ -71,7 +75,9 @@ import {ZaakBetrokkene} from '../model/zaak-betrokkene';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
+import {
+    MedewerkerGroepFieldBuilder
+} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
@@ -983,8 +989,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     if (persoon.geboortedatum) {
                         betrokkene['gegevens'] += `, ${this.datumPipe.transform(persoon.geboortedatum)}`;
                     }
-                    if (persoon.inschrijfadres) {
-                        betrokkene['gegevens'] += `,\n${persoon.inschrijfadres}`;
+                    if (persoon.verblijfplaats) {
+                        betrokkene['gegevens'] += `,\n${persoon.verblijfplaats}`;
                     }
                 });
                 break;

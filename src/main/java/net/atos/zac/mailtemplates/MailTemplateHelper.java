@@ -24,7 +24,10 @@ import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_STREE
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_TOELICHTING;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_TYPE;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAK_URL;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static net.atos.zac.util.StringUtil.joinNonBlankWith;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -39,8 +42,11 @@ import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.brp.BRPClientService;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.Verblijfplaats;
+import net.atos.client.brp.model.Adres;
+import net.atos.client.brp.model.Persoon;
+import net.atos.client.brp.model.VerblijfadresBinnenland;
+import net.atos.client.brp.model.VerblijfadresBuitenland;
+import net.atos.client.brp.model.VerblijfplaatsBuitenland;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -56,7 +62,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.documentcreatie.converter.DataConverter;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -238,7 +243,7 @@ public class MailTemplateHelper {
             return switch (betrokkene) {
                 case NATUURLIJK_PERSOON -> replaceInitiatorVariabelenPersoon(
                         resolvedTekst,
-                        brpClientService.findPersoon(identificatie, DataConverter.FIELDS_PERSOON));
+                        brpClientService.findPersoon(identificatie));
                 case VESTIGING -> replaceInitiatorVariabelenResultaatItem(
                         resolvedTekst,
                         kvkClientService.findVestiging(identificatie));
@@ -252,56 +257,50 @@ public class MailTemplateHelper {
     }
 
     private static String replaceInitiatorVariabelenPersoon(final String resolvedTekst,
-            final Optional<IngeschrevenPersoonHal> initiator) {
+            final Optional<Persoon> initiator) {
         return initiator
-                .map(persoon -> replaceInitiatorVariabelen(resolvedTekst, getNaam(persoon), getAdres(persoon)))
+                .map(persoon -> replaceInitiatorVariabelen(resolvedTekst, persoon.getNaam().getVolledigeNaam(),
+                                                           convertAdres(persoon)))
                 .orElseGet(() -> replaceInitiatorVariabelenOnbekend(resolvedTekst));
     }
 
     private static String replaceInitiatorVariabelenResultaatItem(final String resolvedTekst,
             final Optional<ResultaatItem> initiator) {
         return initiator
-                .map(item -> replaceInitiatorVariabelen(resolvedTekst, getNaam(item), getAdres(item)))
+                .map(item -> replaceInitiatorVariabelen(resolvedTekst, item.getHandelsnaam(), convertAdres(item)))
                 .orElseGet(() -> replaceInitiatorVariabelenOnbekend(resolvedTekst));
     }
 
-    private static String getNaam(final IngeschrevenPersoonHal persoon) {
-        return "%s %s".formatted(
-                persoon.getNaam().getVoornamen(),
-                persoon.getNaam().getGeslachtsnaam());
+    private static String convertAdres(final Persoon persoon) {
+        return switch (persoon.getVerblijfplaats()) {
+            case Adres adres && adres.getVerblijfadres() != null -> convertAdres(adres.getVerblijfadres());
+            case VerblijfplaatsBuitenland verblijfplaatsBuitenland && verblijfplaatsBuitenland.getVerblijfadres() != null ->
+                    convertAdres(verblijfplaatsBuitenland.getVerblijfadres());
+            default -> EMPTY;
+        };
     }
 
-    private static String getNaam(final ResultaatItem item) {
-        return item.getHandelsnaam();
+    private static String convertAdres(final VerblijfadresBinnenland adres) {
+        return "%s %s%s%s, %s %s".formatted(
+                defaultIfBlank(adres.getOfficieleStraatnaam(), EMPTY),
+                defaultIfNull(adres.getHuisnummer(), EMPTY),
+                defaultIfBlank(adres.getHuisletter(), EMPTY),
+                defaultIfBlank(adres.getHuisnummertoevoeging(), EMPTY),
+                defaultIfBlank(adres.getPostcode(), EMPTY),
+                adres.getWoonplaats());
     }
 
-    private static String getAdres(final IngeschrevenPersoonHal persoon) {
-        final Verblijfplaats verblijfplaats = persoon.getVerblijfplaats();
-        if (verblijfplaats != null) {
-            if (isNotBlank(verblijfplaats.getStraat())) {
-                return "%s %s%s%s, %s %s".formatted(
-                        verblijfplaats.getStraat(),
-                        emptyIfBlank(verblijfplaats.getHuisnummer()),
-                        emptyIfBlank(verblijfplaats.getHuisletter()),
-                        emptyIfBlank(verblijfplaats.getHuisnummertoevoeging()),
-                        emptyIfBlank(verblijfplaats.getPostcode()),
-                        verblijfplaats.getWoonplaats());
-            } else {
-                return "%s, %s".formatted(
-                        verblijfplaats.getAdresregel1(),
-                        verblijfplaats.getAdresregel2());
-            }
-        }
-        return null;
+    private static String convertAdres(final VerblijfadresBuitenland adres) {
+        return joinNonBlankWith(", ", adres.getRegel1(), adres.getRegel2(), adres.getRegel3());
     }
 
-    private static String getAdres(final ResultaatItem item) {
+    private static String convertAdres(final ResultaatItem adres) {
         return "%s %s%s, %s %s".formatted(
-                item.getStraatnaam(),
-                emptyIfBlank(item.getHuisnummer()),
-                emptyIfBlank(item.getHuisnummerToevoeging()),
-                emptyIfBlank(item.getPostcode()),
-                item.getPlaats());
+                adres.getStraatnaam(),
+                defaultIfNull(adres.getHuisnummer(), EMPTY),
+                defaultIfBlank(adres.getHuisnummerToevoeging(), EMPTY),
+                defaultIfBlank(adres.getPostcode(), EMPTY),
+                adres.getPlaats());
     }
 
     private static String replaceInitiatorVariabelenOnbekend(final String resolvedTekst) {
@@ -310,16 +309,7 @@ public class MailTemplateHelper {
 
     private static String replaceInitiatorVariabelen(final String resolvedTekst, final String naam,
             final String adres) {
-        return replaceVariabele(replaceVariabele(resolvedTekst,
-                                                 ZAAK_INITIATOR,
-                                                 naam),
-                                ZAAK_INITIATOR_ADRES,
-                                adres);
-    }
-
-    private static <T> String replaceVariabele(final String target, final MailTemplateVariabelen variabele,
-            final T waarde) {
-        return replaceVariabele(target, variabele, waarde != null ? waarde.toString() : null);
+        return replaceVariabele(replaceVariabele(resolvedTekst, ZAAK_INITIATOR, naam), ZAAK_INITIATOR_ADRES, adres);
     }
 
     private static <T> String replaceVariabele(final String target, final MailTemplateVariabelen variabele,
@@ -335,18 +325,8 @@ public class MailTemplateHelper {
     // Make sure that what is passed in the html argument is FULLY encoded HTML (no injection vulnerabilities please!)
     private static String replaceVariabeleHtml(final String target, final MailTemplateVariabelen variabele,
             final String html) {
-        return StringUtils.replace(target,
-                                   variabele.getVariabele(),
-                                   variabele.isResolveVariabeleAlsLegeString()
-                                           ? emptyIfBlank(html)
-                                           : html);
-    }
-
-    private static <T> String emptyIfBlank(final T value) {
-        return emptyIfBlank(value != null ? value.toString() : null);
-    }
-
-    private static String emptyIfBlank(final String value) {
-        return isNotBlank(value) ? value : StringUtils.EMPTY;
+        return StringUtils.replace(target, variabele.getVariabele(),
+                                   variabele.isResolveVariabeleAlsLegeString() ?
+                                           defaultIfBlank(html, EMPTY) : html);
     }
 }

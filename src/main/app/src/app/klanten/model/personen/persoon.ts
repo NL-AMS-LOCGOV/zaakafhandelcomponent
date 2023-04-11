@@ -11,7 +11,7 @@ export class Persoon implements Klant {
     geslacht: string;
     naam: string;
     geboortedatum: string;
-    inschrijfadres: string;
+    verblijfplaats: string;
     identificatieType: IdentificatieType;
     identificatie: string;
     emailadres: string;
