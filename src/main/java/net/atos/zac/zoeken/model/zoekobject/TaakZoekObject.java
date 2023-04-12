@@ -97,6 +97,11 @@ public class TaakZoekObject implements ZoekObject {
     }
 
     @Override
+    public String getObjectId() {
+        return getId();
+    }
+
+    @Override
     public ZoekObjectType getType() {
         return ZoekObjectType.valueOf(type);
     }

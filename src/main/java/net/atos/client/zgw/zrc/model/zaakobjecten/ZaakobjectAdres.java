@@ -26,4 +26,9 @@ public class ZaakobjectAdres extends ZaakobjectMetObjectIdentificatie<ObjectAdre
     public ZaakobjectAdres(final URI zaak, final URI bagobjectURI, final ObjectAdres adres) {
         super(zaak, bagobjectURI, Objecttype.ADRES, adres);
     }
+
+    @Override
+    public String getWaarde() {
+        return getObjectIdentificatie().getIdentificatie();
+    }
 }

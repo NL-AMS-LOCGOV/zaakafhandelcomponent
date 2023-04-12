@@ -40,6 +40,8 @@ import {Besluittype} from './model/besluittype';
 import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
 import {ZaakAfzender} from '../admin/model/zaakafzender';
+import {ZaakAanmaakGegevens} from './model/zaak-aanmaak-gegevens';
+import {BesluitIntrekkenGegevens} from './model/besluit-intrekken-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -67,8 +69,8 @@ export class ZakenService {
         );
     }
 
-    createZaak(zaak: Zaak): Observable<Zaak> {
-        return this.http.post<Zaak>(`${this.basepath}/zaak`, zaak).pipe(
+    createZaak(zaakAanmaakgegevens: ZaakAanmaakGegevens): Observable<Zaak> {
+        return this.http.post<Zaak>(`${this.basepath}/zaak`, zaakAanmaakgegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -272,6 +274,13 @@ export class ZakenService {
         );
     }
 
+    intrekkenBesluit(besluitIntrekkenGegevens: BesluitIntrekkenGegevens): Observable<Besluit> {
+        return this.http.put<BesluitIntrekkenGegevens>(`${this.basepath}/besluit/intrekken`, besluitIntrekkenGegevens)
+                   .pipe(
+                       catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                   );
+    }
+
     listBesluittypes(zaaktypeUuid: string): Observable<Besluittype[]> {
         return this.http.get<Besluittype[]>(`${this.basepath}/besluittypes/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
@@ -284,8 +293,8 @@ export class ZakenService {
         );
     }
 
-    listCommunicatiekanalen(): Observable<string[]> {
-        return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
+    listCommunicatiekanalen(inclusiefEFormulier?: boolean): Observable<{ naam: string, uuid: string }[]> {
+        return this.http.get<string[]>(`${this.basepath}/communicatiekanalen/${inclusiefEFormulier}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

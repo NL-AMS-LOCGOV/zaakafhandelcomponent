@@ -91,7 +91,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .build()],
             [new HiddenFormFieldBuilder()
             .id(fields.REPLYTO)
-            .label(fields.REPLYTO)
             .build()],
             [new InputFormFieldBuilder()
             .id(fields.EMAILADRES)
@@ -106,7 +105,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .build()],
             [new HiddenFormFieldBuilder(moment())
             .id(fields.DATUMGEVRAAGD)
-            .label(fields.DATUMGEVRAAGD)
             .build()],
             [new DocumentenLijstFieldBuilder()
             .id(fields.BIJLAGEN)

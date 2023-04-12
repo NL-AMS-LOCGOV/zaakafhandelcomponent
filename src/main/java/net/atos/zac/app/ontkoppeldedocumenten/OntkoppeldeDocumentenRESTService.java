@@ -71,7 +71,7 @@ public class OntkoppeldeDocumentenRESTService {
     @PUT
     @Path("")
     public RESTResultaat<RESTOntkoppeldDocument> list(final RESTOntkoppeldDocumentListParameters restListParameters) {
-        assertPolicy(policyService.readWerklijstRechten().getDocumentenOntkoppeld());
+        assertPolicy(policyService.readWerklijstRechten().getInbox());
         final OntkoppeldDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
         final OntkoppeldeDocumentenResultaat resultaat = ontkoppeldeDocumentenService.getResultaat(listParameters);
         final RESTOntkoppeldDocumentResultaat restOntkoppeldDocumentResultaat =
@@ -90,7 +90,7 @@ public class OntkoppeldeDocumentenRESTService {
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
-        assertPolicy(policyService.readWerklijstRechten().getDocumentenOntkoppeldVerwijderen());
+        assertPolicy(policyService.readWerklijstRechten().getOntkoppeldeDocumentenVerwijderen());
         final Optional<OntkoppeldDocument> ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
         if (ontkoppeldDocument.isEmpty()) {
             return; // al verwijderd

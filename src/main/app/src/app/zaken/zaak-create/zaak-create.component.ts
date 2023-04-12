@@ -14,7 +14,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -26,8 +26,6 @@ import {InputFormField} from '../../shared/material-form-builder/form-components
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
-import {LocationUtil} from '../../shared/location/location-util';
-import {AddressResult} from '../../shared/location/location.service';
 import {Zaaktype} from '../model/zaaktype';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-form-field';
@@ -39,46 +37,56 @@ import {User} from '../../identity/model/user';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {filter, takeUntil} from 'rxjs/operators';
+import {InboxProductaanvraag} from '../../productaanvragen/model/inbox-productaanvraag';
+import {KlantenService} from '../../klanten/klanten.service';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
+import {ZaakAanmaakGegevens} from '../model/zaak-aanmaak-gegevens';
+import {BAGObject} from '../../bag/model/bagobject';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
+    selector: 'zac-zaak-create',
     templateUrl: './zaak-create.component.html',
     styleUrls: ['./zaak-create.component.less']
 })
 export class ZaakCreateComponent implements OnInit, OnDestroy {
-
+    private static KANAAL_E_FORMULIER = 'E-formulier';
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     readonly sideNavAction = SideNavAction;
     action: SideNavAction;
     private initiatorField: InputFormField;
-    private locatieField: InputFormField;
+    private toelichtingField: TextareaFormField;
+    private bagObjectenField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
     private vertrouwelijkheidaanduidingField: SelectFormField;
     private vertrouwelijkheidaanduidingen: { label: string, value: string }[];
     private ngDestroy = new Subject<void>();
-
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
-    private locatieToevoegenIcon = new ActionIcon('place', 'actie.locatie.toevoegen', new Subject<void>());
-
+    private bagObjectenToevoegenIcon = new ActionIcon('place', 'actie.bagObject.toevoegen', new Subject<void>());
     private initiator: Klant;
-    private locatie: AddressResult;
+    public bagObjecten: BAGObject[] = [];
+    private inboxProductaanvraag: InboxProductaanvraag;
+    private communicatiekanalen: Observable<{ naam: string; uuid: string }[]>;
+    private communicatiekanaalField: SelectFormField;
 
     constructor(private zakenService: ZakenService,
                 private identityService: IdentityService,
                 private router: Router,
                 private navigation: NavigationService,
+                private klantenService: KlantenService,
+                private translateService: TranslateService,
                 private utilService: UtilService) {
+        this.inboxProductaanvraag = this.router.getCurrentNavigation()?.extras?.state?.inboxProductaanvraag;
     }
 
     ngOnInit(): void {
-        this.initiatorToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
-        this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
         this.utilService.setTitle('title.zaak.aanmaken');
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
-        const communicatiekanalen = this.zakenService.listCommunicatiekanalen();
+        this.communicatiekanalen = this.zakenService.listCommunicatiekanalen(this.inboxProductaanvraag != null);
         this.vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
@@ -115,10 +123,10 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                                                          .build();
         this.initiatorField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
 
-        const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                                               .optionLabel('naam').options(communicatiekanalen)
-                                                               .validators(Validators.required)
-                                                               .build();
+        this.communicatiekanaalField = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
+                                                                   .optionLabel('naam').options(this.communicatiekanalen)
+                                                                   .validators(Validators.required)
+                                                                   .build();
 
         this.vertrouwelijkheidaanduidingField = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
                                                                             .label('vertrouwelijkheidaanduiding')
@@ -130,28 +138,38 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
         const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(80)
                                                         .validators(Validators.required)
                                                         .build();
-        const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)
-                                                          .build();
+        this.toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)
+                                                              .build();
 
-        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie')
-                                                       .styleClass('input-fake-enabled')
-                                                       .icon(this.locatieToevoegenIcon)
-                                                       .disabled()
-                                                       .label('locatie')
-                                                       .build();
-        this.locatieField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
+        this.bagObjectenField = new InputFormFieldBuilder().id('bagObjecten')
+                                                           .styleClass('input-fake-enabled')
+                                                           .icon(this.bagObjectenToevoegenIcon)
+                                                           .disabled()
+                                                           .label('bagObjecten')
+                                                           .build();
+
+        this.bagObjectenField.onClear.subscribe(() => {
+            this.bagObjecten = [];
+            this.bagObjectenField.reset();
+        });
+
+        this.bagObjectenField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_BAG_ADRES));
 
         this.createZaakFields = [
             [titel],
             [zaaktype, this.initiatorField],
-            [startdatum, this.locatieField],
+            [startdatum, this.bagObjectenField],
             [toekennenGegevensTitel],
             [this.medewerkerGroepFormField],
             [overigeGegevensTitel],
-            [communicatiekanaal, this.vertrouwelijkheidaanduidingField],
+            [this.communicatiekanaalField, this.vertrouwelijkheidaanduidingField],
             [omschrijving],
-            [toelichting]
+            [this.toelichtingField]
         ];
+
+        if (this.inboxProductaanvraag) {
+            this.verwerkInboxProductaanvraagGegevens();
+        }
     }
 
     ngOnDestroy(): void {
@@ -165,26 +183,23 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
             Object.keys(formGroup.controls).forEach((key) => {
                 if (key === 'vertrouwelijkheidaanduiding') {
                     zaak[key] = formGroup.controls[key].value?.value;
-                } else {
-                    zaak[key] = formGroup.controls[key].value;
-                }
-                if (key === 'initiatorIdentificatie' && this.initiator != null) {
+                } else if (key === 'initiatorIdentificatie' && this.initiator != null) {
                     zaak['initiatorIdentificatieType'] = this.initiator.identificatieType;
                     zaak[key] = this.initiator.identificatie;
-                }
-                if (key === 'zaakgeometrie' && this.locatie != null) {
-                    zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
-                }
-                if (key === 'toekenning') {
+                } else if (key === 'bagObjecten') {
+                    // skip
+                } else if (key === 'toekenning') {
                     if (this.medewerkerGroepFormField.formControl.value.medewerker) {
                         zaak.behandelaar = this.medewerkerGroepFormField.formControl.value.medewerker;
                     }
                     if (this.medewerkerGroepFormField.formControl.value.groep) {
                         zaak.groep = this.medewerkerGroepFormField.formControl.value.groep;
                     }
+                } else {
+                    zaak[key] = formGroup.controls[key].value;
                 }
             });
-            this.zakenService.createZaak(zaak).subscribe(newZaak => {
+            this.zakenService.createZaak(new ZaakAanmaakGegevens(zaak, this.inboxProductaanvraag, this.bagObjecten)).subscribe(newZaak => {
                 this.router.navigate(['/zaken/', newZaak.identificatie]);
             });
         } else {
@@ -195,12 +210,6 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
     initiatorGeselecteerd(initiator: Klant): void {
         this.initiator = initiator;
         this.initiatorField.formControl.setValue(initiator?.naam);
-        this.actionsSidenav.close();
-    }
-
-    locatieGeselecteerd(locatie: AddressResult): void {
-        this.locatie = locatie;
-        this.locatieField.formControl.setValue(locatie?.weergavenaam);
         this.actionsSidenav.close();
     }
 
@@ -241,12 +250,45 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
         }
     }
 
-    private iconNext(action) {
+    private iconNext(action: SideNavAction) {
         return () => {
             this.action = action;
             this.actionsSidenav.open();
         };
     }
 
+    private verwerkInboxProductaanvraagGegevens(): void {
+        const bsnLength = 9;
+        const vestigingsnummerLength = 12;
+        const defaultToelichting = 'Vanuit productaanvraag van type ' + this.inboxProductaanvraag.type;
+        if (this.inboxProductaanvraag.initiatorID) {
+            if (this.inboxProductaanvraag.initiatorID.length === bsnLength) {
+                this.initiatorField.formControl.setValue(this.inboxProductaanvraag.initiatorID);
+                this.klantenService.readPersoon(this.inboxProductaanvraag.initiatorID).subscribe(initiator => {
+                    this.initiator = initiator;
+                    this.initiatorField.formControl.setValue(initiator.naam);
+                });
+            } else if (this.inboxProductaanvraag.initiatorID.length === vestigingsnummerLength) {
+                this.initiatorField.formControl.setValue(this.inboxProductaanvraag.initiatorID);
+                this.klantenService.readVestiging(this.inboxProductaanvraag.initiatorID).subscribe(initiator => {
+                    this.initiator = initiator;
+                    this.initiatorField.formControl.setValue(initiator.naam);
+                });
+            }
+        }
+        this.toelichtingField.formControl.setValue(defaultToelichting);
+        this.communicatiekanalen.subscribe(data => {
+            this.communicatiekanaalField.value(data.find(c => c.naam === ZaakCreateComponent.KANAAL_E_FORMULIER));
+        });
+    }
+
+    bagGeselecteerd($event: BAGObject): void {
+        this.bagObjectenField.formControl.setValue(this.bagObjecten.map(b => b.omschrijving).join(' | '));
+        if (this.bagObjectenField.formControl.value.length > 100) {
+            this.translateService.get('msg.aantal.bagObjecten.geselecteerd', {aantal: this.bagObjecten.length}).subscribe(v => {
+                this.bagObjectenField.formControl.setValue(v);
+            });
+        }
+    }
 }
 

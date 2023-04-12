@@ -211,7 +211,7 @@ public class PlanItemsRESTService {
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
                                            DateTimeConverterUtil.convertToDate(fataleDatum),
                                            taakdata, zaakUUID);
-        indexeerService.addZaak(zaakUUID, false);
+        indexeerService.addOrUpdateZaak(zaakUUID, false);
     }
 
     @POST

@@ -32,9 +32,16 @@ public class RESTAdres extends RESTBAGObject {
 
     public List<RESTPand> panden = new ArrayList<>();
 
+    public RESTAdres() {
+    }
+
     @Override
     public BAGObjectType getBagObjectType() {
         return BAGObjectType.ADRES;
     }
 
+    @Override
+    public String getOmschrijving() {
+        return "%s %s, %s %s".formatted(openbareRuimteNaam, huisnummerWeergave, postcode, woonplaatsNaam);
+    }
 }

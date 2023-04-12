@@ -3,25 +3,27 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field appearance="fill" subscriptSizing="dynamic" class="file-field full-width" (click)="fileInput.click()">
-    <mat-label>{{data.label | translate}}</mat-label>
-    <input [formControl]="data.formControl" [id]="data.id + '_filefield'" [readonly]="true" [required]="data.required" matInput>
-    <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
-        <mat-icon>upload</mat-icon>
-    </button>
-    <button *ngIf="status == 'BEZIG'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
-        <mat-icon>cancel</mat-icon>
-    </button>
-    <button *ngIf="status == 'GEREED'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
-        <mat-icon>delete</mat-icon>
-    </button>
+<div DropZone (onFileDropped)="droppedFile($event)">
+    <mat-form-field appearance="fill" subscriptSizing="dynamic" class="file-field full-width" (click)="fileInput.click()">
+        <mat-label>{{data.label | translate}}</mat-label>
+        <input [formControl]="data.formControl" [id]="data.id + '_filefield'" [readonly]="true" [required]="data.required" matInput>
+        <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
+            <mat-icon>upload</mat-icon>
+        </button>
+        <button *ngIf="status == 'BEZIG'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+            <mat-icon>cancel</mat-icon>
+        </button>
+        <button *ngIf="status == 'GEREED'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+            <mat-icon>delete</mat-icon>
+        </button>
 
-    <mat-hint>
-        <div class="error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">{{getErrorMessage()}}</div>
-        <div *ngIf="data.hint">{{data.hint?.label}}</div>
-    </mat-hint>
+        <mat-hint>
+            <div class="error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">{{getErrorMessage()}}</div>
+            <div *ngIf="data.hint">{{data.hint?.label}}</div>
+        </mat-hint>
 
-    <input hidden="hidden" type="file" [accept]="data.getAllowedFileTypes()" #fileInput id="uploadFile"
-           (change)="uploadFile($event.target.files[0])"
-           name="uploadFile">
-</mat-form-field>
+        <input hidden="hidden" type="file" [accept]="data.getAllowedFileTypes()" #fileInput id="uploadFile"
+               (change)="uploadFile($event.target.files[0])"
+               name="uploadFile">
+    </mat-form-field>
+</div>

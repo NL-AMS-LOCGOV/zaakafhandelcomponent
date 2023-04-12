@@ -125,4 +125,8 @@ export class FileComponent extends FormComponent implements OnInit {
         }
         return super.getErrorMessage();
     }
+
+    droppedFile(file: File): void {
+        this.uploadFile(file);
+    }
 }

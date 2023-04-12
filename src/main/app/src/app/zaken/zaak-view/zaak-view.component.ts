@@ -78,6 +78,7 @@ import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 import {BAGObject} from '../../bag/model/bagobject';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
+import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -474,7 +475,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BETROKKENE;
                 }, 'group_add'));
-                this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
+                this.menu.push(new ButtonMenuItem('actie.bagObject.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BAG_ADRES;
                 }, 'add_home_work'));
@@ -875,7 +876,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakListener);
         this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak$.value.uuid, bagObject))
             .subscribe(() => {
-                this.utilService.openSnackbar('msg.bagobject.toegevoegd');
+                this.utilService.openSnackbar('msg.bagObject.toegevoegd');
                 this.loadHistorie();
                 this.loadBagObjecten();
             });
@@ -957,6 +958,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
         this.teWijzigenBesluit = $event;
         this.actionsSidenav.open();
+    }
+
+    doIntrekking($event): void {
+        const gegevens = new BesluitIntrekkenGegevens();
+        gegevens.besluitUuid = $event.uuid;
+        gegevens.vervaldatum = $event.vervaldatum;
+        gegevens.vervalreden = $event.vervalreden.value;
+        gegevens.reden = $event.toelichting;
+        this.zakenService.intrekkenBesluit(gegevens).subscribe(() => {
+            this.utilService.openSnackbar('msg.besluit.ingetrokken');
+        });
     }
 
     betrokkeneGegevensOphalen(betrokkene: ZaakBetrokkene): void {

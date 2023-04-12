@@ -8,6 +8,7 @@ package net.atos.zac.app.bag.model;
 import java.net.URI;
 
 public abstract class RESTBAGObject {
+
     public URI url;
 
     public String identificatie;
@@ -16,4 +17,5 @@ public abstract class RESTBAGObject {
 
     public abstract BAGObjectType getBagObjectType();
 
+    public abstract String getOmschrijving();
 }

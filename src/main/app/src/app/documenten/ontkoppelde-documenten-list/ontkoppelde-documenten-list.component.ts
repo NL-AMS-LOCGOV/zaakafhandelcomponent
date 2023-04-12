@@ -108,7 +108,7 @@ export class OntkoppeldeDocumentenListComponent extends WerklijstComponent imple
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('msg.document.verwijderen.uitgevoerd', {document: od.titel});
-                this.paginator.page.emit();
+                this.filterChange.emit();
             }
         });
     }

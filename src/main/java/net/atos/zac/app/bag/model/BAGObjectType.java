@@ -7,7 +7,6 @@ package net.atos.zac.app.bag.model;
 
 public enum BAGObjectType {
     ADRES("adressen"),
-    ADRESSEERBAAR_OBJECT("adresseerbaarObject"),
     WOONPLAATS("woonplaats"),
     PAND("panden"),
     OPENBARE_RUIMTE("openbareRuimte"),

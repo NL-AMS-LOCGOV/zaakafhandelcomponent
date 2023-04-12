@@ -27,4 +27,9 @@ public class ZaakobjectWoonplaats extends ZaakobjectMetObjectIdentificatie<Objec
         super(zaak, bagobjectUri, Objecttype.WOONPLAATS, woonplaats);
     }
 
+    @Override
+    public String getWaarde() {
+        return getObjectIdentificatie().getIdentificatie();
+    }
+
 }

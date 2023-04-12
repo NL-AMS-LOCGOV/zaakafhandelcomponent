@@ -3,16 +3,23 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <mat-accordion class="mat-accordion">
-    <mat-expansion-panel (afterExpand)="loadBesluitData(besluit.uuid)" *ngFor="let besluit of besluiten; first as isFirst" [expanded]="isFirst">
+    <mat-expansion-panel (afterExpand)="loadBesluitData(besluit.uuid)"
+                         *ngFor="let besluit of besluiten; first as isFirst" [expanded]="isFirst">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{besluit.identificatie}}
-
             </mat-panel-title>
-            <mat-panel-description>
-                &nbsp;
-                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation(); besluitWijzigen.emit(besluit)">
+            <mat-panel-description class="justify-end">
+                <zac-besluit-indicaties [layout]="indicatiesLayout.VIEW" [besluit]="besluit"></zac-besluit-indicaties>
+                <button *ngIf="!isReadonly(besluit)" mat-icon-button
+                        title="{{'actie.besluit.wijzigen' | translate}}"
+                        (click)="$event.stopPropagation(); besluitWijzigen.emit(besluit)">
                     <mat-icon>edit</mat-icon>
+                </button>
+                <button *ngIf="!isReadonly(besluit)" mat-icon-button
+                        title="{{'actie.besluit.intrekken' | translate}}"
+                        (click)="$event.stopPropagation(); intrekken(besluit)">
+                    <mat-icon outlined>stop_circle</mat-icon>
                 </button>
             </mat-panel-description>
         </mat-expansion-panel-header>
@@ -24,17 +31,21 @@
                     {{'gegevens.algemeen' | translate}}
                 </ng-template>
                 <div class="content flex-row flex-wrap">
-                    <zac-static-text class="flex-1" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
-                    <zac-static-text class="flex-1" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
-                    <zac-static-text class="flex-1" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'besluit' | translate"
+                                     [value]="besluit.besluittype.naam"></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'datum' | translate"
+                                     [value]="besluit.datum | datum "></zac-static-text>
+                    <zac-static-text class="flex-1" [label]="'ingangsdatum' | translate"
+                                     [value]="besluit.ingangsdatum | datum"></zac-static-text>
                     <zac-static-text class="flex-1"
                                      [label]="'vervaldatum' | translate"
                                      [value]="besluit.vervaldatum | datum"
                                      [icon]="besluit.vervalreden ? toolTipIcon : null"
-                                     [matTooltip]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"
+                                     [matTooltip]="besluit.vervalreden ? ('besluit.vervalreden.' + besluit.vervalreden | translate) : null"
                                      [attr.role]="besluit.vervalreden ? 'tooltip' : null"
-                                     [attr.aria-label]="besluit.vervalreden ? ('vervalreden.' + besluit.vervalreden | translate) : null"></zac-static-text>
-                    <zac-static-text class="w100 flex-1" [label]="'besluitToelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
+                                     [attr.aria-label]="besluit.vervalreden ? ('besluit.vervalreden.' + besluit.vervalreden | translate) : null"></zac-static-text>
+                    <zac-static-text class="w100 flex-1" [label]="'besluitToelichting' | translate"
+                                     [value]="besluit.toelichting"></zac-static-text>
                     <mfb-form-field class="flex" *ngIf="besluitInformatieobjecten[besluit.uuid]"
                                     [field]="besluitInformatieobjecten[besluit.uuid]"></mfb-form-field>
 
@@ -92,7 +103,8 @@
                         </ng-container>
                         <tr mat-header-row
                             *matHeaderRowDef="['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting']; sticky: true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];"></tr>
+                        <tr mat-row
+                            *matRowDef="let row; columns: ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];"></tr>
                     </table>
                     <p *ngIf="histories[besluit.uuid]?.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                 </div>

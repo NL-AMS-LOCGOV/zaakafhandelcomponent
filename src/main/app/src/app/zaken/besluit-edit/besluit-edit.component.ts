@@ -96,7 +96,6 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
         if (formGroup) {
             const gegevens = new BesluitWijzigenGegevens();
             gegevens.besluitUuid = this.besluit.uuid;
-            gegevens.zaakUuid = this.zaak.uuid;
             gegevens.resultaattypeUuid = (formGroup.controls['resultaattype'].value as Resultaattype).id;
             gegevens.toelichting = formGroup.controls['toelichting'].value;
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;

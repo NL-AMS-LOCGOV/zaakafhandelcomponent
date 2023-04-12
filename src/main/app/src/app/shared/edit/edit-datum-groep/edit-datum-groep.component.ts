@@ -147,7 +147,6 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     private maakHiddenField(field: AbstractFormField): HiddenFormField {
         return new HiddenFormFieldBuilder(field.formControl.value)
         .id(field.id)
-        .label(field.label)
         .build();
     }
 

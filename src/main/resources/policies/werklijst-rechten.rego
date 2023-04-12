@@ -7,25 +7,25 @@ import data.net.atos.zac.rol.recordmanager
 import input.user
 
 werklijst_rechten := {
-    "documenten_inbox": documenten_inbox,
-    "documenten_ontkoppeld": documenten_ontkoppeld,
-    "documenten_ontkoppeld_verwijderen": documenten_ontkoppeld_verwijderen,
+    "inbox": inbox,
+    "ontkoppelde_documenten_verwijderen": ontkoppelde_documenten_verwijderen,
+    "inbox_productaanvragen_verwijderen": inbox_productaanvragen_verwijderen,
     "zaken_taken": zaken_taken,
     "zaken_taken_verdelen": zaken_taken_verdelen
 }
 
-default documenten_inbox := false
-documenten_inbox {
-    recordmanager.rol in user.rollen
-}
-
-default documenten_ontkoppeld := false
-documenten_ontkoppeld {
+default inbox := false
+inbox {
     { behandelaar, recordmanager }[_].rol in user.rollen
 }
 
-default documenten_ontkoppeld_verwijderen := false
-verdelen_en_vrijgeven {
+default ontkoppelde_documenten_verwijderen := false
+ontkoppelde_documenten_verwijderen {
+    recordmanager.rol in user.rollen
+}
+
+default inbox_productaanvragen_verwijderen := false
+inbox_productaanvragen_verwijderen {
     recordmanager.rol in user.rollen
 }
 

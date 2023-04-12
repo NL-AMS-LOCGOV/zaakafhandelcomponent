@@ -5,10 +5,6 @@
 
 package net.atos.zac.app.audit.converter.zaken;
 
-import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
-
-import java.net.URI;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,15 +46,10 @@ public class AuditZaakobjectWijzigingConverter extends AbstractAuditWijzigingCon
     }
 
     private String toWaarde(final Zaakobject zaakobject) {
-        return zaakobject != null ? extractID(zaakobject.getObject()) : null;
-    }
-
-    private static String extractID(final URI uri) {
-        if (uri == null) {
-            return "-";
+        if (zaakobject == null) {
+            return null;
         }
-        String path = uri.getPath();
-        return contains(path, "/") ? substringAfterLast(path, "/") : path;
+        return zaakobject.getWaarde();
     }
 
 }

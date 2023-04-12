@@ -36,6 +36,6 @@ public class CreateUserTaskInterceptor implements org.flowable.engine.intercepto
         // Wait some time before handling the event to make sure that the task has been created.
         screenEvent.setDelay(SECONDS_TO_DELAY);
         FlowableHelper.getInstance().getEventingService().send(screenEvent);
-        FlowableHelper.getInstance().getIndexeerService().addTaak(context.getTaskEntity().getId());
+        FlowableHelper.getInstance().getIndexeerService().addOrUpdateTaak(context.getTaskEntity().getId());
     }
 }

@@ -27,6 +27,7 @@ import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {DocumentenOndertekenenComponent} from './form-components/documenten-ondertekenen/documenten-ondertekenen.component';
+import {MessageComponent} from './form-components/message/message.component';
 
 @Injectable({
     providedIn: 'root'
@@ -80,6 +81,8 @@ export class MaterialFormBuilderService {
                 return DocumentenLijstComponent;
             case FieldType.DOCUMENTEN_ONDERTEKENEN:
                 return DocumentenOndertekenenComponent;
+            case FieldType.MESSAGE:
+                return MessageComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }

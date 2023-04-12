@@ -1,0 +1,16 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<div class="message" *ngIf="data.formControl.value">
+    <mat-icon class="message-icon"
+              *ngIf="data.icon"
+              [attr.outlined]="data.icon.outlined"
+              [ngClass]="data.icon.styleClass"
+              title="{{data.icon.title | translate}}">
+        {{data.icon.icon}}
+    </mat-icon>
+    <label class="message-text">
+        {{data.label | translate}}
+    </label>
+</div>

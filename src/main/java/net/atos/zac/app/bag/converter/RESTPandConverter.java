@@ -13,7 +13,6 @@ import net.atos.client.bag.model.PandIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectPand;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectPand;
-import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTPand;
 
 public class RESTPandConverter {
@@ -45,8 +44,7 @@ public class RESTPandConverter {
         return restPand;
     }
 
-    public ZaakobjectPand convertToZaakobject(final RESTBAGObjectGegevens<RESTPand> gegevens, final Zaak zaak) {
-        final RESTPand pand = gegevens.bagObject;
+    public ZaakobjectPand convertToZaakobject(final RESTPand pand, final Zaak zaak) {
         return new ZaakobjectPand(zaak.getUrl(), pand.url, new ObjectPand(pand.identificatie));
     }
 }

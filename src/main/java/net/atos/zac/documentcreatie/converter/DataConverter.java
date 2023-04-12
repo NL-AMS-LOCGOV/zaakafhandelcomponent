@@ -7,7 +7,6 @@ package net.atos.zac.documentcreatie.converter;
 
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.aanvraag.ProductaanvraagService.OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
@@ -38,6 +37,7 @@ import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectListParameters;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.authentication.LoggedInUser;
@@ -257,7 +257,7 @@ public class DataConverter {
         listParameters.setZaak(zaak);
         listParameters.setObjectType(OVERIGE);
         return zrcClientService.listZaakobjecten(listParameters).getResults().stream()
-                .filter(zo -> OBJECT_TYPE_OVERIGE_PRODUCTAANVRAAG.equals(zo.getObjectTypeOverige()))
+                .filter(zo -> ZaakobjectProductaanvraag.OBJECT_TYPE_OVERIGE.equals(zo.getObjectTypeOverige()))
                 .findAny()
                 .map(this::convertToStartformulierData)
                 .orElse(null);

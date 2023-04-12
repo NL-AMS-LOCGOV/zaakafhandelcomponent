@@ -24,10 +24,17 @@ public class RESTNummeraanduiding extends RESTBAGObject {
 
     public StatusNaamgeving status;
 
+    public RESTNummeraanduiding() {
+    }
 
     @Override
     public BAGObjectType getBagObjectType() {
         return BAGObjectType.NUMMERAANDUIDING;
+    }
+
+    @Override
+    public String getOmschrijving() {
+        return "%s %s".formatted(huisnummerWeergave, postcode);
     }
 
 }

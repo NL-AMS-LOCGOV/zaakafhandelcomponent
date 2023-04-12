@@ -7,8 +7,9 @@
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
                           (klantGegevens)="initiatorGeselecteerd($event.klant)"
                           [initiator]="true"></zac-klant-koppel>
-        <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
-                          (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
+        <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
+                      [gekoppeldeBagObjecten]="bagObjecten"
+                      (bagObject)="bagGeselecteerd($event)"></zac-bag-zoek>
     </mat-sidenav>
     <div class="content">
         <div class="form">

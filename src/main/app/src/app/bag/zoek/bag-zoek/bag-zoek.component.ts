@@ -8,7 +8,6 @@ import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
 import {ListAdressenParameters} from '../../model/list-adressen-parameters';
-import {ConfirmDialogComponent, ConfirmDialogData} from '../../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {UtilService} from '../../../core/service/util.service';
 import {BAGObject} from '../../model/bagobject';
@@ -51,14 +50,8 @@ export class BagZoekComponent implements OnInit {
     }
 
     selectBagObject(bagObject: BAGObject): void {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData('msg.bagobject.koppelen.bevestigen')
-        }).afterClosed().subscribe(confirmed => {
-            if (confirmed) {
-                this.gekoppeldeBagObjecten.push(bagObject);
-                this.bagObject.emit(bagObject);
-            }
-        });
+        this.gekoppeldeBagObjecten.push(bagObject);
+        this.bagObject.emit(bagObject);
     }
 
     expandable(bagObject: BAGObject) {

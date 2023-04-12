@@ -13,8 +13,6 @@ public class RESTBesluitWijzigenGegevens {
 
     public UUID besluitUuid;
 
-    public UUID zaakUuid;
-
     public UUID resultaattypeUuid;
 
     public String toelichting;

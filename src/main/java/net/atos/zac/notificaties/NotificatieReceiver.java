@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.client.or.objecttype.ObjecttypesClientService;
+import net.atos.client.or.objecttype.model.Objecttype;
 import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
@@ -60,7 +61,7 @@ public class NotificatieReceiver {
 
     private static final String OBJECTTYPE_KENMERK = "objectType";
 
-    private static final String PRODUCTAANVRAAG_OBJECTTYPE_NAME = "ProductAanvraag";
+    private static final String PRODUCTAANVRAAGTYPE_NAAM_DENHAAG = "Productaanvraag-Denhaag";
 
     @Inject
     private EventingService eventingService;
@@ -138,18 +139,18 @@ public class NotificatieReceiver {
     }
 
     private void handleProductaanvraag(final Notificatie notificatie) {
-        if (isProductaanvraag(notificatie)) {
+        if (isProductaanvraagDenHaag(notificatie)) {
             productaanvraagService.verwerkProductaanvraag(notificatie.getResourceUrl());
         }
     }
 
-    private boolean isProductaanvraag(final Notificatie notificatie) {
+    private boolean isProductaanvraagDenHaag(final Notificatie notificatie) {
         final String producttypeUri = notificatie.getProperties().get(OBJECTTYPE_KENMERK);
         if (notificatie.getResource() != OBJECT || notificatie.getAction() != CREATE || isEmpty(producttypeUri)) {
             return false;
         }
-        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(
-                objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
+        final Objecttype objecttype = objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri));
+        return PRODUCTAANVRAAGTYPE_NAAM_DENHAAG.equals(objecttype.getName());
     }
 
     private void handleIndexering(final Notificatie notificatie) {
@@ -157,20 +158,22 @@ public class NotificatieReceiver {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
                     // Updaten van taak is nodig bij afsluiten zaak
-                    indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
+                    indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getResourceUrl()),
+                                                    notificatie.getAction() == UPDATE);
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+                indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
             } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
-                indexeerService.addInformatieobjectByZaakinformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                indexeerService.addOrUpdateInformatieobjectByZaakinformatieobject(
+                        uuidFromURI(notificatie.getResourceUrl()));
             }
         }
         if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
             if (notificatie.getResource() == INFORMATIEOBJECT) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    indexeerService.addInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.addOrUpdateInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
                 }
