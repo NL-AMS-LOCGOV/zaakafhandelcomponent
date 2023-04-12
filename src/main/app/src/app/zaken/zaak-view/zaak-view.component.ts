@@ -53,7 +53,7 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {forkJoin, Observable, share, Subscription} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
@@ -87,7 +87,7 @@ import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly skeletonLayout = SkeletonLayout;
     readonly indicatiesLayout = IndicatiesLayout;
-    zaak: Zaak;
+    zaak$ = new BehaviorSubject<Zaak>(null);
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
@@ -157,22 +157,22 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.init(data['zaak']);
 
             this.zaakListener = this.websocketService.addListenerWithSnackbar(
-                Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
+                Opcode.ANY, ObjectType.ZAAK, this.zaak$.value.uuid,
                 () => this.updateZaak());
 
             this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(
-                Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+                Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak$.value.uuid,
                 () => this.updateZaak());
 
             this.zaakBesluitenListener = this.websocketService.addListenerWithSnackbar(
-                Opcode.UPDATED, ObjectType.ZAAK_BESLUITEN, this.zaak.uuid,
+                Opcode.UPDATED, ObjectType.ZAAK_BESLUITEN, this.zaak$.value.uuid,
                 () => this.loadBesluiten());
 
             this.zaakTakenListener = this.websocketService.addListener(
-                Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+                Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak$.value.uuid,
                 () => this.loadTaken());
 
-            this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
+            this.utilService.setTitle('title.zaak', {zaak: this.zaak$.value.identificatie});
 
             this.getIngelogdeMedewerker();
             this.loadTaken();
@@ -187,7 +187,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     init(zaak: Zaak): void {
-        this.zaak = zaak;
+        this.zaak$.next(zaak);
         this.utilService.disableActionBar(!zaak.rechten.wijzigen);
         this.loadHistorie();
         this.loadBetrokkenen();
@@ -249,34 +249,34 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
-            new SelectFormFieldBuilder(this.zaak.communicatiekanaal).id('communicatiekanaal')
-                                                                    .label('communicatiekanaal')
-                                                                    .validators(Validators.required)
-                                                                    .optionLabel('naam')
-                                                                    .options(
-                                                                        this.zakenService.listCommunicatiekanalen())
-                                                                    .build());
+            new SelectFormFieldBuilder(this.zaak$.value.communicatiekanaal).id('communicatiekanaal')
+                                                                           .label('communicatiekanaal')
+                                                                           .validators(Validators.required)
+                                                                           .optionLabel('naam')
+                                                                           .options(
+                                                                               this.zakenService.listCommunicatiekanalen())
+                                                                           .build());
 
         this.editFormFields.set('medewerker-groep',
-            new MedewerkerGroepFieldBuilder(this.zaak.groep, this.zaak.behandelaar).id('medewerker-groep')
-                                                                                   .groepLabel('groep.-kies-')
-                                                                                   .groepRequired()
-                                                                                   .medewerkerLabel(
-                                                                                       'behandelaar.-kies-')
-                                                                                   .build());
+            new MedewerkerGroepFieldBuilder(this.zaak$.value.groep, this.zaak$.value.behandelaar).id('medewerker-groep')
+                                                                                                 .groepLabel('groep.-kies-')
+                                                                                                 .groepRequired()
+                                                                                                 .medewerkerLabel(
+                                                                                                     'behandelaar.-kies-')
+                                                                                                 .build());
         this.editFormFields.set('omschrijving',
-            new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
-                                                                .maxlength(80)
-                                                                .build());
+            new TextareaFormFieldBuilder(this.zaak$.value.omschrijving).id('omschrijving').label('omschrijving')
+                                                                       .maxlength(80)
+                                                                       .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder(this.zaak.toelichting).id('toelichting').label('toelichting')
-                                                               .maxlength(1000).build());
+            new TextareaFormFieldBuilder(this.zaak$.value.toelichting).id('toelichting').label('toelichting')
+                                                                      .maxlength(1000).build());
         this.editFormFields.set('vertrouwelijkheidaanduiding',
             new SelectFormFieldBuilder(
                 {
                     label: this.translate.instant(
-                        'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
-                    value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
+                        'vertrouwelijkheidaanduiding.' + this.zaak$.value.vertrouwelijkheidaanduiding),
+                    value: 'vertrouwelijkheidaanduiding.' + this.zaak$.value.vertrouwelijkheidaanduiding
                 }).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
                   .validators(Validators.required)
                   .optionLabel('label')
@@ -284,26 +284,26 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                       Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder(this.zaak.startdatum).id('startdatum').label('startdatum')
-                                                          .validators(Validators.required).build());
+            new DateFormFieldBuilder(this.zaak$.value.startdatum).id('startdatum').label('startdatum')
+                                                                 .validators(Validators.required).build());
 
         this.editFormFields.set('einddatumGepland',
-            new DateFormFieldBuilder(this.zaak.einddatumGepland).id('einddatumGepland').label('einddatumGepland')
-                                                                .readonly(!this.zaak.einddatumGepland)
-                                                                .validators(
-                                                                    this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator)
-                                                                .build());
+            new DateFormFieldBuilder(this.zaak$.value.einddatumGepland).id('einddatumGepland').label('einddatumGepland')
+                                                                       .readonly(!this.zaak$.value.einddatumGepland)
+                                                                       .validators(
+                                                                           this.zaak$.value.einddatumGepland ? Validators.required : Validators.nullValidator)
+                                                                       .build());
         this.editFormFieldIcons.set('einddatumGepland',
-            new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
+            new TextIcon(Conditionals.isAfterDate(this.zaak$.value.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
 
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
-            new DateFormFieldBuilder(this.zaak.uiterlijkeEinddatumAfdoening).id('uiterlijkeEinddatumAfdoening')
-                                                                            .label('uiterlijkeEinddatumAfdoening')
-                                                                            .validators(Validators.required)
-                                                                            .build());
+            new DateFormFieldBuilder(this.zaak$.value.uiterlijkeEinddatumAfdoening).id('uiterlijkeEinddatumAfdoening')
+                                                                                   .label('uiterlijkeEinddatumAfdoening')
+                                                                                   .validators(Validators.required)
+                                                                                   .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
-            new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
+            new TextIcon(Conditionals.isAfterDate(this.zaak$.value.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
         this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden')
@@ -365,8 +365,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.rechten.behandelen) {
-            if (!this.zaak.isOntvangstbevestigingVerstuurd) {
+        if (this.zaak$.value.rechten.behandelen) {
+            if (!this.zaak$.value.isOntvangstbevestigingVerstuurd) {
                 this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ONTVANGSTBEVESTIGING;
@@ -379,7 +379,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'mail'));
         }
 
-        if (this.zaak.rechten.wijzigen) {
+        if (this.zaak$.value.rechten.wijzigen) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.maakDocument();
             }, 'note_add'));
@@ -395,53 +395,53 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'local_post_office'));
         }
 
-        if (this.zaak.isOpen && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.behandelen) {
+        if (this.zaak$.value.isOpen && !this.zaak$.value.isInIntakeFase && this.zaak$.value.isBesluittypeAanwezig && this.zaak$.value.rechten.behandelen) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
             }, 'gavel'));
         }
 
-        if (this.zaak.isHeropend && this.zaak.rechten.behandelen) {
+        if (this.zaak$.value.isHeropend && this.zaak$.value.rechten.behandelen) {
             this.menu.push(
                 new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
 
-        if (!this.zaak.isOpen && this.zaak.rechten.heropenen) {
+        if (!this.zaak$.value.isOpen && this.zaak$.value.rechten.heropenen) {
             this.menu.push(
                 new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
         }
 
         forkJoin([
-            this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
-            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
-            this.planItemsService.listProcessTaskPlanItems(this.zaak.uuid)
+            this.planItemsService.listUserEventListenerPlanItems(this.zaak$.value.uuid),
+            this.planItemsService.listHumanTaskPlanItems(this.zaak$.value.uuid),
+            this.planItemsService.listProcessTaskPlanItems(this.zaak$.value.uuid)
         ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, processTaskPlanItems]) => {
-            if (this.zaak.rechten.behandelen && userEventListenerPlanItems.length > 0) {
+            if (this.zaak$.value.rechten.behandelen && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
                     userEventListenerPlanItems.map(
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(
                             userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken &&
-                this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
+            if (this.zaak$.value.isOpen && !this.zaak$.value.isHeropend && this.zaak$.value.rechten.afbreken &&
+                this.zaak$.value.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(
                     new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
-            if (this.zaak.rechten.wijzigen) {
+            if (this.zaak$.value.rechten.wijzigen) {
                 this.menu.push(new ButtonMenuItem('actie.zaakdata.wijzigen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
                 }, 'folder_copy'));
             }
-            if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
+            if (this.zaak$.value.rechten.behandelen && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
                     humanTaskPlanItems.map(
                         humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
             }
-            if (this.zaak.rechten.behandelen && processTaskPlanItems.length > 0) {
+            if (this.zaak$.value.rechten.behandelen && processTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.process.starten'));
                 this.menu = this.menu.concat(
                     processTaskPlanItems.map(
@@ -454,7 +454,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private maakDocument(): void {
         const documentCreatieGegeven = new DocumentCreatieGegevens();
-        documentCreatieGegeven.zaakUUID = this.zaak.uuid;
+        documentCreatieGegeven.zaakUUID = this.zaak$.value.uuid;
         this.informatieObjectenService.createDocument(documentCreatieGegeven)
             .subscribe((documentCreatieResponse) => {
                 if (documentCreatieResponse.redirectURL) {
@@ -467,9 +467,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createKoppelingenMenuItems(): void {
-        if (this.zaak.rechten.behandelen || this.zaak.rechten.wijzigen) {
+        if (this.zaak$.value.rechten.behandelen || this.zaak$.value.rechten.wijzigen) {
             this.menu.push(new HeaderMenuItem('koppelingen'));
-            if (this.zaak.rechten.behandelen) {
+            if (this.zaak$.value.rechten.behandelen) {
                 this.menu.push(new ButtonMenuItem('actie.betrokkene.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BETROKKENE;
@@ -479,9 +479,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     this.action = SideNavAction.ZOEK_BAG_ADRES;
                 }, 'add_home_work'));
             }
-            if (this.zaak.rechten.wijzigen) {
+            if (this.zaak$.value.rechten.wijzigen) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
-                    this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
+                    this.zaakKoppelenService.addTeKoppelenZaak(this.zaak$.value);
                 }, 'account_tree'));
             }
         }
@@ -524,14 +524,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: IntakeAfrondenDialogComponent,
-            dialogData: {zaak: this.zaak, planItem: planItem}
+            dialogData: {zaak: this.zaak$.value, planItem: planItem}
         };
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ZaakAfhandelenDialogComponent,
-            dialogData: {zaak: this.zaak, planItem: planItem}
+            dialogData: {zaak: this.zaak$.value, planItem: planItem}
         };
     }
 
@@ -542,10 +542,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .label('actie.zaak.afbreken.reden')
                                             .optionLabel('naam')
                                             .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(
-                                                this.zaak.zaaktype.uuid))
+                                                this.zaak$.value.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build()],
-            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
+            (results: any[]) => this.zakenService.afbreken(this.zaak$.value.uuid, results['reden']).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
 
@@ -564,7 +564,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const dialogData = new DialogData([
                 new InputFormFieldBuilder().id('reden').label('actie.zaak.heropenen.reden').validators(Validators.required)
                                            .maxlength(100).build()],
-            (results: any[]) => this.zakenService.heropenen(this.zaak.uuid, results['reden']).pipe(
+            (results: any[]) => this.zakenService.heropenen(this.zaak$.value.uuid, results['reden']).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
 
@@ -585,14 +585,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 new SelectFormFieldBuilder().id('resultaattype')
                                             .label('resultaat')
                                             .optionLabel('naam')
-                                            .options(this.zakenService.listResultaattypes(this.zaak.zaaktype.uuid))
+                                            .options(this.zakenService.listResultaattypes(this.zaak$.value.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build(),
                 new InputFormFieldBuilder().id('toelichting')
                                            .label('toelichting')
                                            .maxlength(80)
                                            .build()],
-            (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['toelichting'],
+            (results: any[]) => this.zakenService.afsluiten(this.zaak$.value.uuid, results['toelichting'],
                 results['resultaattype'].id).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
@@ -614,20 +614,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         zaak.einddatumGepland = event.einddatumGepland;
         zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak$.value.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
 
     editOpschorting(event: any): void {
         const zaakOpschortGegevens = new ZaakOpschortGegevens();
-        zaakOpschortGegevens.indicatieOpschorting = !this.zaak.isOpgeschort;
+        zaakOpschortGegevens.indicatieOpschorting = !this.zaak$.value.isOpgeschort;
         zaakOpschortGegevens.einddatumGepland = event.einddatumGepland;
         zaakOpschortGegevens.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
         zaakOpschortGegevens.redenOpschorting = event.reden;
         zaakOpschortGegevens.duurDagen = event.duurDagen;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.opschortenZaak(this.zaak.uuid, zaakOpschortGegevens).subscribe(updatedZaak => {
+        this.zakenService.opschortenZaak(this.zaak$.value.uuid, zaakOpschortGegevens).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -640,14 +640,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         zaakVerlengGegevens.duurDagen = event.duurDagen;
         zaakVerlengGegevens.takenVerlengen = event.takenVerlengen;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.verlengenZaak(this.zaak.uuid, zaakVerlengGegevens).subscribe(updatedZaak => {
+        this.zakenService.verlengenZaak(this.zaak$.value.uuid, zaakVerlengGegevens).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
 
     private loadOpschorting(): void {
-        if (this.zaak.isOpgeschort) {
-            this.zakenService.readOpschortingZaak(this.zaak.uuid).subscribe(objectData => {
+        if (this.zaak$.value.isOpgeschort) {
+            this.zakenService.readOpschortingZaak(this.zaak$.value.uuid).subscribe(objectData => {
                 this.zaakOpschorting = objectData;
             });
         }
@@ -655,15 +655,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editToewijzing(event: any) {
         if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id &&
-            this.zaak.groep === event['medewerker-groep'].groep) {
+            this.zaak$.value.groep === event['medewerker-groep'].groep) {
             this.assignZaakToMe(event);
         } else {
-            this.zaak.groep = event['medewerker-groep'].groep;
-            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
+            this.zaak$.value.groep = event['medewerker-groep'].groep;
+            this.zaak$.value.behandelaar = event['medewerker-groep'].medewerker;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
-            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
-                if (this.zaak.behandelaar) {
-                    this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: this.zaak.behandelaar.naam});
+            this.zakenService.toekennen(this.zaak$.value, event.reden).subscribe(zaak => {
+                if (this.zaak$.value.behandelaar) {
+                    this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: this.zaak$.value.behandelaar.naam});
                 } else {
                     this.utilService.openSnackbar('msg.vrijgegeven.zaak');
                 }
@@ -676,7 +676,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = event[field].value ? event[field].value : event[field];
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak$.value.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -685,31 +685,31 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = value;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak$.value.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
 
     public updateZaak(): void {
-        this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
+        this.zakenService.readZaak(this.zaak$.value.uuid).subscribe(zaak => {
             this.init(zaak);
         });
     }
 
     private loadHistorie(): void {
-        this.zakenService.listHistorieVoorZaak(this.zaak.uuid).subscribe(historie => {
+        this.zakenService.listHistorieVoorZaak(this.zaak$.value.uuid).subscribe(historie => {
             this.historie.data = historie;
         });
     }
 
     private loadBetrokkenen(): void {
-        this.zakenService.listBetrokkenenVoorZaak(this.zaak.uuid).subscribe(betrokkenen => {
+        this.zakenService.listBetrokkenenVoorZaak(this.zaak$.value.uuid).subscribe(betrokkenen => {
             this.betrokkenen.data = betrokkenen;
         });
     }
 
     private loadBagObjecten(): void {
-        this.bagService.listBAGObjectenVoorZaak(this.zaak.uuid).subscribe(bagObjecten => {
+        this.bagService.listBAGObjectenVoorZaak(this.zaak$.value.uuid).subscribe(bagObjecten => {
             this.bagObjecten.data = bagObjecten;
         });
     }
@@ -725,11 +725,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadLocatie(): void {
-        if (this.zaak.zaakgeometrie) {
-            switch (this.zaak.zaakgeometrie.type) {
+        if (this.zaak$.value.zaakgeometrie) {
+            switch (this.zaak$.value.zaakgeometrie.type) {
                 case GeometryType.POINT:
                     this.locationService.coordinatesToAddress(
-                        [this.zaak.zaakgeometrie.point.x, this.zaak.zaakgeometrie.point.y]).subscribe(objectData => {
+                        [this.zaak$.value.zaakgeometrie.point.x, this.zaak$.value.zaakgeometrie.point.y]).subscribe(objectData => {
                         this.zaakLocatie = objectData.response.docs[0];
                     });
                     break;
@@ -738,12 +738,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadBesluiten(): void {
-        this.zakenService.listBesluitenForZaak(this.zaak.uuid)
-            .subscribe(besluiten => this.zaak.besluiten = besluiten);
+        this.zakenService.listBesluitenForZaak(this.zaak$.value.uuid)
+            .subscribe(besluiten => this.zaak$.value.besluiten = besluiten);
     }
 
     private loadTaken(): void {
-        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid)
+        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak$.value.uuid)
                           .pipe(
                               share(),
                               map(values => values.map(value => new ExpandableTableData(value)))
@@ -783,7 +783,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private assignZaakToMe(event: any): void {
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
-        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak$.value, event.reden).subscribe(zaak => {
             this.init(zaak);
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
         });
@@ -799,7 +799,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaakGeometrie(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaakGeometrie(this.zaak$.value.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -807,10 +807,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     initiatorGeselecteerd(initiator: Klant): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        const melding = this.zaak.initiatorIdentificatie ? 'msg.initiator.gewijzigd' : 'msg.initiator.toegevoegd';
-        this.zakenService.updateInitiator(this.zaak, initiator)
+        const melding = this.zaak$.value.initiatorIdentificatie ? 'msg.initiator.gewijzigd' : 'msg.initiator.toegevoegd';
+        this.zakenService.updateInitiator(this.zaak$.value, initiator)
             .subscribe(zaak => {
-                this.zaak = zaak;
+                this.zaak$.next(zaak);
                 this.utilService.openSnackbar(melding, {naam: zaak.initiatorIdentificatie});
                 this.loadHistorie();
             });
@@ -821,14 +821,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.dialog.open(DialogComponent, {
             data: new DialogData(
                 [new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build()],
-                (results: any[]) => this.zakenService.deleteInitiator(this.zaak, results['reden']),
+                (results: any[]) => this.zakenService.deleteInitiator(this.zaak$.value, results['reden']),
                 this.translate.instant('msg.initiator.ontkoppelen.bevestigen')
             )
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('msg.initiator.ontkoppelen.uitgevoerd');
-                this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
-                    this.zaak = zaak;
+                this.zakenService.readZaak(this.zaak$.value.uuid).subscribe(zaak => {
+                    this.zaak$.next(zaak);
                     this.loadHistorie();
                 });
             }
@@ -838,10 +838,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     betrokkeneGeselecteerd(betrokkene: KlantGegevens): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant, betrokkene.betrokkeneRoltype,
+        this.zakenService.createBetrokkene(this.zaak$.value, betrokkene.klant, betrokkene.betrokkeneRoltype,
             betrokkene.betrokkeneToelichting)
             .subscribe(zaak => {
-                this.zaak = zaak;
+                this.zaak$.next(zaak);
                 this.utilService.openSnackbar('msg.betrokkene.toegevoegd',
                     {roltype: betrokkene.betrokkeneRoltype.naam});
                 this.loadHistorie();
@@ -862,8 +862,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             if (result) {
                 this.utilService.openSnackbar('msg.betrokkene.ontkoppelen.uitgevoerd',
                     {betrokkene: betrokkeneIdentificatie});
-                this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
-                    this.zaak = zaak;
+                this.zakenService.readZaak(this.zaak$.value.uuid).subscribe(zaak => {
+                    this.zaak$.next(zaak);
                     this.loadHistorie();
                     this.loadBetrokkenen();
                 });
@@ -873,7 +873,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     adresGeselecteerd(bagObject: BAGObject): void {
         this.websocketService.suspendListener(this.zaakListener);
-        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
+        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak$.value.uuid, bagObject))
             .subscribe(() => {
                 this.utilService.openSnackbar('msg.bagobject.toegevoegd');
                 this.loadHistorie();
@@ -936,7 +936,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {
         const zaakOntkoppelGegevens: ZaakOntkoppelGegevens = new ZaakOntkoppelGegevens();
-        zaakOntkoppelGegevens.zaakUuid = this.zaak.uuid;
+        zaakOntkoppelGegevens.zaakUuid = this.zaak$.value.uuid;
         zaakOntkoppelGegevens.gekoppeldeZaakIdentificatie = gerelateerdeZaak.identificatie;
         zaakOntkoppelGegevens.relatietype = gerelateerdeZaak.relatieType;
 

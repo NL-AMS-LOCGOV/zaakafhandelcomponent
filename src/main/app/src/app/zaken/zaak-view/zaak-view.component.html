@@ -13,7 +13,7 @@
                           [initiator]="true"></zac-klant-koppel>
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
                           (klantGegevens)="betrokkeneGeselecteerd($event)"
-                          [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
+                          [zaaktypeUUID]="zaak$.value.zaaktype.uuid"></zac-klant-koppel>
         <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
                       [gekoppeldeBagObjecten]="bagObjecten.data"
                       (bagObject)="adresGeselecteerd($event)"></zac-bag-zoek>
@@ -22,72 +22,72 @@
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
         <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
                                    [sideNav]="actionsSidenav"
-                                   [zaak]="zaak"
+                                   [zaak]="zaak$.value"
                                    (document)="documentToegevoegd($event)"></zac-informatie-object-add>
         <zac-informatie-verzenden *ngSwitchCase="sideNavAction.DOCUMENT_VERZENDEN"
                                   [sideNav]="actionsSidenav"
-                                  [zaak]="zaak"
+                                  [zaak]="zaak$.value"
                                   (documentVerzonden)="updateZaak()"></zac-informatie-verzenden>
         <zac-human-task-do *ngSwitchCase="sideNavAction.TAAK_STARTEN"
                            (done)="taakGestart()"
-                           [zaak]="zaak"
+                           [zaak]="zaak$.value"
                            [planItem]="actiefPlanItem"></zac-human-task-do>
         <zac-process-task-do *ngSwitchCase="sideNavAction.PROCESS_STARTEN"
                              (done)="processGestart()"
-                             [zaak]="zaak"
+                             [zaak]="zaak$.value"
                              [planItem]="actiefPlanItem"></zac-process-task-do>
         <zac-mail-create *ngSwitchCase="sideNavAction.MAIL_VERSTUREN"
                          (mailVerstuurd)="mailVerstuurd($event)"
-                         [zaak]="zaak"></zac-mail-create>
+                         [zaak]="zaak$.value"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="sideNavAction.ONTVANGSTBEVESTIGING"
                                   (ontvangstBevestigd)="ontvangstBevestigd()"
-                                  [zaak]="zaak"></zac-ontvangstbevestiging>
+                                  [zaak]="zaak$.value"></zac-ontvangstbevestiging>
         <zac-besluit-create *ngSwitchCase="sideNavAction.BESLUIT_VASTLEGGEN"
                             (besluitVastgelegd)="besluitVastgelegd()"
-                            [zaak]="zaak"></zac-besluit-create>
+                            [zaak]="zaak$.value"></zac-besluit-create>
         <zac-besluit-edit *ngSwitchCase="sideNavAction.BESLUIT_WIJZIGEN"
                           (besluitGewijzigd)="besluitVastgelegd()"
                           [besluit]="teWijzigenBesluit"
-                          [zaak]="zaak"></zac-besluit-edit>
+                          [zaak]="zaak$.value"></zac-besluit-edit>
         <zac-zaakdata *ngSwitchCase="sideNavAction.ZAAKDATA_WIJZIGEN"
                       (done)="sluitSidenav()"
-                      [zaak]="zaak"></zac-zaakdata>
+                      [zaak]="zaak$.value"></zac-zaakdata>
 
     </mat-drawer>
     <mat-drawer-content>
 
         <div class="flex-row flex-wrap gap-10">
             <zac-zaak-initiator-toevoegen class="w100 flex-1"
-                                          *ngIf="!zaak.initiatorIdentificatieType"
-                                          [toevoegenToegestaan]="zaak.rechten.behandelen"
+                                          *ngIf="!zaak$.value.initiatorIdentificatieType"
+                                          [toevoegenToegestaan]="zaak$.value.rechten.behandelen"
                                           (add)="addOrEditZaakInitiator()">
             </zac-zaak-initiator-toevoegen>
-            <zac-persoongegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
-                                 [isVerwijderbaar]="zaak.rechten.behandelen"
-                                 [isWijzigbaar]="zaak.rechten.behandelen"
+            <zac-persoongegevens class="w100 flex-1" *ngIf="zaak$.value.initiatorIdentificatieType==='BSN'" [bsn]="zaak$.value.initiatorIdentificatie"
+                                 [isVerwijderbaar]="zaak$.value.rechten.behandelen"
+                                 [isWijzigbaar]="zaak$.value.rechten.behandelen"
                                  (edit)="addOrEditZaakInitiator()"
                                  (delete)="deleteInitiator()">
             </zac-persoongegevens>
-            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='VN'"
-                                  [vestigingsnummer]="zaak.initiatorIdentificatie"
-                                  [isVerwijderbaar]="zaak.rechten.behandelen"
+            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak$.value.initiatorIdentificatieType==='VN'"
+                                  [vestigingsnummer]="zaak$.value.initiatorIdentificatie"
+                                  [isVerwijderbaar]="zaak$.value.rechten.behandelen"
                                   (edit)="addOrEditZaakInitiator()"
-                                  [isWijzigbaar]="zaak.rechten.behandelen"
+                                  [isWijzigbaar]="zaak$.value.rechten.behandelen"
                                   (delete)="deleteInitiator()">
             </zac-bedrijfsgegevens>
-            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
-                                  [isVerwijderbaar]="zaak.rechten.behandelen"
+            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak$.value.initiatorIdentificatieType==='RSIN'" [rsin]="zaak$.value.initiatorIdentificatie"
+                                  [isVerwijderbaar]="zaak$.value.rechten.behandelen"
                                   (edit)="addOrEditZaakInitiator()"
-                                  [isWijzigbaar]="zaak.rechten.behandelen"
+                                  [isWijzigbaar]="zaak$.value.rechten.behandelen"
                                   (delete)="deleteInitiator()">
             </zac-bedrijfsgegevens>
 
 
             <mat-card class="zaken-card w50 flex-1">
                 <mat-card-header class="flex-row space-between">
-                    <mat-card-title>{{zaak.identificatie}}</mat-card-title>
-                    <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
-                    <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
+                    <mat-card-title>{{zaak$.value.identificatie}}</mat-card-title>
+                    <mat-card-subtitle>{{zaak$.value.zaaktype.omschrijving}}</mat-card-subtitle>
+                    <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak$.value"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group mat-stretch-tabs="false">
@@ -99,19 +99,19 @@
 
                                 <div class="flex w33 w50-md w100-sm">
                                     <zac-static-text [label]="'status' | translate"
-                                                     [value]="zaak.status | empty:'naam'"
-                                                     [icon]="zaak.status?.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.status?.toelichting"
-                                                     [attr.role]="zaak.status?.toelichting ? 'tooltip' : null"
-                                                     [attr.aria-label]="zaak.status?.toelichting"></zac-static-text>
+                                                     [value]="zaak$.value.status | empty:'naam'"
+                                                     [icon]="zaak$.value.status?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak$.value.status?.toelichting"
+                                                     [attr.role]="zaak$.value.status?.toelichting ? 'tooltip' : null"
+                                                     [attr.aria-label]="zaak$.value.status?.toelichting"></zac-static-text>
                                     <zac-edit-select [formField]="editFormFields.get('communicatiekanaal')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="!zaak.rechten.wijzigen"
+                                                     [readonly]="!zaak$.value.rechten.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
                                     </zac-edit-select>
                                     <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="!zaak.rechten.wijzigen"
+                                                     [readonly]="!zaak$.value.rechten.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-select>
                                 </div>
@@ -119,32 +119,32 @@
 
                                     <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
                                                                 [reasonField]="editFormFields.get('reden')"
-                                                                [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
+                                                                [readonly]="!zaak$.value.isOpen || !zaak$.value.rechten.toekennen"
                                                                 (onSave)="editToewijzing($event)">
                                     </zac-edit-groep-behandelaar>
-                                    <zac-static-text *ngIf="zaak.archiefNominatie"
-                                                     [label]="'archiefNominatie.datum.'+zaak.archiefNominatie | translate"
-                                                     [value]="zaak.archiefActiedatum | datum | empty"></zac-static-text>
+                                    <zac-static-text *ngIf="zaak$.value.archiefNominatie"
+                                                     [label]="'archiefNominatie.datum.'+zaak$.value.archiefNominatie | translate"
+                                                     [value]="zaak$.value.archiefActiedatum | datum | empty"></zac-static-text>
 
                                 </div>
                                 <div class="flex w33 w50-md w100-sm">
                                     <zac-static-text [label]="'registratiedatum' | translate"
-                                                     [value]="zaak.registratiedatum | datum"></zac-static-text>
+                                                     [value]="zaak$.value.registratiedatum | datum"></zac-static-text>
                                     <zac-static-text [label]="'resultaat' | translate"
-                                                     [value]="zaak.resultaat?.resultaattype | empty:'naam'"
-                                                     [icon]="zaak.resultaat?.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.resultaat?.toelichting"
-                                                     [attr.role]="zaak.resultaat?.toelichting ? 'tooltip' : null"
-                                                     [attr.aria-label]="zaak.resultaat?.toelichting"></zac-static-text>
-                                    <zac-static-text *ngIf="zaak.einddatum" [label]="'einddatum' | translate"
-                                                     [value]="zaak.einddatum | datum"></zac-static-text>
+                                                     [value]="zaak$.value.resultaat?.resultaattype | empty:'naam'"
+                                                     [icon]="zaak$.value.resultaat?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak$.value.resultaat?.toelichting"
+                                                     [attr.role]="zaak$.value.resultaat?.toelichting ? 'tooltip' : null"
+                                                     [attr.aria-label]="zaak$.value.resultaat?.toelichting"></zac-static-text>
+                                    <zac-static-text *ngIf="zaak$.value.einddatum" [label]="'einddatum' | translate"
+                                                     [value]="zaak$.value.einddatum | datum"></zac-static-text>
 
                                 </div>
 
                                 <div class="flex-1 w100">
                                     <zac-static-text [label]="'locatie' | translate"
-                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
-                                                     (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
+                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak$.value.rechten.wijzigen ? null : locatieIcon"
+                                                     (iconClicked)="!zaak$.value.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
 
                                 <div class="flex-1 w100">
@@ -156,19 +156,19 @@
                                                           [uiterlijkeEinddatumAfdoeningIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
                                                           [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editDatumGroep($event)"
-                                                          [opgeschort]="zaak.isOpgeschort"
-                                                          [opschortReden]="zaak.redenOpschorting"
+                                                          [opgeschort]="zaak$.value.isOpgeschort"
+                                                          [opschortReden]="zaak$.value.redenOpschorting"
                                                           [opschortDuur]="zaakOpschorting?.duurDagen"
                                                           [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
-                                                          [verlengReden]="zaak.redenVerlenging"
-                                                          [verlengDuur]="zaak.duurVerlenging"
-                                                          [verlengingstermijn]="zaak.zaaktype.verlengingstermijn"
-                                                          [readonly]="!zaak.rechten.wijzigen"
-                                                          [actieOpschorten]="zaak.zaaktype.opschortingMogelijk && zaak.isOpen && !zaak.isHeropend
-                                                                         && !zaak.isOpgeschort && zaak.rechten.behandelen"
-                                                          [actieHervatten]="zaak.isOpgeschort && zaak.rechten.behandelen"
-                                                          [actieVerlengen]="zaak.zaaktype.verlengingMogelijk && !zaak.duurVerlenging && zaak.isOpen
-                                                                        && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.wijzigenDoorlooptijd"
+                                                          [verlengReden]="zaak$.value.redenVerlenging"
+                                                          [verlengDuur]="zaak$.value.duurVerlenging"
+                                                          [verlengingstermijn]="zaak$.value.zaaktype.verlengingstermijn"
+                                                          [readonly]="!zaak$.value.rechten.wijzigen"
+                                                          [actieOpschorten]="zaak$.value.zaaktype.opschortingMogelijk && zaak$.value.isOpen && !zaak$.value.isHeropend
+                                                                         && !zaak$.value.isOpgeschort && zaak$.value.rechten.behandelen"
+                                                          [actieHervatten]="zaak$.value.isOpgeschort && zaak$.value.rechten.behandelen"
+                                                          [actieVerlengen]="zaak$.value.zaaktype.verlengingMogelijk && !zaak$.value.duurVerlenging && zaak$.value.isOpen
+                                                                        && !zaak$.value.isHeropend && !zaak$.value.isOpgeschort && zaak$.value.rechten.wijzigenDoorlooptijd"
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                     <mat-divider></mat-divider>
@@ -177,24 +177,24 @@
                                 <div class="flex-1 w100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.rechten.wijzigen"
+                                                    [readonly]="!zaak$.value.rechten.wijzigen"
                                                     (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div class="flex-1 w100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.rechten.wijzigen"
+                                                    [readonly]="!zaak$.value.rechten.wijzigen"
                                                     (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0">
+                        <mat-tab *ngIf="zaak$.value.gerelateerdeZaken.length > 0">
                             <ng-template mat-tab-label>
                                 <mat-icon>account_tree</mat-icon>
                                 {{'gerelateerdeZaken' | translate}}</ng-template>
                             <div id="gerelateerdeZaken_tab" class="table-wrapper">
-                                <table mat-table [dataSource]="zaak.gerelateerdeZaken">
+                                <table mat-table [dataSource]="zaak$.value.gerelateerdeZaken">
                                     <ng-container *ngFor="let column of gerelateerdeZaakColumns" [matColumnDef]="column">
                                         <th mat-header-cell *matHeaderCellDef> {{'gerelateerde.zaak.' + column | translate}} </th>
                                         <td mat-cell *matCellDef="let row"> {{row[column] | empty | datum}}</td>
@@ -340,7 +340,7 @@
                                                title="{{ 'actie.bedrijf.bekijken' | translate }}">
                                                 <mat-icon>visibility</mat-icon>
                                             </a>
-                                            <button *ngIf="zaak.rechten.behandelen"
+                                            <button *ngIf="zaak$.value.rechten.behandelen"
                                                     mat-icon-button
                                                     (click)="deleteBetrokkene(betrokkene)"
                                                     title="{{ 'actie.betrokkene.verwijderen' | translate}}">
@@ -400,8 +400,8 @@
 
             <div class="w50 flex-1 flex-col">
 
-                <zac-besluit-view class="besluiten" *ngIf="zaak.besluiten" [besluiten]="zaak.besluiten"
-                                  [readonly]="!zaak.isOpen || !zaak.rechten.behandelen"
+                <zac-besluit-view class="besluiten" *ngIf="zaak$.value.besluiten" [besluiten]="zaak$.value.besluiten"
+                                  [readonly]="!zaak$.value.isOpen || !zaak$.value.rechten.behandelen"
                                   (besluitWijzigen)="besluitWijzigen($event)"></zac-besluit-view>
 
                 <mat-card class="taken-card">
@@ -511,8 +511,8 @@
 
 
         </div>
-        <zac-zaak-documenten class="w100" [zaak]="zaak"></zac-zaak-documenten>
+        <zac-zaak-documenten class="w100" [zaak]="zaak$|async"></zac-zaak-documenten>
 
-        <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
+        <zac-notities [uuid]="zaak$.value.uuid" [type]="notitieType"></zac-notities>
     </mat-drawer-content>
 </mat-drawer-container>

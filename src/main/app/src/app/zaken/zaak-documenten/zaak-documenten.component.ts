@@ -78,17 +78,20 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                 private router: Router) { }
 
     ngOnInit(): void {
-        this.taakModus = !!this.taakZaak$;
-        if (this.taakModus) {
-            this.taakZaak$.subscribe(zaak => {
-                this.init(zaak);
-            });
-        } else {
-            this.init(this.zaak);
-        }
+        this.init();
     }
 
-    init(zaak: Zaak) {
+    init() {
+        let zaak;
+        this.taakModus = !!this.taakZaak$;
+        if (this.taakModus) {
+            this.taakZaak$.subscribe(z => {
+                zaak = z;
+            });
+        } else {
+            zaak = this.zaak;
+        }
+
         this.zaakUUID = zaak.uuid;
         this.zaakIdentificatie = zaak.identificatie;
         this.heeftGerelateerdeZaken = 0 < zaak.gerelateerdeZaken.length;
@@ -109,6 +112,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        this.init();
         this.loadInformatieObjecten();
     }
 
