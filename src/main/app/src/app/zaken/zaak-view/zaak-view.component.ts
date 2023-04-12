@@ -926,9 +926,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    ontvangstBevestigd(): void {
+    ontvangstBevestigd(ontvangstBevestigd: boolean): void {
         this.sluitSidenav();
-        this.updateZaak();
+        if (ontvangstBevestigd) {
+            this.updateZaak();
+        }
     }
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {

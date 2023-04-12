@@ -350,3 +350,26 @@ mat-icon[outlined] {
 .material-icons-outlined {
   font-variation-settings: "FILL" 0;
 }
+
+.sidenav-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: @primary-heading-color;
+  border-bottom: 1px solid @border-color;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+
+    .mat-icon {
+      padding: 0 12px;
+    }
+  }
+
+  .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before {
+    opacity: 0;
+  }
+}

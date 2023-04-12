@@ -30,6 +30,7 @@ import {ActionIcon} from '../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -40,7 +41,7 @@ export class OntvangstbevestigingComponent implements OnInit {
 
     formConfig: FormConfig;
     fields: Array<AbstractFormField[]>;
-
+    @Input() sideNav: MatDrawer;
     @Input() zaak: Zaak;
     @Output() ontvangstBevestigd = new EventEmitter<boolean>();
 

@@ -34,6 +34,7 @@ import {KlantenService} from '../../klanten/klanten.service';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-mail-create',
@@ -52,6 +53,7 @@ export class MailCreateComponent implements OnInit {
 
     formConfig: FormConfig;
     @Input() zaak: Zaak;
+    @Input() sideNav: MatDrawer;
     @Output() mailVerstuurd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     ingelogdeMedewerker: User;

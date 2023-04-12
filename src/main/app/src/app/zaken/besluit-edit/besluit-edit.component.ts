@@ -25,6 +25,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {BesluitWijzigenGegevens} from '../model/besluit-wijzigen-gegevens';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-besluit-edit',
@@ -36,6 +37,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
     formConfig: FormConfig;
     @Input() besluit: Besluit;
     @Input() zaak: Zaak;
+    @Input() sideNav: MatDrawer;
     @Output() besluitGewijzigd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     private ngDestroy = new Subject<void>();
