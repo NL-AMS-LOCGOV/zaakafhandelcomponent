@@ -57,6 +57,7 @@
                           [zaak]="zaak"></zac-besluit-edit>
         <zac-zaakdata *ngSwitchCase="sideNavAction.ZAAKDATA_WIJZIGEN"
                       (done)="sluitSidenav()"
+                      [sideNav]="actionsSidenav"
                       [zaak]="zaak"></zac-zaakdata>
 
     </mat-drawer>

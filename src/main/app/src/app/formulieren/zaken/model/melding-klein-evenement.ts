@@ -31,7 +31,7 @@ export class MeldingKleinEvenement extends AbstractZaakFormulier {
         const fields = this.fields;
         this.form.push(
             [new HeadingFormFieldBuilder().id('melding_klein_evenement').label(this.translate.instant('melding_klein_evenement.evenement'))
-                                          .level(HeadingLevel.H3).build()],
+                                          .level(HeadingLevel.H4).build()],
             [new InputFormFieldBuilder(this.getDataElement(fields.NAAMEVENEMENT)).id(fields.NAAMEVENEMENT).label(fields.NAAMEVENEMENT).build()],
             [new TextareaFormFieldBuilder(this.getDataElement(fields.OMSCHRIJVINGEVENEMENT)).id(fields.OMSCHRIJVINGEVENEMENT)
                                                                                             .label(fields.OMSCHRIJVINGEVENEMENT)
