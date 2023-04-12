@@ -13,6 +13,7 @@
                           [initiator]="true"></zac-klant-koppel>
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
                           (klantGegevens)="betrokkeneGeselecteerd($event)"
+                          [sideNav]="actionsSidenav"
                           [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
         <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
                       [gekoppeldeBagObjecten]="bagObjecten.data"

@@ -3,6 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
+<div class="sidenav-title">
+    <h3>
+        <mat-icon>person_add_alt_1</mat-icon>
+        {{(initiator ? 'actie.initiator.toevoegen' : 'actie.betrokkene.toevoegen') | translate}}</h3>
+    <button mat-icon-button (click)="sideNav.close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
 <!--Initiator-->
 <mat-tab-group mat-stretch-tabs="false" *ngIf="initiator">
     <mat-tab>
