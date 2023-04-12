@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
@@ -13,20 +13,21 @@ import {UtilService} from '../../../core/service/util.service';
 import {BAGObject} from '../../model/bagobject';
 import {BAGObjecttype} from '../../model/bagobjecttype';
 import {Adres} from '../../model/adres';
+import {MatDrawer, MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-bag-zoek',
     templateUrl: './bag-zoek.component.html',
     styleUrls: ['./bag-zoek.component.less']
 })
-export class BagZoekComponent implements OnInit {
+export class BagZoekComponent {
 
     @Output() bagObject = new EventEmitter<BAGObject>();
     @Input() gekoppeldeBagObjecten: BAGObject[];
-    BAGObjecttype = BAGObjecttype;
-    trefwoorden = new FormControl('', [Validators.required, Validators.maxLength(255)]);
-
+    @Input() sidenav: MatSidenav | MatDrawer;
     @ViewChild(MatTable) table: MatTable<BAGObject>;
+    BAGObjecttype = BAGObjecttype;
+    trefwoorden = new FormControl('', [Validators.maxLength(255)]);
     bagObjecten: MatTableDataSource<BAGObject> = new MatTableDataSource<BAGObject>();
     loading = false;
     formGroup: FormGroup;
@@ -34,19 +35,19 @@ export class BagZoekComponent implements OnInit {
 
     constructor(private bagService: BAGService, private utilService: UtilService, private dialog: MatDialog) { }
 
-    ngOnInit(): void {}
-
     zoek(): void {
-        this.loading = true;
-        this.utilService.setLoading(true);
         this.bagObjecten.data = [];
-        this.bagService.listAdressen(
-            new ListAdressenParameters(this.trefwoorden.value))
-            .subscribe(adressen => {
-                this.bagObjecten.data = adressen.resultaten;
-                this.loading = false;
-                this.utilService.setLoading(false);
-            });
+        if (this.trefwoorden.value) {
+            this.loading = true;
+            this.utilService.setLoading(true);
+            this.bagService.listAdressen(
+                new ListAdressenParameters(this.trefwoorden.value))
+                .subscribe(adressen => {
+                    this.bagObjecten.data = adressen.resultaten;
+                    this.loading = false;
+                    this.utilService.setLoading(false);
+                });
+        }
     }
 
     selectBagObject(bagObject: BAGObject): void {

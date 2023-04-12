@@ -9,6 +9,7 @@
                           [initiator]="true"></zac-klant-koppel>
         <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
                       [gekoppeldeBagObjecten]="bagObjecten"
+                      [sidenav]="actionsSidenav"
                       (bagObject)="bagGeselecteerd($event)"></zac-bag-zoek>
     </mat-sidenav>
     <div class="content">
