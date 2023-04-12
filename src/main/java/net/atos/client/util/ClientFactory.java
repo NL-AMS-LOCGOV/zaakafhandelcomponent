@@ -40,7 +40,7 @@ public final class ClientFactory {
                         .property("org.jboss.resteasy.jaxrs.client.proxy.host", proxyHost)
                         .property("org.jboss.resteasy.jaxrs.client.proxy.port", proxyPort);
             }
-            return clientBuilder.build().register(LoggingFilter.class);
+            return clientBuilder.build();
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException("Fout tijdens initialiseren van client", e);
         }
