@@ -13,9 +13,16 @@ public class RESTWoonplaats extends RESTBAGObject {
 
     public StatusWoonplaats status;
 
+    public RESTWoonplaats() {
+    }
+
     @Override
     public BAGObjectType getBagObjectType() {
         return BAGObjectType.WOONPLAATS;
     }
 
+    @Override
+    public String getOmschrijving() {
+        return naam;
+    }
 }

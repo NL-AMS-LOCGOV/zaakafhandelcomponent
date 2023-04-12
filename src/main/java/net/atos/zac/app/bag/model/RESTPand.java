@@ -13,9 +13,16 @@ public class RESTPand extends RESTBAGObject {
 
     public StatusPand status;
 
+    public RESTPand() {
+    }
+
     @Override
     public BAGObjectType getBagObjectType() {
         return BAGObjectType.PAND;
     }
 
+    @Override
+    public String getOmschrijving() {
+        return identificatie;
+    }
 }

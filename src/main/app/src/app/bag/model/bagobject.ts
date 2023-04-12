@@ -13,4 +13,5 @@ export abstract class BAGObject {
     documentnummer: string;
     geconstateerd: boolean;
     status: string;
+    omschrijving: string;
 }

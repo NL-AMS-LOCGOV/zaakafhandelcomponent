@@ -82,6 +82,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
+import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
@@ -96,6 +97,8 @@ import net.atos.zac.app.admin.converter.RESTZaakAfzenderConverter;
 import net.atos.zac.app.admin.model.RESTZaakAfzender;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
+import net.atos.zac.app.bag.converter.RESTBAGConverter;
+import net.atos.zac.app.bag.model.RESTBAGObject;
 import net.atos.zac.app.klanten.KlantenRESTService;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
 import net.atos.zac.app.productaanvragen.model.RESTInboxProductaanvraag;
@@ -258,6 +261,9 @@ public class ZakenRESTService {
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
 
     @Inject
+    private RESTBAGConverter bagConverter;
+
+    @Inject
     private RESTHistorieRegelConverter auditTrailConverter;
 
     @Inject
@@ -363,6 +369,14 @@ public class ZakenRESTService {
         if (restZaakAanmaakGegevens.inboxProductaanvraag != null) {
             koppelInboxProductaanvraag(zaak, restZaakAanmaakGegevens.inboxProductaanvraag);
         }
+
+        if (restZaakAanmaakGegevens.bagObjecten != null) {
+            for (final RESTBAGObject restbagObject : restZaakAanmaakGegevens.bagObjecten) {
+                final Zaakobject zaakobject = bagConverter.convertToZaakobject(restbagObject, zaak);
+                zrcClientService.createZaakobject(zaakobject);
+            }
+        }
+
         return zaakConverter.convert(zaak);
     }
 

@@ -13,7 +13,6 @@ import net.atos.client.bag.model.WoonplaatsIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectWoonplaats;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectWoonplaats;
-import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTWoonplaats;
 
 public class RESTWoonplaatsConverter {
@@ -44,8 +43,7 @@ public class RESTWoonplaatsConverter {
         return restWoonplaats;
     }
 
-    public ZaakobjectWoonplaats convertToZaakobject(final RESTBAGObjectGegevens<RESTWoonplaats> gegevens, final Zaak zaak) {
-        final RESTWoonplaats woonplaats = gegevens.bagObject;
+    public ZaakobjectWoonplaats convertToZaakobject(final RESTWoonplaats woonplaats, final Zaak zaak) {
         return new ZaakobjectWoonplaats(zaak.getUrl(), woonplaats.url, new ObjectWoonplaats(woonplaats.identificatie, woonplaats.naam));
     }
 }

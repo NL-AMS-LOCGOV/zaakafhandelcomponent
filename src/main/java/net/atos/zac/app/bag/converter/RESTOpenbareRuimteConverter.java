@@ -14,7 +14,6 @@ import net.atos.client.bag.model.OpenbareRuimteIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectOpenbareRuimte;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectOpenbareRuimte;
-import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
 
 public class RESTOpenbareRuimteConverter {
@@ -56,8 +55,7 @@ public class RESTOpenbareRuimteConverter {
         return restOpenbareRuimte;
     }
 
-    public ZaakobjectOpenbareRuimte convertToZaakobject(final RESTBAGObjectGegevens<RESTOpenbareRuimte> gegevens, final Zaak zaak) {
-        final RESTOpenbareRuimte openbareRuimte = gegevens.bagObject;
+    public ZaakobjectOpenbareRuimte convertToZaakobject(final RESTOpenbareRuimte openbareRuimte, final Zaak zaak) {
         final ObjectOpenbareRuimte objectOpenbareRuimte = new ObjectOpenbareRuimte(
                 openbareRuimte.identificatie,
                 openbareRuimte.naam,

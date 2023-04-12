@@ -16,7 +16,6 @@ import net.atos.client.bag.model.TypeAdresseerbaarObject;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectNummeraanduiding;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectNummeraanduiding;
-import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTNummeraanduiding;
 
 public class RESTNummeraanduidingConverter {
@@ -58,8 +57,7 @@ public class RESTNummeraanduidingConverter {
         return restNummeraanduiding;
     }
 
-    public ZaakobjectNummeraanduiding convertToZaakobject(final RESTBAGObjectGegevens<RESTNummeraanduiding> gegevens, final Zaak zaak) {
-        final RESTNummeraanduiding nummeraanduiding = gegevens.bagObject;
+    public ZaakobjectNummeraanduiding convertToZaakobject(final RESTNummeraanduiding nummeraanduiding, final Zaak zaak) {
         final ObjectNummeraanduiding objectNummeraanduiding = new ObjectNummeraanduiding(
                 nummeraanduiding.identificatie,
                 nummeraanduiding.huisnummer,
@@ -73,12 +71,12 @@ public class RESTNummeraanduidingConverter {
     }
 
     private String convertHuisnummerWeergave(final Nummeraanduiding nummeraanduiding) {
-        return RESTBAGConverterUtil.getHuisnummerWeergave(nummeraanduiding.getHuisnummer(), nummeraanduiding.getHuisletter(),
-                                                          nummeraanduiding.getHuisnummertoevoeging());
+        return RESTBAGConverter.getHuisnummerWeergave(nummeraanduiding.getHuisnummer(), nummeraanduiding.getHuisletter(),
+                                                      nummeraanduiding.getHuisnummertoevoeging());
     }
 
     private String convertHuisnummerWeergave(final ObjectNummeraanduiding nummeraanduiding) {
-        return RESTBAGConverterUtil.getHuisnummerWeergave(nummeraanduiding.getHuisnummer(), nummeraanduiding.getHuisletter(),
-                                                          nummeraanduiding.getHuisnummertoevoeging());
+        return RESTBAGConverter.getHuisnummerWeergave(nummeraanduiding.getHuisnummer(), nummeraanduiding.getHuisletter(),
+                                                      nummeraanduiding.getHuisnummertoevoeging());
     }
 }
