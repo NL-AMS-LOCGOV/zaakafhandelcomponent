@@ -17,7 +17,6 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectAdres;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectAdres;
 import net.atos.zac.app.bag.model.RESTAdres;
-import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 
 public class RESTAdresConverter {
 
@@ -80,8 +79,7 @@ public class RESTAdresConverter {
         return restAdres;
     }
 
-    public ZaakobjectAdres convertToZaakobject(final RESTBAGObjectGegevens<RESTAdres> gegevens, final Zaak zaak) {
-        final RESTAdres adres = gegevens.bagObject;
+    public ZaakobjectAdres convertToZaakobject(RESTAdres adres, final Zaak zaak) {
         ObjectAdres objectAdres = new ObjectAdres(adres.identificatie,
                                                   adres.woonplaatsNaam,
                                                   adres.openbareRuimteNaam,
@@ -93,10 +91,10 @@ public class RESTAdresConverter {
     }
 
     private String convertToVolledigHuisnummer(final AdresIOHal adresHal) {
-        return RESTBAGConverterUtil.getHuisnummerWeergave(adresHal.getHuisnummer(), adresHal.getHuisletter(), adresHal.getHuisnummertoevoeging());
+        return RESTBAGConverter.getHuisnummerWeergave(adresHal.getHuisnummer(), adresHal.getHuisletter(), adresHal.getHuisnummertoevoeging());
     }
 
     private String convertToVolledigHuisnummer(final ObjectAdres objectAdres) {
-        return RESTBAGConverterUtil.getHuisnummerWeergave(objectAdres.getHuisnummer(), objectAdres.getHuisletter(), objectAdres.getHuisnummertoevoeging());
+        return RESTBAGConverter.getHuisnummerWeergave(objectAdres.getHuisnummer(), objectAdres.getHuisletter(), objectAdres.getHuisnummertoevoeging());
     }
 }

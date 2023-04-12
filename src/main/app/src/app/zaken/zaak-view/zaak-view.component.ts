@@ -57,10 +57,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -478,7 +475,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BETROKKENE;
                 }, 'group_add'));
-                this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
+                this.menu.push(new ButtonMenuItem('actie.bagObject.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BAG_ADRES;
                 }, 'add_home_work'));
@@ -879,7 +876,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakListener);
         this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
             .subscribe(() => {
-                this.utilService.openSnackbar('msg.bagobject.toegevoegd');
+                this.utilService.openSnackbar('msg.bagObject.toegevoegd');
                 this.loadHistorie();
                 this.loadBagObjecten();
             });

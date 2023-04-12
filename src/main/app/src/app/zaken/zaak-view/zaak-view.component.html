@@ -357,7 +357,7 @@
                         <mat-tab *ngIf="bagObjecten.data.length > 0">
                             <ng-template mat-tab-label>
                                 <mat-icon>gps_fixed</mat-icon>
-                                {{'bagobjecten' | translate}}
+                                {{'bagObjecten' | translate}}
                             </ng-template>
                             <div id="bagobjecten_tab" class="table-wrapper bagobjecten-table">
                                 <table mat-table [dataSource]="bagObjecten" matSort>
@@ -375,17 +375,8 @@
                                     </ng-container>
                                     <ng-container matColumnDef="omschrijving">
                                         <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'omschrijving' | translate}} </th>
-                                        <td *matCellDef="let bagObject" mat-cell [ngSwitch]="bagObject.bagObjectType">
-                                            <span *ngSwitchCase="BAGObjecttype.ADRES">
-                                                {{bagObject.openbareRuimteNaam}} {{bagObject.huisnummerWeergave}},
-                                                {{bagObject.postcode}} {{bagObject.woonplaatsNaam}}
-                                            </span>
-                                            <span *ngSwitchCase="BAGObjecttype.NUMMERAANDUIDING">
-                                                {{bagObject.huisnummerWeergave}} ({{bagObject.postcode}})
-                                            </span>
-                                            <span *ngSwitchCase="BAGObjecttype.PAND"> {{bagObject.identificatie}}</span>
-                                            <span *ngSwitchCase="BAGObjecttype.OPENBARE_RUIMTE">{{bagObject.naam}} ({{bagObject.woonplaatsNaam}})</span>
-                                            <span *ngSwitchCase="BAGObjecttype.WOONPLAATS">{{bagObject.naam}}</span>
+                                        <td *matCellDef="let bagObject" mat-cell>
+                                            {{bagObject.omschrijving}}
                                         </td>
                                     </ng-container>
 

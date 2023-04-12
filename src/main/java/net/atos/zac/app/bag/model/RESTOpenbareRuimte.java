@@ -17,9 +17,16 @@ public class RESTOpenbareRuimte extends RESTBAGObject {
 
     public String woonplaatsNaam;
 
+    public RESTOpenbareRuimte() {
+    }
+
     @Override
     public BAGObjectType getBagObjectType() {
         return BAGObjectType.OPENBARE_RUIMTE;
     }
 
+    @Override
+    public String getOmschrijving() {
+        return naam;
+    }
 }

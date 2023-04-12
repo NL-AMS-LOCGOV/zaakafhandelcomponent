@@ -50,7 +50,7 @@
                 </span>
                 <span *ngSwitchCase="BAGObjecttype.NUMMERAANDUIDING">{{bagObject.huisnummerWeergave}} ({{bagObject.postcode}})</span>
                 <span *ngSwitchCase="BAGObjecttype.PAND">
-                    {{'bouwjaar' | translate}}: {{bagObject.oorspronkelijkBouwjaar}} ({{'bagobject.pand.status.' + bagObject.status | translate}})
+                    {{'bouwjaar' | translate}}: {{bagObject.oorspronkelijkBouwjaar}} ({{'bagObject.pand.status.' + bagObject.status | translate}})
                 </span>
                 <span *ngSwitchCase="BAGObjecttype.OPENBARE_RUIMTE">{{bagObject.naam}} ({{bagObject.type}})</span>
                 <span *ngSwitchCase="BAGObjecttype.WOONPLAATS">{{bagObject.naam}}</span>

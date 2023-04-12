@@ -17,10 +17,13 @@ public class JsonbConfiguration implements ContextResolver<Jsonb> {
     private Jsonb jsonb;
 
     public JsonbConfiguration() {
-        final JsonbConfig jsonbConfig = new JsonbConfig().withAdapters(
-                new ZonedDateTimeAdapter(),
-                new LocalDateAdapter());
-
+        final JsonbConfig jsonbConfig = new JsonbConfig()
+                .withAdapters(
+                        new ZonedDateTimeAdapter(),
+                        new LocalDateAdapter()
+                ).withDeserializers(
+                        new RESTBAGObjectJsonbDeserializer()
+                );
         jsonb = JsonbBuilder.create(jsonbConfig);
     }
 
