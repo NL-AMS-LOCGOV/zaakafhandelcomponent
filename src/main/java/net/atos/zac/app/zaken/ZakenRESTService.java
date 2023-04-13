@@ -62,8 +62,8 @@ import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.AardRelatie;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
-import net.atos.client.zgw.zrc.model.GeometryZaakPatch;
 import net.atos.client.zgw.zrc.model.HoofdzaakZaakPatch;
+import net.atos.client.zgw.zrc.model.LocatieZaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.NietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
@@ -129,6 +129,7 @@ import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakLocatieGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
@@ -390,12 +391,15 @@ public class ZakenRESTService {
             zaakInformatieobject.setZaak(zaak.getUrl());
             zaakInformatieobject.setTitel(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_TITEL);
             zaakInformatieobject.setBeschrijving(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
-            zrcClientService.createZaakInformatieobject(zaakInformatieobject, ProductaanvraagService.ZAAK_INFORMATIEOBJECT_REDEN);
+            zrcClientService.createZaakInformatieobject(zaakInformatieobject,
+                                                        ProductaanvraagService.ZAAK_INFORMATIEOBJECT_REDEN);
         }
 
         //koppel productaanvraag (object-registratie) aan de zaak
-        final ORObject productaanvraagObject = objectsClientService.readObject(inboxProductaanvraag.productaanvraagObjectUUID);
-        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaak.getUrl(), productaanvraagObject.getUrl());
+        final ORObject productaanvraagObject = objectsClientService.readObject(
+                inboxProductaanvraag.productaanvraagObjectUUID);
+        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaak.getUrl(),
+                                                                                   productaanvraagObject.getUrl());
         zrcClientService.createZaakobject(zaakobject);
 
         //verwijder het verwerkte inbox productaanvraag item
@@ -414,12 +418,13 @@ public class ZakenRESTService {
     }
 
     @PATCH
-    @Path("{uuid}/zaakgeometrie")
-    public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
+    @Path("{uuid}/zaaklocatie")
+    public RESTZaak updateZaakLocatie(@PathParam("uuid") final UUID zaakUUID,
+            final RESTZaakLocatieGegevens locatieGegevens) {
         assertPolicy(policyService.readZaakRechten(zrcClientService.readZaak(zaakUUID)).getWijzigen());
-        final GeometryZaakPatch geometryZaakPatch = new GeometryZaakPatch(
-                restGeometryConverter.convert(restZaak.zaakgeometrie));
-        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID, geometryZaakPatch);
+        final LocatieZaakPatch locatieZaakPatch = new LocatieZaakPatch(
+                restGeometryConverter.convert(locatieGegevens.geometrie));
+        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID, locatieZaakPatch, locatieGegevens.reden);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -845,7 +850,8 @@ public class ZakenRESTService {
 
     @GET
     @Path("communicatiekanalen/{inclusiefEFormulier}")
-    public List<RESTCommunicatiekanaal> listCommunicatiekanalen(@PathParam("inclusiefEFormulier") final boolean inclusiefEFormulier) {
+    public List<RESTCommunicatiekanaal> listCommunicatiekanalen(
+            @PathParam("inclusiefEFormulier") final boolean inclusiefEFormulier) {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
         if (!inclusiefEFormulier) {
             communicatieKanalen.removeIf(

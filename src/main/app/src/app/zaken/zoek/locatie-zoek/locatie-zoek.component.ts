@@ -3,7 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import * as ol from 'ol/index.js';
 import * as layer from 'ol/layer.js';
 import * as proj from 'ol/proj.js';
@@ -21,20 +31,27 @@ import {takeUntil} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {LocationUtil} from '../../../shared/location/location-util';
+import {Geometry} from '../../model/geometry';
+import {GeometryType} from '../../model/geometryType';
+import {GeometryGegevens} from '../../model/geometry-gegevens';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-locatie-zoek',
     templateUrl: './locatie-zoek.component.html',
     styleUrls: ['./locatie-zoek.component.less']
 })
-export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @Input() huidigeLocatie: AddressResult;
-    @Output() locatie = new EventEmitter<AddressResult>();
+    @Input() huidigeLocatie: Geometry;
+    @Input() sideNav: MatDrawer;
+    @Output() locatie = new EventEmitter<GeometryGegevens>();
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
-    selectedAddress: AddressResult;
-    results: SuggestResult[];
+    markerLocatie: Geometry;
+    nearestAddress: AddressResult;
     searchControl: FormControl = new FormControl();
+    searchResults: SuggestResult[];
+    redenControl: FormControl = new FormControl('');
 
     private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -65,8 +82,8 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     private pointStyle: style.Style = new style.Style({
         text: new style.Text({
-            text: 'place',
-            font: '900 30px "Material Icons"',
+            text: 'location_on',
+            font: '640 32px "Material Symbols Outlined"',
             fill: new style.Fill({
                 color: '#ff0000'
             }),
@@ -74,9 +91,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         })
     });
 
-    constructor(private locationService: LocationService) {
-
-    }
+    constructor(private locationService: LocationService) {}
 
     ngOnInit(): void {
         const projection = proj.get(this.EPSG3857);
@@ -142,7 +157,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         this.searchControl.valueChanges.pipe(
             takeUntil(this.unsubscribe$)
         ).subscribe((value) => {
-            this.searchAddress(value);
+            this.searchAddresses(value);
         });
     }
 
@@ -152,10 +167,8 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         }, 0);
 
         this.map.on('click', (event) => {
-            const locationCoordinates: Array<number> = proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-            this.locationService.coordinatesToAddress(locationCoordinates).subscribe(objectData => {
-                this.setAddress(objectData.response.docs[0]);
-            });
+            const coordinate: Array<number> = proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
+            this.setLokatie(LocationUtil.coordinateToPoint(coordinate), false);
         });
 
         this.map.on('click', () => {
@@ -167,22 +180,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         });
 
         if (this.huidigeLocatie) {
-            this.setAddress(this.huidigeLocatie);
-        }
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        for (const propName in changes) {
-            if (changes.hasOwnProperty(propName)) {
-                switch (propName) {
-                    case 'huidigeLocatie':
-                        if (!changes.huidigeLocatie.firstChange && changes.huidigeLocatie.currentValue) {
-                            console.log(changes.huidigeLocatie);
-                            this.setAddress(changes.huidigeLocatie.currentValue);
-                        }
-                        break;
-                }
-            }
+            this.setLokatie(this.huidigeLocatie, false);
         }
     }
 
@@ -191,81 +189,71 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         this.unsubscribe$.complete();
     }
 
-    private searchAddress(query): void {
+    private searchAddresses(query): void {
         if (query) {
             this.locationService.addressSuggest(query).subscribe(data => {
-                this.results = data.response.docs;
+                this.searchResults = data.response.docs;
             });
         }
+    }
+
+    displayAddress = (result: SuggestResult): string => {
+        return result?.weergavenaam;
+    };
+
+    selectAddress($event: MatAutocompleteSelectedEvent): void {
+        this.locationService.addressLookup($event.option.value.id).subscribe(objectData => {
+            this.nearestAddress = objectData.response.docs[0];
+            this.setLokatie(LocationUtil.wktToPoint(this.nearestAddress.centroide_ll), true);
+        });
+    }
+
+    private setLokatie(geometry: Geometry, fromSearch: boolean) {
+        if (geometry && geometry.type == GeometryType.POINT) {
+            this.markerLocatie = geometry;
+            const coordinate: Array<number> = [geometry.point.x, geometry.point.y];
+            this.addMarker(coordinate);
+            if (fromSearch) {
+                this.zoomToMarker(coordinate);
+            } else {
+                if (this.map.getView().getZoom() < this.MAX_ZOOM) {
+                    this.zoomToMarker(coordinate);
+                }
+                this.locationService.coordinateToAddress(coordinate).subscribe(objectData => {
+                    this.nearestAddress = objectData.response.docs[0];
+                    this.searchControl.reset();
+                });
+            }
+        }
+    }
+
+    private addMarker(coordinate: Coordinate) {
+        const marker = new ol.Feature({
+            geometry: new geom.Point(proj.fromLonLat(coordinate))
+        });
+        marker.setStyle(this.pointStyle);
+        const features = this.locationSource.getFeatures();
+        features.forEach((feature) => this.locationSource.removeFeature(feature));
+        this.locationSource.refresh();
+        this.locationSource.addFeature(marker);
+    }
+
+    private zoomToMarker(coordinate: Array<number>): void {
+        const mapCenter: Array<number> = proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
+        this.map.getView().setCenter(mapCenter);
+        const locationExtent = this.locationSource.getExtent();
+        this.map.getView().fit(locationExtent, {
+            size: this.map.getSize(),
+            maxZoom: this.MAX_ZOOM
+        });
     }
 
     clear(): void {
-        if (this.selectedAddress) {
-            this.locatie.next(null);
-        }
-        this.resetMap();
+        this.markerLocatie = null;
+        this.save();
     }
 
     save(): void {
-        if (this.selectedAddress) {
-            this.locatie.next(this.selectedAddress);
-        }
+        this.locatie.next(new GeometryGegevens(this.markerLocatie, this.redenControl.value));
     }
-
-    selectionChanged($event: MatAutocompleteSelectedEvent): void {
-        this.locationService.addressLookup($event.option.value.id).subscribe(objectData => {
-            this.setAddress(objectData.response.docs[0]);
-        });
-    }
-
-    setAddress(address) {
-        this.selectedAddress = address;
-        const locationCoordinates: Array<number> = LocationUtil.centroide_llToArray(address.centroide_ll);
-
-        this.addMarker(locationCoordinates);
-
-        this.zoomToLocation(this.locationSource, locationCoordinates);
-    }
-
-    private addMarker(locationCoordinates: Coordinate) {
-        const marker = new ol.Feature({
-            geometry: new geom.Point(proj.fromLonLat(locationCoordinates))
-        });
-
-        marker.setStyle(this.pointStyle);
-
-        this.clearFeatures();
-        this.locationSource.refresh();
-        this.locationSource.addFeature(marker);
-
-    }
-
-    private zoomToLocation(sourceLayer: source.Vector, locationCoordinates: Array<number>): void {
-        if (this.map.getView().getZoom() < this.MAX_ZOOM) {
-            const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
-            this.map.getView().setCenter(mapCenter);
-
-            const locationExtent = sourceLayer.getExtent();
-            this.map.getView().fit(locationExtent, {
-                size: this.map.getSize(),
-                maxZoom: this.MAX_ZOOM
-            });
-        }
-    }
-
-    private resetMap(): void {
-        this.selectedAddress = null;
-        this.clearFeatures();
-        this.map.getView().setCenter(this.DEFAULT_CENTER);
-        this.map.getView().setZoom(this.DEFAULT_ZOOM);
-    }
-
-    private clearFeatures(): void {
-        const features = this.locationSource.getFeatures();
-        features.forEach((feature) => this.locationSource.removeFeature(feature));
-    }
-
-    resultDisplay = (result: SuggestResult): string => {
-        return result?.weergavenaam;
-    };
 }

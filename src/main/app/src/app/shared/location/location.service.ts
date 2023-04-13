@@ -41,7 +41,7 @@ export class LocationService {
                    .pipe(catchError(err => this.foutAfhandelingService.foutAfhandelen(err)));
     }
 
-    coordinatesToAddress(coordinates: number[]): Observable<GeoDataResponse<AddressResult>> {
+    coordinateToAddress(coordinates: number[]): Observable<GeoDataResponse<AddressResult>> {
         return this.geolocationAddressSuggest(coordinates).pipe(
             mergeMap(data => this.addressLookup(data.response.docs[0].id))
         );

@@ -3,19 +3,24 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-.adres-zoek-veld {
-  min-width: 400px;
-}
-
-.open-layers-map {
-  height: calc(100vh - 155px);
-}
-
 .map-container {
   width: 50vw;
   position: relative;
+  margin: -15px 0 12px;
 }
 
-.search {
-  margin: 10px 10px 0;
+.open-layers-map {
+  height: calc(100vh - 331px);
+}
+
+.overlay {
+  font-weight: 500;
+  display: block;
+  width: fit-content;
+  height: 0;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  left: 45px;
+  pointer-events: none;
 }
