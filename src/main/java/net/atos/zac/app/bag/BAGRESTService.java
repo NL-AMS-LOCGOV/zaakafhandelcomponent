@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -76,17 +77,25 @@ public class BAGRESTService {
     }
 
     @POST
-    public void create(final RESTBAGObjectGegevens<RESTBAGObject> bagObjectGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
+    public void create(final RESTBAGObjectGegevens bagObjectGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUuid);
         assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
-        if (isNogNietGekoppeld(bagObjectGegevens.bagObject, zaak)) {
-            zrcClientService.createZaakobject(bagConverter.convertToZaakobject(bagObjectGegevens.bagObject, zaak));
+        if (isNogNietGekoppeld(bagObjectGegevens.getBagObject(), zaak)) {
+            zrcClientService.createZaakobject(bagConverter.convertToZaakobject(bagObjectGegevens.getBagObject(), zaak));
         }
+    }
+
+    @DELETE
+    public void delete(final RESTBAGObjectGegevens bagObjectGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUuid);
+        assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
+        final Zaakobject zaakobject = zrcClientService.readZaakobject(bagObjectGegevens.uuid);
+        zrcClientService.deleteZaakobject(zaakobject, bagObjectGegevens.redenWijzigen);
     }
 
     @GET
     @Path("zaak/{zaakUuid}")
-    public List<RESTBAGObject> listBagobjectenVoorZaak(@PathParam("zaakUuid") final UUID zaakUUID) {
+    public List<RESTBAGObjectGegevens> listBagobjectenVoorZaak(@PathParam("zaakUuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakRechten(zaak).getLezen());
@@ -95,7 +104,7 @@ public class BAGRESTService {
         if (zaakobjecten.getCount() > 0) {
             return zaakobjecten.getResults().stream()
                     .filter(Zaakobject::isBagObject)
-                    .map(bagConverter::convertToBAGObject)
+                    .map(bagConverter::convertToRESTBAGObjectGegevens)
                     .toList();
         } else {
             return Collections.emptyList();

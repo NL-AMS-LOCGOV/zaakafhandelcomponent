@@ -17,11 +17,6 @@ export class DialogData {
                 public uitleg?: string) {}
 
     formFieldsInvalid(): boolean {
-        for (const formField of this.formFields) {
-            if (formField.formControl.invalid) {
-                return true;
-            }
-        }
-        return false;
+        return this.formFields.some(field => field.formControl.invalid);
     }
 }

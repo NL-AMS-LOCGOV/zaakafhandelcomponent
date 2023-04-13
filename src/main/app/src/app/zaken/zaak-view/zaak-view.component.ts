@@ -78,7 +78,6 @@ import {Besluit} from '../model/besluit';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 import {BAGObject} from '../../bag/model/bagobject';
-import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 import {GeometryGegevens} from '../model/geometry-gegevens';
 
@@ -109,9 +108,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
     betrokkenenColumns: string[] = ['roltype', 'betrokkenegegevens', 'betrokkeneidentificatie', 'roltoelichting', 'actions'];
-    bagObjecten: MatTableDataSource<BAGObject> = new MatTableDataSource<BAGObject>();
-    bagObjectenColumns: string[] = ['identificatie', 'type', 'omschrijving'];
-    BAGObjecttype = BAGObjecttype;
+    bagObjectenDataSource: MatTableDataSource<BAGObjectGegevens> = new MatTableDataSource<BAGObjectGegevens>();
+    gekoppeldeBagObjecten: BAGObject[];
+    bagObjectenColumns: string[] = ['identificatie', 'type', 'omschrijving', 'actions'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
@@ -716,8 +715,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadBagObjecten(): void {
-        this.bagService.listBAGObjectenVoorZaak(this.zaak.uuid).subscribe(bagObjecten => {
-            this.bagObjecten.data = bagObjecten;
+        this.bagService.list(this.zaak.uuid).subscribe(bagObjecten => {
+            this.gekoppeldeBagObjecten = bagObjecten.map(bg => bg.zaakobject);
+            this.bagObjectenDataSource.data = bagObjecten;
         });
     }
 
@@ -860,7 +860,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     adresGeselecteerd(bagObject: BAGObject): void {
         this.websocketService.suspendListener(this.zaakListener);
-        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, bagObject))
+        this.bagService.create(new BAGObjectGegevens(this.zaak.uuid, bagObject))
             .subscribe(() => {
                 this.utilService.openSnackbar('msg.bagObject.toegevoegd');
                 this.loadHistorie();
@@ -987,5 +987,24 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 betrokkene['gegevens'] = '-';
                 break;
         }
+    }
+
+    bagObjectVerwijderen(bagObjectGegevens: BAGObjectGegevens): void {
+        const bagObject = bagObjectGegevens.zaakobject;
+        const reden = new InputFormFieldBuilder().maxlength(80).id('reden').label('reden').validators(Validators.required).build();
+        const dialogData = new DialogData([reden],
+            (results: any[]) =>
+                this.bagService.delete(new BAGObjectGegevens(this.zaak.uuid, bagObject, bagObjectGegevens.uuid, results['reden']))
+                    .pipe(tap(() => this.websocketService.suspendListener(this.zaakListener))));
+
+        dialogData.uitleg = this.translate.instant('msg.bagObject.verwijderen.bevestigen', {omschrijving: bagObject.omschrijving});
+        dialogData.confirmButtonActionKey = 'actie.bagObject.verwijderen';
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
+            if (result) {
+                this.loadHistorie();
+                this.loadBagObjecten();
+                this.utilService.openSnackbar('msg.bagObject.verwijderen.uitgevoerd', {omschrijving: bagObject.omschrijving});
+            }
+        });
     }
 }
