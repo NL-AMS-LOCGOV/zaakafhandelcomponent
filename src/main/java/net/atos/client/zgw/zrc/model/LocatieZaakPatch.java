@@ -9,14 +9,14 @@ package net.atos.client.zgw.zrc.model;
 import javax.json.bind.annotation.JsonbProperty;
 
 /**
- * Zaak geometry patch data
+ * Zaak locatie patch data
  */
-public class GeometryZaakPatch extends Zaak {
+public class LocatieZaakPatch extends Zaak {
 
     @JsonbProperty(nillable = true)
     private final Geometry zaakgeometrie;
 
-    public GeometryZaakPatch(final Geometry zaakgeometrie) {
+    public LocatieZaakPatch(final Geometry zaakgeometrie) {
         this.zaakgeometrie = zaakgeometrie;
     }
 

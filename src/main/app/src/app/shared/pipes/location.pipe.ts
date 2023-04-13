@@ -4,24 +4,19 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {LocationService} from '../location/location.service';
 import {LocationUtil} from '../location/location-util';
-import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Geometry} from '../../zaken/model/geometry';
 
 @Pipe({
     name: 'location'
 })
 export class LocationPipe implements PipeTransform {
-    constructor(private locationService: LocationService) {}
+    constructor() {}
 
-    transform(value: string): Observable<string> {
+    transform(value: Geometry | string): string {
         if (value) {
-            return this.locationService.coordinatesToAddress(LocationUtil.centroide_llToArray(value)).pipe(
-                map(address => address.response.docs[0].weergavenaam)
-            );
-        } else {
-            return of(value);
+            return LocationUtil.format(typeof value == 'string' ? LocationUtil.wktToPoint(value) : value);
         }
+        return null;
     }
 }

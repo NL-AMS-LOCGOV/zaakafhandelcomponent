@@ -44,10 +44,8 @@ import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {Klant} from '../../klanten/model/klanten/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {AddressResult, LocationService} from '../../shared/location/location.service';
-import {GeometryType} from '../model/geometryType';
+import {LocationService} from '../../shared/location/location.service';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
-import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {detailExpand} from '../../shared/animations/animations';
@@ -57,7 +55,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -79,6 +80,7 @@ import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-
 import {BAGObject} from '../../bag/model/bagobject';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
+import {GeometryGegevens} from '../model/geometry-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -89,7 +91,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     readonly skeletonLayout = SkeletonLayout;
     readonly indicatiesLayout = IndicatiesLayout;
     zaak: Zaak;
-    zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
@@ -184,7 +185,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         };
 
         this.toonAfgerondeTaken = SessionStorageUtil.getItem('toonAfgerondeTaken');
-
     }
 
     init(zaak: Zaak): void {
@@ -195,7 +195,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.loadBagObjecten();
         this.setEditableFormFields();
         this.setupMenu();
-        this.loadLocatie();
         this.loadOpschorting();
         this.setPaginaLocatieInformatie(zaak.identificatie);
     }
@@ -213,6 +212,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     ngAfterViewInit() {
         this.viewInitialized = true;
         super.ngAfterViewInit();
+
+        this.subscriptions$.push(this.actionsSidenav.openedChange.subscribe(opened => {
+            if (!opened && this.action == SideNavAction.ZOEK_LOCATIE) {
+                this.action = null;
+            }
+        }));
+
         this.takenDataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'groep':
@@ -725,19 +731,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.open();
     }
 
-    private loadLocatie(): void {
-        if (this.zaak.zaakgeometrie) {
-            switch (this.zaak.zaakgeometrie.type) {
-                case GeometryType.POINT:
-                    this.locationService.coordinatesToAddress(
-                        [this.zaak.zaakgeometrie.point.x, this.zaak.zaakgeometrie.point.y]).subscribe(objectData => {
-                        this.zaakLocatie = objectData.response.docs[0];
-                    });
-                    break;
-            }
-        }
-    }
-
     private loadBesluiten(): void {
         this.zakenService.listBesluitenForZaak(this.zaak.uuid)
             .subscribe(besluiten => this.zaak.besluiten = besluiten);
@@ -790,17 +783,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    locatieGeselecteerd(locatie: AddressResult): void {
-        this.zaakLocatie = locatie;
+    locatieGeselecteerd(locatie: GeometryGegevens): void {
         this.actionsSidenav.close();
-
-        const zaak: Zaak = new Zaak();
-        if (locatie) {
-            zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
-        }
-
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaakGeometrie(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaakLocatie(this.zaak.uuid, locatie.geometry, locatie.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }

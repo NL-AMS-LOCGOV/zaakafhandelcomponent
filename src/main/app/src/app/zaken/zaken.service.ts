@@ -42,6 +42,8 @@ import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
 import {ZaakAfzender} from '../admin/model/zaakafzender';
 import {ZaakAanmaakGegevens} from './model/zaak-aanmaak-gegevens';
 import {BesluitIntrekkenGegevens} from './model/besluit-intrekken-gegevens';
+import {ZaakLocatieGegevens} from './model/zaak-locatie-gegevens';
+import {Geometry} from './model/geometry';
 
 @Injectable({
     providedIn: 'root'
@@ -195,8 +197,9 @@ export class ZakenService {
         );
     }
 
-    updateZaakGeometrie(uuid: string, zaak: Zaak): Observable<Zaak> {
-        return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaakgeometrie`, zaak).pipe(
+    updateZaakLocatie(uuid: string, locatie: Geometry, reden: string): Observable<Zaak> {
+        return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaaklocatie`,
+            new ZaakLocatieGegevens(locatie, reden)).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -257,7 +260,8 @@ export class ZakenService {
     }
 
     afsluiten(uuid: string, afsluitenReden: string, resultaattypeUuid: string): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden, resultaattypeUuid)).pipe(
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`,
+            new ZaakAfsluitenGegevens(afsluitenReden, resultaattypeUuid)).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -312,7 +316,8 @@ export class ZakenService {
     }
 
     listBesluitInformatieobjecten(besluitUuid: string): Observable<EnkelvoudigInformatieobject[]> {
-        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/listBesluitInformatieobjecten/${besluitUuid}`).pipe(
+        return this.http.get<EnkelvoudigInformatieobject[]>(
+            `${this.basepath}/listBesluitInformatieobjecten/${besluitUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

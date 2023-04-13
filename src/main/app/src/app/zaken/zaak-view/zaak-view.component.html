@@ -20,7 +20,8 @@
                       [sidenav]="actionsSidenav"
                       (bagObject)="adresGeselecteerd($event)"></zac-bag-zoek>
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
-                          [huidigeLocatie]="zaakLocatie"
+                          [sideNav]="actionsSidenav"
+                          [huidigeLocatie]="zaak.zaakgeometrie"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
         <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
                                    [sideNav]="actionsSidenav"
@@ -151,7 +152,8 @@
 
                                 <div class="flex-1 w100">
                                     <zac-static-text [label]="'locatie' | translate"
-                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
+                                                     [value]="zaak.zaakgeometrie | location | empty"
+                                                     [icon]="!zaak.rechten.wijzigen ? null : locatieIcon"
                                                      (iconClicked)="!zaak.rechten.wijzigen ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
 
@@ -258,10 +260,10 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more *ngIf="regel.attribuutLabel !== 'zaakgeometrie'"
-                                                       [text]="regel.oudeWaarde | empty"
+                                                       [text]="regel.oudeWaarde | location | empty"
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'"
-                                                       [text]="regel.oudeWaarde | location | async | empty"
+                                                       [text]="regel.oudeWaarde | location | empty"
                                                        [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
@@ -272,7 +274,7 @@
                                                        [text]="regel.nieuweWaarde | empty"
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'"
-                                                       [text]="regel.nieuweWaarde | location | async | empty"
+                                                       [text]="regel.nieuweWaarde | location | empty"
                                                        [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
