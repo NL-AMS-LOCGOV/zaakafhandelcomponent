@@ -16,8 +16,8 @@
                           [sideNav]="actionsSidenav"
                           [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
         <zac-bag-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
-                      [gekoppeldeBagObjecten]="bagObjecten.data"
-                      [sidenav]="actionsSidenav"
+                      [gekoppeldeBagObjecten]="gekoppeldeBagObjecten"
+                      [sideNav]="actionsSidenav"
                       (bagObject)="adresGeselecteerd($event)"></zac-bag-zoek>
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
                           [huidigeLocatie]="zaakLocatie"
@@ -362,29 +362,40 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="bagObjecten.data.length > 0">
+                        <mat-tab *ngIf="bagObjectenDataSource.data.length > 0">
                             <ng-template mat-tab-label>
                                 <mat-icon>gps_fixed</mat-icon>
                                 {{'bagObjecten' | translate}}
                             </ng-template>
                             <div id="bagobjecten_tab" class="table-wrapper bagobjecten-table">
-                                <table mat-table [dataSource]="bagObjecten" matSort>
+                                <table mat-table [dataSource]="bagObjectenDataSource" matSort>
                                     <ng-container matColumnDef="identificatie">
                                         <th mat-header-cell *matHeaderCellDef> {{ 'identificatie' | translate }} </th>
-                                        <td mat-cell *matCellDef="let bagObject">
-                                            <read-more [text]="bagObject.identificatie" [maxLength]="20"></read-more>
+                                        <td mat-cell *matCellDef="let bagObjectGegevens">
+                                            <read-more [text]="bagObjectGegevens.bagObject.identificatie" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="type">
                                         <th mat-header-cell *matHeaderCellDef> {{ 'type' | translate }} </th>
-                                        <td mat-cell *matCellDef="let bagObject">
-                                            {{'objecttype.' + bagObject.bagObjectType | translate}}
+                                        <td mat-cell *matCellDef="let bagObjectGegevens">
+                                            {{'objecttype.' + bagObjectGegevens.bagObject.bagObjectType | translate}}
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="omschrijving">
                                         <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'omschrijving' | translate}} </th>
-                                        <td *matCellDef="let bagObject" mat-cell>
-                                            {{bagObject.omschrijving}}
+                                        <td *matCellDef="let bagObjectGegevens" mat-cell>
+                                            {{bagObjectGegevens.bagObject.omschrijving}}
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="actions">
+                                        <th *matHeaderCellDef mat-header-cell></th>
+                                        <td *matCellDef="let bagObjectGegevens" mat-cell>
+                                            <button *ngIf="zaak.rechten.behandelen"
+                                                    mat-icon-button
+                                                    (click)="bagObjectVerwijderen(bagObjectGegevens)"
+                                                    title="{{ 'actie.bagObject.verwijderen' | translate}}">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
                                         </td>
                                     </ng-container>
 

@@ -116,6 +116,27 @@ public class ZRCClientService {
     }
 
     /**
+     * Delete {@link Zaakobject}.
+     *
+     * @param zaakobject {@link Zaakobject}.
+     */
+    public void deleteZaakobject(final Zaakobject zaakobject, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        zrcClient.zaakobjectDelete(zaakobject.getUuid());
+    }
+
+    /**
+     * Read {@link Zaakobject} via its UUID.
+     * Throws a RuntimeException if the {@link Zaakobject} can not be read.
+     *
+     * @param zaakobjectUUID UUID of {@link Zaakobject}.
+     * @return {@link Zaakobject}. Never NULL!
+     */
+    public Zaakobject readZaakobject(final UUID zaakobjectUUID) {
+        return zrcClient.zaakobjectRead(zaakobjectUUID);
+    }
+
+    /**
      * Create {@link ZaakInformatieobject}
      *
      * @param zaakInformatieobject describes relation between ZAAK en INFORMATIEOBJECT

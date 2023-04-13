@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DialogData} from './dialog-data';
 import {FieldType} from '../material-form-builder/model/field-type.enum';
@@ -12,13 +12,19 @@ import {FieldType} from '../material-form-builder/model/field-type.enum';
     templateUrl: 'dialog.component.html',
     styleUrls: ['./dialog.component.less']
 })
-export class DialogComponent {
+export class DialogComponent implements OnInit {
 
-    loading = false;
+    loading = true;
 
     constructor(
         public dialogRef: MatDialogRef<DialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    }
+
+    ngOnInit(): void {
+        this.dialogRef.afterOpened().subscribe(() => {
+            this.loading = false;
+        });
     }
 
     confirm(): void {
@@ -47,5 +53,9 @@ export class DialogComponent {
 
     cancel(): void {
         this.dialogRef.close(false);
+    }
+
+    disabled() {
+        return this.loading || this.data && this.data.formFieldsInvalid();
     }
 }

@@ -18,10 +18,12 @@ import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectPand;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectWoonplaats;
 import net.atos.zac.app.bag.model.RESTAdres;
 import net.atos.zac.app.bag.model.RESTBAGObject;
+import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTNummeraanduiding;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
 import net.atos.zac.app.bag.model.RESTPand;
 import net.atos.zac.app.bag.model.RESTWoonplaats;
+import net.atos.zac.util.UriUtil;
 
 public class RESTBAGConverter {
 
@@ -50,7 +52,7 @@ public class RESTBAGConverter {
         };
     }
 
-    public RESTBAGObject convertToBAGObject(final Zaakobject zaakobject) {
+    public RESTBAGObject convertToRESTBAGObject(final Zaakobject zaakobject) {
         return switch (zaakobject.getObjectType()) {
             case ADRES -> adresConverter.convertToREST((ZaakobjectAdres) zaakobject);
             case PAND -> pandConverter.convertToREST((ZaakobjectPand) zaakobject);
@@ -59,6 +61,14 @@ public class RESTBAGConverter {
             case OVERIGE -> nummeraanduidingConverter.convertToREST((ZaakobjectNummeraanduiding) zaakobject); // voor nu alleen nummeraanduiding
             default -> throw new IllegalStateException("Unexpected objectType: " + zaakobject.getObjectType());
         };
+    }
+
+    public RESTBAGObjectGegevens convertToRESTBAGObjectGegevens(final Zaakobject zaakobject) {
+        final RESTBAGObjectGegevens restZaakobject = new RESTBAGObjectGegevens();
+        restZaakobject.zaakobject = convertToRESTBAGObject(zaakobject);
+        restZaakobject.uuid = zaakobject.getUuid();
+        restZaakobject.zaakUuid = UriUtil.uuidFromURI(zaakobject.getZaak());
+        return restZaakobject;
     }
 
     public static String getHuisnummerWeergave(final Integer huisnummer, final String huisletter, final String huisnummertoevoeging) {

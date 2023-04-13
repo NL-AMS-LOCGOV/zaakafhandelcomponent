@@ -158,6 +158,14 @@ public interface ZRCClient {
     @Path("zaakobjecten")
     Zaakobject zaakobjectCreate(final Zaakobject zaakobject);
 
+    @DELETE
+    @Path("zaakobjecten/{uuid}")
+    Response zaakobjectDelete(@PathParam("uuid") final UUID uuid);
+
+    @GET
+    @Path("zaakobjecten/{uuid}")
+    Zaakobject zaakobjectRead(@PathParam("uuid") final UUID uuid);
+
     @GET
     @Path("zaken/{zaak_uuid}/audittrail")
     List<AuditTrailRegel> listAuditTrail(@PathParam("zaak_uuid") final UUID zaakUUID);
@@ -165,4 +173,5 @@ public interface ZRCClient {
     @GET
     @Path("zaakinformatieobjecten/{uuid}")
     ZaakInformatieobject zaakinformatieobjectRead(@PathParam("uuid") UUID zaakinformatieobjectUUID);
+
 }

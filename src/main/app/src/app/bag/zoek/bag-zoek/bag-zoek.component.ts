@@ -24,7 +24,7 @@ export class BagZoekComponent {
 
     @Output() bagObject = new EventEmitter<BAGObject>();
     @Input() gekoppeldeBagObjecten: BAGObject[];
-    @Input() sidenav: MatSidenav | MatDrawer;
+    @Input() sideNav: MatSidenav | MatDrawer;
     @ViewChild(MatTable) table: MatTable<BAGObject>;
     BAGObjecttype = BAGObjecttype;
     trefwoorden = new FormControl('', [Validators.maxLength(255)]);

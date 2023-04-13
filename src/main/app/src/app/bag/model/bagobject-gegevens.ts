@@ -6,5 +6,5 @@
 import {BAGObject} from './bagobject';
 
 export class BAGObjectGegevens {
-    constructor(public zaakUUID: string, public bagObject: BAGObject) {}
+    constructor(public zaakUuid: string, public zaakobject: BAGObject, public uuid?: string, public redenWijzigen?: string) {}
 }

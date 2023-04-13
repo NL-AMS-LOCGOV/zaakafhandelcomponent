@@ -17,7 +17,7 @@
         </mat-icon>
         {{ data.confirmButtonActionKey | translate }}
     </button>
-    <button [disabled]="loading" autofocus mat-button (click)="cancel()" id="cancelButton">
+    <button [disabled]="disabled()" mat-button (click)="cancel()" id="cancelButton">
         {{ data.cancelButtonActionKey | translate }}
     </button>
 </div>
