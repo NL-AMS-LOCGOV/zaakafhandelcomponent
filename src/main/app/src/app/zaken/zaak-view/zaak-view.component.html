@@ -260,7 +260,7 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more *ngIf="regel.attribuutLabel !== 'zaakgeometrie'"
-                                                       [text]="regel.oudeWaarde | location | empty"
+                                                       [text]="regel.oudeWaarde | empty"
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'"
                                                        [text]="regel.oudeWaarde | location | empty"
