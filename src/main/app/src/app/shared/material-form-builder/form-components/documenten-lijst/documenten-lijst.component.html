@@ -6,10 +6,6 @@
 <fieldset>
     <legend>{{data.label | translate}}</legend>
     <div [id]="data.id" class="value">
-        <mat-form-field class="full-width" *ngIf="toonFilterVeld()">
-            <mat-label>{{'filter' | translate}}</mat-label>
-            <input matInput (keyup)="applyFilter($event)">
-        </mat-form-field>
         <div class="table-wrapper mat-elevation-z1">
             <table mat-table [dataSource]="dataSource">
                 <ng-container matColumnDef="select">

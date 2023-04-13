@@ -63,11 +63,6 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit, D
         }
     }
 
-    applyFilter($event: KeyboardEvent): void {
-        const filterValue = ($event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
-
     updateSelected($event: MatCheckboxChange, document): void {
         if ($event) {
             this.selection.toggle(document);
@@ -80,10 +75,6 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit, D
             this.documenten = this.data.documenten;
             this.ophalenDocumenten();
         }
-    }
-
-    toonFilterVeld(): boolean {
-        return !this.data.readonly;
     }
 
     selectDisabled(document): boolean {
