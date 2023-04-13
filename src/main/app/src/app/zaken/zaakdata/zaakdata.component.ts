@@ -7,6 +7,7 @@ import {ZaakFormulierenService} from '../../formulieren/zaken/zaak-formulieren.s
 import {Zaak} from '../model/zaak';
 import {AbstractZaakFormulier} from '../../formulieren/zaken/abstract-zaak-formulier';
 import {ZakenService} from '../zaken.service';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-zaakdata',
@@ -16,6 +17,7 @@ import {ZakenService} from '../zaken.service';
 export class ZaakdataComponent implements OnInit {
 
     @Input() zaak: Zaak;
+    @Input() sideNav: MatDrawer;
     @Output() done = new EventEmitter<void>();
 
     private formulier: AbstractZaakFormulier;

@@ -24,6 +24,7 @@ import {Besluittype} from '../model/besluittype';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-besluit-create',
@@ -34,6 +35,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
 
     formConfig: FormConfig;
     @Input() zaak: Zaak;
+    @Input() sideNav: MatDrawer;
     @Output() besluitVastgelegd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     private ngDestroy = new Subject<void>();

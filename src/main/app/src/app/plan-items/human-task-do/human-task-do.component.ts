@@ -15,6 +15,7 @@ import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.s
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 import {Zaak} from '../../zaken/model/zaak';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -27,6 +28,7 @@ export class HumanTaskDoComponent implements OnInit {
     formConfig: FormConfig;
     private formulier: AbstractTaakFormulier;
     @Input() planItem: PlanItem;
+    @Input() sideNav: MatDrawer;
     @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 

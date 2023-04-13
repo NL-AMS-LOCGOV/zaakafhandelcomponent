@@ -3,6 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
+<div class="sidenav-title">
+    <h3>
+        <mat-icon>add_home_work</mat-icon>
+        {{'actie.bagObject.toevoegen' | translate}}</h3>
+    <button mat-icon-button (click)="sidenav.close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
 <div class="form">
     <div class="flex-row flex-col-md gap-10 flex-wrap">
         <div class="w100">
@@ -12,7 +21,7 @@
                     <mat-icon>search</mat-icon>
                 </button>
                 <mat-label>{{'trefwoorden' | translate}}</mat-label>
-                <input matInput id="trefwoorden" maxlength="255"
+                <input matInput id="trefwoorden" cdkFocusInitial maxlength="255"
                        (keyup.enter)="!trefwoorden.valid || zoek()"
                        [formControl]="trefwoorden">
                 <mat-hint align="end">{{trefwoorden.value.length}}/255</mat-hint>

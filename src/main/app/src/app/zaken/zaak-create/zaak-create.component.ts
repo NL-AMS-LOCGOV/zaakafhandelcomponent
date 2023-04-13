@@ -52,6 +52,7 @@ import {TranslateService} from '@ngx-translate/core';
 export class ZaakCreateComponent implements OnInit, OnDestroy {
     private static KANAAL_E_FORMULIER = 'E-formulier';
     createZaakFields: Array<AbstractFormField[]>;
+    bagObjecten: BAGObject[] = [];
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     readonly sideNavAction = SideNavAction;
@@ -66,8 +67,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
     private bagObjectenToevoegenIcon = new ActionIcon('place', 'actie.bagObject.toevoegen', new Subject<void>());
     private initiator: Klant;
-    public bagObjecten: BAGObject[] = [];
-    private inboxProductaanvraag: InboxProductaanvraag;
+    private readonly inboxProductaanvraag: InboxProductaanvraag;
     private communicatiekanalen: Observable<{ naam: string; uuid: string }[]>;
     private communicatiekanaalField: SelectFormField;
 
@@ -121,7 +121,6 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                                                          .disabled()
                                                          .label('initiator')
                                                          .build();
-        this.initiatorField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
 
         this.communicatiekanaalField = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                    .optionLabel('naam').options(this.communicatiekanalen)
@@ -148,12 +147,17 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
                                                            .label('bagObjecten')
                                                            .build();
 
+        this.initiatorField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
+        this.initiatorField.onClear.subscribe(() => {
+            this.initiator = null;
+            this.initiatorField.reset();
+        });
+
+        this.bagObjectenField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_BAG_ADRES));
         this.bagObjectenField.onClear.subscribe(() => {
             this.bagObjecten = [];
             this.bagObjectenField.reset();
         });
-
-        this.bagObjectenField.clicked.subscribe(this.iconNext(SideNavAction.ZOEK_BAG_ADRES));
 
         this.createZaakFields = [
             [titel],

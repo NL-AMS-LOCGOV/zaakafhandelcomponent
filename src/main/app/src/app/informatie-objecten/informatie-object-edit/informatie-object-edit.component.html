@@ -3,6 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
+<div class="sidenav-title">
+    <h3>
+        <mat-icon>difference</mat-icon>
+        {{'actie.nieuwe.versie.toevoegen' | translate}}</h3>
+    <button mat-icon-button (click)="sideNav.close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
 <div class="form">
     <mfb-form *ngIf="fields" (formSubmit)="onFormSubmit($event)" [formFields]="fields" [config]="formConfig"></mfb-form>
 </div>

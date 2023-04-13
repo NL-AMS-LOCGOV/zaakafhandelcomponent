@@ -12,6 +12,7 @@ import {KlantenService} from '../../klanten.service';
 import {KlantGegevens} from '../../model/klanten/klant-gegevens';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-klant-koppel',
@@ -21,6 +22,7 @@ import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-
 export class KlantKoppelComponent implements OnInit {
     @Input() initiator: boolean = false;
     @Input() zaaktypeUUID: string;
+    @Input() sideNav: MatDrawer;
     @Output() klantGegevens = new EventEmitter<KlantGegevens>();
     betrokkeneRoltype: SelectFormField;
     betrokkeneToelichting: InputFormField;

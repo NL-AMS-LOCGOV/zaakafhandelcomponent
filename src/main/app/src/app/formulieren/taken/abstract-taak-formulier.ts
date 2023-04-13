@@ -6,7 +6,6 @@
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {FormGroup} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
-import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
 import {Taakinformatie} from '../../taken/model/taakinformatie';
@@ -15,7 +14,6 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
-import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {Zaak} from '../../zaken/model/zaak';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
@@ -45,9 +43,6 @@ export abstract class AbstractTaakFormulier {
     initStartForm() {
         this.humanTaskData.taakStuurGegevens = new TaakStuurGegevens();
         this.form = [];
-        this.form.push(
-            [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level(HeadingLevel.H2)
-                                          .build()]);
         this._initStartForm();
     }
 
@@ -61,10 +56,6 @@ export abstract class AbstractTaakFormulier {
     protected abstract _initStartForm();
 
     protected abstract _initBehandelForm();
-
-    protected getStartTitel(): string {
-        return this.translate.instant(`title.taak.starten`, {taak: this.taakNaam});
-    }
 
     getBehandelTitel(): string {
         if (this.readonly) {
