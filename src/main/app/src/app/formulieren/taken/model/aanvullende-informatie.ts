@@ -32,6 +32,7 @@ import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form
 import {ZaakAfzender} from '../../../admin/model/zaakafzender';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DividerFormFieldBuilder} from '../../../shared/material-form-builder/form-components/divider/divider-form-field-builder';
 
 export class AanvullendeInformatie extends AbstractTaakFormulier {
 
@@ -42,7 +43,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         BODY: 'body',
         DATUMGEVRAAGD: 'datumGevraagd',
         DATUMGELEVERD: 'datumGeleverd',
-        OPMERKINGEN: 'opmerkingen',
+        TOELICHTING: 'toelichting',
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
         BIJLAGEN: 'bijlagen',
         ZAAK_OPSCHORTEN: 'zaakOpschorten',
@@ -51,7 +52,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     taakinformatieMapping = {
         uitkomst: this.fields.AANVULLENDE_INFORMATIE,
-        opmerking: this.fields.OPMERKINGEN
+        opmerking: this.fields.TOELICHTING
     };
 
     mailtemplate$: Observable<Mailtemplate>;
@@ -174,13 +175,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .id(fields.BODY)
             .label(fields.BODY)
             .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.OPMERKINGEN))
-            .id(fields.OPMERKINGEN)
-            .label(fields.OPMERKINGEN)
-            .validators(Validators.required)
-            .readonly(this.readonly)
-            .maxlength(1000)
-            .build()],
+            [new DividerFormFieldBuilder().build()],
             [
                 new DateFormFieldBuilder(this.getDataElement(fields.DATUMGEVRAAGD))
                 .id(fields.DATUMGEVRAAGD)
@@ -200,6 +195,12 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .options(this.getAanvullendeInformatieOpties())
             .validators(Validators.required)
             .readonly(this.readonly)
+            .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
+            .id(fields.TOELICHTING)
+            .label(fields.TOELICHTING)
+            .readonly(this.readonly)
+            .maxlength(1000)
             .build()]);
 
         if (this.toonHervatten()) {
