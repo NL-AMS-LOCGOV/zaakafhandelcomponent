@@ -20,15 +20,15 @@ public class RESTPersoon extends RESTKlant {
 
     public String geboortedatum;
 
-    public String inschrijfadres;
+    public String verblijfplaats;
 
     public RESTPersoon() {
     }
 
-    public RESTPersoon(final String naam, final String geboortedatum, final String inschrijfadres) {
+    public RESTPersoon(final String naam, final String geboortedatum, final String verblijfplaats) {
         this.naam = naam;
         this.geboortedatum = geboortedatum;
-        this.inschrijfadres = inschrijfadres;
+        this.verblijfplaats = verblijfplaats;
     }
 
     @Override

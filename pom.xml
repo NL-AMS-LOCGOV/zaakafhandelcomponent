@@ -204,16 +204,15 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -330,7 +329,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/zoeken-openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/zoeken-openapi.yaml
+                            </inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <modelPackage>net.atos.client.kvk.zoeken.model</modelPackage>
@@ -356,7 +356,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/basisprofiel-openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/basisprofiel-openapi.yaml
+                            </inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <modelPackage>net.atos.client.kvk.basisprofiel.model</modelPackage>
@@ -615,7 +616,9 @@
                                 <image>eclipse-temurin:17-jre-focal</image>
                             </from>
                             <to>
-                                <image>europe-west4-docker.pkg.dev/dimpact-dev-20201130/common-ground/zaakafhandelcomponent</image>
+                                <image>
+                                    europe-west4-docker.pkg.dev/dimpact-dev-20201130/common-ground/zaakafhandelcomponent
+                                </image>
                             </to>
                             <container>
                                 <ports>

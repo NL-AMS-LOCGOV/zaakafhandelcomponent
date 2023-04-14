@@ -5,10 +5,11 @@
 
 package net.atos.client.zgw.zrc.model;
 
+import static java.util.stream.Collectors.joining;
+
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.QueryParam;
 
@@ -172,7 +173,7 @@ public class ZaakListParameters extends AbstractListParameters {
         if (CollectionUtils.isNotEmpty(archiefnominatieIn)) {
             return archiefnominatieIn.stream()
                     .map(Archiefnominatie::getValue)
-                    .collect(Collectors.joining(","));
+                    .collect(joining(","));
         } else {
             return null;
         }
@@ -220,7 +221,7 @@ public class ZaakListParameters extends AbstractListParameters {
         if (CollectionUtils.isNotEmpty(archiefstatusIn)) {
             return archiefstatusIn.stream()
                     .map(Archiefstatus::toValue)
-                    .collect(Collectors.joining(","));
+                    .collect(joining(","));
         } else {
             return null;
         }

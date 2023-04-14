@@ -7,23 +7,21 @@ package net.atos.zac.documentcreatie.converter;
 
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
+import static net.atos.zac.util.StringUtil.joinNonBlank;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.brp.BRPClientService;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.NaamPersoon;
-import net.atos.client.brp.model.Verblijfplaats;
+import net.atos.client.brp.model.Adres;
+import net.atos.client.brp.model.Persoon;
+import net.atos.client.brp.model.VerblijfadresBinnenland;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
@@ -191,37 +189,30 @@ public class DataConverter {
     }
 
     private AanvragerData createAanvragerDataNatuurlijkPersoon(final String bsn) {
-        return brpClientService.findPersoon(bsn, FIELDS_PERSOON)
+        return brpClientService.findPersoon(bsn)
                 .map(this::convertToAanvragerDataPersoon)
                 .orElse(null);
     }
 
-    private AanvragerData convertToAanvragerDataPersoon(final IngeschrevenPersoonHal persoon) {
+    private AanvragerData convertToAanvragerDataPersoon(final Persoon persoon) {
         final AanvragerData aanvragerData = new AanvragerData();
         if (persoon.getNaam() != null) {
-            aanvragerData.naam = convertToNaam(persoon.getNaam());
+            aanvragerData.naam = persoon.getNaam().getVolledigeNaam();
         }
-        if (persoon.getVerblijfplaats() != null) {
-            final Verblijfplaats verblijfplaats = persoon.getVerblijfplaats();
-            aanvragerData.straat = verblijfplaats.getStraat();
-            aanvragerData.huisnummer = convertToHuisnummer(verblijfplaats);
-            aanvragerData.postcode = verblijfplaats.getPostcode();
-            aanvragerData.woonplaats = verblijfplaats.getWoonplaats();
+        if (persoon.getVerblijfplaats() instanceof Adres adres && adres.getVerblijfadres() != null) {
+            final var verblijfadres = adres.getVerblijfadres();
+            aanvragerData.straat = verblijfadres.getOfficieleStraatnaam();
+            aanvragerData.huisnummer = convertToHuisnummer(verblijfadres);
+            aanvragerData.postcode = verblijfadres.getPostcode();
+            aanvragerData.woonplaats = verblijfadres.getWoonplaats();
         }
         return aanvragerData;
     }
 
-    private String convertToNaam(final NaamPersoon naam) {
-        return Stream.of(naam.getVoornamen(), naam.getVoorvoegsel(), naam.getGeslachtsnaam())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(" "));
-    }
-
-    private String convertToHuisnummer(final Verblijfplaats verblijfplaats) {
-        return Stream.of(Objects.toString(verblijfplaats.getHuisnummer(), null),
-                         verblijfplaats.getHuisnummertoevoeging(), verblijfplaats.getHuisletter())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(" "));
+    private String convertToHuisnummer(final VerblijfadresBinnenland verblijfadres) {
+        return joinNonBlank(Objects.toString(verblijfadres.getHuisnummer(), null),
+                            verblijfadres.getHuisnummertoevoeging(),
+                            verblijfadres.getHuisletter());
     }
 
     private AanvragerData createAanvragerDataVestiging(final String vestigingsnummer) {
@@ -247,9 +238,8 @@ public class DataConverter {
     }
 
     private String convertToHuisnummer(final ResultaatItem vestiging) {
-        return Stream.of(Objects.toString(vestiging.getHuisnummer(), null), vestiging.getHuisnummerToevoeging())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(" "));
+        return joinNonBlank(Objects.toString(vestiging.getHuisnummer(), null),
+                            vestiging.getHuisnummerToevoeging());
     }
 
     private StartformulierData createStartformulierData(final URI zaak) {

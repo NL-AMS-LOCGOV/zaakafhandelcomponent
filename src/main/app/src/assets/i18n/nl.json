@@ -107,7 +107,7 @@
   "straat": "Straat",
   "woonplaats": "Woonplaats",
   "gemeenteCode": "Gemeentecode",
-  "inschrijfadres": "Inschrijfadres",
+  "verblijfplaats": "Verblijfplaats",
   "vestigingsadres": "Vestigingsadres",
   "objecttype.ADRES": "Adres",
   "objecttype.ADRESSEERBAAR_OBJECT": "Adresseerbaar object",

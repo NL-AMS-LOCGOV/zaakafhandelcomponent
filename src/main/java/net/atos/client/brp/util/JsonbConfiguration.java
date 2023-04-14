@@ -15,16 +15,8 @@ public class JsonbConfiguration implements ContextResolver<Jsonb> {
     private Jsonb jsonb;
 
     public JsonbConfiguration() {
-        final JsonbConfig jsonbConfig = new JsonbConfig().withAdapters(
-                new AanduidingBijHuisnummerEnumAdapter(),
-                new AanduidingBijzonderNederlanderschapEnumAdapter(),
-                new GeslachtEnumAdapter(),
-                new IndicatieGezagMinderjarigeEnumAdapter(),
-                new NaamgebruikEnumAdapter(),
-                new OuderAanduidingEnumAdapter(),
-                new RedenOpschortingBijhoudingEnumAdapter(),
-                new SoortAdresEnumAdapter(),
-                new SoortVerbintenisEnumAdapter());
+        final JsonbConfig jsonbConfig = new JsonbConfig()
+                .withDeserializers(new PersonenQueryResponseJsonbDeserializer());
         jsonb = JsonbBuilder.create(jsonbConfig);
     }
 

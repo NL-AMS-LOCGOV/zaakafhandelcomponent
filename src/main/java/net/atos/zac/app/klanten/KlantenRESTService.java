@@ -5,8 +5,7 @@
 
 package net.atos.zac.app.klanten;
 
-import static net.atos.zac.app.klanten.KlantenUtil.ONBEKEND;
-import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
+import static net.atos.zac.util.StringUtil.ONBEKEND;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -27,9 +26,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.client.brp.BRPClientService;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.ListPersonenParameters;
+import net.atos.client.brp.model.PersonenQuery;
+import net.atos.client.brp.model.PersonenQueryResponse;
+import net.atos.client.brp.model.Persoon;
 import net.atos.client.klanten.KlantenClientService;
 import net.atos.client.klanten.model.Klant;
 import net.atos.client.kvk.KVKClientService;
@@ -92,17 +91,16 @@ public class KlantenRESTService {
     @GET
     @Path("persoon/{bsn}")
     public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) throws ExecutionException, InterruptedException {
-        return brpClientService.findPersoonAsync(bsn, FIELDS_PERSOON)
+        return brpClientService.findPersoonAsync(bsn)
                 .thenCombine(klantenClientService.findPersoonAsync(bsn),
                              (persoon, klant) -> convertToRESTPersoon(persoon, klant))
                 .toCompletableFuture()
                 .get();
     }
 
-    private RESTPersoon convertToRESTPersoon(final Optional<IngeschrevenPersoonHal> persoon,
-            final Optional<Klant> klant) {
+    private RESTPersoon convertToRESTPersoon(final Optional<Persoon> persoon, final Optional<Klant> klant) {
         return persoon
-                .map(persoonConverter::convert)
+                .map(persoonConverter::convertPersoon)
                 .map(restPersoon -> (RESTPersoon) addKlantData(restPersoon, klant))
                 .orElse(ONBEKEND_PERSOON);
     }
@@ -144,11 +142,9 @@ public class KlantenRESTService {
     @PUT
     @Path("personen")
     public RESTResultaat<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
-        final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
-        final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(
-                listPersonenParameters);
-        return new RESTResultaat<>(
-                persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
+        final PersonenQuery query = persoonConverter.convertToPersonenQuery(restListPersonenParameters);
+        final PersonenQueryResponse response = brpClientService.queryPersonen(query);
+        return new RESTResultaat<>(persoonConverter.convertFromPersonenQueryResponse(response));
     }
 
     @PUT

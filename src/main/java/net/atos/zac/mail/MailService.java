@@ -5,6 +5,7 @@
 
 package net.atos.zac.mail;
 
+import static java.util.stream.Collectors.joining;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -211,7 +211,7 @@ public class MailService {
             if (!attachments.isEmpty()) {
                 addToParagraph(paragraph, MAIL_BIJLAGE,
                                attachments.stream().map(attachment -> String.valueOf(attachment.getFilename()))
-                                       .collect(Collectors.joining(", ")));
+                                       .collect(joining(", ")));
             }
             addToParagraph(paragraph, MAIL_ONDERWERP, subject);
             paragraph.add(MAIL_BERICHT);
