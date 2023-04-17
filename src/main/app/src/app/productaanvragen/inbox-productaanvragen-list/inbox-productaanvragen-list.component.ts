@@ -36,8 +36,8 @@ export class InboxProductaanvragenListComponent extends WerklijstComponent imple
     dataSource: MatTableDataSource<InboxProductaanvraag> = new MatTableDataSource<InboxProductaanvraag>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['expand', 'type', 'ontvangstdatum', 'initiator', 'actions'];
-    filterColumns: string[] = ['expand_filter', 'type_filter', 'ontvangstdatum_filter', 'initiator_filter', 'actions_filter'];
+    displayedColumns: string[] = ['expand', 'type', 'ontvangstdatum', 'initiator', 'aantal_bijlagen', 'actions'];
+    filterColumns: string[] = ['expand_filter', 'type_filter', 'ontvangstdatum_filter', 'initiator_filter', 'aantal_bijlagen_filter', 'actions_filter'];
     listParameters: InboxProductaanvraagListParameters;
     expandedRow: InboxProductaanvraag | null;
     filterType: string[] = [];
