@@ -271,4 +271,16 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     getFileTooltip(filetype: string): string {
         return this.translate.instant('bestandstype', {type: filetype.toUpperCase()});
     }
+
+    isBewerkenToegestaan(enkelvoudigInformatieobject): boolean {
+        return enkelvoudigInformatieobject.rechten.wijzigen &&
+            FileFormatUtil.isOffice(enkelvoudigInformatieobject.formaat);
+    }
+
+    bewerken(enkelvoudigInformatieobject) {
+        this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(enkelvoudigInformatieobject.uuid, this.zaak?.uuid)
+            .subscribe(url => {
+                window.open(url);
+            });
+    }
 }
