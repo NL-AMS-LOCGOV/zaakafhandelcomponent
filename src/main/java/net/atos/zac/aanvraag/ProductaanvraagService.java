@@ -11,6 +11,7 @@ import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.kvk.KVKClientService;
@@ -26,6 +28,8 @@ import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Medewerker;
@@ -56,11 +60,11 @@ public class ProductaanvraagService {
 
     private static final Logger LOG = Logger.getLogger(ProductaanvraagService.class.getName());
 
-    public static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
+    public static final String AANVRAAG_PDF_TITEL = "Aanvraag PDF";
 
-    public static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
+    public static final String AANVRAAG_PDF_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
-    public static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
+    public static final String ZAAK_INFORMATIEOBJECT_REDEN = "Document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
 
     private static final String ROL_TOELICHTING = "Overgenomen vanuit de product aanvraag";
 
@@ -79,6 +83,9 @@ public class ProductaanvraagService {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private DRCClientService drcClientService;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -144,18 +151,25 @@ public class ProductaanvraagService {
         final InboxProductaanvraag inboxProductaanvraag = new InboxProductaanvraag();
         inboxProductaanvraag.setProductaanvraagObjectUUID(productaanvraagObject.getUuid());
         inboxProductaanvraag.setType(productaanvraag.getType());
-        inboxProductaanvraag.setOntvangstdatum(productaanvraagObject.getRecord().getStartAt());
+        inboxProductaanvraag.setOntvangstdatum(productaanvraagObject.getRecord().getRegistrationAt());
         if (StringUtils.isNotBlank(productaanvraag.getBsn())) {
             inboxProductaanvraag.setInitiatorID(productaanvraag.getBsn());
         }
         if (productaanvraag.getPdfUrl() != null) {
             final UUID aanvraagDocumentUUID = uuidFromURI(productaanvraag.getPdfUrl());
             inboxProductaanvraag.setAanvraagdocumentUUID(aanvraagDocumentUUID);
-            inboxDocumentenService.find(aanvraagDocumentUUID).ifPresent(inboxDocument -> {
-                inboxDocumentenService.delete(inboxDocument.getId());
-            });
+            deleteInboxDocument(aanvraagDocumentUUID);
         }
+        final List<URI> bijlagen = ListUtils.emptyIfNull(productaanvraag.getAttachments());
+        inboxProductaanvraag.setAantalBijlagen(bijlagen.size());
+        bijlagen.forEach(bijlage -> deleteInboxDocument(uuidFromURI(bijlage)));
         inboxProductaanvraagService.create(inboxProductaanvraag);
+    }
+
+    private void deleteInboxDocument(final UUID documentUUID) {
+        inboxDocumentenService.find(documentUUID).ifPresent(inboxDocument -> {
+            inboxDocumentenService.delete(inboxDocument.getId());
+        });
     }
 
     private void registreerZaak(final UUID zaaktypeUuid, final ProductaanvraagDenhaag productaanvraag, final ORObject productaanvraagObject) {
@@ -183,6 +197,7 @@ public class ProductaanvraagService {
 
         pairProductaanvraagWithZaak(productaanvraagObject.getUrl(), zaak.getUrl());
         pairAanvraagPDFWithZaak(productaanvraag, zaak.getUrl());
+        pairBijlagenWithZaak(productaanvraag, zaak.getUrl());
 
         if (isNotBlank(productaanvraag.getBsn())) {
             addInitiator(productaanvraag.getBsn(), zaak.getUrl(), zaak.getZaaktype());
@@ -195,9 +210,21 @@ public class ProductaanvraagService {
         final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
         zaakInformatieobject.setInformatieobject(productaanvraag.getPdfUrl());
         zaakInformatieobject.setZaak(zaakUrl);
-        zaakInformatieobject.setTitel(ZAAK_INFORMATIEOBJECT_TITEL);
-        zaakInformatieobject.setBeschrijving(ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
+        zaakInformatieobject.setTitel(AANVRAAG_PDF_TITEL);
+        zaakInformatieobject.setBeschrijving(AANVRAAG_PDF_BESCHRIJVING);
         zrcClientService.createZaakInformatieobject(zaakInformatieobject, ZAAK_INFORMATIEOBJECT_REDEN);
+    }
+
+    private void pairBijlagenWithZaak(final ProductaanvraagDenhaag productaanvraag, final URI zaakUrl) {
+        for (URI attachment : ListUtils.emptyIfNull(productaanvraag.getAttachments())) {
+            EnkelvoudigInformatieobject bijlage = drcClientService.readEnkelvoudigInformatieobject(attachment);
+            final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
+            zaakInformatieobject.setInformatieobject(bijlage.getUrl());
+            zaakInformatieobject.setZaak(zaakUrl);
+            zaakInformatieobject.setTitel(bijlage.getTitel());
+            zaakInformatieobject.setBeschrijving(bijlage.getBeschrijving());
+            zrcClientService.createZaakInformatieobject(zaakInformatieobject, ZAAK_INFORMATIEOBJECT_REDEN);
+        }
     }
 
     private void toekennenZaak(final Zaak zaak, final ZaakafhandelParameters zaakafhandelParameters) {

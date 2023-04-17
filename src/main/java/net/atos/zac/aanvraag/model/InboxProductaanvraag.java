@@ -63,6 +63,8 @@ public class InboxProductaanvraag {
     @Column(name = "id_initiator")
     private String initiatorID;
 
+    @Column(name = "aantalBijlagen")
+    private int aantalBijlagen;
 
     public Long getId() {
         return id;
@@ -110,5 +112,13 @@ public class InboxProductaanvraag {
 
     public void setInitiatorID(final String initiatorID) {
         this.initiatorID = initiatorID;
+    }
+
+    public int getAantalBijlagen() {
+        return aantalBijlagen;
+    }
+
+    public void setAantalBijlagen(final int aantalBijlagen) {
+        this.aantalBijlagen = aantalBijlagen;
     }
 }

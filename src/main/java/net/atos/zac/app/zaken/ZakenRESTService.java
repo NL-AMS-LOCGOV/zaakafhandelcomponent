@@ -389,8 +389,8 @@ public class ZakenRESTService {
                     inboxProductaanvraag.aanvraagdocumentUUID);
             zaakInformatieobject.setInformatieobject(enkelvoudigInformatieobject.getUrl());
             zaakInformatieobject.setZaak(zaak.getUrl());
-            zaakInformatieobject.setTitel(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_TITEL);
-            zaakInformatieobject.setBeschrijving(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
+            zaakInformatieobject.setTitel(ProductaanvraagService.AANVRAAG_PDF_TITEL);
+            zaakInformatieobject.setBeschrijving(ProductaanvraagService.AANVRAAG_PDF_BESCHRIJVING);
             zrcClientService.createZaakInformatieobject(zaakInformatieobject,
                                                         ProductaanvraagService.ZAAK_INFORMATIEOBJECT_REDEN);
         }
