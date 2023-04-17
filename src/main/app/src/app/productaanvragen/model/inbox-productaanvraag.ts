@@ -8,6 +8,7 @@ export class InboxProductaanvraag {
     productaanvraagObjectUUID: string;
     aanvraagdocumentUUID: string;
     ontvangstdatum: string;
+    aantalBijlagen: number;
     type: string;
     initiatorID: string;
 }

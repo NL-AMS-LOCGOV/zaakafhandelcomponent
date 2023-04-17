@@ -16,6 +16,8 @@ public class RESTInboxProductaanvraag {
 
     public UUID aanvraagdocumentUUID;
 
+    public int aantalBijlagen;
+
     public String type;
 
     public LocalDate ontvangstdatum;

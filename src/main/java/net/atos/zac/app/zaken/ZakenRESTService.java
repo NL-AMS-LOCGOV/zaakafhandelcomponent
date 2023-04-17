@@ -83,7 +83,6 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
-import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectProductaanvraag;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Besluittype;
@@ -92,6 +91,7 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.aanvraag.InboxProductaanvraagService;
+import net.atos.zac.aanvraag.ProductaanvraagDenhaag;
 import net.atos.zac.aanvraag.ProductaanvraagService;
 import net.atos.zac.app.admin.converter.RESTZaakAfzenderConverter;
 import net.atos.zac.app.admin.model.RESTZaakAfzender;
@@ -188,6 +188,9 @@ public class ZakenRESTService {
 
     @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private ProductaanvraagService productaanvraagService;
 
     @Inject
     private BRCClientService brcClientService;
@@ -382,25 +385,12 @@ public class ZakenRESTService {
     }
 
     private void koppelInboxProductaanvraag(final Zaak zaak, final RESTInboxProductaanvraag inboxProductaanvraag) {
-        if (inboxProductaanvraag.aanvraagdocumentUUID != null) {
-            //koppel aanvraagdocument
-            final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
-            EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
-                    inboxProductaanvraag.aanvraagdocumentUUID);
-            zaakInformatieobject.setInformatieobject(enkelvoudigInformatieobject.getUrl());
-            zaakInformatieobject.setZaak(zaak.getUrl());
-            zaakInformatieobject.setTitel(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_TITEL);
-            zaakInformatieobject.setBeschrijving(ProductaanvraagService.ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
-            zrcClientService.createZaakInformatieobject(zaakInformatieobject,
-                                                        ProductaanvraagService.ZAAK_INFORMATIEOBJECT_REDEN);
-        }
+        final ORObject productaanvraagObject = objectsClientService.readObject(inboxProductaanvraag.productaanvraagObjectUUID);
+        final ProductaanvraagDenhaag productaanvraag = productaanvraagService.getProductaanvraag(productaanvraagObject);
 
-        //koppel productaanvraag (object-registratie) aan de zaak
-        final ORObject productaanvraagObject = objectsClientService.readObject(
-                inboxProductaanvraag.productaanvraagObjectUUID);
-        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaak.getUrl(),
-                                                                                   productaanvraagObject.getUrl());
-        zrcClientService.createZaakobject(zaakobject);
+        productaanvraagService.pairProductaanvraagWithZaak(productaanvraagObject, zaak.getUrl());
+        productaanvraagService.pairAanvraagPDFWithZaak(productaanvraag, zaak.getUrl());
+        productaanvraagService.pairBijlagenWithZaak(productaanvraag.getAttachments(), zaak.getUrl());
 
         //verwijder het verwerkte inbox productaanvraag item
         inboxProductaanvraagService.delete(inboxProductaanvraag.id);
