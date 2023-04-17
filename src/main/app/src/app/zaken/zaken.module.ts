@@ -35,6 +35,7 @@ import {IntakeAfrondenDialogComponent} from './intake-afronden-dialog/intake-afr
 import {ZaakdataComponent} from './zaakdata/zaakdata.component';
 import {ZaakInitiatorToevoegenComponent} from './zaak-initiator-toevoegen/zaak-initiator-toevoegen.component';
 import {DocumentIconComponent} from '../shared/document-icon/document-icon.component';
+import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -73,7 +74,8 @@ import {DocumentIconComponent} from '../shared/document-icon/document-icon.compo
         ZoekenModule,
         GebruikersvoorkeurenModule,
         BAGModule,
-        DocumentIconComponent
+        DocumentIconComponent,
+        InformatieObjectIndicatiesComponent
     ]
 })
 export class ZakenModule {

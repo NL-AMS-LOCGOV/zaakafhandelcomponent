@@ -6,10 +6,13 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {DocumentZoekObject} from '../../../zoeken/model/documenten/document-zoek-object';
-import {TranslateService} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {DatumPipe} from '../../pipes/datum.pipe';
 import {Indicatie} from '../../model/indicatie';
 import {IndicatiesComponent} from '../indicaties.component';
+import {MaterialModule} from '../../material/material.module';
+import {PipesModule} from '../../pipes/pipes.module';
+import {CommonModule} from '@angular/common';
 
 export enum InformatieobjectIndicatie {
     VERGRENDELD = 'VERGRENDELD',
@@ -20,7 +23,9 @@ export enum InformatieobjectIndicatie {
 }
 
 @Component({
+    standalone: true,
     selector: 'zac-informatie-object-indicaties',
+    imports: [MaterialModule, TranslateModule, PipesModule, CommonModule],
     templateUrl: '../indicaties.component.html',
     styleUrls: ['../indicaties.component.less']
 })

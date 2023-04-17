@@ -14,6 +14,7 @@ import {RouteReuseStrategyService} from './route-reuse-strategy.service';
 import {InformatieObjectAddComponent} from './informatie-object-add/informatie-object-add.component';
 import {InformatieObjectVerzendenComponent} from './informatie-object-verzenden/informatie-object-verzenden.component';
 import {DocumentIconComponent} from '../shared/document-icon/document-icon.component';
+import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import {DocumentIconComponent} from '../shared/document-icon/document-icon.compo
     imports: [
         SharedModule,
         InformatieObjectenRoutingModule,
-        DocumentIconComponent
+        DocumentIconComponent,
+        InformatieObjectIndicatiesComponent
     ],
     providers: [
         {provide: RouteReuseStrategy, useClass: RouteReuseStrategyService}
