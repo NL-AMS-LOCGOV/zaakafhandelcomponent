@@ -109,7 +109,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: page
           in: query
           description: Een pagina binnen de gepagineerde set resultaten.
@@ -247,7 +251,11 @@ paths:
           description: Geef het client ID op waarvoor je de applicatie wil opvragen.
           required: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
       responses:
         '200':
           description: OK
@@ -509,7 +517,7 @@ tags:
   - name: consumer
     description: ''
 servers:
-  - url: http://open-zaak.default/autorisaties/api/v1
+  - url: https://open-zaak.develop-public-service-platform.net/autorisaties/api/v1
 components:
   responses:
     '400':

@@ -73,9 +73,9 @@ info:
     **Resources en acties**
     - `zaak`: create, update, destroy
     - `status`: create
-    - `zaakobject`: create
+    - `zaakobject`: create, update, destroy
     - `zaakinformatieobject`: create
-    - `zaakeigenschap`: create
+    - `zaakeigenschap`: create, update, destroy
     - `klantcontact`: create
     - `rol`: create, destroy
     - `resultaat`: create, update, destroy
@@ -96,7 +96,7 @@ info:
   license:
     name: EUPL 1.2
     url: https://opensource.org/licenses/EUPL-1.2
-  version: 1.1.2
+  version: 1.2.0
 security:
   - JWT-Claims: [ ]
 paths:
@@ -2277,7 +2277,15 @@ paths:
     post:
       operationId: zaakobject_create
       summary: Maak een ZAAKOBJECT aan.
-      description: Maak een ZAAKOBJECT aan.
+      description: |-
+        Maak een ZAAKOBJECT aan.
+
+        **Er wordt gevalideerd op**
+
+        - Indien de `object` URL opgegeven is, dan moet deze een geldige response
+          (HTTP 200) geven.
+        - Indien opgegeven, dan wordt `objectIdentificatie` gevalideerd tegen de
+          `objectType` discriminator.
       parameters:
         - name: Content-Type
           in: header
@@ -2300,11 +2308,7 @@ paths:
           schema:
             type: string
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ZaakObject'
-        required: true
+        $ref: '#/components/requestBodies/ZaakObject'
       responses:
         '201':
           description: Created
@@ -2388,6 +2392,160 @@ paths:
       security:
         - JWT-Claims:
             - zaken.lezen
+    put:
+      operationId: zaakobject_update
+      summary: Werk een ZAAKOBJECT in zijn geheel bij.
+      description: |-
+        **Er wordt gevalideerd op**
+
+        - De attributen `zaak`, `object` en `objectType` mogen niet gewijzigd worden.
+        - Indien opgegeven, dan wordt `objectIdentificatie` gevalideerd tegen de
+          `objectType` discriminator.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+      requestBody:
+        $ref: '#/components/requestBodies/ZaakObject'
+      responses:
+        '200':
+          description: OK
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZaakObject'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaakobjecten
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken)
+    patch:
+      operationId: zaakobject_partial_update
+      summary: Werk een ZAAKOBJECT deels bij.
+      description: |-
+        **Er wordt gevalideerd op**
+
+        - De attributen `zaak`, `object` en `objectType` mogen niet gewijzigd worden.
+        - Indien opgegeven, dan wordt `objectIdentificatie` gevalideerd tegen de
+          `objectType` discriminator.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+      requestBody:
+        $ref: '#/components/requestBodies/ZaakObject'
+      responses:
+        '200':
+          description: OK
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZaakObject'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaakobjecten
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken)
+    delete:
+      operationId: zaakobject_delete
+      summary: Verwijder een ZAAKOBJECT.
+      description: |-
+        Verbreek de relatie tussen een ZAAK en een OBJECT door de ZAAKOBJECT resource te
+        verwijderen.
+      responses:
+        '204':
+          description: No content
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaakobjecten
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken | zaken.verwijderen)
     parameters:
       - name: uuid
         in: path
@@ -2674,7 +2832,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: archiefactiedatum
           in: query
           description: De datum waarop het gearchiveerde zaakdossier vernietigd moet
@@ -2719,7 +2881,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: startdatum
           in: query
           description: De datum waarop met de uitvoering van de zaak is gestart
@@ -4016,11 +4182,7 @@ paths:
           schema:
             type: string
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ZaakEigenschap'
-        required: true
+        $ref: '#/components/requestBodies/ZaakEigenschap'
       responses:
         '201':
           description: Created
@@ -4179,6 +4341,153 @@ paths:
       security:
         - JWT-Claims:
             - zaken.lezen
+    put:
+      operationId: zaakeigenschap_update
+      summary: Werk een ZAAKEIGENSCHAP in zijn geheel bij.
+      description: |-
+        **Er wordt gevalideerd op**
+
+        - Alleen de WAARDE mag gewijzigd worden
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+      requestBody:
+        $ref: '#/components/requestBodies/ZaakEigenschap'
+      responses:
+        '200':
+          description: OK
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZaakEigenschap'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaken
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken)
+    patch:
+      operationId: zaakeigenschap_partial_update
+      summary: Werk een ZAAKEIGENSCHAP deels bij.
+      description: |-
+        **Er wordt gevalideerd op**
+
+        - Alleen de WAARDE mag gewijzigd worden
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+      requestBody:
+        $ref: '#/components/requestBodies/ZaakEigenschap'
+      responses:
+        '200':
+          description: OK
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZaakEigenschap'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaken
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken)
+    delete:
+      operationId: zaakeigenschap_delete
+      description: Verwijder een ZAAKEIGENSCHAP.
+      responses:
+        '204':
+          description: No content
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '406':
+          $ref: '#/components/responses/406'
+        '409':
+          $ref: '#/components/responses/409'
+        '410':
+          $ref: '#/components/responses/410'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+        - zaken
+      security:
+        - JWT-Claims:
+            - (zaken.bijwerken | zaken.geforceerd-bijwerken)
     parameters:
       - name: uuid
         in: path
@@ -4217,7 +4526,7 @@ tags:
       `archiefstatus` een andere status heeft dan "nog_te_archiveren". Voor
       praktische redenen is er geen harde validatie regel aan de provider kant.
 servers:
-  - url: http://open-zaak.default/zaken/api/v1
+  - url: https://open-zaak.develop-public-service-platform.net/zaken/api/v1
 components:
   responses:
     '400':
@@ -4365,11 +4674,23 @@ components:
           schema:
             $ref: '#/components/schemas/ZaakInformatieObject'
       required: true
+    ZaakObject:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ZaakObject'
+      required: true
     Zaak:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Zaak'
+      required: true
+    ZaakEigenschap:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ZaakEigenschap'
       required: true
   securitySchemes:
     JWT-Claims:
@@ -5129,6 +5450,48 @@ components:
           type: string
           format: date-time
           readOnly: true
+    ObjectTypeOverigeDefinitie:
+      description: |-
+        Verwijzing naar het schema van het type OBJECT als `objectType` de waarde "overige" heeft.
+
+        * De URL referentie moet naar een JSON endpoint   wijzen waarin het objecttype gedefinieerd is, inclusief het   [JSON-schema](https://json-schema.org/).
+        * Gebruik het `schema` attribuut om te verwijzen naar het schema binnen   de objecttype resource (deze gebruikt het   [jq](http://stedolan.github.io/jq/) formaat.
+        * Gebruik het `objectData` attribuut om te verwijzen naar de gegevens   binnen het OBJECT. Deze gebruikt ook het   [jq](http://stedolan.github.io/jq/) formaat.
+
+        Indien je hier gebruikt van maakt, dan moet je een OBJECT url opgeven en is het gebruik van objectIdentificatie niet mogelijk. De opgegeven OBJECT url wordt gevalideerd tegen het schema van het opgegeven objecttype.
+      required:
+        - url
+        - schema
+        - objectData
+      type: object
+      properties:
+        url:
+          title: Objecttype-URL
+          description: URL-referentie naar de objecttype resource in een API. Deze
+            resource moet de [JSON-schema](https://json-schema.org/)-definitie van
+            het objecttype bevatten.
+          type: string
+          format: uri
+          maxLength: 1000
+          minLength: 1
+        schema:
+          title: schema-pad
+          description: 'Een geldige [jq](http://stedolan.github.io/jq/) expressie.
+            Dit wordt gecombineerd met de resource uit het `url`-attribuut om het
+            schema van het objecttype uit te lezen. Bijvoorbeeld: `.jsonSchema`.'
+          type: string
+          maxLength: 100
+          minLength: 1
+        objectData:
+          title: objectgegevens-pad
+          description: 'Een geldige [jq](http://stedolan.github.io/jq/) expressie.
+            Dit wordt gecombineerd met de JSON data uit de OBJECT url om de objectgegevens
+            uit te lezen en de vorm van de gegevens tegen het schema te valideren.
+            Bijvoorbeeld: `.record.data`.'
+          type: string
+          maxLength: 100
+          minLength: 1
+      nullable: true
     ZaakObject:
       required:
         - zaak
@@ -5239,6 +5602,8 @@ components:
           type: string
           pattern: '[a-z_]+'
           maxLength: 100
+        objectTypeOverigeDefinitie:
+          $ref: '#/components/schemas/ObjectTypeOverigeDefinitie'
         relatieomschrijving:
           title: Relatieomschrijving
           description: Omschrijving van de betrekking tussen de ZAAK en het OBJECT.
@@ -6774,10 +7139,11 @@ components:
             - blijvend_bewaren
             - vernietigen
         archiefnominatie__in:
-          title: Archiefnominatie  in
           description: Multiple values may be separated by commas.
-          type: string
-          minLength: 1
+          type: array
+          items:
+            type: string
+            nullable: true
         archiefactiedatum:
           title: Archiefactiedatum
           description: De datum waarop het gearchiveerde zaakdossier vernietigd moet
@@ -6820,10 +7186,11 @@ components:
             - gearchiveerd_procestermijn_onbekend
             - overgedragen
         archiefstatus__in:
-          title: Archiefstatus  in
           description: Multiple values may be separated by commas.
-          type: string
-          minLength: 1
+          type: array
+          items:
+            type: string
+            nullable: true
         startdatum:
           title: Startdatum
           description: De datum waarop met de uitvoering van de zaak is gestart
