@@ -63,7 +63,7 @@ public class InboxProductaanvraag {
     @Column(name = "id_initiator")
     private String initiatorID;
 
-    @Column(name = "aantalBijlagen")
+    @Column(name = "aantal_bijlagen")
     private int aantalBijlagen;
 
     public Long getId() {
