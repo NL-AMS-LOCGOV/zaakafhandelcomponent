@@ -142,11 +142,6 @@ public class ProductaanvraagService {
         zrcClientService.createRol(rolNatuurlijkPersoon);
     }
 
-    private void pairProductaanvraagWithZaak(final URI productaanvraagUrl, final URI zaakUrl) {
-        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaakUrl, productaanvraagUrl);
-        zrcClientService.createZaakobject(zaakobject);
-    }
-
     private void registreerInbox(final ProductaanvraagDenhaag productaanvraag, final ORObject productaanvraagObject) {
         final InboxProductaanvraag inboxProductaanvraag = new InboxProductaanvraag();
         inboxProductaanvraag.setProductaanvraagObjectUUID(productaanvraagObject.getUuid());
@@ -195,9 +190,9 @@ public class ProductaanvraagService {
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUuid);
         toekennenZaak(zaak, zaakafhandelParameters);
 
-        pairProductaanvraagWithZaak(productaanvraagObject.getUrl(), zaak.getUrl());
+        pairProductaanvraagWithZaak(productaanvraagObject, zaak.getUrl());
         pairAanvraagPDFWithZaak(productaanvraag, zaak.getUrl());
-        pairBijlagenWithZaak(productaanvraag, zaak.getUrl());
+        pairBijlagenWithZaak(productaanvraag.getAttachments(), zaak.getUrl());
 
         if (isNotBlank(productaanvraag.getBsn())) {
             addInitiator(productaanvraag.getBsn(), zaak.getUrl(), zaak.getZaaktype());
@@ -206,7 +201,12 @@ public class ProductaanvraagService {
         cmmnService.startCase(zaak, zaaktype, zaakafhandelParameters, formulierData);
     }
 
-    private void pairAanvraagPDFWithZaak(final ProductaanvraagDenhaag productaanvraag, final URI zaakUrl) {
+    public void pairProductaanvraagWithZaak(final ORObject productaanvraag, final URI zaakUrl) {
+        final ZaakobjectProductaanvraag zaakobject = new ZaakobjectProductaanvraag(zaakUrl, productaanvraag.getUrl());
+        zrcClientService.createZaakobject(zaakobject);
+    }
+
+    public void pairAanvraagPDFWithZaak(final ProductaanvraagDenhaag productaanvraag, final URI zaakUrl) {
         final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
         zaakInformatieobject.setInformatieobject(productaanvraag.getPdfUrl());
         zaakInformatieobject.setZaak(zaakUrl);
@@ -215,9 +215,9 @@ public class ProductaanvraagService {
         zrcClientService.createZaakInformatieobject(zaakInformatieobject, ZAAK_INFORMATIEOBJECT_REDEN);
     }
 
-    private void pairBijlagenWithZaak(final ProductaanvraagDenhaag productaanvraag, final URI zaakUrl) {
-        for (URI attachment : ListUtils.emptyIfNull(productaanvraag.getAttachments())) {
-            final EnkelvoudigInformatieobject bijlage = drcClientService.readEnkelvoudigInformatieobject(attachment);
+    public void pairBijlagenWithZaak(final List<URI> bijlageURIs, final URI zaakUrl) {
+        for (final URI bijlageURI : ListUtils.emptyIfNull(bijlageURIs)) {
+            final EnkelvoudigInformatieobject bijlage = drcClientService.readEnkelvoudigInformatieobject(bijlageURI);
             final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
             zaakInformatieobject.setInformatieobject(bijlage.getUrl());
             zaakInformatieobject.setZaak(zaakUrl);
