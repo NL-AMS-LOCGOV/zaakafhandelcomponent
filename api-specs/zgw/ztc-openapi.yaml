@@ -622,7 +622,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: rsin
           in: query
           description: Het door een kamer toegekend uniek nummer voor de INGESCHREVEN
@@ -635,7 +639,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: page
           in: query
           description: Een pagina binnen de gepagineerde set resultaten.
@@ -3470,7 +3478,11 @@ paths:
           description: Multiple values may be separated by commas.
           required: false
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
         - name: status
           in: query
           description: |
@@ -3977,7 +3989,7 @@ tags:
       Een ZAAKTYPE beschrijft het geheel van karakteristieke eigenschappen van
       zaken van eenzelfde soort.
 servers:
-  - url: http://open-zaak.default/catalogi/api/v1
+  - url: https://open-zaak.develop-public-service-platform.net/catalogi/api/v1
 components:
   responses:
     '400':

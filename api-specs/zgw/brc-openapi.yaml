@@ -875,7 +875,7 @@ tags:
   - name: besluitinformatieobjecten
     description: ''
 servers:
-  - url: http://open-zaak.default/besluiten/api/v1
+  - url: https://open-zaak.develop-public-service-platform.net/besluiten/api/v1
 components:
   responses:
     '400':
