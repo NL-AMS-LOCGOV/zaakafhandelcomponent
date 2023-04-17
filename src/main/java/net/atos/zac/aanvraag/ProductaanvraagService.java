@@ -217,7 +217,7 @@ public class ProductaanvraagService {
 
     private void pairBijlagenWithZaak(final ProductaanvraagDenhaag productaanvraag, final URI zaakUrl) {
         for (URI attachment : ListUtils.emptyIfNull(productaanvraag.getAttachments())) {
-            EnkelvoudigInformatieobject bijlage = drcClientService.readEnkelvoudigInformatieobject(attachment);
+            final EnkelvoudigInformatieobject bijlage = drcClientService.readEnkelvoudigInformatieobject(attachment);
             final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
             zaakInformatieobject.setInformatieobject(bijlage.getUrl());
             zaakInformatieobject.setZaak(zaakUrl);
