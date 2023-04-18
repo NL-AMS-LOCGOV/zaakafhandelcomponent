@@ -85,7 +85,6 @@ import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/beslui
         NotificationDialogComponent,
         ExportButtonComponent,
         BesluitIndicatiesComponent,
-        InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
         VersionComponent,
         SortPipe
@@ -137,7 +136,6 @@ import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/beslui
         DagenPipe,
         ExportButtonComponent,
         BesluitIndicatiesComponent,
-        InformatieObjectIndicatiesComponent,
         ZaakIndicatiesComponent,
         VersionComponent,
         SortPipe

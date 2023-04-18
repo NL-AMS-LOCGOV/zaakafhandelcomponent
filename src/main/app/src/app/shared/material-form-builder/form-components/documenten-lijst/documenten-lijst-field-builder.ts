@@ -28,7 +28,7 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    removeColumn(column: 'select' | 'titel' | 'documentType' | 'status' | 'versie' | 'auteur' | 'creatiedatum' | 'bestandsomvang' | 'url'): this {
+    removeColumn(column: 'select' | 'titel' | 'documentType' | 'status' | 'versie' | 'auteur' | 'creatiedatum' | 'bestandsomvang' | 'indicaties' | 'url'): this {
         this.formField.removeColumn(column);
         return this;
     }

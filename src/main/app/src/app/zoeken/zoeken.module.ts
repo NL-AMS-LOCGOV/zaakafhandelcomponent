@@ -18,6 +18,7 @@ import {KlantenModule} from '../klanten/klanten.module';
 import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
 import {RouterLink} from '@angular/router';
 import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-object-link.component';
+import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-objec
         SharedModule,
         KlantenModule,
         RouterLink,
-        RouterLink
+        RouterLink,
+        InformatieObjectIndicatiesComponent
     ]
 })
 export class ZoekenModule {

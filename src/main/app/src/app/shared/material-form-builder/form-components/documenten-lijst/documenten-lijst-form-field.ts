@@ -13,7 +13,7 @@ export class DocumentenLijstFormField extends AbstractFormControlField {
     fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten: Observable<EnkelvoudigInformatieobject[]>;
     documentenChecked: string[];
-    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
+    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'indicaties', 'url'];
     selectLabel = '';
     openInNieuweTab: boolean = false;
 

@@ -57,6 +57,7 @@ import {DocumentenOndertekenenComponent} from './form-components/documenten-onde
 import {DocumentIconComponent} from '../document-icon/document-icon.component';
 import {DragAndDropDirective} from './form-components/file/drag-and-drop.directive';
 import {MessageComponent} from './form-components/message/message.component';
+import {InformatieObjectIndicatiesComponent} from '../indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
     declarations: [
@@ -113,7 +114,8 @@ import {MessageComponent} from './form-components/message/message.component';
         NgxEditorModule,
         MatMenuModule,
         MatListModule,
-        DocumentIconComponent
+        DocumentIconComponent,
+        InformatieObjectIndicatiesComponent
     ],
     exports: [
         FormComponent,

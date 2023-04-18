@@ -14,13 +14,14 @@ import {InformatieObjectenService} from '../../../../informatie-objecten/informa
 import {TranslateService} from '@ngx-translate/core';
 import {DocumentenLijstFormField} from './documenten-lijst-form-field';
 import {Observable} from 'rxjs';
+import {IndicatiesLayout} from '../../../indicaties/indicaties.component';
 
 @Component({
     templateUrl: './documenten-lijst.component.html',
     styleUrls: ['./documenten-lijst.component.less']
 })
 export class DocumentenLijstComponent extends FormComponent implements OnInit, DoCheck {
-
+    readonly indicatiesLayout = IndicatiesLayout;
     data: DocumentenLijstFormField;
     documenten: Observable<EnkelvoudigInformatieobject[]>;
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
