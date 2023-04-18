@@ -86,23 +86,33 @@
                                title="{{ 'actie.document.bekijken' | translate}}">
                                 <mat-icon>visibility</mat-icon>
                             </a>
-                            <button *ngIf="!taakModus && row.rechten.wijzigen && !row.isBesluitDocument && !row.relatieType" mat-icon-button
-                                    [disabled]="isOntkoppelenDisabled(row)"
-                                    (click)="documentOntkoppelen(row)"
-                                    title="{{ 'actie.document.ontkoppelen' | translate}}">
-                                <mat-icon>link_off</mat-icon>
+                            <button mat-icon-button *ngIf="isBewerkenToegestaan(row)"
+                                    (click)="bewerken(row)"
+                                    title="{{ 'actie.document.bewerken' | translate}}">
+                                <mat-icon>edit</mat-icon>
                             </button>
-                            <button *ngIf="!taakModus && row.rechten.wijzigen && !row.isBesluitDocument && !row.relatieType" mat-icon-button
-                                    [disabled]="isDocumentVerplaatsenDisabled(row)"
-                                    (click)="documentVerplaatsen(row)"
-                                    title="{{ 'actie.document.verplaatsen' | translate}}">
-                                <mat-icon>content_cut</mat-icon>
+                            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                                <mat-icon>more_vert</mat-icon>
                             </button>
-                            <a mat-icon-button
-                               [href]="getDownloadURL(row)"
-                               title="{{ 'actie.downloaden' | translate}}">
-                                <mat-icon>download</mat-icon>
-                            </a>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item *ngIf="!taakModus && row.rechten.wijzigen && !row.isBesluitDocument && !row.relatieType"
+                                        [disabled]="isOntkoppelenDisabled(row)"
+                                        (click)="documentOntkoppelen(row)">
+                                    <mat-icon>link_off</mat-icon>
+                                    <span>{{ 'actie.document.ontkoppelen' | translate}}</span>
+                                </button>
+                                <button mat-menu-item *ngIf="!taakModus && row.rechten.wijzigen && !row.isBesluitDocument && !row.relatieType"
+                                        [disabled]="isDocumentVerplaatsenDisabled(row)"
+                                        (click)="documentVerplaatsen(row)">
+                                    <mat-icon>content_cut</mat-icon>
+                                    <span>{{ 'actie.document.verplaatsen' | translate}}</span>
+                                </button>
+                                <a mat-menu-item
+                                   [href]="getDownloadURL(row)">
+                                    <mat-icon>download</mat-icon>
+                                    <span>{{ 'actie.document.downloaden' | translate}}</span>
+                                </a>
+                            </mat-menu>
                         </div>
                     </td>
                 </ng-container>
