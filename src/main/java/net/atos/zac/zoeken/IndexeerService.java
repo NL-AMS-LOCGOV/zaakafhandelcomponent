@@ -202,6 +202,7 @@ public class IndexeerService {
         herindexerenBezig.add(objectType);
         try {
             log(objectType, "Markeren voor herindexeren gestart...");
+            helper.removeMarks(objectType);
             markSolrEntitiesForRemoval(objectType);
             switch (objectType) {
                 case ZAAK -> markAllZakenForReindexing();
