@@ -91,9 +91,9 @@ public class IndexeerService {
 
     private final Set<ZoekObjectType> herindexerenBezig = new HashSet<>();
 
-    public record Resultaat(long indexed, long removed, long errors, long remaining) {
+    public record Resultaat(long indexed, long removed, long remaining) {
         public Resultaat() {
-            this(0, 0, 0, 0);
+            this(0, 0, 0);
         }
     }
 
@@ -136,10 +136,10 @@ public class IndexeerService {
                 entities.stream()
                         .filter(zoekIndexEntity -> zoekIndexEntity.getStatus() == REMOVE)
                         .map(ZoekIndexEntity::getObjectId));
-        final var resultaat = new Resultaat(added, removed, entities.size() - added - removed, count - entities.size());
+        final var resultaat = new Resultaat(added, removed, count - entities.size());
         log(objectType, "Indexeren gestopt");
-        log(objectType, "geindexeerd: %d, verwijderd: %d, fouten: %d, resterend: %d"
-                .formatted(resultaat.indexed(), resultaat.removed(), resultaat.errors(), resultaat.remaining()));
+        log(objectType, "geindexeerd: %d, verwijderd: %d, resterend: %d"
+                .formatted(resultaat.indexed(), resultaat.removed(), resultaat.remaining()));
         return resultaat;
     }
 
@@ -157,8 +157,8 @@ public class IndexeerService {
         try {
             return converter.convert(zoekIndexEntity.getObjectId());
         } catch (final RuntimeException e) {
-            LOG.log(WARNING, "[%s] Exception on object with id '%s'"
-                    .formatted(zoekIndexEntity.getType(), zoekIndexEntity.getObjectId()), e);
+            LOG.log(WARNING, "[%s] '%s': %s".formatted(zoekIndexEntity.getType(), zoekIndexEntity.getObjectId(),
+                                                       e.getMessage()));
             return null;
         }
     }

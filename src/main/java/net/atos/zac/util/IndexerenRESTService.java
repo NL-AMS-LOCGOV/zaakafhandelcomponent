@@ -55,9 +55,9 @@ public class IndexerenRESTService {
         final StringBuilder info = new StringBuilder();
         Arrays.stream(ZoekObjectType.values()).forEach(type -> {
             final IndexeerService.Resultaat resultaat = indexeerService.indexeer(aantal, type);
-            info.append(("[%s] geindexeerd: %d, verwijderd: %d, fouten: %d, resterend: %d\n")
+            info.append(("[%s] geindexeerd: %d, verwijderd: %d, resterend: %d\n")
                                 .formatted(type.toString(), resultaat.indexed(), resultaat.removed(),
-                                           resultaat.errors(), resultaat.remaining()));
+                                           resultaat.remaining()));
         });
         return info.toString();
     }
