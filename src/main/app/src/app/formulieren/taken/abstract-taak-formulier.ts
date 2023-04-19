@@ -16,6 +16,7 @@ import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {Zaak} from '../../zaken/model/zaak';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 export abstract class AbstractTaakFormulier {
 
@@ -23,6 +24,7 @@ export abstract class AbstractTaakFormulier {
     protected static TAAK_FATALEDATUM: string = 'taakFataledatum';
     protected static BIJLAGEN_FIELD: string = 'bijlagen';
     protected static ONDERTEKENEN_FIELD: string = 'ondertekenen';
+    protected static TOELICHTING_FIELD: string = 'toelichting';
     protected static TAAK_DATA_MULTIPLE_VALUE_JOIN_CHARACTER = ';';
 
     zaak: Zaak;
@@ -50,6 +52,7 @@ export abstract class AbstractTaakFormulier {
         this.form = [];
         this.readonly = readonly;
         this._initBehandelForm();
+        this.initToelichtingVeld();
         this.refreshTaakdocumenten();
     }
 
@@ -78,6 +81,7 @@ export abstract class AbstractTaakFormulier {
 
     getTaak(formGroup: FormGroup): Taak {
         this.taak.taakdata = this.getDataElementen(formGroup);
+        this.taak.toelichting = this.getFormField(AbstractTaakFormulier.TOELICHTING_FIELD).formControl.value;
         this.taak.taakinformatie = this.getTaakinformatie(formGroup);
         return this.taak;
     }
@@ -137,6 +141,7 @@ export abstract class AbstractTaakFormulier {
         Object.entries(formGroup.value)
               .filter(([key]) => key !== AbstractTaakFormulier.TAAK_TOEKENNING)
               .filter(([key]) => key !== AbstractTaakFormulier.TAAK_FATALEDATUM)
+              .filter(([key]) => key !== AbstractTaakFormulier.TOELICHTING_FIELD)
               .filter(([key]) => !this.isReadonlyFormField(key) || key === AbstractTaakFormulier.ONDERTEKENEN_FIELD)
               .map(([key, value]) => {
                   this.dataElementen[key] = value as any;
@@ -177,4 +182,13 @@ export abstract class AbstractTaakFormulier {
         throw new Error(`FormField: "${id}" not found!`);
     }
 
+    private initToelichtingVeld(): void {
+        this.form.push(
+            [new TextareaFormFieldBuilder(this.taak.toelichting)
+            .id(AbstractTaakFormulier.TOELICHTING_FIELD)
+            .label(AbstractTaakFormulier.TOELICHTING_FIELD)
+            .readonly(this.readonly)
+            .maxlength(1000)
+            .build()]);
+    }
 }

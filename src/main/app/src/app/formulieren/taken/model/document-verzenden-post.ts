@@ -73,12 +73,6 @@ export class DocumentVerzendenPost extends AbstractTaakFormulier {
             .label(fields.VERZENDDATUM)
             .validators(Validators.required)
             .readonly(this.readonly)
-            .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
-            .id(fields.TOELICHTING)
-            .label(fields.TOELICHTING)
-            .maxlength(1000)
-            .readonly(this.readonly)
             .build()]
         );
     }

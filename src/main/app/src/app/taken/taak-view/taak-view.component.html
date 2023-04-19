@@ -57,13 +57,6 @@
                                                          [value]="taak.fataledatum | datum"
                                                          [icon]="fataledatumIcon"></zac-static-text>
                                     </div>
-
-                                    <div class="flex-1">
-                                        <zac-edit-tekst [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.wijzigen"
-                                                        [formField]="editFormFields.get('toelichting')"
-                                                        (onSave)="partialEditTaak($event, 'toelichting')">
-                                        </zac-edit-tekst>
-                                    </div>
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{'historie' | translate}}">
