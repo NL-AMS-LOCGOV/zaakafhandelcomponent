@@ -64,6 +64,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
     private documentListener: WebsocketListener;
+    private converteerButton: ButtonMenuItem = null;
 
     constructor(private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
@@ -96,6 +97,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                     this.toevoegenActies();
                     this.loadZaakInformatieobjecten();
                     this.loadHistorie();
+                    this.resetConvertKnop();
                 });
 
             this.loadHistorie();
@@ -178,11 +180,13 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
         if (this.infoObject.status === InformatieobjectStatus.DEFINITIEF && this.laatsteVersieInfoObject.rechten.wijzigen
             && FileFormatUtil.isOffice(this.infoObject.formaat)) {
-            this.menu.push(new ButtonMenuItem('actie.converteren', () => {
+            this.converteerButton = new ButtonMenuItem('actie.converteren', () => {
+                this.converteerButton.disabled = true;
+                this.utilService.setLoading(true);
                 this.informatieObjectenService.convertInformatieObjectToPDF(this.infoObject.uuid, this.zaak?.uuid)
-                    .subscribe(() => {
-                    });
-            }, 'picture_as_pdf'));
+                    .subscribe(() => {});
+            }, 'picture_as_pdf');
+            this.menu.push(this.converteerButton);
         }
     }
 
@@ -264,5 +268,10 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
             tap(() => this.websocketService.suspendListener(this.documentListener))
         );
+    }
+
+    private resetConvertKnop(): void {
+        this.converteerButton.disabled = false;
+        this.utilService.setLoading(false);
     }
 }
