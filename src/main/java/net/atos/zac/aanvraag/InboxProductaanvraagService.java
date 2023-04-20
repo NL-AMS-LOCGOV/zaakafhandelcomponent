@@ -21,7 +21,6 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.atos.client.zgw.shared.util.DateTimeUtil;
 import net.atos.zac.aanvraag.model.InboxProductaanvraag;
 import net.atos.zac.aanvraag.model.InboxProductaanvraagListParameters;
 import net.atos.zac.aanvraag.model.InboxProductaanvraagResultaat;
@@ -110,13 +109,10 @@ public class InboxProductaanvraagService {
 
         if (listParameters.getOntvangstdatum() != null) {
             if (listParameters.getOntvangstdatum().van() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get(InboxProductaanvraag.ONTVANGSTDATUM),
-                                                            DateTimeUtil.convertToDateTime(listParameters.getOntvangstdatum().van())));
+                predicates.add(builder.greaterThanOrEqualTo(root.get(InboxProductaanvraag.ONTVANGSTDATUM), listParameters.getOntvangstdatum().van()));
             }
             if (listParameters.getOntvangstdatum().tot() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get(InboxProductaanvraag.ONTVANGSTDATUM),
-                                                         DateTimeUtil.convertToDateTime(listParameters.getOntvangstdatum().tot()).plusDays(1)
-                                                                 .minusSeconds(1)));
+                predicates.add(builder.lessThanOrEqualTo(root.get(InboxProductaanvraag.ONTVANGSTDATUM), listParameters.getOntvangstdatum().tot()));
             }
         }
         return builder.and(predicates.toArray(new Predicate[0]));
