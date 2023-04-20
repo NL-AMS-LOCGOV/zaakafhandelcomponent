@@ -24,7 +24,6 @@ export class Goedkeuren extends AbstractTaakFormulier {
     private readonly GOEDKEUREN_ENUM_PREFIX: string = 'goedkeuren.';
 
     fields = {
-        TOELICHTING: 'toelichting',
         VRAAG: 'vraag',
         GOEDKEUREN: 'goedkeuren',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten',
@@ -33,7 +32,7 @@ export class Goedkeuren extends AbstractTaakFormulier {
 
     taakinformatieMapping = {
         uitkomst: this.fields.GOEDKEUREN,
-        opmerking: this.fields.TOELICHTING
+        opmerking: AbstractTaakFormulier.TOELICHTING_FIELD
     };
 
     constructor(translate: TranslateService,
@@ -88,13 +87,6 @@ export class Goedkeuren extends AbstractTaakFormulier {
             .options(this.getGoedkeurenOpties$())
             .validators(Validators.required)
             .readonly(this.readonly)
-            .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
-            .id(fields.TOELICHTING)
-            .label(fields.TOELICHTING)
-            .validators(Validators.required)
-            .readonly(this.readonly)
-            .maxlength(1000)
             .build()]
         );
     }
