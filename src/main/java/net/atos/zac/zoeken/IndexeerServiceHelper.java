@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -29,18 +30,6 @@ public class IndexeerServiceHelper {
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
-
-    private void markObjectForIndexing(final String objectId, final ZoekObjectType objectType, final boolean reindex) {
-        final ZoekIndexEntity entity = findMarkedObject(objectId);
-        if (entity != null) {
-            if (entity.getStatus() == (reindex ? REMOVE : ADD)) {
-                entity.setStatus(UPDATE);
-                entityManager.merge(entity);
-            }
-        } else {
-            entityManager.persist(new ZoekIndexEntity(objectId, objectType, ADD));
-        }
-    }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void markObjectForIndexing(final String objectId, final ZoekObjectType objectType) {
@@ -81,15 +70,6 @@ public class IndexeerServiceHelper {
         objectIds.forEach(this::removeMark);
     }
 
-    private ZoekIndexEntity findMarkedObject(final String objectId) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
-        final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
-        query.where(builder.equal(root.get(ZoekIndexEntity.OBJECT_ID), objectId));
-        final List<ZoekIndexEntity> list = entityManager.createQuery(query).getResultList();
-        return list.isEmpty() ? null : list.get(0);
-    }
-
     public List<ZoekIndexEntity> retrieveMarkedObjects(final ZoekObjectType objectType, final int rows) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
@@ -114,5 +94,33 @@ public class IndexeerServiceHelper {
 
     public long countMarkedObjects(final ZoekObjectType type) {
         return countMarkedObjects(type, null);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeMarks(final ZoekObjectType objectType) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaDelete<ZoekIndexEntity> query = builder.createCriteriaDelete(ZoekIndexEntity.class);
+        query.where(builder.equal(query.from(ZoekIndexEntity.class).get(ZoekIndexEntity.TYPE), objectType.toString()));
+        entityManager.createQuery(query).executeUpdate();
+    }
+
+    private void markObjectForIndexing(final String objectId, final ZoekObjectType objectType, final boolean reindex) {
+        final ZoekIndexEntity entity = findMarkedObject(objectId);
+        if (entity != null) {
+            if (entity.getStatus() == (reindex ? REMOVE : ADD)) {
+                entity.setStatus(UPDATE);
+                entityManager.merge(entity);
+            }
+        } else {
+            entityManager.persist(new ZoekIndexEntity(objectId, objectType, ADD));
+        }
+    }
+
+    private ZoekIndexEntity findMarkedObject(final String objectId) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
+        query.where(builder.equal(query.from(ZoekIndexEntity.class).get(ZoekIndexEntity.OBJECT_ID), objectId));
+        final List<ZoekIndexEntity> list = entityManager.createQuery(query).getResultList();
+        return list.isEmpty() ? null : list.get(0);
     }
 }

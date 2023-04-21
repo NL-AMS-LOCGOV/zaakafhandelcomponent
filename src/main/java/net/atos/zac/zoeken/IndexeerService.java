@@ -154,13 +154,17 @@ public class IndexeerService {
 
     private ZoekObject convertToZoekObject(final ZoekIndexEntity zoekIndexEntity,
             final AbstractZoekObjectConverter<? extends ZoekObject> converter) {
+        ZoekObject zoekObject = null;
         try {
-            return converter.convert(zoekIndexEntity.getObjectId());
+            zoekObject = converter.convert(zoekIndexEntity.getObjectId());
         } catch (final RuntimeException e) {
             LOG.log(WARNING, "[%s] '%s': %s".formatted(zoekIndexEntity.getType(), zoekIndexEntity.getObjectId(),
                                                        e.getMessage()));
-            return null;
         }
+        if (zoekObject == null) {
+            helper.removeMark(zoekIndexEntity.getObjectId());
+        }
+        return zoekObject;
     }
 
     private long addToSolrIndex(final Stream<ZoekObject> zoekObjecten) {
@@ -202,6 +206,7 @@ public class IndexeerService {
         herindexerenBezig.add(objectType);
         try {
             log(objectType, "Markeren voor herindexeren gestart...");
+            helper.removeMarks(objectType);
             markSolrEntitiesForRemoval(objectType);
             switch (objectType) {
                 case ZAAK -> markAllZakenForReindexing();
