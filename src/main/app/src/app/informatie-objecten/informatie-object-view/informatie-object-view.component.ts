@@ -38,6 +38,7 @@ import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-di
 import {Observable} from 'rxjs';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
+import {ZakenService} from '../../zaken/zaken.service';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -71,7 +72,8 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 private websocketService: WebsocketService,
                 private router: Router,
                 private translate: TranslateService,
-                private dialog: MatDialog) {
+                private dialog: MatDialog,
+                private zakenService: ZakenService) {
         super();
     }
 
@@ -189,6 +191,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     private loadZaakInformatieobjecten(): void {
         this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaakInformatieObjecten => {
             this.zaakInformatieObjecten = zaakInformatieObjecten;
+            this.loadZaak();
         });
     }
 
@@ -264,5 +267,19 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
             tap(() => this.websocketService.suspendListener(this.documentListener))
         );
+    }
+
+    /**
+     * Voor het geval dat er bij navigatie naar het enkelvoudiginformatieobject geen zaak meegegeven is,
+     * dan wordt deze via de verkorte zaak gegevens opgehaald.
+     *
+     * Als er ook geen verkorte zaak gegevens beschikbaar, dan is dit een document zonder zaak.
+     */
+    private loadZaak(): void {
+        if (!this.zaak && this.zaakInformatieObjecten && this.zaakInformatieObjecten.length > 0) {
+            this.zakenService.readZaakByID(this.zaakInformatieObjecten[0].zaakIdentificatie).subscribe(zaak => {
+               this.zaak = zaak;
+            });
+        }
     }
 }
