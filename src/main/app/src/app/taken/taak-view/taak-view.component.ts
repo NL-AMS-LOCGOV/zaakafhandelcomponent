@@ -286,6 +286,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.taak.taakdocumenten.push(informatieobject.uuid);
-        this.formulier.refreshTaakdocumenten();
+        this.formulier.refreshTaakdocumentenEnBijlagen();
     }
 }
