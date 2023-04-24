@@ -253,7 +253,6 @@ public class InformatieObjectenRESTService {
         return zrcClientService.listZaakinformatieobjecten(zaak).stream()
                 .map(zaakinformatieobject -> drcClientService.readEnkelvoudigInformatieobject(zaakinformatieobject.getInformatieobject()))
                 .filter(this::isVerzendenToegestaan)
-                .filter(informatieobject -> policyService.readDocumentRechten(informatieobject, zaak).getWijzigen())
                 .map(informatieobject -> informatieobjectConverter.convertToREST(informatieobject, zaak)).collect(Collectors.toList());
     }
 
