@@ -11,33 +11,31 @@
                     <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <zac-skeleton-loader [loading$]="bedrijf$"
-                                         [options]="{layout: skeletonLoaderLayout.FIELDS, fields:7, fieldsPerRow:1}">
                         <div id="bedrijfsgegevens" class="content flex-row flex-wrap space-between">
                             <zac-static-text [label]="'handelsnaam' | translate"
-                                             [value]="bedrijf?.naam"></zac-static-text>
+                                             [value]="bedrijf.naam"></zac-static-text>
                             <zac-static-text [label]="'kvknummer' | translate"
-                                             [value]="bedrijf?.kvkNummer"></zac-static-text>
-                            <zac-static-text *ngIf="vestigingsnummer" [label]="'vestigingsnummer' | translate"
-                                             [value]="bedrijf?.vestigingsnummer"></zac-static-text>
-                            <zac-static-text *ngIf="rsin" [label]="'rsin' | translate"
-                                             [value]="bedrijf?.rsin"></zac-static-text>
+                                             [value]="bedrijf.kvkNummer"></zac-static-text>
+                            <zac-static-text *ngIf="bedrijf.vestigingsnummer" [label]="'vestigingsnummer' | translate"
+                                             [value]="bedrijf.vestigingsnummer"></zac-static-text>
+                            <zac-static-text *ngIf="bedrijf.rsin" [label]="'rsin' | translate"
+                                             [value]="bedrijf.rsin"></zac-static-text>
                             <zac-static-text [label]="'type' | translate"
-                                             [value]="bedrijf?.type | translate"></zac-static-text>
+                                             [value]="bedrijf.type | translate"></zac-static-text>
                             <zac-static-text [label]="'adres' | translate"
-                                             [value]="bedrijf?.adres | empty"></zac-static-text>
+                                             [value]="bedrijf.adres | empty"></zac-static-text>
                             <zac-static-text [label]="'telefoonnummer' | translate"
-                                             [value]="bedrijf?.telefoonnummer | empty"></zac-static-text>
+                                             [value]="bedrijf.telefoonnummer | empty"></zac-static-text>
                             <zac-static-text [label]="'emailadres' | translate"
-                                             [value]="bedrijf?.emailadres | empty"></zac-static-text>
+                                             [value]="bedrijf.emailadres | empty"></zac-static-text>
                         </div>
-                    </zac-skeleton-loader>
                 </mat-card-content>
             </mat-card>
 
             <div class="flex-1 w75">
-                <zac-klant-zaken-tabel [klantIdentificatie]="bedrijfIdentificatie"></zac-klant-zaken-tabel>
-                <zac-klant-contactmomenten-tabel *ngIf="vestigingsnummer" [vestigingsnummer]="vestigingsnummer"></zac-klant-contactmomenten-tabel>
+                <zac-klant-zaken-tabel [klantIdentificatie]="bedrijf.identificatie"></zac-klant-zaken-tabel>
+                <zac-klant-contactmomenten-tabel *ngIf="bedrijf.vestigingsnummer"
+                                                 [vestigingsnummer]="bedrijf.vestigingsnummer"></zac-klant-contactmomenten-tabel>
             </div>
         </div>
 

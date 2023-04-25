@@ -77,14 +77,9 @@
                                  (edit)="addOrEditZaakInitiator()"
                                  (delete)="deleteInitiator()">
             </zac-persoongegevens>
-            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='VN'"
-                                  [vestigingsnummer]="zaak.initiatorIdentificatie"
-                                  [isVerwijderbaar]="zaak.rechten.behandelen"
-                                  (edit)="addOrEditZaakInitiator()"
-                                  [isWijzigbaar]="zaak.rechten.behandelen"
-                                  (delete)="deleteInitiator()">
-            </zac-bedrijfsgegevens>
-            <zac-bedrijfsgegevens class="w100 flex-1" *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
+            <zac-bedrijfsgegevens class="w100 flex-1"
+                                  *ngIf="zaak.initiatorIdentificatieType==='VN' || zaak.initiatorIdentificatieType==='RSIN'"
+                                  [rsinOfVestigingsnummer]="zaak.initiatorIdentificatie"
                                   [isVerwijderbaar]="zaak.rechten.behandelen"
                                   (edit)="addOrEditZaakInitiator()"
                                   [isWijzigbaar]="zaak.rechten.behandelen"
@@ -511,9 +506,8 @@
                                     class="collapsed-row"></tr>
                                 <tr class="mat-row" *matNoDataRow>
                                     <td class="mat-cell" colspan="9">
-                                        <zac-skeleton-loader [loading$]="taken$" [options]="{layout:skeletonLayout.TABLE}">
-                                            <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                                        </zac-skeleton-loader>
+                                        <p *ngIf="takenLoading">{{'msg.loading' | translate}}</p>
+                                        <p *ngIf="!takenLoading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                                     </td>
                                 </tr>
                             </table>

@@ -3,36 +3,33 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:skeletonLayout.CARD, fields:4, fieldsPerRow:2}">
-    <mat-card class="zaak-gegevens flex-fill-col" *ngIf="zaak$ | async as zaak">
-        <mat-card-header>
-            <mat-card-title-group>
-                <mat-card-title>{{'zaak' | translate}} {{zaak.identificatie}}</mat-card-title>
-                <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
-                <a [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
-                   mat-icon-button>
-                    <mat-icon>visibility</mat-icon>
-                </a>
-            </mat-card-title-group>
-        </mat-card-header>
+<mat-card class="zaak-gegevens flex-fill-col">
+    <mat-card-header>
+        <mat-card-title-group>
+            <mat-card-title>{{'zaak' | translate}} {{zaak.identificatie}}</mat-card-title>
+            <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
+            <a [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+               mat-icon-button>
+                <mat-icon>visibility</mat-icon>
+            </a>
+        </mat-card-title-group>
+    </mat-card-header>
 
-        <mat-card-content>
-            <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
-            <div class="content flex-row flex-wrap flex-col-xs">
+    <mat-card-content>
+        <div class="content flex-row flex-wrap flex-col-xs">
+            <zac-static-text class="flex-1 w50" [label]="'status' | translate"
+                             [value]="zaak.status | empty:'naam'"></zac-static-text>
 
-                <zac-static-text class="flex-1 w50" [label]="'status' | translate"
-                                 [value]="zaak.status | empty:'naam'"></zac-static-text>
+            <zac-static-text class="flex-1 w50" [label]="'startdatum' | translate"
+                             [value]="zaak.startdatum | datum"></zac-static-text>
 
-                <zac-static-text class="flex-1 w50" [label]="'startdatum' | translate"
-                                 [value]="zaak.startdatum | datum"></zac-static-text>
+            <zac-static-text class="flex-1 w50" [label]="'einddatumGepland' | translate"
+                             [value]="zaak.einddatumGepland | datum"
+                             [icon]="einddatumGeplandIcon"></zac-static-text>
 
-                <zac-static-text class="flex-1 w50" [label]="'einddatumGepland' | translate"
-                                 [value]="zaak.einddatumGepland | datum"
-                                 [icon]="einddatumGeplandIcon"></zac-static-text>
+            <zac-static-text class="toelichting-field flex-1 w50" [label]="'toelichting' | translate"
+                             [value]="zaak.toelichting"></zac-static-text>
+        </div>
+    </mat-card-content>
+</mat-card>
 
-                <zac-static-text class="toelichting-field flex-1 w50" [label]="'toelichting' | translate"
-                                 [value]="zaak.toelichting"></zac-static-text>
-            </div>
-        </mat-card-content>
-    </mat-card>
-</zac-skeleton-loader>

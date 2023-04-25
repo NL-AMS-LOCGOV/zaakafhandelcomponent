@@ -93,7 +93,7 @@ public class KlantenRESTService {
     public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) throws ExecutionException, InterruptedException {
         return brpClientService.findPersoonAsync(bsn)
                 .thenCombine(klantenClientService.findPersoonAsync(bsn),
-                             (persoon, klant) -> convertToRESTPersoon(persoon, klant))
+                             this::convertToRESTPersoon)
                 .toCompletableFuture()
                 .get();
     }
@@ -119,7 +119,7 @@ public class KlantenRESTService {
             throws ExecutionException, InterruptedException {
         return kvkClientService.findVestigingAsync(vestigingsnummer)
                 .thenCombine(klantenClientService.findVestigingAsync(vestigingsnummer),
-                             (vestiging, klant) -> convertToRESTBedrijf(vestiging, klant))
+                             this::convertToRESTBedrijf)
                 .toCompletableFuture()
                 .get();
     }
@@ -128,7 +128,7 @@ public class KlantenRESTService {
         return vestiging
                 .map(bedrijfConverter::convert)
                 .map(restBedrijf -> (RESTBedrijf) addKlantData(restBedrijf, klant))
-                .orElseGet(() -> new RESTBedrijf());
+                .orElseGet(RESTBedrijf::new);
     }
 
     @GET
@@ -136,7 +136,7 @@ public class KlantenRESTService {
     public RESTBedrijf readRechtspersoon(@PathParam("rsin") final String rsin) {
         return kvkClientService.findRechtspersoon(rsin)
                 .map(bedrijfConverter::convert)
-                .orElseGet(() -> new RESTBedrijf());
+                .orElseGet(RESTBedrijf::new);
     }
 
     @PUT
