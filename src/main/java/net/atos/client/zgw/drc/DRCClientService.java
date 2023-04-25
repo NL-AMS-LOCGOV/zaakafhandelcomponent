@@ -16,9 +16,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
@@ -37,10 +35,6 @@ import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
  */
 @ApplicationScoped
 public class DRCClientService {
-
-    @Inject
-    @ConfigProperty(name = "ZGW_API_CLIENT_MP_REST_URL")
-    private String getZgwApiClientMpRestUrl;
 
     @Inject
     @RestClient
@@ -95,10 +89,10 @@ public class DRCClientService {
         return createInvocationBuilder(enkelvoudigInformatieobjectURI).get(EnkelvoudigInformatieobject.class);
     }
 
-    public EnkelvoudigInformatieobjectWithInhoudAndLock updateEnkelvoudigInformatieobject(final UUID uuid, final String toelichting,
-            final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieObjectWithInhoudAndLock) {
+    public EnkelvoudigInformatieobjectWithInhoudAndLock updateEnkelvoudigInformatieobject(final UUID uuid,
+            final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobject, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieObjectWithInhoudAndLock);
+        return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieobject);
     }
 
     /**
@@ -132,7 +126,8 @@ public class DRCClientService {
         final Response response = drcClient.enkelvoudigInformatieobjectDownload(enkelvoudigInformatieobjectUUID);
         if (!response.bufferEntity()) {
             throw new RuntimeException(
-                    String.format("Content of enkelvoudig informatieobject with uuid '%s' could not be buffered.", enkelvoudigInformatieobjectUUID.toString()));
+                    String.format("Content of enkelvoudig informatieobject with uuid '%s' could not be buffered.",
+                                  enkelvoudigInformatieobjectUUID.toString()));
         }
         return (ByteArrayInputStream) response.getEntity();
     }
@@ -144,11 +139,14 @@ public class DRCClientService {
      * @param versie                          Required version
      * @return Content of {@link EnkelvoudigInformatieobject}.
      */
-    public ByteArrayInputStream downloadEnkelvoudigInformatieobjectVersie(final UUID enkelvoudigInformatieobjectUUID, final Integer versie) {
-        final Response response = drcClient.enkelvoudigInformatieobjectDownloadVersie(enkelvoudigInformatieobjectUUID, versie);
+    public ByteArrayInputStream downloadEnkelvoudigInformatieobjectVersie(final UUID enkelvoudigInformatieobjectUUID,
+            final Integer versie) {
+        final Response response = drcClient.enkelvoudigInformatieobjectDownloadVersie(enkelvoudigInformatieobjectUUID,
+                                                                                      versie);
         if (!response.bufferEntity()) {
-            throw new RuntimeException(String.format("Content of enkelvoudig informatieobject with uuid '%s' and version '%d' could not be buffered.",
-                                                     enkelvoudigInformatieobjectUUID.toString(), versie));
+            throw new RuntimeException(String.format(
+                    "Content of enkelvoudig informatieobject with uuid '%s' and version '%d' could not be buffered.",
+                    enkelvoudigInformatieobjectUUID.toString(), versie));
         }
         return (ByteArrayInputStream) response.getEntity();
     }
@@ -169,25 +167,18 @@ public class DRCClientService {
      * @param filter {@link EnkelvoudigInformatieobjectListParameters}.
      * @return List of {@EnkelvoudigInformatieobject} instances.
      */
-    public Results<EnkelvoudigInformatieobject> listEnkelvoudigInformatieObjecten(final EnkelvoudigInformatieobjectListParameters filter) {
+    public Results<EnkelvoudigInformatieobject> listEnkelvoudigInformatieObjecten(
+            final EnkelvoudigInformatieobjectListParameters filter) {
         return drcClient.enkelvoudigInformatieobjectList(filter);
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud createEnkelvoudigInformatieobject(final EnkelvoudigInformatieobjectWithInhoud informatieobject) {
+    public EnkelvoudigInformatieobjectWithInhoud createEnkelvoudigInformatieobject(
+            final EnkelvoudigInformatieobjectWithInhoud informatieobject) {
         return drcClient.enkelvoudigInformatieobjectCreate(informatieobject);
     }
 
-    public Gebruiksrechten createGebruiksrechten(final Gebruiksrechten gebruiksrechten) {
-        return drcClient.gebruiksrechtenCreate(gebruiksrechten);
-    }
-
-    private String generateLockId(final UUID enkelvoudigInformatieobjectUUID, final String lockOwner) {
-        return enkelvoudigInformatieobjectUUID.toString() + ';' + lockOwner;
-    }
-
-    public URI createEnkelvoudigInformatieObjectURL(final UUID enkelvoudigInformatieObjectUrl) {
-        return UriBuilder.fromUri(getZgwApiClientMpRestUrl).path(DRCClient.class)
-                .path(DRCClient.class, "enkelvoudigInformatieobjectRead").build(enkelvoudigInformatieObjectUrl);
+    public void createGebruiksrechten(final Gebruiksrechten gebruiksrechten) {
+        drcClient.gebruiksrechtenCreate(gebruiksrechten);
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

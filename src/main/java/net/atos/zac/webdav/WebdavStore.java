@@ -21,9 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectUpdateService;
 import net.atos.zac.authentication.SecurityUtil;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
@@ -32,7 +31,7 @@ public class WebdavStore implements IWebdavStore {
 
     private static final StoredObject folderStoredObject;
 
-    private static final String TOELICHTING = "Document bewerkt";
+    private static final String UPDATE_INHOUD_TOELICHTING = "Document bewerkt";
 
     static {
         folderStoredObject = new StoredObject();
@@ -45,18 +44,18 @@ public class WebdavStore implements IWebdavStore {
      */
     private static final Map<String, StoredObject> fileStoredObjectMap = Collections.synchronizedMap(new LRUMap<>(100));
 
-    private WebdavHelper webdavHelper;
+    private final WebdavHelper webdavHelper;
 
-    private DRCClientService drcClientService;
+    private final DRCClientService drcClientService;
 
-    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
+    private final EnkelvoudigInformatieObjectUpdateService enkelvoudigInformatieObjectUpdateService;
 
     // De dummy parameter is nodig omdat de constructie waarmee deze class wordt geinstantieerd deze parameter verwacht
     public WebdavStore(final File dummy) {
         webdavHelper = CDI.current().select(WebdavHelper.class).get();
         drcClientService = CDI.current().select(DRCClientService.class).get();
-        enkelvoudigInformatieObjectLockService =
-                CDI.current().select(EnkelvoudigInformatieObjectLockService.class).get();
+        enkelvoudigInformatieObjectUpdateService =
+                CDI.current().select(EnkelvoudigInformatieObjectUpdateService.class).get();
     }
 
     @Override
@@ -83,7 +82,8 @@ public class WebdavStore implements IWebdavStore {
     public InputStream getResourceContent(final ITransaction transaction, final String resourceUri) {
         final String token = extraheerToken(resourceUri);
         if (StringUtils.isNotEmpty(token)) {
-            final UUID enkelvoudigInformatieobjectUUID = webdavHelper.readGegevens(token).enkelvoudigInformatieibjectUUID();
+            final UUID enkelvoudigInformatieobjectUUID = webdavHelper.readGegevens(token)
+                    .enkelvoudigInformatieibjectUUID();
             return drcClientService.downloadEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
         } else {
             return null;
@@ -91,39 +91,22 @@ public class WebdavStore implements IWebdavStore {
     }
 
     @Override
-    public long setResourceContent(final ITransaction transaction, final String resourceUri, final InputStream content, final String contentType,
-            final String characterEncoding) {
+    public long setResourceContent(final ITransaction transaction, final String resourceUri, final InputStream content,
+            final String contentType, final String characterEncoding) {
         final String token = extraheerToken(resourceUri);
         if (StringUtils.isNotEmpty(token)) {
             final WebdavHelper.Gegevens webdavGegevens = webdavHelper.readGegevens(token);
-            boolean tempLock = false;
             try {
-                SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(), webdavGegevens.loggedInUser());
-                final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
-                        drcClientService.readEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID());
-                final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
-                if (enkelvoudigInformatieobject.getLocked()) {
-                    enkelvoudigInformatieObjectLock =
-                            enkelvoudigInformatieObjectLockService.readLock(enkelvoudigInformatieobject.getUUID());
-                } else {
-                    tempLock = true;
-                    enkelvoudigInformatieObjectLock =
-                            enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
-                                                                              webdavGegevens.loggedInUser().getId());
-                }
-
-                final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-                enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
-                enkelvoudigInformatieobjectWithInhoudAndLock.setInhoud(IOUtils.toByteArray(content));
-                return drcClientService.updateEnkelvoudigInformatieobject(
-                        webdavGegevens.enkelvoudigInformatieibjectUUID(), TOELICHTING,
-                        enkelvoudigInformatieobjectWithInhoudAndLock).getBestandsomvang();
-            } catch (final IOException ioException) {
-                throw new RuntimeException(ioException);
+                SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(),
+                                             webdavGegevens.loggedInUser());
+                final var update = new EnkelvoudigInformatieobjectWithInhoudAndLock();
+                update.setInhoud(IOUtils.toByteArray(content));
+                return enkelvoudigInformatieObjectUpdateService.updateEnkelvoudigInformatieObject(
+                        webdavGegevens.enkelvoudigInformatieibjectUUID(), update, UPDATE_INHOUD_TOELICHTING)
+                        .getBestandsomvang();
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
             } finally {
-                if (tempLock) {
-                    enkelvoudigInformatieObjectLockService.deleteLock(webdavGegevens.enkelvoudigInformatieibjectUUID());
-                }
                 fileStoredObjectMap.remove(token);
             }
         } else {
@@ -167,8 +150,10 @@ public class WebdavStore implements IWebdavStore {
 
     private StoredObject getFileStoredObject(final String token) {
         return fileStoredObjectMap.computeIfAbsent(token, key -> {
-            final UUID enkelvoudigInformatieobjectUUID = webdavHelper.readGegevens(token).enkelvoudigInformatieibjectUUID();
-            final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
+            final UUID enkelvoudigInformatieobjectUUID = webdavHelper.readGegevens(token)
+                    .enkelvoudigInformatieibjectUUID();
+            final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
+                    enkelvoudigInformatieobjectUUID);
             final StoredObject storedObject = new StoredObject();
             storedObject.setFolder(false);
             storedObject.setCreationDate(convertToDate(enkelvoudigInformatieobject.getCreatiedatum()));

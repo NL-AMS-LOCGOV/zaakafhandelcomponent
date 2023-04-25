@@ -57,8 +57,7 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectOndertekenService;
-import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectVerzendenService;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectUpdateService;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
@@ -70,7 +69,6 @@ import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
@@ -141,16 +139,10 @@ public class TakenRESTService {
     private PolicyService policyService;
 
     @Inject
-    private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
-
-    @Inject
-    private EnkelvoudigInformatieObjectVerzendenService enkelvoudigInformatieObjectVerzendenService;
+    private EnkelvoudigInformatieObjectUpdateService enkelvoudigInformatieObjectUpdateService;
 
     @Inject
     private OpschortenZaakHelper opschortenZaakHelper;
-
-    @Inject
-    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @GET
     @Path("zaak/{zaakUUID}")
@@ -380,7 +372,7 @@ public class TakenRESTService {
                     assertPolicy(enkelvoudigInformatieobject.getOndertekening() == null &&
                                          policyService.readDocumentRechten(enkelvoudigInformatieobject, zaak)
                                                  .getOndertekenen());
-                    enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(
+                    enkelvoudigInformatieObjectUpdateService.ondertekenEnkelvoudigInformatieObject(
                             enkelvoudigInformatieobject.getUUID());
                 }));
     }
@@ -411,7 +403,7 @@ public class TakenRESTService {
     private void setVerzenddatumEnkelvoudigInformatieObject(final UUID uuid, final LocalDate verzenddatum,
             final String toelichting) {
         final var informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        enkelvoudigInformatieObjectVerzendenService.verzendenEnkelvoudigInformatieObject(informatieobject, verzenddatum,
-                                                                                         toelichting);
+        enkelvoudigInformatieObjectUpdateService.verzendEnkelvoudigInformatieObject(informatieobject.getUUID(),
+                                                                                    verzenddatum, toelichting);
     }
 }
