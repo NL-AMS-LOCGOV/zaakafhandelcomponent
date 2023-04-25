@@ -114,8 +114,15 @@
                 <zac-zaak-verkort *ngIf="zaak" class="zaak-card" [zaak]="zaak"></zac-zaak-verkort>
             </div>
         </div>
-
         <zac-zaak-documenten *ngIf="initialized" [zaak]="zaak"></zac-zaak-documenten>
+        <mat-card *ngIf="!initialized">
+            <mat-card-header>
+                <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-progress-bar mode="query"></mat-progress-bar>
+            </mat-card-content>
+        </mat-card>
 
     </mat-drawer-content>
 </mat-drawer-container>
