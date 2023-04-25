@@ -17,17 +17,17 @@
 
     <mat-card-content>
         <div class="content flex-row flex-wrap flex-col-xs">
-            <zac-static-text class="flex-1 w50" [label]="'status' | translate"
+            <zac-static-text class="flex-1 w33" [label]="'status' | translate"
                              [value]="zaak.status | empty:'naam'"></zac-static-text>
 
-            <zac-static-text class="flex-1 w50" [label]="'startdatum' | translate"
+            <zac-static-text class="flex-1 w33" [label]="'startdatum' | translate"
                              [value]="zaak.startdatum | datum"></zac-static-text>
 
-            <zac-static-text class="flex-1 w50" [label]="'einddatumGepland' | translate"
+            <zac-static-text class="flex-1 w33" [label]="'einddatumGepland' | translate"
                              [value]="zaak.einddatumGepland | datum"
                              [icon]="einddatumGeplandIcon"></zac-static-text>
 
-            <zac-static-text class="toelichting-field flex-1 w50" [label]="'toelichting' | translate"
+            <zac-static-text class="toelichting-field flex-1 w100" [label]="'toelichting' | translate"
                              [value]="zaak.toelichting"></zac-static-text>
         </div>
     </mat-card-content>
