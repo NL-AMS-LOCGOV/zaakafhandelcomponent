@@ -3,17 +3,13 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-
-<mat-expansion-panel [expanded]="klantExpanded"
-                     (expandedChange)="klantExpandedChanged($event)">
+<mat-expansion-panel [expanded]="klantExpanded">
     <mat-expansion-panel-header>
         <mat-panel-title>
             {{'initiator.titel'| translate}}
         </mat-panel-title>
         <mat-panel-description>
-            <zac-skeleton-loader [loading$]="bedrijf$">
-                {{bedrijf?.naam}}
-            </zac-skeleton-loader>
+            {{bedrijf ? bedrijf.naam : ('msg.loading'| translate)}}
             <div class="flex-row">
                 <button *ngIf="bedrijf && isWijzigbaar" [title]="'actie.initiator.wijzigen' | translate" mat-icon-button
                         (click)="$event.stopPropagation(); edit.emit(bedrijf)">
@@ -29,28 +25,25 @@
                    title="{{ 'actie.bedrijf.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </a>
-                </div>
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-    <zac-skeleton-loader [loading$]="bedrijf$"
-                         [options]="{layout: skeletonLayout.FIELDS, fields:7, fieldsPerRow:7}">
-        <div id="bedrijfsgegevens" class="content flex-row flex-wrap">
-            <zac-static-text [label]="'handelsnaam' | translate"
-                             [value]="bedrijf?.naam"></zac-static-text>
-            <zac-static-text [label]="'kvknummer' | translate"
-                             [value]="bedrijf?.kvkNummer"></zac-static-text>
-            <zac-static-text *ngIf="vestigingsnummer" [label]="'vestigingsnummer' | translate"
-                             [value]="bedrijf?.vestigingsnummer"></zac-static-text>
-            <zac-static-text *ngIf="rsin" [label]="'rsin' | translate"
-                             [value]="bedrijf?.rsin"></zac-static-text>
-            <zac-static-text [label]="'type' | translate"
-                             [value]="bedrijf?.type | translate"></zac-static-text>
-            <zac-static-text [label]="'adres' | translate"
-                             [value]="bedrijf?.adres | empty"></zac-static-text>
-            <zac-static-text [label]="'telefoonnummer' | translate"
-                             [value]="bedrijf?.telefoonnummer | empty"></zac-static-text>
-            <zac-static-text [label]="'emailadres' | translate"
-                             [value]="bedrijf?.emailadres | empty"></zac-static-text>
-        </div>
-    </zac-skeleton-loader>
-    </mat-expansion-panel>
+            </div>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div *ngIf="bedrijf" id="bedrijfsgegevens" class="content flex-row flex-wrap">
+        <zac-static-text [label]="'handelsnaam' | translate"
+                         [value]="bedrijf.naam"></zac-static-text>
+        <zac-static-text [label]="'kvknummer' | translate"
+                         [value]="bedrijf.kvkNummer"></zac-static-text>
+        <zac-static-text *ngIf="bedrijf.vestigingsnummer" [label]="'vestigingsnummer' | translate"
+                         [value]="bedrijf.vestigingsnummer"></zac-static-text>
+        <zac-static-text *ngIf="bedrijf.rsin" [label]="'rsin' | translate"
+                         [value]="bedrijf.rsin"></zac-static-text>
+        <zac-static-text [label]="'type' | translate"
+                         [value]="bedrijf.type | translate"></zac-static-text>
+        <zac-static-text [label]="'adres' | translate"
+                         [value]="bedrijf.adres | empty"></zac-static-text>
+        <zac-static-text [label]="'telefoonnummer' | translate"
+                         [value]="bedrijf.telefoonnummer | empty"></zac-static-text>
+        <zac-static-text [label]="'emailadres' | translate"
+                         [value]="bedrijf.emailadres | empty"></zac-static-text>
+    </div>
+</mat-expansion-panel>

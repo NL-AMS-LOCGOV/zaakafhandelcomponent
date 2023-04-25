@@ -37,7 +37,6 @@ import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
 import {EditSelectComponent} from './edit/edit-select/edit-select.component';
 import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
-import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.component';
 import {DagenPipe} from './pipes/dagen.pipe';
 import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
 import {EditInputComponent} from './edit/edit-input/edit-input.component';
@@ -48,7 +47,6 @@ import {FacetFilterComponent} from './table-zoek-filters/facet-filter/facet-filt
 import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filter.component';
 import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
 import {ZaakIndicatiesComponent} from './indicaties/zaak-indicaties/zaak-indicaties.component';
-import {InformatieObjectIndicatiesComponent} from './indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 import {VersionComponent} from './version/version.component';
 import {SortPipe} from './dynamic-table/pipes/sort.pipe';
 import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/besluit-indicaties.component';
@@ -80,7 +78,6 @@ import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/beslui
         ColumnPickerComponent,
         TooltipListPipe,
         DocumentViewerComponent,
-        SkeletonLoaderComponent,
         DagenPipe,
         NotificationDialogComponent,
         ExportButtonComponent,
@@ -132,7 +129,6 @@ import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/beslui
         TooltipListPipe,
         DocumentViewerComponent,
         ColumnPickerComponent,
-        SkeletonLoaderComponent,
         DagenPipe,
         ExportButtonComponent,
         BesluitIndicatiesComponent,
