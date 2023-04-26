@@ -514,6 +514,8 @@
   "actie.document.verwijderen": "Document verwijderen",
   "actie.document.verwijderen.reden": "Reden waarom document wordt verwijderd",
   "actie.document.bekijken": "Document bekijken",
+  "actie.document.downloaden": "Document downloaden",
+  "actie.document.bewerken": "Document bewerken",
   "actie.downloaden": "Downloaden",
   "actie.downloaden.zip": "Downloaden als zip",
   "actie.aanvraagdocument.bekijken": "Aanvraagdocument bekijken",

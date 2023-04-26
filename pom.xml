@@ -627,6 +627,7 @@
                                 </ports>
                                 <entrypoint>
                                     <arg>java</arg>
+                                    <arg>--enable-preview</arg>
                                     <arg>-jar</arg>
                                     <arg>/app/classpath/zaakafhandelcomponent.jar</arg>
                                 </entrypoint>

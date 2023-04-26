@@ -22,7 +22,6 @@ import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder
 export class Advies extends AbstractTaakFormulier {
 
     fields = {
-        TOELICHTING: 'toelichtingAdvies',
         VRAAG: 'vraag',
         ADVIES: 'advies',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
@@ -30,7 +29,7 @@ export class Advies extends AbstractTaakFormulier {
 
     taakinformatieMapping = {
         uitkomst: this.fields.ADVIES,
-        opmerking: this.fields.TOELICHTING
+        opmerking: AbstractTaakFormulier.TOELICHTING_FIELD
     };
 
     constructor(
@@ -85,13 +84,6 @@ export class Advies extends AbstractTaakFormulier {
             .options(this.tabellen['ADVIES'])
             .validators(Validators.required)
             .readonly(this.readonly)
-            .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
-            .id(fields.TOELICHTING)
-            .label(fields.TOELICHTING)
-            .validators(Validators.required)
-            .readonly(this.readonly)
-            .maxlength(1000)
             .build()]
         );
     }

@@ -43,7 +43,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
         BODY: 'body',
         DATUMGEVRAAGD: 'datumGevraagd',
         DATUMGELEVERD: 'datumGeleverd',
-        TOELICHTING: 'toelichting',
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
         BIJLAGEN: 'bijlagen',
         ZAAK_OPSCHORTEN: 'zaakOpschorten',
@@ -52,7 +51,7 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
 
     taakinformatieMapping = {
         uitkomst: this.fields.AANVULLENDE_INFORMATIE,
-        opmerking: this.fields.TOELICHTING
+        opmerking: AbstractTaakFormulier.TOELICHTING_FIELD
     };
 
     mailtemplate$: Observable<Mailtemplate>;
@@ -195,12 +194,6 @@ export class AanvullendeInformatie extends AbstractTaakFormulier {
             .options(this.getAanvullendeInformatieOpties())
             .validators(Validators.required)
             .readonly(this.readonly)
-            .build()],
-            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING))
-            .id(fields.TOELICHTING)
-            .label(fields.TOELICHTING)
-            .readonly(this.readonly)
-            .maxlength(1000)
             .build()]);
 
         if (this.toonHervatten()) {

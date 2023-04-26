@@ -366,9 +366,11 @@ public class DocumentZoekObject implements ZoekObject {
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(DocumentIndicatie.class)));
     }
 
-    public void setIndicatie(final DocumentIndicatie indicatie, final boolean value) {
-        updateIndicaties(indicatie, value);
-        updateIndicatieVolgorde(indicatie, value);
+    public void setIndicatie(final DocumentIndicatie indicatie, final Boolean value) {
+        if (value != null) {
+            updateIndicaties(indicatie, value);
+            updateIndicatieVolgorde(indicatie, value);
+        }
     }
 
     private void updateIndicaties(DocumentIndicatie indicatie, boolean value) {

@@ -3,61 +3,36 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {KlantenService} from '../klanten.service';
 import {Persoon} from '../model/personen/persoon';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {Observable, share} from 'rxjs';
-import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-persoongegevens',
     styleUrls: ['./persoonsgegevens.component.less'],
     templateUrl: './persoonsgegevens.component.html'
 })
-export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
+export class PersoonsgegevensComponent implements OnChanges {
     @Input() isVerwijderbaar: boolean;
     @Input() isWijzigbaar: boolean;
     @Output() delete = new EventEmitter<Persoon>();
     @Output() edit = new EventEmitter<Persoon>();
-
-    private _bsn: string;
-    @Input() set bsn(identificatie: string) {
-        this._bsn = identificatie;
-        this.loadPersoon();
-    }
-
-    get bsn(): string {
-        return this._bsn;
-    }
+    @Input() bsn: string;
 
     persoon: Persoon;
-    persoon$: Observable<Persoon>;
-    skeletonLayout = SkeletonLayout;
     klantExpanded: boolean;
-    viewInitialized = false;
 
     constructor(private klantenService: KlantenService) {
     }
 
-    ngOnInit(): void {
-        this.loadPersoon();
-    }
-
-    private loadPersoon(): void {
-        this.persoon$ = this.klantenService.readPersoon(this._bsn).pipe(share());
-        this.persoon$.subscribe(persoon => {
-            this.persoon = persoon;
-        });
-    }
-
-    klantExpandedChanged($event: boolean): void {
-        if (this.viewInitialized) {
-            SessionStorageUtil.setItem('klantExpanded', $event ? 'true' : 'false');
+    ngOnChanges(): void {
+        this.persoon = null;
+        this.klantExpanded = false;
+        if (this.bsn) {
+            this.klantenService.readPersoon(this.bsn).subscribe(persoon => {
+                this.persoon = persoon;
+                this.klantExpanded = true;
+            });
         }
-    }
-
-    ngAfterViewInit() {
-        this.viewInitialized = true;
     }
 }

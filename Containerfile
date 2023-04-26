@@ -17,7 +17,7 @@ COPY --from=build /target/zaakafhandelcomponent.jar /
 COPY --from=build /build_timestamp.txt /
 
 # Start zaakafhandelcomponent
-ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent.jar", "--enable-preview"]
+ENTRYPOINT ["java", "--enable-preview", "-jar", "zaakafhandelcomponent.jar"]
 EXPOSE 8080 9990
 
 ARG buildId

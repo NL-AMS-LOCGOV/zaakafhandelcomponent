@@ -175,6 +175,7 @@ public class TakenRESTService {
         assertPolicy(takenService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigen());
         taakVariabelenService.setTaakdata(task, restTaak.taakdata);
         taakVariabelenService.setTaakinformatie(task, restTaak.taakinformatie);
+        updateTaak(restTaak);
         return restTaak;
     }
 
