@@ -598,9 +598,11 @@ public class InformatieObjectenRESTService {
                      officeConverterClientService.convertToPDF(documentInputStream, document.getBestandsnaam())) {
             final EnkelvoudigInformatieobjectWithInhoudAndLock pdf = new EnkelvoudigInformatieobjectWithInhoudAndLock();
             pdf.setLock(getLock(document));
-            pdf.setInhoud(pdfInputStream.readAllBytes());
+            final byte[] inhoud = pdfInputStream.readAllBytes();
+            pdf.setInhoud(inhoud);
             pdf.setFormaat(MEDIA_TYPE_PDF);
             pdf.setBestandsnaam(StringUtils.substringBeforeLast(document.getBestandsnaam(), ".") + ".pdf");
+            pdf.setBestandsomvang((long) inhoud.length);
             drcClientService.updateEnkelvoudigInformatieobject(document.getUUID(), TOELICHTING_PDF, pdf);
         } finally {
             if (tempLock) {

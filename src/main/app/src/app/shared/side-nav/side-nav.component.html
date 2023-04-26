@@ -11,17 +11,19 @@
         </h3>
         <mat-divider *ngSwitchCase="menuItemType.HEADER"></mat-divider>
 
-        <a mat-list-item *ngSwitchCase="menuItemType.LINK" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
+        <a mat-list-item *ngSwitchCase="menuItemType.LINK" [disabled]="menuItem.disabled"
+           routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       matListItemIcon>{{menuItem.icon}}</mat-icon>
             <div matListItemTitle>{{menuItem.title | translate}}</div>
         </a>
-        <a mat-list-item *ngSwitchCase="menuItemType.BUTTON" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
+        <a mat-list-item *ngSwitchCase="menuItemType.BUTTON" [disabled]="menuItem.disabled"
+           (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       matListItemIcon>{{menuItem.icon}}</mat-icon>
             <div matListItemTitle>{{menuItem.title | translate}}</div>
         </a>
-        <a mat-list-item *ngSwitchCase="menuItemType.HREF" [href]="asHrefMenuItem(menuItem).url">
+        <a mat-list-item *ngSwitchCase="menuItemType.HREF" [disabled]="menuItem.disabled" [href]="asHrefMenuItem(menuItem).url">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       matListItemIcon>{{menuItem.icon}}</mat-icon>
             <div matListItemTitle>{{menuItem.title | translate}}</div>
