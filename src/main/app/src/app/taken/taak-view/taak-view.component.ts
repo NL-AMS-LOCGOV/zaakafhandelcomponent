@@ -14,7 +14,7 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
@@ -42,6 +42,7 @@ import {NotificationDialogComponent, NotificationDialogData} from '../../shared/
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatDialog} from '@angular/material/dialog';
 import {Zaaktype} from '../../zaken/model/zaaktype';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -172,6 +173,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             .label('toelichting')
             .maxlength(1000)
             .build());
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden')
+                                                                    .label('reden')
+                                                                    .maxlength(80)
+                                                                    .build());
 
         this.fataledatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'errorTaakVerlopen_icon',
             'msg.datum.overschreden', 'error');
@@ -241,8 +246,9 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         } else {
             this.taak.groep = event['medewerker-groep'].groep;
             this.taak.behandelaar = event['medewerker-groep'].medewerker;
+            const reden: string = event['reden'];
             this.websocketService.suspendListener(this.taakListener);
-            this.takenService.toekennen(this.taak).subscribe(() => {
+            this.takenService.toekennen(this.taak, reden).subscribe(() => {
                 if (this.taak.behandelaar) {
                     this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
                 } else {

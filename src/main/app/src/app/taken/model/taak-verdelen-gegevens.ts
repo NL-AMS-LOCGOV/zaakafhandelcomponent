@@ -8,5 +8,6 @@ export class TaakVerdelenGegevens {
     taken: { taakId: string, zaakUuid: string }[];
     behandelaarGebruikersnaam: string;
     groepId: string;
+    reden: string;
 
 }

@@ -8,4 +8,5 @@ export class TaakToekennenGegevens {
     zaakUuid: string;
     groepId: string;
     behandelaarId: string;
+    reden: string;
 }

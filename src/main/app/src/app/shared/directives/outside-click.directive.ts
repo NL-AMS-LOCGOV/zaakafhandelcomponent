@@ -19,7 +19,7 @@ import {UtilService} from '../../core/service/util.service';
 })
 export class OutsideClickDirective implements OnInit, OnDestroy {
 
-    private static inclusions: string[] = ['mat-option-text'];
+    private static inclusions: string[] = ['mat-option-text', 'mdc-list-item__primary-text'];
 
     @Output('zacOutsideClick') outsideClick = new EventEmitter<MouseEvent>();
 
