@@ -253,10 +253,8 @@ public class RESTInformatieobjectConverter {
     }
 
     public EnkelvoudigInformatieobjectWithInhoudAndLock convert(
-            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens,
-            final String lock, final RESTFileUpload file) {
+            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens, final RESTFileUpload file) {
         final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-        enkelvoudigInformatieobjectWithInhoudAndLock.setLock(lock);
 
         if (restEnkelvoudigInformatieObjectVersieGegevens.status != null) {
             enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(
