@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+@import "src/variables";
+
 mat-slide-toggle {
   right: 30px;
   position: absolute;
@@ -55,4 +57,70 @@ mat-slide-toggle {
 
 .cdk-column-expandedTaakDetail zac-static-text {
   min-width: 150px;
+}
+
+.location-text {
+  margin: 5px;
+
+  .static-text-label {
+    font-size: small;
+    font-weight: 500;
+
+    .mat-icon {
+      font-size: 14px;
+      height: 14px;
+      width: 14px;
+      vertical-align: text-bottom;
+    }
+  }
+
+  .static-text-content {
+    min-height: 20px;
+    font-size: 14px;
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+
+    .edit-icon {
+      display: none;
+      background-color: @box-shadow-color-light;
+
+      .mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  &:hover {
+    .static-text-content {
+      cursor: pointer;
+      box-shadow: 0 0 0 1px @box-shadow-color-light;
+
+      .edit-icon {
+        display: flex;
+      }
+    }
+  }
+
+  &.readonly {
+
+    .static-text-label {
+      .mat-icon {
+        display: none;
+      }
+    }
+
+    .static-text-content {
+      &.nopanel {
+        cursor: default;
+        box-shadow: none;
+
+        .edit-icon {
+          display: none;
+        }
+      }
+    }
+  }
 }
