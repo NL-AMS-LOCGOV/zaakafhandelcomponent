@@ -35,16 +35,13 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {TaakStatus} from '../model/taak-status.enum';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
-import {Observable, share} from 'rxjs';
 import {Zaak} from '../../zaken/model/zaak';
 import {ZakenService} from '../../zaken/zaken.service';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatDialog} from '@angular/material/dialog';
+import {Zaaktype} from '../../zaken/model/zaaktype';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -57,8 +54,11 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('historieSort') historieSort: MatSort;
 
-    taak: Taak = new Taak();
-    zaak$: Observable<Zaak>;
+    taak: Taak;
+    zaak: Zaak;
+    formulier: AbstractTaakFormulier;
+    formConfig: FormConfig;
+
     menu: MenuItem[] = [];
     readonly sideNavAction = SideNavAction;
     action: SideNavAction;
@@ -68,9 +68,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editFormFields: Map<string, any> = new Map<string, any>();
     fataledatumIcon: TextIcon;
+    initialized = false;
 
-    formulier: AbstractTaakFormulier;
-    formConfig: FormConfig;
     posts: number = 0;
     private taakListener: WebsocketListener;
     private ingelogdeMedewerker: User;
@@ -91,9 +90,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     ngOnInit(): void {
         this.getIngelogdeMedewerker();
-        this.subscriptions$.push(this.route.data.subscribe(data => {
-            this.init(data['taak']);
-        }));
+        this.route.data.subscribe(data => {
+            this.createZaakFromTaak(data.taak);
+            this.init(data.taak, true);
+        });
     }
 
     ngAfterViewInit(): void {
@@ -101,7 +101,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.taakListener = this.websocketService.addListenerWithSnackbar(
             Opcode.ANY, ObjectType.TAAK, this.taak.id,
-            () => this.ophalenTaak());
+            () => this.reloadTaak());
 
         this.historieSrc.sortingDataAccessor = (item, property) => {
             switch (property) {
@@ -111,7 +111,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                     return item[property];
             }
         };
-
         this.historieSrc.sort = this.historieSort;
     }
 
@@ -128,10 +127,18 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setupMenu();
     }
 
-    private init(taak: Taak): void {
+    private init(taak: Taak, initZaak: boolean): void {
         this.initTaakGegevens(taak);
-        this.zaak$ = this.zakenService.readZaak(this.taak.zaakUuid).pipe(share());
-        this.zaak$.subscribe(zaak => this.createTaakForm(taak, zaak));
+        if (initZaak) {
+            this.zakenService.readZaak(this.taak.zaakUuid).subscribe(zaak => {
+                this.zaak = zaak;
+                this.initialized = true;
+                this.createTaakForm(taak, zaak);
+
+            });
+        } else {
+            this.createTaakForm(taak, this.zaak);
+        }
     }
 
     private createTaakForm(taak: Taak, zaak: Zaak): void {
@@ -144,9 +151,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.formConfig = null;
         }
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie)
-                             .behandelForm(taak, zaak)
-                             .build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak, zaak).build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
@@ -214,7 +219,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.taakListener);
         this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
-            this.init(taak);
+            this.init(taak, false);
             this.posts++;
         });
     }
@@ -224,7 +229,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.websocketService.suspendListener(this.taakListener);
             this.takenService.complete(this.formulier.getTaak(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.afgerond');
-                this.init(taak);
+                this.init(taak, false);
             });
         }
     }
@@ -243,7 +248,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                 } else {
                     this.utilService.openSnackbar('msg.vrijgegeven.taak');
                 }
-                this.init(this.taak);
+                this.init(this.taak, false);
             });
         }
     }
@@ -257,12 +262,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private ophalenTaak() {
-        this.subscriptions$.push(this.route.data.subscribe(data => {
-            this.takenService.readTaak(data['taak'].id).subscribe(taak => {
-                this.init(taak);
-            });
-        }));
+    private reloadTaak() {
+        this.takenService.readTaak(this.taak.id).subscribe(taak => {
+            this.init(taak, true);
+        });
     }
 
     private getIngelogdeMedewerker() {
@@ -276,7 +279,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => {
             this.taak.behandelaar = taak.behandelaar;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
-            this.init(this.taak);
+            this.init(this.taak, false);
         });
     }
 
@@ -286,6 +289,18 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.taak.taakdocumenten.push(informatieobject.uuid);
-        this.formulier.refreshTaakdocumenten();
+        this.formulier.refreshTaakdocumentenEnBijlagen();
+    }
+
+    /**
+     *  Zaak is nog niet geladen, beschikbare zaak-data uit de taak vast weergeven totdat de zaak is geladen
+     */
+    private createZaakFromTaak(taak: Taak): void {
+        const zaak = new Zaak();
+        zaak.identificatie = taak.zaakIdentificatie;
+        zaak.uuid = taak.zaakUuid;
+        zaak.zaaktype = new Zaaktype();
+        zaak.zaaktype.omschrijving = taak.zaaktypeOmschrijving;
+        this.zaak = zaak;
     }
 }

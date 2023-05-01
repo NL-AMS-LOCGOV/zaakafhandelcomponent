@@ -53,7 +53,7 @@ export abstract class AbstractTaakFormulier {
         this.readonly = readonly;
         this._initBehandelForm();
         this.initToelichtingVeld();
-        this.refreshTaakdocumenten();
+        this.refreshTaakdocumentenEnBijlagen();
     }
 
     protected abstract _initStartForm();
@@ -90,7 +90,7 @@ export abstract class AbstractTaakFormulier {
         return key in this.dataElementen ? this.dataElementen[key] : null;
     }
 
-    refreshTaakdocumenten() {
+    refreshTaakdocumentenEnBijlagen() {
         this.form.forEach((value, index) => {
             value.forEach(field => {
                 if (field.id === AbstractTaakFormulier.BIJLAGEN_FIELD) {
@@ -99,7 +99,8 @@ export abstract class AbstractTaakFormulier {
             });
         });
 
-        const taakDocumenten$ = this.getTaakdocumenten();
+        const bijlagen = this.dataElementen[AbstractTaakFormulier.BIJLAGEN_FIELD];
+        const taakDocumenten$ = this.getTaakdocumentenEnBijlagen(bijlagen);
 
         this.form.push(
             [new DocumentenLijstFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
@@ -113,7 +114,7 @@ export abstract class AbstractTaakFormulier {
         });
     }
 
-    private getTaakdocumenten(): Observable<EnkelvoudigInformatieobject[]> {
+    private getTaakdocumentenEnBijlagen(bijlagen: string): Observable<EnkelvoudigInformatieobject[]> {
         const zoekParameters = new InformatieobjectZoekParameters();
         zoekParameters.zaakUUID = this.zaak.uuid;
         zoekParameters.informatieobjectUUIDs = [];
@@ -123,6 +124,10 @@ export abstract class AbstractTaakFormulier {
                 zoekParameters.informatieobjectUUIDs.push(uuid);
             });
         }
+
+        bijlagen?.split(';').forEach(uuid => {
+            zoekParameters.informatieobjectUUIDs.push(uuid);
+        });
 
         return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
     }

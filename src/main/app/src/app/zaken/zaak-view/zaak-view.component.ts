@@ -24,9 +24,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
-import {
-    TextareaFormFieldBuilder
-} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {IdentityService} from '../../identity/identity.service';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -39,9 +37,7 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
-import {
-    SelectFormFieldBuilder
-} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
@@ -55,14 +51,11 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {forkJoin, Observable, share, Subscription} from 'rxjs';
+import {forkJoin} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -73,12 +66,9 @@ import {ZaakBetrokkene} from '../model/zaak-betrokkene';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {
-    MedewerkerGroepFieldBuilder
-} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
-import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
 import {Besluit} from '../model/besluit';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
@@ -93,7 +83,6 @@ import {GeometryGegevens} from '../model/geometry-gegevens';
     animations: [detailExpand]
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
-    readonly skeletonLayout = SkeletonLayout;
     readonly indicatiesLayout = IndicatiesLayout;
     zaak: Zaak;
     zaakOpschorting: ZaakOpschorting;
@@ -103,11 +92,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     action: SideNavAction;
     teWijzigenBesluit: Besluit;
 
-    taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
     allTakenExpanded: boolean = false;
     toonAfgerondeTaken = false;
     takenFilter: any = {};
+    takenLoading = false;
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'fataledatum', 'groep', 'behandelaar', 'id'];
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
@@ -130,8 +119,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakBesluitenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
     private ingelogdeMedewerker: LoggedInUser;
-    private dialogSubscriptions: Subscription[] = [];
     private datumPipe = new DatumPipe('nl');
+
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -219,7 +208,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         super.ngAfterViewInit();
 
         this.subscriptions$.push(this.actionsSidenav.openedChange.subscribe(opened => {
-            if (!opened && this.action == SideNavAction.ZOEK_LOCATIE) {
+            if (!opened && this.action === SideNavAction.ZOEK_LOCATIE) {
                 this.action = null;
             }
         }));
@@ -506,10 +495,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.dialog.open(userEventListenerDialog.dialogComponent, {
             data: userEventListenerDialog.dialogData
         }).afterClosed().subscribe(result => {
-            for (const subscription of this.dialogSubscriptions) {
-                subscription.unsubscribe();
-            }
-            this.dialogSubscriptions.length = 0;
             if (result) {
                 if (result === 'openBesluitVastleggen') {
                     this.actionsSidenav.open();
@@ -743,17 +728,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadTaken(): void {
-        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid)
-                          .pipe(
-                              share(),
-                              map(values => values.map(value => new ExpandableTableData(value)))
-                          );
-        this.taken$.subscribe(taken => {
-            taken = taken.sort((a, b) => a.data.fataledatum?.localeCompare(b.data.fataledatum) ||
-                a.data.creatiedatumTijd?.localeCompare(b.data.creatiedatumTijd));
-            this.takenDataSource.data = taken;
-            this.filterTakenOpStatus();
-        });
+        this.takenLoading = true;
+        this.takenService.listTakenVoorZaak(this.zaak.uuid)
+            .pipe(map(values => values.map(value => new ExpandableTableData(value))))
+            .subscribe(taken => {
+                taken = taken.sort((a, b) => a.data.fataledatum?.localeCompare(b.data.fataledatum) ||
+                    a.data.creatiedatumTijd?.localeCompare(b.data.creatiedatumTijd));
+                this.takenDataSource.data = taken;
+                this.filterTakenOpStatus();
+                this.takenLoading = false;
+            });
     }
 
     expandTaken(expand: boolean): void {

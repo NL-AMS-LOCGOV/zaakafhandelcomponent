@@ -246,7 +246,6 @@ public class InformatieObjectenRESTService {
                 .map(zaakinformatieobject -> drcClientService.readEnkelvoudigInformatieobject(
                         zaakinformatieobject.getInformatieobject()))
                 .filter(this::isVerzendenToegestaan)
-                .filter(informatieobject -> policyService.readDocumentRechten(informatieobject, zaak).getWijzigen())
                 .map(informatieobject -> informatieobjectConverter.convertToREST(informatieobject, zaak))
                 .collect(Collectors.toList());
     }
@@ -574,9 +573,11 @@ public class InformatieObjectenRESTService {
              final ByteArrayInputStream pdfInputStream =
                      officeConverterClientService.convertToPDF(documentInputStream, document.getBestandsnaam())) {
             final EnkelvoudigInformatieobjectWithInhoudAndLock pdf = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-            pdf.setInhoud(pdfInputStream.readAllBytes());
+            final byte[] inhoud = pdfInputStream.readAllBytes();
+            pdf.setInhoud(inhoud);
             pdf.setFormaat(MEDIA_TYPE_PDF);
             pdf.setBestandsnaam(StringUtils.substringBeforeLast(document.getBestandsnaam(), ".") + ".pdf");
+            pdf.setBestandsomvang((long) inhoud.length);
             enkelvoudigInformatieObjectUpdateService.updateEnkelvoudigInformatieObject(document.getUUID(), pdf,
                                                                                        TOELICHTING_PDF);
         }

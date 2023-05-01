@@ -14,14 +14,16 @@
     <mat-drawer-content>
 
         <div class="flex-row flex-wrap gap-10">
-            <mat-card *ngIf="formulier" class="taak-formulier w50 flex">
+            <mat-card class="taak-formulier w50 flex">
                 <mat-card-content>
                     <div class="form">
-                        <mfb-form (formPartial)="onFormPartial($event)"
+                        <mfb-form *ngIf="formulier"
+                                  (formPartial)="onFormPartial($event)"
                                   (formSubmit)="onFormSubmit($event)"
                                   [formFields]="formulier.form"
                                   [config]="formConfig"
                                   [submitted]="posts"></mfb-form>
+                        <mat-progress-bar *ngIf="!formulier" mode="query"></mat-progress-bar>
                     </div>
                 </mat-card-content>
             </mat-card>
@@ -109,12 +111,18 @@
                     </mat-card-content>
                 </mat-card>
 
-                <zac-zaak-verkort class="zaak-card" [zaak$]="zaak$"></zac-zaak-verkort>
+                <zac-zaak-verkort *ngIf="zaak" class="zaak-card" [zaak]="zaak"></zac-zaak-verkort>
             </div>
         </div>
-
-
-        <zac-zaak-documenten [taakZaak$]="zaak$"></zac-zaak-documenten>
+        <zac-zaak-documenten *ngIf="initialized" [zaak]="zaak"></zac-zaak-documenten>
+        <mat-card *ngIf="!initialized">
+            <mat-card-header>
+                <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-progress-bar mode="query"></mat-progress-bar>
+            </mat-card-content>
+        </mat-card>
 
     </mat-drawer-content>
 </mat-drawer-container>
