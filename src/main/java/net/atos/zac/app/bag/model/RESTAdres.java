@@ -30,6 +30,8 @@ public class RESTAdres extends RESTBAGObject {
 
     public RESTWoonplaats woonplaats;
 
+    public RESTAdresseerbaarObject adresseerbaarObject;
+
     public List<RESTPand> panden = new ArrayList<>();
 
     public RESTAdres() {

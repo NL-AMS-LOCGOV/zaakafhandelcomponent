@@ -7,9 +7,12 @@ package net.atos.zac.app.bag.converter;
 
 import java.net.URI;
 
+import javax.inject.Inject;
+
 import net.atos.client.bag.model.AdresIOHal;
 import net.atos.client.bag.model.Indicatie;
 import net.atos.client.bag.model.OpenbareRuimte;
+import net.atos.client.bag.model.OpenbareRuimteIOHal;
 import net.atos.client.bag.model.OpenbareRuimteIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectOpenbareRuimte;
@@ -17,6 +20,9 @@ import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectOpenbareRuimte;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
 
 public class RESTOpenbareRuimteConverter {
+
+    @Inject
+    private RESTWoonplaatsConverter woonplaatsConverter;
 
     public RESTOpenbareRuimte convertToREST(final OpenbareRuimteIOHalBasis openbareRuimteIO, final AdresIOHal adres) {
         if (openbareRuimteIO == null) {
@@ -28,17 +34,17 @@ public class RESTOpenbareRuimteConverter {
     }
 
     public RESTOpenbareRuimte convertToREST(final OpenbareRuimteIOHalBasis openbareRuimteIO) {
-        if (openbareRuimteIO == null) {
-            return null;
-        }
-        final OpenbareRuimte openbareRuimte = openbareRuimteIO.getOpenbareRuimte();
-        final RESTOpenbareRuimte restOpenbareRuimte = new RESTOpenbareRuimte();
+        final RESTOpenbareRuimte restOpenbareRuimte = convertToREST(openbareRuimteIO.getOpenbareRuimte());
         restOpenbareRuimte.url = URI.create(openbareRuimteIO.getLinks().getSelf().getHref());
-        restOpenbareRuimte.identificatie = openbareRuimte.getIdentificatie();
-        restOpenbareRuimte.naam = openbareRuimte.getNaam();
-        restOpenbareRuimte.status = openbareRuimte.getStatus();
-        restOpenbareRuimte.type = openbareRuimte.getType();
-        restOpenbareRuimte.geconstateerd = Indicatie.J.equals(openbareRuimte.getGeconstateerd());
+        return restOpenbareRuimte;
+    }
+
+    public RESTOpenbareRuimte convertToREST(final OpenbareRuimteIOHal openbareRuimteIO) {
+        final RESTOpenbareRuimte restOpenbareRuimte = convertToREST(openbareRuimteIO.getOpenbareRuimte());
+        restOpenbareRuimte.url = URI.create(openbareRuimteIO.getLinks().getSelf().getHref());
+        if (openbareRuimteIO.getEmbedded() != null) {
+            restOpenbareRuimte.woonplaats = woonplaatsConverter.convertToREST(openbareRuimteIO.getEmbedded().getLigtInWoonplaats());
+        }
         return restOpenbareRuimte;
     }
 
@@ -62,4 +68,19 @@ public class RESTOpenbareRuimteConverter {
                 openbareRuimte.woonplaatsNaam);
         return new ZaakobjectOpenbareRuimte(zaak.getUrl(), openbareRuimte.url, objectOpenbareRuimte);
     }
+
+    private RESTOpenbareRuimte convertToREST(final OpenbareRuimte openbareRuimte) {
+        final RESTOpenbareRuimte restOpenbareRuimte = new RESTOpenbareRuimte();
+        restOpenbareRuimte.identificatie = openbareRuimte.getIdentificatie();
+        restOpenbareRuimte.naam = openbareRuimte.getNaam();
+        restOpenbareRuimte.woonplaatsNaam = openbareRuimte.getLigtIn();
+        restOpenbareRuimte.status = openbareRuimte.getStatus();
+        restOpenbareRuimte.type = openbareRuimte.getType();
+        if (openbareRuimte.getType() != null) {
+            restOpenbareRuimte.typeWeergave = openbareRuimte.getType().toString();
+        }
+        restOpenbareRuimte.geconstateerd = Indicatie.J.equals(openbareRuimte.getGeconstateerd());
+        return restOpenbareRuimte;
+    }
+
 }

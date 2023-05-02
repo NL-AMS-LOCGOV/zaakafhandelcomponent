@@ -39,6 +39,7 @@ import net.atos.client.bag.model.NummeraanduidingIOHal;
 import net.atos.client.bag.model.NummeraanduidingIOHalCollection;
 import net.atos.client.bag.model.NummeraanduidingIOLvcHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -49,7 +50,9 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/nummeraanduidingen")
 public interface NummeraanduidingApi {

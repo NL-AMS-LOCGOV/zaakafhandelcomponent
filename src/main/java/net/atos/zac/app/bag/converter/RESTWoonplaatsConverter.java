@@ -9,6 +9,7 @@ import java.net.URI;
 
 import net.atos.client.bag.model.Indicatie;
 import net.atos.client.bag.model.Woonplaats;
+import net.atos.client.bag.model.WoonplaatsIOHal;
 import net.atos.client.bag.model.WoonplaatsIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectWoonplaats;
@@ -21,13 +22,17 @@ public class RESTWoonplaatsConverter {
         if (woonplaatsIO == null) {
             return null;
         }
-        final Woonplaats woonplaats = woonplaatsIO.getWoonplaats();
-        final RESTWoonplaats restWoonplaats = new RESTWoonplaats();
+        final RESTWoonplaats restWoonplaats = convertToREST(woonplaatsIO.getWoonplaats());
         restWoonplaats.url = URI.create(woonplaatsIO.getLinks().getSelf().getHref());
-        restWoonplaats.identificatie = woonplaats.getIdentificatie();
-        restWoonplaats.naam = woonplaats.getNaam();
-        restWoonplaats.status = woonplaats.getStatus();
-        restWoonplaats.geconstateerd = Indicatie.J.equals(woonplaats.getGeconstateerd());
+        return restWoonplaats;
+    }
+
+    public RESTWoonplaats convertToREST(final WoonplaatsIOHal woonplaatsIO) {
+        if (woonplaatsIO == null) {
+            return null;
+        }
+        final RESTWoonplaats restWoonplaats = convertToREST(woonplaatsIO.getWoonplaats());
+        restWoonplaats.url = URI.create(woonplaatsIO.getLinks().getSelf().getHref());
         return restWoonplaats;
     }
 
@@ -46,4 +51,14 @@ public class RESTWoonplaatsConverter {
     public ZaakobjectWoonplaats convertToZaakobject(final RESTWoonplaats woonplaats, final Zaak zaak) {
         return new ZaakobjectWoonplaats(zaak.getUrl(), woonplaats.url, new ObjectWoonplaats(woonplaats.identificatie, woonplaats.naam));
     }
+
+    private RESTWoonplaats convertToREST(final Woonplaats woonplaats) {
+        final RESTWoonplaats restWoonplaats = new RESTWoonplaats();
+        restWoonplaats.identificatie = woonplaats.getIdentificatie();
+        restWoonplaats.naam = woonplaats.getNaam();
+        restWoonplaats.status = woonplaats.getStatus();
+        restWoonplaats.geconstateerd = Indicatie.J.equals(woonplaats.getGeconstateerd());
+        return restWoonplaats;
+    }
+
 }

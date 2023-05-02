@@ -39,6 +39,7 @@ import net.atos.client.bag.model.OpenbareRuimteIOHal;
 import net.atos.client.bag.model.OpenbareRuimteIOHalCollection;
 import net.atos.client.bag.model.OpenbareRuimteIOLvcHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -49,7 +50,9 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/openbareruimten")
 public interface OpenbareRuimteApi {

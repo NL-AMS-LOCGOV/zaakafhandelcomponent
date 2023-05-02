@@ -8,8 +8,11 @@ package net.atos.zac.app.bag.converter;
 
 import java.net.URI;
 
+import javax.inject.Inject;
+
 import net.atos.client.bag.model.Indicatie;
 import net.atos.client.bag.model.Nummeraanduiding;
+import net.atos.client.bag.model.NummeraanduidingIOHal;
 import net.atos.client.bag.model.NummeraanduidingIOHalBasis;
 import net.atos.client.bag.model.StatusNaamgeving;
 import net.atos.client.bag.model.TypeAdresseerbaarObject;
@@ -20,22 +23,31 @@ import net.atos.zac.app.bag.model.RESTNummeraanduiding;
 
 public class RESTNummeraanduidingConverter {
 
+    @Inject
+    private RESTWoonplaatsConverter woonplaatsConverter;
+
+    @Inject
+    private RESTOpenbareRuimteConverter openbareRuimteConverter;
+
     public RESTNummeraanduiding convertToREST(final NummeraanduidingIOHalBasis nummeraanduidingIO) {
         if (nummeraanduidingIO == null) {
             return null;
         }
-        final Nummeraanduiding nummeraanduiding = nummeraanduidingIO.getNummeraanduiding();
-        final RESTNummeraanduiding restNummeraanduiding = new RESTNummeraanduiding();
+        final RESTNummeraanduiding restNummeraanduiding = convertToREST(nummeraanduidingIO.getNummeraanduiding());
         restNummeraanduiding.url = URI.create(nummeraanduidingIO.getLinks().getSelf().getHref());
-        restNummeraanduiding.identificatie = nummeraanduiding.getIdentificatie();
-        restNummeraanduiding.postcode = nummeraanduiding.getPostcode();
-        restNummeraanduiding.huisnummer = nummeraanduiding.getHuisnummer();
-        restNummeraanduiding.huisletter = nummeraanduiding.getHuisletter();
-        restNummeraanduiding.huisnummertoevoeging = nummeraanduiding.getHuisnummertoevoeging();
-        restNummeraanduiding.huisnummerWeergave = convertHuisnummerWeergave(nummeraanduiding);
-        restNummeraanduiding.status = nummeraanduiding.getStatus();
-        restNummeraanduiding.typeAdresseerbaarObject = nummeraanduiding.getTypeAdresseerbaarObject();
-        restNummeraanduiding.geconstateerd = Indicatie.J.equals(nummeraanduiding.getGeconstateerd());
+        return restNummeraanduiding;
+    }
+
+    public RESTNummeraanduiding convertToREST(final NummeraanduidingIOHal nummeraanduidingIO) {
+        if (nummeraanduidingIO == null) {
+            return null;
+        }
+        final RESTNummeraanduiding restNummeraanduiding = convertToREST(nummeraanduidingIO.getNummeraanduiding());
+        restNummeraanduiding.url = URI.create(nummeraanduidingIO.getLinks().getSelf().getHref());
+        if (nummeraanduidingIO.getEmbedded() != null) {
+            restNummeraanduiding.woonplaats = woonplaatsConverter.convertToREST(nummeraanduidingIO.getEmbedded().getLigtInWoonplaats());
+            restNummeraanduiding.openbareRuimte = openbareRuimteConverter.convertToREST(nummeraanduidingIO.getEmbedded().getLigtAanOpenbareRuimte());
+        }
         return restNummeraanduiding;
     }
 
@@ -78,5 +90,19 @@ public class RESTNummeraanduidingConverter {
     private String convertHuisnummerWeergave(final ObjectNummeraanduiding nummeraanduiding) {
         return RESTBAGConverter.getHuisnummerWeergave(nummeraanduiding.getHuisnummer(), nummeraanduiding.getHuisletter(),
                                                       nummeraanduiding.getHuisnummertoevoeging());
+    }
+
+    public RESTNummeraanduiding convertToREST(final Nummeraanduiding nummeraanduiding) {
+        final RESTNummeraanduiding restNummeraanduiding = new RESTNummeraanduiding();
+        restNummeraanduiding.identificatie = nummeraanduiding.getIdentificatie();
+        restNummeraanduiding.postcode = nummeraanduiding.getPostcode();
+        restNummeraanduiding.huisnummer = nummeraanduiding.getHuisnummer();
+        restNummeraanduiding.huisletter = nummeraanduiding.getHuisletter();
+        restNummeraanduiding.huisnummertoevoeging = nummeraanduiding.getHuisnummertoevoeging();
+        restNummeraanduiding.huisnummerWeergave = convertHuisnummerWeergave(nummeraanduiding);
+        restNummeraanduiding.status = nummeraanduiding.getStatus();
+        restNummeraanduiding.typeAdresseerbaarObject = nummeraanduiding.getTypeAdresseerbaarObject();
+        restNummeraanduiding.geconstateerd = Indicatie.J.equals(nummeraanduiding.getGeconstateerd());
+        return restNummeraanduiding;
     }
 }

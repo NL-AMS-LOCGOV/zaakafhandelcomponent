@@ -10,7 +10,8 @@ public enum BAGObjectType {
     WOONPLAATS("woonplaats"),
     PAND("panden"),
     OPENBARE_RUIMTE("openbareRuimte"),
-    NUMMERAANDUIDING("nummeraanduiding");
+    NUMMERAANDUIDING("nummeraanduiding"),
+    ADRESSEERBAAR_OBJECT("adreseerbaarObject");
 
     public final String expand;
 

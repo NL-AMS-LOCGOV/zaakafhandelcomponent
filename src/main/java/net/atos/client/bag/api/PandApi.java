@@ -47,6 +47,7 @@ import net.atos.client.bag.model.PandIOLvcHalCollection;
 import net.atos.client.bag.model.PointGeoJSON;
 import net.atos.client.bag.model.StatusPand;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -57,7 +58,9 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/panden")
 public interface PandApi {
@@ -85,7 +88,7 @@ public interface PandApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public PandIOHal pandIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @HeaderParam("Accept-Crs") String acceptCrs,
+            @HeaderParam("Accept-Crs") @DefaultValue("epsg:28992") String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**

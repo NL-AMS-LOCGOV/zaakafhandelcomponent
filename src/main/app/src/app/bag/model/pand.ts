@@ -17,4 +17,5 @@ export class Pand extends BAGObject {
         'PAND_GESLOOPT' |
         'PAND_BUITEN_GEBRUIK' |
         'PAND_TEN_ONRECHTE_OPGEVOERD';
+    statusWeergave: string;
 }

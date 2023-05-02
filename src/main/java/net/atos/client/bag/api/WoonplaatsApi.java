@@ -45,6 +45,7 @@ import net.atos.client.bag.model.WoonplaatsIOHal;
 import net.atos.client.bag.model.WoonplaatsIOHalCollection;
 import net.atos.client.bag.model.WoonplaatsIOLvcHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -55,7 +56,8 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/woonplaatsen")
 public interface WoonplaatsApi {
@@ -84,7 +86,7 @@ public interface WoonplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public WoonplaatsIOHal woonplaatsIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") String acceptCrs,
+            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue("epsg:28992") String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**
