@@ -320,6 +320,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 .validators(Validators.required)
                 .maxlength(80)
                 .build());
+        this.editFormFields.set('redenNietVerplicht', new InputFormFieldBuilder().id('reden')
+                .label('reden')
+                .maxlength(80)
+                .build());
     }
 
     private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {
