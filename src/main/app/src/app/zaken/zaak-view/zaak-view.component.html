@@ -125,7 +125,7 @@
                                 <div class="flex w33 w50-md w100-sm">
 
                                     <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
-                                                                [reasonField]="editFormFields.get('reden')"
+                                                                [reasonField]="editFormFields.get('redenNietVerplicht')"
                                                                 [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
                                                                 (onSave)="editToewijzing($event)">
                                     </zac-edit-groep-behandelaar>

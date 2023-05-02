@@ -45,7 +45,8 @@
                                     <div class="flex-1 w33 w50-sm">
                                         <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
                                                                     [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.toekennen"
-                                                                    (onSave)="editToewijzing($event)">
+                                                                    (onSave)="editToewijzing($event)"
+                                                                    [reasonField]="editFormFields.get('reden')">
                                         </zac-edit-groep-behandelaar>
                                     </div>
 
