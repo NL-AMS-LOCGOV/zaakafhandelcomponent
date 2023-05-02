@@ -3,6 +3,8 @@ package net.atos.zac.zoeken.converter;
 import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -10,12 +12,15 @@ import javax.inject.Inject;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
+import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Resultaattype;
@@ -140,6 +145,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
                 zaakZoekObject.setResultaatToelichting(resultaat.getToelichting());
             }
         }
+        zaakZoekObject.setBagObjectIDs(getBagObjectIDs(zaak));
 
         return zaakZoekObject;
     }
@@ -171,6 +177,18 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         return zgwApiService.findGroepForZaak(zaak)
                 .map(groep -> identityService.readGroup(groep.getBetrokkeneIdentificatie().getIdentificatie()))
                 .orElse(null);
+    }
+
+
+    public List<String> getBagObjectIDs(final Zaak zaak) {
+        final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
+        zaakobjectListParameters.setZaak(zaak.getUrl());
+        final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
+        if (zaakobjecten.getCount() > 0) {
+            return zaakobjecten.getResults().stream().filter(Zaakobject::isBagObject).map(Zaakobject::getWaarde).toList();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override
