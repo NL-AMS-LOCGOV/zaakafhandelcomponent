@@ -11,6 +11,10 @@
 
 .open-layers-map {
   height: calc(100vh - 331px);
+
+  &.readonly {
+    height: calc(100vh - 139px);
+  }
 }
 
 .overlay {
@@ -21,6 +25,12 @@
   overflow: visible;
   position: relative;
   z-index: 1;
-  left: 45px;
+  left: 9px;
   pointer-events: none;
+
+  ::ng-deep .static-text {
+    padding: 12px;
+    border-radius: 6px;
+    backdrop-filter: brightness(112.5%) saturate(75%) blur(2.5px);
+  }
 }

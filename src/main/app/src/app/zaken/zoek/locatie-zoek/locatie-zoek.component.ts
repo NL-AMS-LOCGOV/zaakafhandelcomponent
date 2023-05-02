@@ -44,6 +44,7 @@ import {MatDrawer} from '@angular/material/sidenav';
 export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() huidigeLocatie: Geometry;
+    @Input() readonly: boolean;
     @Input() sideNav: MatDrawer;
     @Output() locatie = new EventEmitter<GeometryGegevens>();
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
@@ -91,7 +92,8 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
         })
     });
 
-    constructor(private locationService: LocationService) {}
+    constructor(private locationService: LocationService) {
+    }
 
     ngOnInit(): void {
         const projection = proj.get(this.EPSG3857);
@@ -142,7 +144,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
         const interactions = interaction.defaults({
             onFocusOnly: true
         });
-        const controls = control.defaults();
+        const controls = control.defaults({zoom: false});
 
         this.map = new ol.Map({
             interactions: interactions,
@@ -155,7 +157,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
         this.map.addInteraction(modify);
 
         this.searchControl.valueChanges.pipe(
-            takeUntil(this.unsubscribe$)
+                takeUntil(this.unsubscribe$)
         ).subscribe((value) => {
             this.searchAddresses(value);
         });
@@ -166,10 +168,12 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
             this.map.setTarget(this.openLayersMapRef.nativeElement);
         }, 0);
 
-        this.map.on('click', (event) => {
-            const coordinate: Array<number> = proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-            this.setLokatie(LocationUtil.coordinateToPoint(coordinate), false);
-        });
+        if (!this.readonly) {
+            this.map.on('click', (event) => {
+                const coordinate: Array<number> = proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
+                this.setLokatie(LocationUtil.coordinateToPoint(coordinate), false);
+            });
+        }
 
         this.map.on('click', () => {
             this.openLayersMapRef.nativeElement.focus();
