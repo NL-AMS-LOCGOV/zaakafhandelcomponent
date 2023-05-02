@@ -17,6 +17,5 @@ public class RESTTaakToekennenGegevens {
 
     public String behandelaarId;
 
-    // ToDo zaakafhandelcomponent-2131
-    public String reden = "Test taak toekennen reden";
+    public String reden;
 }

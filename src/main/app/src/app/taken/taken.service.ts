@@ -50,12 +50,13 @@ export class TakenService {
         );
     }
 
-    toekennen(taak: Taak): Observable<void> {
+    toekennen(taak: Taak, reden: string): Observable<void> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUuid;
         taakToekennenGegevens.groepId = taak.groep?.id;
         taakToekennenGegevens.behandelaarId = taak.behandelaar?.id;
+        taakToekennenGegevens.reden = reden;
 
         return this.http.patch<void>(`${this.basepath}/toekennen`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
@@ -98,19 +99,21 @@ export class TakenService {
         );
     }
 
-    verdelenVanuitLijst(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
+    verdelenVanuitLijst(taken: TaakZoekObject[], reden: string, groep?: Group, medewerker?: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
         taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
         taakBody.groepId = groep?.id;
+        taakBody.reden = reden;
         return this.http.put<void>(`${this.basepath}/lijst/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    vrijgevenVanuitLijst(taken: TaakZoekObject[]): Observable<void> {
+    vrijgevenVanuitLijst(taken: TaakZoekObject[], reden: string): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
         taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
+        taakBody.reden = reden;
         return this.http.put<void>(`${this.basepath}/lijst/vrijgeven`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

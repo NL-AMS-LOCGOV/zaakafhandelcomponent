@@ -10,6 +10,8 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     templateUrl: 'zaken-vrijgeven-dialog.component.html',
@@ -18,7 +20,7 @@ import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 export class ZakenVrijgevenDialogComponent implements OnInit {
 
     loading: boolean;
-    redenFormField: AbstractFormField;
+    redenFormField: InputFormField;
 
     constructor(
         public dialogRef: MatDialogRef<ZakenVrijgevenDialogComponent>,
@@ -28,10 +30,10 @@ export class ZakenVrijgevenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.redenFormField = new TextareaFormFieldBuilder().id('reden')
-                                                            .label('reden')
-                                                            .maxlength(100)
-                                                            .build();
+        this.redenFormField = new InputFormFieldBuilder().id('reden')
+                                                         .label('reden')
+                                                         .maxlength(100)
+                                                         .build();
     }
 
     close(): void {

@@ -14,6 +14,8 @@ import {User} from '../../identity/model/user';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-form-field';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     templateUrl: 'zaken-verdelen-dialog.component.html',
@@ -22,7 +24,7 @@ import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 export class ZakenVerdelenDialogComponent implements OnInit {
 
     medewerkerGroepFormField: MedewerkerGroepFormField;
-    redenFormField: AbstractFormField;
+    redenFormField: InputFormField;
     loading: boolean;
 
     constructor(
@@ -41,7 +43,11 @@ export class ZakenVerdelenDialogComponent implements OnInit {
                                                                          .groepLabel('actie.zaak.toekennen.groep')
                                                                          .medewerkerLabel('actie.zaak.toekennen.medewerker')
                                                                          .maxlength(50).build();
-        this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').maxlength(100).build();
+        this.redenFormField = new InputFormFieldBuilder()
+        .id('reden')
+        .label('reden')
+        .maxlength(100)
+        .build();
     }
 
     isDisabled(): boolean {

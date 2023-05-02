@@ -12,6 +12,8 @@ import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     selector: 'zac-taken-verdelen-dialog',
@@ -21,6 +23,7 @@ import {User} from '../../identity/model/user';
 export class TakenVerdelenDialogComponent implements OnInit {
 
     medewerkerGroepFormField: MedewerkerGroepFormField;
+    redenFormField: InputFormField;
     loading: boolean = false;
 
     constructor(
@@ -39,6 +42,11 @@ export class TakenVerdelenDialogComponent implements OnInit {
                                                                          .medewerkerLabel('actie.taak.toekennen.medewerker')
                                                                          .maxlength(50)
                                                                          .build();
+        this.redenFormField = new InputFormFieldBuilder().id('reden')
+                                                         .label('reden')
+                                                         .maxlength(100)
+                                                         .build();
+
     }
 
     isDisabled(): boolean {
@@ -48,9 +56,10 @@ export class TakenVerdelenDialogComponent implements OnInit {
 
     verdeel(): void {
         const toekenning: { groep?: Group, medewerker?: User } = this.medewerkerGroepFormField.formControl.value;
+        const reden: string = this.redenFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.takenService.verdelenVanuitLijst(this.data, toekenning.groep, toekenning.medewerker).subscribe(() => {
+        this.takenService.verdelenVanuitLijst(this.data, reden, toekenning.groep, toekenning.medewerker).subscribe(() => {
             this.dialogRef.close(toekenning.groep || toekenning.medewerker);
         });
     }
