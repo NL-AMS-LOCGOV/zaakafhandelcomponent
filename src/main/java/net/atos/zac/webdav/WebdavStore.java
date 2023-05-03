@@ -51,7 +51,7 @@ public class WebdavStore implements IWebdavStore {
     private final EnkelvoudigInformatieObjectUpdateService enkelvoudigInformatieObjectUpdateService;
 
     // De dummy parameter is nodig omdat de constructie waarmee deze class wordt geinstantieerd deze parameter verwacht
-    public WebdavStore(final File dummy) {
+    public WebdavStore(final File ignoredDummy) {
         webdavHelper = CDI.current().select(WebdavHelper.class).get();
         drcClientService = CDI.current().select(DRCClientService.class).get();
         enkelvoudigInformatieObjectUpdateService =
@@ -100,7 +100,9 @@ public class WebdavStore implements IWebdavStore {
                 SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(),
                                              webdavGegevens.loggedInUser());
                 final var update = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-                update.setInhoud(IOUtils.toByteArray(content));
+                final byte[] inhoud = IOUtils.toByteArray(content);
+                update.setInhoud(inhoud);
+                update.setBestandsomvang((long) inhoud.length);
                 return enkelvoudigInformatieObjectUpdateService.updateEnkelvoudigInformatieObject(
                         webdavGegevens.enkelvoudigInformatieibjectUUID(), update, UPDATE_INHOUD_TOELICHTING)
                         .getBestandsomvang();

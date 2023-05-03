@@ -294,6 +294,7 @@ public class RESTInformatieobjectConverter {
         }
         if (file != null && file.file != null) {
             enkelvoudigInformatieobjectWithInhoudAndLock.setInhoud(file.file);
+            enkelvoudigInformatieobjectWithInhoudAndLock.setBestandsomvang((long) file.file.length);
             enkelvoudigInformatieobjectWithInhoudAndLock.setFormaat(file.type);
         }
 
