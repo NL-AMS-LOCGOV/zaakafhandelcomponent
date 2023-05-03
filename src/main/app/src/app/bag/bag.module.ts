@@ -8,11 +8,13 @@ import {SharedModule} from '../shared/shared.module';
 import {BagZoekComponent} from './zoek/bag-zoek/bag-zoek.component';
 import {BAGViewComponent} from './bag-view/bag-view.component';
 import {BAGRoutingModule} from './bag-routing.module';
+import {BagZakenTabelComponent} from './bag-zaken-tabel/bag-zaken-tabel.component';
 
 @NgModule({
     declarations: [
         BagZoekComponent,
-        BAGViewComponent
+        BAGViewComponent,
+        BagZakenTabelComponent
     ],
     exports: [
         BagZoekComponent
