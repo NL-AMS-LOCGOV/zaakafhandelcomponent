@@ -8,6 +8,7 @@ import {Woonplaats} from './woonplaats';
 import {OpenbareRuimte} from './openbare-ruimte';
 import {Nummeraanduiding} from './nummeraanduiding';
 import {Pand} from './pand';
+import {AdresseerbaarObject} from './adresseerbaar-object';
 
 export class Adres extends BAGObject {
     postcode: string;
@@ -20,5 +21,6 @@ export class Adres extends BAGObject {
     openbareRuimte: OpenbareRuimte;
     nummeraanduiding: Nummeraanduiding;
     woonplaats: Woonplaats;
+    adresseerbaarObject: AdresseerbaarObject;
     panden: Pand[];
 }

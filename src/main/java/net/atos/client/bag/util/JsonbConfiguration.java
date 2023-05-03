@@ -21,7 +21,9 @@ public class JsonbConfiguration implements ContextResolver<Jsonb> {
                 new StatusNaamgevingEnumAdapter(),
                 new StatusPandEnumAdapter(),
                 new StatusWoonplaatsEnumAdapter(),
+                new StatusVerblijfsobjectEnumAdapter(),
                 new TypeAdresseerbaarObjectEnumAdapter(),
+                new GebruiksdoelEnumAdapter(),
                 new TypeOpenbareRuimteEnumAdapter());
         jsonb = JsonbBuilder.create(jsonbConfig);
     }

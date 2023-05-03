@@ -19,6 +19,7 @@ public enum ZoekVeld {
     ZAAK_BETROKKENE_ZAAKCOORDINATOR("zaak_betrokkene_zaakcoordinator"),
     ZAAK_BETROKKENE_MEDE_INITIATOR("zaak_betrokkene_mede_initiator"),
     ZAAK_BETROKKENEN("zaak_betrokkenen"),
+    ZAAK_BAGOBJECTEN("zaak_bagObjecten"),
 
     TAAK_ZAAK_ID("taak_zaakId"),
     TAAK_TOELICHTING("taak_toelichting"),

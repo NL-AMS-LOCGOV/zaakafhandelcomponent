@@ -4,6 +4,8 @@
  */
 
 import {BAGObject} from './bagobject';
+import {Woonplaats} from './woonplaats';
+import {OpenbareRuimte} from './openbare-ruimte';
 
 export class Nummeraanduiding extends BAGObject {
     postcode: string;
@@ -12,7 +14,7 @@ export class Nummeraanduiding extends BAGObject {
     huisletter: string;
     huisnummertoevoeging: string;
     openbareRuimteNaam: string;
-    woonplaatsNaam: string;
-    woonplaats: string;
     status: 'UITGEGEVEN' | 'INGETROKKEN';
+    woonplaats: Woonplaats;
+    openbareRuimte: OpenbareRuimte;
 }

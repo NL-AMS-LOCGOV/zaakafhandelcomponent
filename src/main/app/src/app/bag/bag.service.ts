@@ -11,6 +11,7 @@ import {Adres} from './model/adres';
 import {Resultaat} from '../shared/model/resultaat';
 import {catchError, Observable} from 'rxjs';
 import {BAGObjectGegevens} from './model/bagobject-gegevens';
+import {BAGObject} from './model/bagobject';
 
 @Injectable({
     providedIn: 'root'
@@ -42,6 +43,12 @@ export class BAGService {
 
     delete(bagObjectGegevens: BAGObjectGegevens): Observable<void> {
         return this.http.delete<void>(this.basepath, {body: bagObjectGegevens}).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    read(type: string, id: string): Observable<BAGObject> {
+        return this.http.get<BAGObject>(`${this.basepath}/${type}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

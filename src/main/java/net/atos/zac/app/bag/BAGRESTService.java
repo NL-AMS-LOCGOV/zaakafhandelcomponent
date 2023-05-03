@@ -35,6 +35,10 @@ import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectListParameters;
 import net.atos.zac.app.bag.converter.RESTAdresConverter;
 import net.atos.zac.app.bag.converter.RESTBAGConverter;
+import net.atos.zac.app.bag.converter.RESTNummeraanduidingConverter;
+import net.atos.zac.app.bag.converter.RESTOpenbareRuimteConverter;
+import net.atos.zac.app.bag.converter.RESTPandConverter;
+import net.atos.zac.app.bag.converter.RESTWoonplaatsConverter;
 import net.atos.zac.app.bag.model.BAGObjectType;
 import net.atos.zac.app.bag.model.RESTAdres;
 import net.atos.zac.app.bag.model.RESTBAGObject;
@@ -62,6 +66,18 @@ public class BAGRESTService {
     private RESTAdresConverter adresConverter;
 
     @Inject
+    private RESTNummeraanduidingConverter nummeraanduidingConverter;
+
+    @Inject
+    private RESTOpenbareRuimteConverter openbareRuimteConverter;
+
+    @Inject
+    private RESTPandConverter pandConverter;
+
+    @Inject
+    private RESTWoonplaatsConverter woonplaatsConverter;
+
+    @Inject
     private PolicyService policyService;
 
     @PUT
@@ -74,6 +90,19 @@ public class BAGRESTService {
         return new RESTResultaat<>(bagClientService.listAdressen(bevraagAdressenParameters).stream()
                                            .map(adres -> adresConverter.convertToREST(adres))
                                            .toList());
+    }
+
+    @GET
+    @Path("/{type}/{id}")
+    public RESTBAGObject read(@PathParam("type") final BAGObjectType type, @PathParam("id") final String id) {
+        return switch (type) {
+            case ADRES -> adresConverter.convertToREST(bagClientService.readAdres(id));
+            case WOONPLAATS -> woonplaatsConverter.convertToREST(bagClientService.readWoonplaats(id));
+            case PAND -> pandConverter.convertToREST(bagClientService.readPand(id));
+            case OPENBARE_RUIMTE -> openbareRuimteConverter.convertToREST(bagClientService.readOpenbareRuimte(id));
+            case NUMMERAANDUIDING -> nummeraanduidingConverter.convertToREST(bagClientService.readNummeraanduiding(id));
+            case ADRESSEERBAAR_OBJECT -> null; //(Nog) geen zelfstandige entiteit
+        };
     }
 
     @POST

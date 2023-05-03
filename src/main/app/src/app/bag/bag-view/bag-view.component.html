@@ -1,0 +1,205 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-drawer-container class="inner-sidenav-container">
+    <mat-drawer-content>
+        <div class="flex-row gap-10 flex-wrap">
+            <div class="bag-gegevens flex-col">
+                <mat-card *ngIf="bagObject.bagObjectType === 'ADRES'">
+                    <mat-card-header>
+                        <mat-card-title>{{adres.omschrijving}}</mat-card-title>
+                        <mat-card-subtitle>{{'objecttype.ADRES' | translate}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'adres' | translate"
+                                             [value]="adres.openbareRuimteNaam+' '+adres.huisnummerWeergave+' \n'+adres.postcode+' '+adres.woonplaatsNaam"></zac-static-text>
+                            <zac-static-text [label]="'bouwjaar' | translate"
+                                             [value]="adres.panden[0]?.oorspronkelijkBouwjaar"></zac-static-text>
+                            <zac-static-text [label]="'oppervlakte' | translate"
+                                             *ngIf="adres.adresseerbaarObject?.typeAdresseerbaarObject === 'VERBLIJFSOBJECT'"
+                                             [value]="adres.adresseerbaarObject?.vboOppervlakte"></zac-static-text>
+                            <zac-static-text [label]="'gebruiksdoel' | translate"
+                                             *ngIf="adres.adresseerbaarObject?.typeAdresseerbaarObject === 'VERBLIJFSOBJECT'"
+                                             [value]="adres.adresseerbaarObject?.vboDoel"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+adres.nummeraanduiding.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.PAND' | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="adres.panden[0].identificatie"></zac-static-text>
+                            <zac-static-text [label]="'bouwjaar' | translate"
+                                             [value]="adres.panden[0]?.oorspronkelijkBouwjaar"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.pand.status.'+adres.panden[0]?.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'AdresseerbaarObject.' + adres.adresseerbaarObject.typeAdresseerbaarObject | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="adres.adresseerbaarObject.identificatie"></zac-static-text>
+                            <zac-static-text *ngIf="adres.adresseerbaarObject.typeAdresseerbaarObject==='VERBLIJFSOBJECT'"
+                                             class="w50 w100-lg"
+                                             [label]="'gebruiksdoel' | translate"
+                                             [value]="adres.adresseerbaarObject.vboDoel"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="adres.adresseerbaarObject.status"></zac-static-text>
+                            <zac-static-text *ngIf="adres.adresseerbaarObject.typeAdresseerbaarObject==='VERBLIJFSOBJECT'"
+                                             class="w50 w100-lg"
+                                             [label]="'oppervlakte' | translate"
+                                             [value]="adres.adresseerbaarObject.vboOppervlakte+' m2'"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.NUMMERAANDUIDING' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="adres.nummeraanduiding.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'postcode' | translate"
+                                             [value]="adres.nummeraanduiding.postcode"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+adres.nummeraanduiding.status | translate"></zac-static-text>
+                            <zac-static-text [label]="'huisnummer' | translate"
+                                             [value]="adres.nummeraanduiding.huisnummerWeergave"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="adres.openbareRuimte.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="adres.openbareRuimte.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+adres.openbareRuimte.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="adres.woonplaats.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="adres.woonplaats.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+adres.woonplaats.status | translate"></zac-static-text>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card *ngIf="bagObject.bagObjectType === 'OPENBARE_RUIMTE'">
+                    <mat-card-header>
+                        <mat-card-title>{{openbareRuimte.omschrijving}}</mat-card-title>
+                        <mat-card-subtitle>{{'objecttype.OPENBARE_RUIMTE' | translate}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="title mat-title">{{'gegevens' | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="openbareRuimte.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+openbareRuimte.status | translate"></zac-static-text>
+                            <zac-static-text [label]="'woonplaats' | translate"
+                                             [value]="openbareRuimte.woonplaatsNaam"></zac-static-text>
+                            <zac-static-text [label]="'type' | translate"
+                                             [value]="openbareRuimte.typeWeergave"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="openbareRuimte.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate" [value]="openbareRuimte.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+openbareRuimte.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="openbareRuimte.woonplaats.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="openbareRuimte.woonplaats.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+openbareRuimte.woonplaats.status | translate"></zac-static-text>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card *ngIf="bagObject.bagObjectType === 'WOONPLAATS'">
+                    <mat-card-header>
+                        <mat-card-title>{{woonplaats.omschrijving}}</mat-card-title>
+                        <mat-card-subtitle>{{'objecttype.WOONPLAATS' | translate}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="title">{{'gegevens' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="woonplaats.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="woonplaats.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+ woonplaats.status | translate"></zac-static-text>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card *ngIf="bagObject.bagObjectType === 'PAND'">
+                    <mat-card-header>
+                        <mat-card-title>{{pand.omschrijving}}</mat-card-title>
+                        <mat-card-subtitle>{{'objecttype.PAND' | translate}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text class="" [label]="'identificatie' | translate"
+                                             [value]="pand.identificatie"></zac-static-text>
+                            <zac-static-text class="" [label]="'bouwjaar' | translate"
+                                             [value]="pand.oorspronkelijkBouwjaar"></zac-static-text>
+                            <zac-static-text class="" [label]="'status' | translate"
+                                             [value]="pand.statusWeergave"></zac-static-text>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card *ngIf="bagObject.bagObjectType === 'NUMMERAANDUIDING'">
+                    <mat-card-header>
+                        <mat-card-title>{{nummeraanduiding.omschrijving}}</mat-card-title>
+                        <mat-card-subtitle>{{'objecttype.NUMMERAANDUIDING' | translate}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'huisnummer' | translate"
+                                             [value]="nummeraanduiding.huisnummer"></zac-static-text>
+                            <zac-static-text [label]="'huisletter' | translate"
+                                             [value]="nummeraanduiding.huisletter"></zac-static-text>
+                            <zac-static-text [label]="'huisnummertoevoeging' | translate"
+                                             [value]="nummeraanduiding.huisnummertoevoeging"></zac-static-text>
+                            <zac-static-text [label]="'straat' | translate"
+                                             [value]="nummeraanduiding.openbareRuimte.naam"></zac-static-text>
+                            <zac-static-text [label]="'woonplaats' | translate"
+                                             [value]="nummeraanduiding.woonplaats.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+nummeraanduiding.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="nummeraanduiding.openbareRuimte.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="nummeraanduiding.openbareRuimte.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+nummeraanduiding.openbareRuimte.status | translate"></zac-static-text>
+                        </div>
+                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="content flex-row flex-wrap">
+                            <zac-static-text [label]="'identificatie' | translate"
+                                             [value]="nummeraanduiding.woonplaats.identificatie"></zac-static-text>
+                            <zac-static-text [label]="'naam' | translate"
+                                             [value]="nummeraanduiding.woonplaats.naam"></zac-static-text>
+                            <zac-static-text [label]="'status' | translate"
+                                             [value]="'bagObject.status.'+nummeraanduiding.woonplaats.status | translate"></zac-static-text>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <zac-bag-zaken-tabel class="zaak-gegevens" [BagObjectIdentificatie]="bagObject.identificatie"></zac-bag-zaken-tabel>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

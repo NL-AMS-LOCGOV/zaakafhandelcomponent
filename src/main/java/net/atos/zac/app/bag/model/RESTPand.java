@@ -13,6 +13,8 @@ public class RESTPand extends RESTBAGObject {
 
     public StatusPand status;
 
+    public String statusWeergave;
+
     public RESTPand() {
     }
 

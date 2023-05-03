@@ -158,6 +158,9 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_betrokkene_*")
     private Map<String, List<String>> betrokkenen;
 
+    @Field("zaak_bagObjecten")
+    private List<String> bagObjectIDs;
+
     public ZaakZoekObject() {
     }
 
@@ -515,5 +518,13 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setBetrokkenen(final Map<String, List<String>> betrokkenen) {
         this.betrokkenen = betrokkenen;
+    }
+
+    public List<String> getBagObjectIDs() {
+        return bagObjectIDs;
+    }
+
+    public void setBagObjectIDs(final List<String> bagObjectIDs) {
+        this.bagObjectIDs = bagObjectIDs;
     }
 }

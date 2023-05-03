@@ -16,6 +16,7 @@ import static net.atos.zac.notificaties.Resource.ROL;
 import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
 import static net.atos.zac.notificaties.Resource.ZAAKINFORMATIEOBJECT;
+import static net.atos.zac.notificaties.Resource.ZAAKOBJECT;
 import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -163,7 +164,8 @@ public class NotificatieReceiver {
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
-            } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
+            } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT ||
+                    notificatie.getResource() == ROL || notificatie.getResource() == ZAAKOBJECT) {
                 indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
             } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
                 indexeerService.addOrUpdateInformatieobjectByZaakinformatieobject(

@@ -5,10 +5,12 @@
 
 package net.atos.zac.app.bag.converter;
 
+import java.net.URI;
 import java.util.List;
 
 import net.atos.client.bag.model.Indicatie;
 import net.atos.client.bag.model.Pand;
+import net.atos.client.bag.model.PandIOHal;
 import net.atos.client.bag.model.PandIOHalBasis;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ObjectPand;
@@ -25,12 +27,18 @@ public class RESTPandConverter {
     }
 
     public RESTPand convertToREST(final PandIOHalBasis pandIO) {
-        final Pand pand = pandIO.getPand();
-        final RESTPand restPand = new RESTPand();
-        restPand.identificatie = pand.getIdentificatie();
-        restPand.status = pand.getStatus();
-        restPand.oorspronkelijkBouwjaar = pand.getOorspronkelijkBouwjaar();
-        restPand.geconstateerd = Indicatie.J.equals(pand.getGeconstateerd());
+        if (pandIO == null) {
+            return null;
+        }
+        return convertToREST(pandIO.getPand());
+    }
+
+    public RESTPand convertToREST(final PandIOHal pandIO) {
+        if (pandIO == null) {
+            return null;
+        }
+        final RESTPand restPand = convertToREST(pandIO.getPand());
+        restPand.url = URI.create(pandIO.getLinks().getSelf().getHref());
         return restPand;
     }
 
@@ -47,4 +55,17 @@ public class RESTPandConverter {
     public ZaakobjectPand convertToZaakobject(final RESTPand pand, final Zaak zaak) {
         return new ZaakobjectPand(zaak.getUrl(), pand.url, new ObjectPand(pand.identificatie));
     }
+
+    public RESTPand convertToREST(final Pand pand) {
+        final RESTPand restPand = new RESTPand();
+        restPand.identificatie = pand.getIdentificatie();
+        restPand.status = pand.getStatus();
+        if (pand.getStatus() != null) {
+            restPand.statusWeergave = pand.getStatus().toString();
+        }
+        restPand.oorspronkelijkBouwjaar = pand.getOorspronkelijkBouwjaar();
+        restPand.geconstateerd = Indicatie.J.equals(pand.getGeconstateerd());
+        return restPand;
+    }
+
 }

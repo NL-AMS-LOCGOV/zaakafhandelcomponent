@@ -13,9 +13,13 @@ public class RESTOpenbareRuimte extends RESTBAGObject {
 
     public TypeOpenbareRuimte type;
 
+    public String typeWeergave;
+
     public StatusNaamgeving status;
 
     public String woonplaatsNaam;
+
+    public RESTWoonplaats woonplaats;
 
     public RESTOpenbareRuimte() {
     }

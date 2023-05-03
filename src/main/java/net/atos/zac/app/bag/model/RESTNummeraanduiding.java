@@ -24,6 +24,10 @@ public class RESTNummeraanduiding extends RESTBAGObject {
 
     public StatusNaamgeving status;
 
+    public RESTWoonplaats woonplaats;
+
+    public RESTOpenbareRuimte openbareRuimte;
+
     public RESTNummeraanduiding() {
     }
 

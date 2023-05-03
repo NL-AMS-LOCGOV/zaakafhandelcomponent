@@ -16,6 +16,7 @@ import javax.json.stream.JsonParser;
 
 import net.atos.zac.app.bag.model.BAGObjectType;
 import net.atos.zac.app.bag.model.RESTAdres;
+import net.atos.zac.app.bag.model.RESTAdresseerbaarObject;
 import net.atos.zac.app.bag.model.RESTBAGObject;
 import net.atos.zac.app.bag.model.RESTNummeraanduiding;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
@@ -35,6 +36,7 @@ public class RESTBAGObjectJsonbDeserializer implements JsonbDeserializer<RESTBAG
             case WOONPLAATS -> JSONB.fromJson(jsonObject.toString(), RESTWoonplaats.class);
             case PAND -> JSONB.fromJson(jsonObject.toString(), RESTPand.class);
             case OPENBARE_RUIMTE -> JSONB.fromJson(jsonObject.toString(), RESTOpenbareRuimte.class);
+            case ADRESSEERBAAR_OBJECT -> JSONB.fromJson(jsonObject.toString(), RESTAdresseerbaarObject.class);
         };
     }
 }

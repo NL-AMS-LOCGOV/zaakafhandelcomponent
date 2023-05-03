@@ -7,6 +7,7 @@ package net.atos.zac.app.bag.converter;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -49,6 +50,7 @@ public class RESTBAGConverter {
             case WOONPLAATS -> woonplaatsConverter.convertToZaakobject((RESTWoonplaats) restbagObject, zaak);
             case OPENBARE_RUIMTE -> openbareRuimteConverter.convertToZaakobject((RESTOpenbareRuimte) restbagObject, zaak);
             case NUMMERAANDUIDING -> nummeraanduidingConverter.convertToZaakobject((RESTNummeraanduiding) restbagObject, zaak);
+            case ADRESSEERBAAR_OBJECT -> throw new NotImplementedException();
         };
     }
 

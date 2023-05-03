@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -45,6 +47,7 @@ import net.atos.client.bag.model.WoonplaatsIOHal;
 import net.atos.client.bag.model.WoonplaatsIOHalCollection;
 import net.atos.client.bag.model.WoonplaatsIOLvcHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -55,7 +58,8 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/woonplaatsen")
 public interface WoonplaatsApi {
@@ -72,7 +76,7 @@ public interface WoonplaatsApi {
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
             @HeaderParam("Content-Crs") String contentCrs,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van een woonplaats met de identificatie van een woonplaats.
@@ -84,7 +88,7 @@ public interface WoonplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public WoonplaatsIOHal woonplaatsIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") String acceptCrs,
+            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**
@@ -98,7 +102,7 @@ public interface WoonplaatsApi {
     public WoonplaatsIOHal woonplaatsIdentificatieVoorkomen(@PathParam("identificatie") String identificatie,
             @PathParam("versie") Integer versie, @PathParam("timestampRegistratieLv") String timestampRegistratieLv,
             @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van de levenscyclus van een woonplaats met de identificatie van een woonplaats.
@@ -110,7 +114,7 @@ public interface WoonplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public WoonplaatsIOLvcHalCollection woonplaatsLvcIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geheleLvc") @DefaultValue("false") Boolean geheleLvc, @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * Zoeken van één of meer woonplaatsen met een woonplaatsnaam, geometrische locatie of binnen een bounding box.
@@ -122,7 +126,7 @@ public interface WoonplaatsApi {
     public WoonplaatsIOHalCollection zoekWoonplaatsen(@QueryParam("naam") String naam,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
             @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("point") PointGeoJSON point,
             @QueryParam("bbox") List<BigDecimal> bbox) throws ProcessingException;

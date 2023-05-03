@@ -412,6 +412,13 @@
                                     <ng-container matColumnDef="actions">
                                         <th *matHeaderCellDef mat-header-cell></th>
                                         <td *matCellDef="let bagObjectGegevens" mat-cell>
+                                            <a mat-icon-button
+                                               [routerLink]="['/bag-objecten', bagObjectGegevens.bagObject.bagObjectType.toLowerCase(), bagObjectGegevens.bagObject.identificatie]"
+                                               (click)="$event.stopPropagation()"
+                                               [id]="'bagObject_' + bagObjectGegevens.bagObject.identificatie +'_button'"
+                                               title="{{ 'actie.bagObject.bekijken' | translate }}">
+                                                <mat-icon>visibility</mat-icon>
+                                            </a>
                                             <button *ngIf="zaak.rechten.behandelen"
                                                     mat-icon-button
                                                     (click)="bagObjectVerwijderen(bagObjectGegevens)"

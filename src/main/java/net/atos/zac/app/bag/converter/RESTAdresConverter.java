@@ -32,13 +32,16 @@ public class RESTAdresConverter {
     @Inject
     private RESTWoonplaatsConverter woonplaatsConverter;
 
+    @Inject
+    private RESTAdreseerbaarObjectConverter adreseerbaarObjectConverter;
+
     public RESTAdres convertToREST(final AdresIOHal adres) {
         if (adres == null) {
             return null;
         }
         final RESTAdres restAdres = new RESTAdres();
         restAdres.url = URI.create(adres.getLinks().getSelf().getHref());
-        restAdres.identificatie = adres.getAdresseerbaarObjectIdentificatie();
+        restAdres.identificatie = adres.getNummeraanduidingIdentificatie();
         restAdres.postcode = adres.getPostcode();
         restAdres.huisnummer = adres.getHuisnummer();
         restAdres.huisletter = adres.getHuisletter();
@@ -59,6 +62,7 @@ public class RESTAdresConverter {
             restAdres.nummeraanduiding = nummeraanduidingConverter.convertToREST(adres.getEmbedded().getNummeraanduiding());
             restAdres.woonplaats = woonplaatsConverter.convertToREST(adres.getEmbedded().getWoonplaats());
             restAdres.panden = pandConverter.convertToREST(adres.getEmbedded().getPanden());
+            restAdres.adresseerbaarObject = adreseerbaarObjectConverter.convertToREST(adres.getEmbedded().getAdresseerbaarObject());
         }
         return restAdres;
     }
@@ -79,7 +83,7 @@ public class RESTAdresConverter {
         return restAdres;
     }
 
-    public ZaakobjectAdres convertToZaakobject(RESTAdres adres, final Zaak zaak) {
+    public ZaakobjectAdres convertToZaakobject(final RESTAdres adres, final Zaak zaak) {
         ObjectAdres objectAdres = new ObjectAdres(adres.identificatie,
                                                   adres.woonplaatsNaam,
                                                   adres.openbareRuimteNaam,
