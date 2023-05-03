@@ -185,7 +185,11 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakobjectListParameters.setZaak(zaak.getUrl());
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {
-            return zaakobjecten.getResults().stream().filter(Zaakobject::isBagObject).map(Zaakobject::getWaarde).toList();
+            return zaakobjecten.getResults()
+                    .stream()
+                    .filter(Zaakobject::isBagObject)
+                    .map(Zaakobject::getWaarde)
+                    .toList();
         } else {
             return Collections.emptyList();
         }

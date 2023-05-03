@@ -35,7 +35,13 @@ import net.atos.client.util.ClientFactory;
 @ApplicationScoped
 public class BAGClientService {
 
-    private final String defaultCRS = "epsg:28992";
+    public static final String DEFAULT_CRS = "epsg:28992";
+
+    private static final String ADRES_EXPAND = "panden, adresseerbaarObject, nummeraanduiding, openbareRuimte, woonplaats";
+
+    private static final String NUMMERAANDUIDING_EXPAND = "ligtAanOpenbareRuimte, ligtInWoonplaats";
+
+    private static final String OPENBARE_RUIMTE_EXPAND = "ligtInWoonplaats";
 
     @Inject
     @RestClient
@@ -58,7 +64,7 @@ public class BAGClientService {
     private OpenbareRuimteApi openbareRuimteApi;
 
     public AdresIOHal readAdres(final String nummeraanduidingIdentificatie) {
-        return adresApi.bevraagAdressenMetNumId(nummeraanduidingIdentificatie, "panden, adresseerbaarObject, nummeraanduiding, openbareRuimte, woonplaats",
+        return adresApi.bevraagAdressenMetNumId(nummeraanduidingIdentificatie, ADRES_EXPAND,
                                                 null);
     }
 
@@ -67,15 +73,15 @@ public class BAGClientService {
     }
 
     public NummeraanduidingIOHal readNummeraanduiding(final String nummeraanduidingIdentificatie) {
-        return nummeraanduidingApi.nummeraanduidingIdentificatie(nummeraanduidingIdentificatie, null, null, "ligtAanOpenbareRuimte, ligtInWoonplaats", null);
+        return nummeraanduidingApi.nummeraanduidingIdentificatie(nummeraanduidingIdentificatie, null, null, NUMMERAANDUIDING_EXPAND, null);
     }
 
     public PandIOHal readPand(final String pandIdentificatie) {
-        return pandApi.pandIdentificatie(pandIdentificatie, null, null, defaultCRS, null);
+        return pandApi.pandIdentificatie(pandIdentificatie, null, null, null, null);
     }
 
     public OpenbareRuimteIOHal readOpenbareRuimte(final String openbareRuimeIdentificatie) {
-        return openbareRuimteApi.openbareruimteIdentificatie(openbareRuimeIdentificatie, null, null, "ligtInWoonplaats", null);
+        return openbareRuimteApi.openbareruimteIdentificatie(openbareRuimeIdentificatie, null, null, OPENBARE_RUIMTE_EXPAND, null);
     }
 
     public List<AdresIOHal> listAdressen(final BevraagAdressenParameters parameters) {

@@ -27,10 +27,16 @@ public class RESTPandConverter {
     }
 
     public RESTPand convertToREST(final PandIOHalBasis pandIO) {
+        if (pandIO == null) {
+            return null;
+        }
         return convertToREST(pandIO.getPand());
     }
 
     public RESTPand convertToREST(final PandIOHal pandIO) {
+        if (pandIO == null) {
+            return null;
+        }
         final RESTPand restPand = convertToREST(pandIO.getPand());
         restPand.url = URI.create(pandIO.getLinks().getSelf().getHref());
         return restPand;

@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -72,7 +74,7 @@ public interface StandplaatsApi {
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
             @HeaderParam("Content-Crs") String contentCrs,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van een standplaats met de identificatie van een standplaats.
@@ -84,7 +86,7 @@ public interface StandplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public StandplaatsIOHal standplaatsIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") String acceptCrs,
+            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**
@@ -97,7 +99,7 @@ public interface StandplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public StandplaatsIOHal standplaatsIdentificatieVoorkomen(@PathParam("identificatie") String identificatie,
             @PathParam("versie") Integer versie, @PathParam("timestampRegistratieLv") String timestampRegistratieLv,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen levenscyclus van een standplaats met de identificatie van een standplaats.
@@ -109,7 +111,7 @@ public interface StandplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public StandplaatsIOLvcHalCollection standplaatsLvcIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geheleLvc") @DefaultValue("false") Boolean geheleLvc,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * zoeken van standplaatsen met een geometrische locatie of binnen een bounding box.
@@ -121,7 +123,7 @@ public interface StandplaatsApi {
     public StandplaatsIOHalCollection zoekStandplaatsen(@QueryParam("geldigOp") LocalDate geldigOp,
             @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
-            @HeaderParam("Content-Crs") String contentCrs, @HeaderParam("Accept-Crs") String acceptCrs,
+            @HeaderParam("Content-Crs") String contentCrs, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("point") PointGeoJSON point,
             @QueryParam("bbox") List<BigDecimal> bbox) throws ProcessingException;

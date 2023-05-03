@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -74,7 +76,7 @@ public interface WoonplaatsApi {
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
             @HeaderParam("Content-Crs") String contentCrs,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van een woonplaats met de identificatie van een woonplaats.
@@ -86,7 +88,7 @@ public interface WoonplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public WoonplaatsIOHal woonplaatsIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue("epsg:28992") String acceptCrs,
+            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**
@@ -100,7 +102,7 @@ public interface WoonplaatsApi {
     public WoonplaatsIOHal woonplaatsIdentificatieVoorkomen(@PathParam("identificatie") String identificatie,
             @PathParam("versie") Integer versie, @PathParam("timestampRegistratieLv") String timestampRegistratieLv,
             @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van de levenscyclus van een woonplaats met de identificatie van een woonplaats.
@@ -112,7 +114,7 @@ public interface WoonplaatsApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public WoonplaatsIOLvcHalCollection woonplaatsLvcIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geheleLvc") @DefaultValue("false") Boolean geheleLvc, @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * Zoeken van één of meer woonplaatsen met een woonplaatsnaam, geometrische locatie of binnen een bounding box.
@@ -124,7 +126,7 @@ public interface WoonplaatsApi {
     public WoonplaatsIOHalCollection zoekWoonplaatsen(@QueryParam("naam") String naam,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
             @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("point") PointGeoJSON point,
             @QueryParam("bbox") List<BigDecimal> bbox) throws ProcessingException;

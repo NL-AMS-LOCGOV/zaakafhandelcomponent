@@ -83,7 +83,7 @@ public class RESTAdresConverter {
         return restAdres;
     }
 
-    public ZaakobjectAdres convertToZaakobject(RESTAdres adres, final Zaak zaak) {
+    public ZaakobjectAdres convertToZaakobject(final RESTAdres adres, final Zaak zaak) {
         ObjectAdres objectAdres = new ObjectAdres(adres.identificatie,
                                                   adres.woonplaatsNaam,
                                                   adres.openbareRuimteNaam,

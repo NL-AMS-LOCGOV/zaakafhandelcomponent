@@ -34,12 +34,18 @@ public class RESTOpenbareRuimteConverter {
     }
 
     public RESTOpenbareRuimte convertToREST(final OpenbareRuimteIOHalBasis openbareRuimteIO) {
+        if (openbareRuimteIO == null) {
+            return null;
+        }
         final RESTOpenbareRuimte restOpenbareRuimte = convertToREST(openbareRuimteIO.getOpenbareRuimte());
         restOpenbareRuimte.url = URI.create(openbareRuimteIO.getLinks().getSelf().getHref());
         return restOpenbareRuimte;
     }
 
     public RESTOpenbareRuimte convertToREST(final OpenbareRuimteIOHal openbareRuimteIO) {
+        if (openbareRuimteIO == null) {
+            return null;
+        }
         final RESTOpenbareRuimte restOpenbareRuimte = convertToREST(openbareRuimteIO.getOpenbareRuimte());
         restOpenbareRuimte.url = URI.create(openbareRuimteIO.getLinks().getSelf().getHref());
         if (openbareRuimteIO.getEmbedded() != null) {

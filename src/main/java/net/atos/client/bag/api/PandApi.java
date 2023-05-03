@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -76,7 +78,7 @@ public interface PandApi {
     public PandIOHalCollection pandGeometrie(PointGeoJSON pointGeoJSON, @QueryParam("geldigOp") LocalDate geldigOp,
             @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @HeaderParam("Content-Crs") String contentCrs,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen van een pand met de identificatie van een pand.
@@ -101,7 +103,7 @@ public interface PandApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public PandIOHal pandIdentificatieVoorkomen(@PathParam("identificatie") String identificatie,
             @PathParam("versie") Integer versie, @PathParam("timestampRegistratieLv") String timestampRegistratieLv,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * bevragen levenscyclus van een pand met de identificatie van een pand.
@@ -113,7 +115,7 @@ public interface PandApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public PandIOLvcHalCollection pandLvcIdentificatie(@PathParam("identificatie") String identificatie,
             @QueryParam("geheleLvc") @DefaultValue("false") Boolean geheleLvc,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * Zoek panden met een geometrische locatie, binnen een bounding box,  met een adresseerbaar object identificatie of met een nummeraanduiding  identificatie.
@@ -125,7 +127,7 @@ public interface PandApi {
     public PandIOHalCollection zoekPanden(@QueryParam("geldigOp") LocalDate geldigOp,
             @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @HeaderParam("Content-Crs") String contentCrs,
-            @HeaderParam("Accept-Crs") String acceptCrs, @QueryParam("page") @DefaultValue("1") Integer page,
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs, @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("point") PointGeoJSON point,
             @QueryParam("bbox") List<BigDecimal> bbox, @QueryParam("statusPand") List<StatusPand> statusPand,
             @QueryParam("geconstateerd") Boolean geconstateerd, @QueryParam("bouwjaar") BouwjaarFilter bouwjaar,

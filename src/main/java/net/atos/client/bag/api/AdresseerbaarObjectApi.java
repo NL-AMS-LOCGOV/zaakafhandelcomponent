@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -75,7 +77,7 @@ public interface AdresseerbaarObjectApi {
     public AdresseerbaarObjectIOHal bevragenAdresseerbaarObject(
             @PathParam("adresseerbaarObjectIdentificatie") String adresseerbaarObjectIdentificatie,
             @QueryParam("geldigOp") LocalDate geldigOp, @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp,
-            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") String acceptCrs,
+            @QueryParam("expand") String expand, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig) throws ProcessingException;
 
     /**
@@ -89,7 +91,7 @@ public interface AdresseerbaarObjectApi {
     public AdresseerbaarObjectLvcIOHalCollection bevragenAdresseerbaarObjectLvc(
             @PathParam("adresseerbaarObjectIdentificatie") String adresseerbaarObjectIdentificatie,
             @QueryParam("geheleLvc") @DefaultValue("false") Boolean geheleLvc,
-            @HeaderParam("Accept-Crs") String acceptCrs) throws ProcessingException;
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs) throws ProcessingException;
 
     /**
      * Bevragen van één of meer adresseerbare objecten op basis van een nummeraanduiding identificatie.
@@ -102,7 +104,7 @@ public interface AdresseerbaarObjectApi {
             @QueryParam("nummeraanduidingIdentificatie") String nummeraanduidingIdentificatie,
             @QueryParam("huidig") @DefaultValue("false") Boolean huidig, @QueryParam("geldigOp") LocalDate geldigOp,
             @QueryParam("beschikbaarOp") OffsetDateTime beschikbaarOp, @QueryParam("expand") String expand,
-            @HeaderParam("Accept-Crs") String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs, @HeaderParam("Content-Crs") String contentCrs,
             @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("bbox") List<BigDecimal> bbox,
             @QueryParam("geconstateerd") Boolean geconstateerd,

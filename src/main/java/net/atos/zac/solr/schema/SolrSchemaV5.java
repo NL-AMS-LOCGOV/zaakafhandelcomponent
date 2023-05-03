@@ -30,12 +30,7 @@ class SolrSchemaV5 implements SolrSchemaUpdate {
 
     @Override
     public List<SchemaRequest.Update> getSchemaUpdates() {
-        return updateZaakSchema();
+        return List.of(addFieldMultiValued("zaak_bagObjecten", STRING, true, true));
     }
 
-    private List<SchemaRequest.Update> updateZaakSchema() {
-        return List.of(
-                addFieldMultiValued("zaak_bagObjecten", STRING, true, true)
-        );
-    }
 }

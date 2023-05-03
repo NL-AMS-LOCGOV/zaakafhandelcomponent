@@ -17,6 +17,8 @@
 
 package net.atos.client.bag.api;
 
+import static net.atos.client.bag.BAGClientService.DEFAULT_CRS;
+
 import java.time.temporal.ChronoUnit;
 
 import javax.ws.rs.DefaultValue;
@@ -62,7 +64,7 @@ public interface AdresUitgebreidApi {
     @Produces({"application/hal+json", "application/problem+json"})
     public AdresUitgebreidHal bevraagAdresUitgebreidMetNumId(
             @PathParam("nummeraanduidingIdentificatie") String nummeraanduidingIdentificatie,
-            @HeaderParam("Accept-Crs") String acceptCrs,
+            @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("inclusiefEindStatus") @DefaultValue("false") Boolean inclusiefEindStatus) throws ProcessingException;
 
     /**
@@ -79,7 +81,7 @@ public interface AdresUitgebreidApi {
             @QueryParam("exacteMatch") @DefaultValue("false") Boolean exacteMatch,
             @QueryParam("adresseerbaarObjectIdentificatie") String adresseerbaarObjectIdentificatie,
             @QueryParam("woonplaatsNaam") String woonplaatsNaam,
-            @QueryParam("openbareRuimteNaam") String openbareRuimteNaam, @HeaderParam("Accept-Crs") String acceptCrs,
+            @QueryParam("openbareRuimteNaam") String openbareRuimteNaam, @HeaderParam("Accept-Crs") @DefaultValue(DEFAULT_CRS) String acceptCrs,
             @QueryParam("page") @DefaultValue("1") Integer page,
             @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("q") String q,
             @QueryParam("inclusiefEindStatus") @DefaultValue("false") Boolean inclusiefEindStatus) throws ProcessingException;

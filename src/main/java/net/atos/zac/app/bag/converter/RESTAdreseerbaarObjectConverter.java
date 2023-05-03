@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.bag.converter;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.ListUtils;
@@ -63,7 +62,7 @@ public class RESTAdreseerbaarObjectConverter {
         restAdresseerbaarObject.geconstateerd = Indicatie.J.equals(verblijfsobject.getGeconstateerd());
         restAdresseerbaarObject.vboDoel = ListUtils.emptyIfNull(
                 verblijfsobject.getGebruiksdoelen()).stream().map(Gebruiksdoel::toString).collect(Collectors.joining(", "));
-        restAdresseerbaarObject.vboOppervlakte = Optional.ofNullable(verblijfsobject.getOppervlakte()).orElse(0);
+        restAdresseerbaarObject.vboOppervlakte = verblijfsobject.getOppervlakte() != null ? verblijfsobject.getOppervlakte() : 0;
         return restAdresseerbaarObject;
     }
 }

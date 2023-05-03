@@ -17,7 +17,6 @@ public class RESTAdresseerbaarObject extends RESTBAGObject {
 
     public int vboOppervlakte;
 
-
     public RESTAdresseerbaarObject() {
     }
 
