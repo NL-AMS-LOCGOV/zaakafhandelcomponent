@@ -9,6 +9,7 @@ import {OpenbareRuimte} from './openbare-ruimte';
 import {Nummeraanduiding} from './nummeraanduiding';
 import {Pand} from './pand';
 import {AdresseerbaarObject} from './adresseerbaar-object';
+import {Geometry} from '../../zaken/model/geometry';
 
 export class Adres extends BAGObject {
     postcode: string;
@@ -23,4 +24,5 @@ export class Adres extends BAGObject {
     woonplaats: Woonplaats;
     adresseerbaarObject: AdresseerbaarObject;
     panden: Pand[];
+    geometry: Geometry;
 }

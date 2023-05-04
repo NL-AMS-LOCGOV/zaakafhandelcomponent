@@ -42,6 +42,7 @@ public class RESTAdreseerbaarObjectConverter {
         restAdresseerbaarObject.identificatie = ligplaats.getIdentificatie();
         restAdresseerbaarObject.status = ligplaats.getStatus().toString();
         restAdresseerbaarObject.geconstateerd = Indicatie.J.equals(ligplaats.getGeconstateerd());
+        restAdresseerbaarObject.geometry = RESTBAGConverter.convertVlak(ligplaats.getGeometrie());
         return restAdresseerbaarObject;
     }
 
@@ -51,6 +52,7 @@ public class RESTAdreseerbaarObjectConverter {
         restAdresseerbaarObject.identificatie = standplaats.getIdentificatie();
         restAdresseerbaarObject.status = standplaats.getStatus().toString();
         restAdresseerbaarObject.geconstateerd = Indicatie.J.equals(standplaats.getGeconstateerd());
+        restAdresseerbaarObject.geometry = RESTBAGConverter.convertVlak(standplaats.getGeometrie());
         return restAdresseerbaarObject;
     }
 
@@ -63,6 +65,7 @@ public class RESTAdreseerbaarObjectConverter {
         restAdresseerbaarObject.vboDoel = ListUtils.emptyIfNull(
                 verblijfsobject.getGebruiksdoelen()).stream().map(Gebruiksdoel::toString).collect(Collectors.joining(", "));
         restAdresseerbaarObject.vboOppervlakte = verblijfsobject.getOppervlakte() != null ? verblijfsobject.getOppervlakte() : 0;
+        restAdresseerbaarObject.geometry = RESTBAGConverter.convertPuntOrVlak(verblijfsobject.getGeometrie());
         return restAdresseerbaarObject;
     }
 }

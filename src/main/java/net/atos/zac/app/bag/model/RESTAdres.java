@@ -8,6 +8,8 @@ package net.atos.zac.app.bag.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.atos.zac.app.zaken.model.RESTGeometry;
+
 public class RESTAdres extends RESTBAGObject {
 
     public String postcode;
@@ -45,5 +47,24 @@ public class RESTAdres extends RESTBAGObject {
     @Override
     public String getOmschrijving() {
         return "%s %s, %s %s".formatted(openbareRuimteNaam, huisnummerWeergave, postcode, woonplaatsNaam);
+    }
+
+    public RESTGeometry getGeometry() {
+        RESTGeometry geometry = new RESTGeometry();
+        geometry.type = "GeometryCollection";
+        geometry.geometrycollection = new ArrayList<>();
+        if (adresseerbaarObject != null && adresseerbaarObject.geometry != null) {
+            geometry.geometrycollection.add(adresseerbaarObject.geometry);
+        }
+        if (panden != null && !panden.isEmpty() && panden.get(0).geometry != null) {
+            geometry.geometrycollection.add(panden.get(0).geometry);
+        }
+        if (geometry.geometrycollection.size() == 1) {
+            return geometry.geometrycollection.get(0);
+        }
+        if (geometry.geometrycollection.size() == 2) {
+            return geometry;
+        }
+        return null;
     }
 }

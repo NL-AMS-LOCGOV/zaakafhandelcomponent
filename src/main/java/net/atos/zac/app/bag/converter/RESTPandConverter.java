@@ -65,6 +65,7 @@ public class RESTPandConverter {
         }
         restPand.oorspronkelijkBouwjaar = pand.getOorspronkelijkBouwjaar();
         restPand.geconstateerd = Indicatie.J.equals(pand.getGeconstateerd());
+        restPand.geometry = RESTBAGConverter.convertVlak(pand.getGeometrie());
         return restPand;
     }
 
