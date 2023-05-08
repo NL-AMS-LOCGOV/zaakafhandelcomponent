@@ -10,6 +10,9 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.bag.model.PointGeoJSON;
+import net.atos.client.bag.model.PuntOfVlak;
+import net.atos.client.bag.model.Surface;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.zaakobjecten.Zaakobject;
 import net.atos.client.zgw.zrc.model.zaakobjecten.ZaakobjectAdres;
@@ -24,6 +27,8 @@ import net.atos.zac.app.bag.model.RESTNummeraanduiding;
 import net.atos.zac.app.bag.model.RESTOpenbareRuimte;
 import net.atos.zac.app.bag.model.RESTPand;
 import net.atos.zac.app.bag.model.RESTWoonplaats;
+import net.atos.zac.app.zaken.model.RESTCoordinates;
+import net.atos.zac.app.zaken.model.RESTGeometry;
 import net.atos.zac.util.UriUtil;
 
 public class RESTBAGConverter {
@@ -84,5 +89,33 @@ public class RESTBAGConverter {
             volledigHuisnummer.append("-").append(huisnummertoevoeging);
         }
         return volledigHuisnummer.toString().trim();
+    }
+
+    public static RESTGeometry convertVlak(final Surface surface) {
+        final RESTGeometry geometry = new RESTGeometry();
+        geometry.type = surface.getType().value();
+        geometry.polygon = surface.getCoordinates()
+                .stream()
+                .map(coords -> coords.stream()
+                        .map(punt -> new RESTCoordinates(punt.get(0).doubleValue(), punt.get(1).doubleValue()))
+                        .toList())
+                .toList();
+        return geometry;
+    }
+
+    public static RESTGeometry convertPunt(PointGeoJSON punt) {
+        final RESTGeometry geometry = new RESTGeometry();
+        geometry.type = punt.getType().value();
+        geometry.point = new RESTCoordinates(punt.getCoordinates().get(0).doubleValue(), punt.getCoordinates().get(1).doubleValue());
+        return geometry;
+    }
+
+    public static RESTGeometry convertPuntOrVlak(PuntOfVlak puntOfVlak) {
+        if (puntOfVlak.getPunt() != null) {
+            return convertPunt(puntOfVlak.getPunt());
+        } else if (puntOfVlak.getVlak() != null) {
+            return convertVlak(puntOfVlak.getVlak());
+        }
+        return null;
     }
 }

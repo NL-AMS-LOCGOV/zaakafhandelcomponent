@@ -4,6 +4,7 @@
  */
 
 import {BAGObject} from './bagobject';
+import {Geometry} from '../../zaken/model/geometry';
 
 export class Pand extends BAGObject {
     oorspronkelijkBouwjaar: string;
@@ -18,4 +19,5 @@ export class Pand extends BAGObject {
         'PAND_BUITEN_GEBRUIK' |
         'PAND_TEN_ONRECHTE_OPGEVOERD';
     statusWeergave: string;
+    geometry: Geometry;
 }

@@ -77,7 +77,7 @@ public class BAGClientService {
     }
 
     public PandIOHal readPand(final String pandIdentificatie) {
-        return pandApi.pandIdentificatie(pandIdentificatie, null, null, null, null);
+        return pandApi.pandIdentificatie(pandIdentificatie, null, null, DEFAULT_CRS, null);
     }
 
     public OpenbareRuimteIOHal readOpenbareRuimte(final String openbareRuimeIdentificatie) {

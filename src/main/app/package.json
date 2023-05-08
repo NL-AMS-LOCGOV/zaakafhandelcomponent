@@ -27,6 +27,7 @@
     "@ngrx/store-devtools": "^15.2.1",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
+    "@types/proj4": "^2.5.2",
     "ngx-editor": "^15.1.0",
     "moment": "^2.29.4",
     "ng2-pdfjs-viewer": "^15.0.0",

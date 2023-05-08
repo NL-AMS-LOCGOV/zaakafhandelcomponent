@@ -39,6 +39,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import net.atos.client.bag.model.AdresUitgebreidHal;
 import net.atos.client.bag.model.AdresUitgebreidHalCollection;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
+import net.atos.client.bag.util.JsonbConfiguration;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 /**
@@ -49,7 +50,10 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 
 @RegisterRestClient(configKey = "BAG-API-Client")
 @RegisterClientHeaders(BAGClientHeadersFactory.class)
-@RegisterProviders({@RegisterProvider(RuntimeExceptionMapper.class)})
+@RegisterProviders({
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)
+})
 @Timeout(unit = ChronoUnit.SECONDS, value = 5)
 @Path("/adressenuitgebreid")
 public interface AdresUitgebreidApi {
