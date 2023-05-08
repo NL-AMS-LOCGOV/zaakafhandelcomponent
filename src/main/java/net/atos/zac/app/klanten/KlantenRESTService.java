@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.klanten;
 
+import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.VALID_PERSONEN_QUERIES;
 import static net.atos.zac.util.StringUtil.ONBEKEND;
 
 import java.util.Comparator;
@@ -48,6 +49,7 @@ import net.atos.zac.app.klanten.model.klant.RESTContactGegevens;
 import net.atos.zac.app.klanten.model.klant.RESTKlant;
 import net.atos.zac.app.klanten.model.klant.RESTRoltype;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
+import net.atos.zac.app.klanten.model.personen.RESTPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 import net.atos.zac.app.shared.RESTResultaat;
 
@@ -139,6 +141,12 @@ public class KlantenRESTService {
                 .orElseGet(RESTBedrijf::new);
     }
 
+    @GET
+    @Path("personen/parameters")
+    public List<RESTPersonenParameters> getPersonenParameters() {
+        return VALID_PERSONEN_QUERIES;
+    }
+
     @PUT
     @Path("personen")
     public RESTResultaat<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
@@ -173,7 +181,8 @@ public class KlantenRESTService {
 
     @GET
     @Path("contactgegevens/{identificatieType}/{initiatorIdentificatie}")
-    public RESTContactGegevens ophalenContactGegevens(@PathParam("identificatieType") final IdentificatieType identificatieType,
+    public RESTContactGegevens ophalenContactGegevens(
+            @PathParam("identificatieType") final IdentificatieType identificatieType,
             @PathParam("initiatorIdentificatie") final String initiatorIdentificatie) {
         final RESTContactGegevens restContactGegevens = new RESTContactGegevens();
         if (identificatieType == null) {
@@ -192,6 +201,6 @@ public class KlantenRESTService {
             restContactGegevens.emailadres = klant.getEmailadres();
         });
 
-         return restContactGegevens;
+        return restContactGegevens;
     }
 }

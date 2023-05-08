@@ -17,14 +17,14 @@
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>emoji_people</mat-icon>
-            {{'actie.initiator.toevoegen.persoon' | translate}}
+            {{'betrokkene.persoon' | translate}}
         </ng-template>
         <zac-persoon-zoek (persoon)="klantGeselecteerd($event)"></zac-persoon-zoek>
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>business</mat-icon>
-            {{'actie.initiator.toevoegen.bedrijf' | translate}}
+            {{'betrokkene.bedrijf' | translate}}
         </ng-template>
         <zac-bedrijf-zoek (bedrijf)="klantGeselecteerd($event)"></zac-bedrijf-zoek>
     </mat-tab>
@@ -35,7 +35,7 @@
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>emoji_people</mat-icon>
-            {{'actie.betrokkene.toevoegen.persoon' | translate}}
+            {{'betrokkene.persoon' | translate}}
         </ng-template>
         <div class="form betrokkene-form">
             <div class="flex-row flex-col-sm gap-10">
@@ -48,7 +48,7 @@
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>business</mat-icon>
-            {{'actie.betrokkene.toevoegen.bedrijf' | translate}}
+            {{'betrokkene.bedrijf' | translate}}
         </ng-template>
         <div class="form">
             <div class="flex-row flex-col-sm gap-10">

@@ -107,6 +107,8 @@ public class ConfiguratieService {
     @ConfigProperty(name = "CONTEXT_URL")
     private String contextUrl;
 
+    private String gemeenteCode = "0599"; // TODO configuration GEMEENTE_CODE instead of hard coded
+
     @Inject
     @ConfigProperty(name = "GEMEENTE_NAAM")
     private String gemeenteNaam;
@@ -148,6 +150,10 @@ public class ConfiguratieService {
     public URI informatieobjectTonenUrl(final UUID enkelvoudigInformatieobjectUUID) {
         return UriBuilder.fromUri(contextUrl).path("informatie-objecten/{enkelvoudigInformatieobjectUUID}")
                 .build(enkelvoudigInformatieobjectUUID.toString());
+    }
+
+    public String readGemeenteCode() {
+        return gemeenteCode;
     }
 
     public String readGemeenteNaam() {

@@ -6,6 +6,7 @@
 <mat-form-field appearance="fill" class="full-width" (click)="clicked()" [class]="data.styleClass">
 
     <button *ngIf="data.onClear.observed && data.formControl.value"
+            [disabled]="data.formControl.disabled"
             mat-icon-button type="button" matSuffix
             title="{{'actie.wissen' | translate}}"
             (click)="data.onClear.emit(); $event.stopPropagation()">
@@ -13,6 +14,7 @@
     </button>
 
     <button *ngFor="let icon of data.icons"
+            [disabled]="data.formControl.disabled"
             mat-icon-button type="button" matSuffix
             title="{{icon.title | translate}}"
             (click)="icon.iconClicked.next(null)">
