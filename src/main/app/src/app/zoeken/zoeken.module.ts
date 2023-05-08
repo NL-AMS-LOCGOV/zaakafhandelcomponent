@@ -19,6 +19,7 @@ import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/do
 import {RouterLink} from '@angular/router';
 import {ZoekObjectLinkComponent} from './zoek-object/zoek-object-link/zoek-object-link.component';
 import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
+import {BAGModule} from '../bag/bag.module';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informat
         KlantenModule,
         RouterLink,
         RouterLink,
-        InformatieObjectIndicatiesComponent
+        InformatieObjectIndicatiesComponent,
+        BAGModule
     ]
 })
 export class ZoekenModule {

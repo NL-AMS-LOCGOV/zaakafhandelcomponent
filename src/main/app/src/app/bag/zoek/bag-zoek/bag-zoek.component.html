@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="sidenav-title">
+<div class="sidenav-title" *ngIf="bagObject.observed">
     <h3>
         <mat-icon>add_home_work</mat-icon>
         {{'actie.bagObject.toevoegen' | translate}}</h3>
@@ -16,17 +16,17 @@
     <div class="flex-row flex-col-md gap-10 flex-wrap">
         <div class="w100">
 
-            <mat-form-field appearance="fill" class="full-width">
+            <mat-form-field appearance="fill" floatLabel="always" class="full-width">
                 <button [disabled]="trefwoorden.invalid || loading" mat-icon-button type="button" matSuffix title="{{'zoeken' | translate}}" (click)="zoek()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <mat-label>{{'trefwoorden' | translate}}</mat-label>
+                <mat-label>{{'bagObjecten' | translate}}</mat-label>
                 <input matInput id="trefwoorden" cdkFocusInitial maxlength="255"
                        (keyup.enter)="!trefwoorden.valid || zoek()"
+                       placeholder="{{'msg.zoeken.bagObject.label' | translate}}"
                        [formControl]="trefwoorden">
                 <mat-hint align="end">{{trefwoorden.value.length}}/255</mat-hint>
             </mat-form-field>
-
         </div>
     </div>
 </div>
@@ -68,9 +68,15 @@
         <ng-container matColumnDef="acties" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-                <button mat-icon-button color="primary" [disabled]="reedsGekoppeld(row)" (click)="selectBagObject(row)"
+                <button *ngIf="bagObject.observed" mat-icon-button color="primary" [disabled]="reedsGekoppeld(row)" (click)="selectBagObject(row)"
                         title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>add_home_work</mat-icon>
+                </button>
+                <button *ngIf="!bagObject.observed" mat-icon-button
+                        (click)="openBagTonenPagina(row)"
+                        [id]="'bagObjectBekijken_' + row.identificatie +'_button'"
+                        title="{{ 'actie.bagObject.bekijken' | translate }}">
+                    <mat-icon>visibility</mat-icon>
                 </button>
             </td>
         </ng-container>

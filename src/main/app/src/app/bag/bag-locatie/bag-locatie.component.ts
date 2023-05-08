@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import * as ol from 'ol/index.js';
 import * as layer from 'ol/layer.js';
 import * as proj from 'ol/proj.js';
@@ -24,7 +24,7 @@ import * as interaction from 'ol/interaction';
     templateUrl: './bag-locatie.component.html',
     styleUrls: ['./bag-locatie.component.less']
 })
-export class BagLocatieComponent implements OnInit, AfterViewInit {
+export class BagLocatieComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Input() bagGeometrie: Geometry;
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
@@ -115,12 +115,12 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
             this.map.setTarget(this.openLayersMapRef.nativeElement);
         }, 0);
         if (this.bagGeometrie) {
-            this.setLocatie(this.bagGeometrie);
+            this.draw(this.bagGeometrie);
             this.zoom();
         }
     }
 
-    private setLocatie(geometry: Geometry): void {
+    private draw(geometry: Geometry): void {
         if (geometry.type === GeometryType.POINT) {
             const coordinate: Array<number> = [geometry.point.x, geometry.point.y];
             this.addPoint(coordinate);
@@ -133,7 +133,7 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
             this.addVlak(coordinates);
         }
         if (geometry.type === GeometryType.GEOMETRY_COLLECTION) {
-            geometry.geometrycollection.forEach(g => this.setLocatie(g));
+            geometry.geometrycollection.forEach(g => this.draw(g));
         }
     }
 
@@ -158,5 +158,14 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
             size: this.map.getSize(),
             maxZoom: this.DEFAULT_ZOOM
         });
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.bagGeometrie = changes.bagGeometrie.currentValue;
+        if (this.bagGeometrie && !changes.bagGeometrie.isFirstChange()) {
+            this.geometrieSource.clear();
+            this.draw(this.bagGeometrie);
+            this.zoom();
+        }
     }
 }

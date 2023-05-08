@@ -8,12 +8,12 @@ import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
 import {ListAdressenParameters} from '../../model/list-adressen-parameters';
-import {MatDialog} from '@angular/material/dialog';
 import {UtilService} from '../../../core/service/util.service';
 import {BAGObject} from '../../model/bagobject';
 import {BAGObjecttype} from '../../model/bagobjecttype';
 import {Adres} from '../../model/adres';
 import {MatDrawer, MatSidenav} from '@angular/material/sidenav';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'zac-bag-zoek',
@@ -33,7 +33,7 @@ export class BagZoekComponent {
     formGroup: FormGroup;
     columns: string[] = ['expand', 'id', 'type', 'omschrijving', 'acties'];
 
-    constructor(private bagService: BAGService, private utilService: UtilService, private dialog: MatDialog) { }
+    constructor(private bagService: BAGService, private utilService: UtilService, private router: Router) { }
 
     zoek(): void {
         this.bagObjecten.data = [];
@@ -99,5 +99,10 @@ export class BagZoekComponent {
             return this.gekoppeldeBagObjecten.some(b => b.identificatie === row.identificatie && b.bagObjectType === row.bagObjectType);
         }
         return false;
+    }
+
+    openBagTonenPagina(bagObject: BAGObject): void {
+        this.sideNav?.close();
+        this.router.navigate(['/bag-objecten', bagObject.bagObjectType.toLowerCase(), bagObject.identificatie]);
     }
 }
