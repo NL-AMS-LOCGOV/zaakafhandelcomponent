@@ -26,27 +26,24 @@ import * as interaction from 'ol/interaction';
 })
 export class BagLocatieComponent implements OnInit, AfterViewInit {
 
-    @Input() huidigeLocatie: Geometry;
+    @Input() bagGeometrie: Geometry;
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
 
     private map: ol.Map;
-    private view: ol.View;
-    private locationSource: source.Vector;
+    private geometrieSource = new source.Vector();
     private readonly RDNEW: string = 'EPSG:28992';
-    private readonly EXTENT_MATRIX: number = 20;
     private readonly DEFAULT_ZOOM: number = 14;
     private readonly MAX_ZOOM: number = 14;
-    private layers: any[];
+
     private defaultStyle: style.Style = new style.Style({
         fill: new style.Fill({
-            color: 'rgba(255, 255, 255, 0.5)'
+            color: 'rgba(0,119,255,0.25)'
         }),
         stroke: new style.Stroke({
-            color: '#0077ff',
+            color: 'rgb(0,119,255)',
             width: 2
         })
     });
-
     private pointStyle: style.Style = new style.Style({
         text: new style.Text({
             text: 'adjust',
@@ -58,25 +55,24 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
     });
 
     constructor() {
-        const RD = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m' +
-            ' +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs';
-        proj4.defs(
-            this.RDNEW, RD
-        );
+        proj4.defs(this.RDNEW, '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m' +
+            ' +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs');
         register(proj4);
-        proj.get(this.RDNEW).setExtent([-285401.92, 22598.08, 595401.9199999999, 903401.9199999999]);
+        proj.get(this.RDNEW).setExtent([-285401.92, 22598.08, 595401.92, 903401.92]);
     }
 
     ngOnInit(): void {
         const projection = proj.get(this.RDNEW);
+        const extentMatrix = 20;
         const projectionExtent = projection.getExtent();
-        const res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.880, 13.440, 6.720, 3.360, 1.680, 0.840, 0.420];
-        const matrixIds = new Array(this.EXTENT_MATRIX);
-        for (let z = 0; z < this.EXTENT_MATRIX; ++z) {
-            matrixIds[z] = ('0' + z).slice(-2);
+        const width = extent.getWidth(projectionExtent) / 256;
+        const resolutions = new Array(extentMatrix);
+        const matrixIds = new Array(extentMatrix);
+        for (let z = 0; z < extentMatrix; ++z) {
+            matrixIds[z] = z;
+            resolutions[z] = width / Math.pow(2, z);
         }
-        const brtsource = new source.WMTS({
-            projection: this.RDNEW,
+        const kaartSource = new source.WMTS({
             layer: 'standaard',
             format: 'image/png',
             url: 'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0',
@@ -84,22 +80,19 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
             style: '',
             tileGrid: new WMTSTileGrid({
                 origin: extent.getTopLeft(projectionExtent),
-                resolutions: res,
-                matrixIds
-            }),
-            attributions: ['© OpenLayers en PDOK']
+                resolutions: resolutions,
+                matrixIds: matrixIds
+            })
         });
-        const brtLayer = new layer.Tile({
-            source: brtsource
+        const kaartLayer = new layer.Tile({
+            source: kaartSource
         });
-        this.locationSource = new source.Vector();
-        const locationLayer = new layer.Vector({
-            source: this.locationSource,
+
+        const geometrieLayer = new layer.Vector({
+            source: this.geometrieSource,
             style: this.defaultStyle
         });
-        this.layers = [brtLayer];
-        this.layers.push(locationLayer);
-        this.view = new ol.View({
+        const view = new ol.View({
             projection: proj.get(this.RDNEW),
             constrainResolution: true,
             zoom: this.DEFAULT_ZOOM,
@@ -108,8 +101,8 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
         });
         this.map = new ol.Map({
             controls: [],
-            view: this.view,
-            layers: this.layers,
+            view: view,
+            layers: [kaartLayer, geometrieLayer],
             interactions: interaction.defaults({
                 mouseWheelZoom: false,
                 onFocusOnly: true
@@ -121,13 +114,13 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
             this.map.setTarget(this.openLayersMapRef.nativeElement);
         }, 0);
-        if (this.huidigeLocatie) {
-            this.setLocatie(this.huidigeLocatie);
+        if (this.bagGeometrie) {
+            this.setLocatie(this.bagGeometrie);
             this.zoom();
         }
     }
 
-    private setLocatie(geometry: Geometry) {
+    private setLocatie(geometry: Geometry): void {
         if (geometry.type === GeometryType.POINT) {
             const coordinate: Array<number> = [geometry.point.x, geometry.point.y];
             this.addPoint(coordinate);
@@ -144,26 +137,23 @@ export class BagLocatieComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private addPoint(coordinate: Coordinate) {
-        console.log(coordinate);
+    private addPoint(coordinate: Coordinate): void {
         const marker = new ol.Feature({
             geometry: new geom.Point(coordinate)
         });
         marker.setStyle(this.pointStyle);
-        this.locationSource.addFeature(marker);
+        this.geometrieSource.addFeature(marker);
     }
 
-    private addVlak(coordinates: Coordinate[][]) {
+    private addVlak(coordinates: Coordinate[][]): void {
         const vlak = new ol.Feature({
             geometry: new geom.Polygon(coordinates)
         });
-
-        vlak.setStyle(this.defaultStyle);
-        this.locationSource.addFeature(vlak);
+        this.geometrieSource.addFeature(vlak);
     }
 
     private zoom(): void {
-        const locationExtent = this.locationSource.getExtent();
+        const locationExtent = this.geometrieSource.getExtent();
         this.map.getView().fit(locationExtent, {
             size: this.map.getSize(),
             maxZoom: this.DEFAULT_ZOOM

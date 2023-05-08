@@ -27,7 +27,7 @@ export class BAGViewComponent implements OnInit {
     woonplaats: Woonplaats;
     pand: Pand;
     nummeraanduiding: Nummeraanduiding;
-    geometry: Geometry;
+    geometrie: Geometry;
 
     constructor(private utilService: UtilService, private _route: ActivatedRoute) {
     }
@@ -39,7 +39,7 @@ export class BAGViewComponent implements OnInit {
             switch (this.bagObject.bagObjectType) {
                 case BAGObjecttype.ADRES:
                     this.adres = this.bagObject as Adres;
-                    this.geometry = this.adres.geometry;
+                    this.geometrie = this.adres.geometry;
                     break;
                 case BAGObjecttype.ADRESSEERBAAR_OBJECT:
                     break; // (Nog) geen zelfstandige entiteit
@@ -48,7 +48,7 @@ export class BAGViewComponent implements OnInit {
                     break;
                 case BAGObjecttype.PAND:
                     this.pand = this.bagObject as Pand;
-                    this.geometry = this.pand.geometry;
+                    this.geometrie = this.pand.geometry;
                     break;
                 case BAGObjecttype.OPENBARE_RUIMTE:
                     this.openbareRuimte = this.bagObject as OpenbareRuimte;

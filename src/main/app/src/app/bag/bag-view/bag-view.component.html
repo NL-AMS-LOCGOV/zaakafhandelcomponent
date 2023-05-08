@@ -201,7 +201,7 @@
             </div>
             <div class="main-content flex-col gap-16">
                 <zac-bag-zaken-tabel [BagObjectIdentificatie]="bagObject.identificatie"></zac-bag-zaken-tabel>
-                <zac-bag-locatie *ngIf="geometry" [huidigeLocatie]="geometry"></zac-bag-locatie>
+                <zac-bag-locatie *ngIf="geometrie" [bagGeometrie]="geometrie"></zac-bag-locatie>
             </div>
         </div>
     </mat-drawer-content>
