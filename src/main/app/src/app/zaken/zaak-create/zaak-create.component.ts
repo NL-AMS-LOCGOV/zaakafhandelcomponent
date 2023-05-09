@@ -65,7 +65,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
     private vertrouwelijkheidaanduidingen: { label: string, value: string }[];
     private ngDestroy = new Subject<void>();
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
-    private bagObjectenToevoegenIcon = new ActionIcon('place', 'actie.bagObject.toevoegen', new Subject<void>());
+    private bagObjectenToevoegenIcon = new ActionIcon('gps_fixed', 'actie.bagObject.toevoegen', new Subject<void>());
     private initiator: Klant;
     private readonly inboxProductaanvraag: InboxProductaanvraag;
     private communicatiekanalen: Observable<{ naam: string; uuid: string }[]>;

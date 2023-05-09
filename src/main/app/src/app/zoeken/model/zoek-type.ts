@@ -4,5 +4,8 @@
  */
 
 export enum ZoekType {
-    ZAC, PERSONEN, BEDRIJVEN
+    ZAC = 'ZAC',
+    PERSONEN = 'PERSONEN',
+    BEDRIJVEN = 'BEDRIJVEN',
+    BAG_OBJECTEN = 'BAG_OBJECTEN'
 }
