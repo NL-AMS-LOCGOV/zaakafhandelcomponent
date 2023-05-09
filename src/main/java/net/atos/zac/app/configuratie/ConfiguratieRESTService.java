@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.configuratie;
 
+import static net.atos.zac.util.JsonbUtil.JSONB;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,8 +61,14 @@ public class ConfiguratieRESTService {
     }
 
     @GET
+    @Path("gemeente/code")
+    public String readGemeenteCode() {
+        return JSONB.toJson(configuratieService.readGemeenteCode());
+    }
+
+    @GET
     @Path("gemeente")
     public String readGemeenteNaam() {
-        return configuratieService.readGemeenteNaam();
+        return JSONB.toJson(configuratieService.readGemeenteNaam());
     }
 }

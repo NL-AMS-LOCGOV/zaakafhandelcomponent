@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.klanten.converter;
 
+import static net.atos.zac.app.klanten.model.personen.RESTPersonenParameters.Cardinaliteit.NON;
+import static net.atos.zac.app.klanten.model.personen.RESTPersonenParameters.Cardinaliteit.OPT;
+import static net.atos.zac.app.klanten.model.personen.RESTPersonenParameters.Cardinaliteit.REQ;
 import static net.atos.zac.util.StringUtil.NON_BREAKING_SPACE;
 import static net.atos.zac.util.StringUtil.ONBEKEND;
 import static net.atos.zac.util.StringUtil.joinNonBlankWith;
@@ -45,9 +48,38 @@ import net.atos.client.brp.model.ZoekMetPostcodeEnHuisnummerResponse;
 import net.atos.client.brp.model.ZoekMetStraatHuisnummerEnGemeenteVanInschrijving;
 import net.atos.client.brp.model.ZoekMetStraatHuisnummerEnGemeenteVanInschrijvingResponse;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
+import net.atos.zac.app.klanten.model.personen.RESTPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 
 public class RESTPersoonConverter {
+    // Moet overeenkomen met wat er in convertToPersonenQuery gebeurt.
+    public static final List<RESTPersonenParameters> VALID_PERSONEN_QUERIES = List.of(
+            new RESTPersonenParameters(REQ,
+                                       NON, NON, NON,
+                                       NON,
+                                       NON,
+                                       NON, NON, NON),
+            new RESTPersonenParameters(NON,
+                                       REQ, OPT, OPT,
+                                       REQ,
+                                       NON,
+                                       NON, NON, NON),
+            new RESTPersonenParameters(NON,
+                                       REQ, REQ, OPT,
+                                       NON,
+                                       REQ,
+                                       NON, NON, NON),
+            new RESTPersonenParameters(NON,
+                                       NON, NON, NON,
+                                       NON,
+                                       NON,
+                                       REQ, REQ, NON),
+            new RESTPersonenParameters(NON,
+                                       NON, NON, NON,
+                                       NON,
+                                       REQ,
+                                       NON, REQ, REQ)
+    );
 
     public List<RESTPersoon> convertPersonen(final List<Persoon> personen) {
         return personen.stream().map(this::convertPersoon).toList();
