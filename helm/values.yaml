@@ -30,6 +30,7 @@ ldap:
 
 # Configuration gemeente
 gemeente:
+  code: ""
   naam: ""
   mail: ""
 

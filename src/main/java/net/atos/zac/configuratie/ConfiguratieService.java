@@ -107,7 +107,9 @@ public class ConfiguratieService {
     @ConfigProperty(name = "CONTEXT_URL")
     private String contextUrl;
 
-    private String gemeenteCode = "0599"; // TODO configuration GEMEENTE_CODE instead of hard coded
+    @Inject
+    @ConfigProperty(name = "GEMEENTE_CODE")
+    private String gemeenteCode;
 
     @Inject
     @ConfigProperty(name = "GEMEENTE_NAAM")
