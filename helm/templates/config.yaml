@@ -12,7 +12,7 @@ data:
   AUTH_REALM: {{ required "Valid .Values.auth.realm entry required!" .Values.auth.realm }}
   LDAP_URL: {{ required "Valid .Values.ldap.url entry required!" .Values.ldap.url }}
   LDAP_DN: {{ required "Valid .Values.ldap.dn entry required!" .Values.ldap.dn }}
-  GEMEENTE_CODE: {{ required "Valid .Values.gemeente.code entry required!" .Values.gemeente.code }}
+  GEMEENTE_CODE: {{ required "Valid .Values.gemeente.code entry required!" .Values.gemeente.code  | quote }}
   GEMEENTE_NAAM: {{ required "Valid .Values.gemeente.naam entry required!" .Values.gemeente.naam }}
   GEMEENTE_MAIL: {{ required "Valid .Values.gemeente.mail entry required!" .Values.gemeente.mail }}
   ZGW_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.zgwApis.url entry required!" .Values.zgwApis.url }}
