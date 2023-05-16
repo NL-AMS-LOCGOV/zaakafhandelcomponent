@@ -4,7 +4,16 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {merge, Observable} from 'rxjs';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';
@@ -35,27 +44,31 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     sorteerVeld = SorteerVeld;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     zoekParameters = new ZoekParameters();
+    actieveFilters: boolean;
     zoekResultaat: ZoekResultaat<ZaakZoekObject> = new ZoekResultaat<ZaakZoekObject>();
     init: boolean;
     inclusiefAfgerondeZaken = false;
     ZoekVeld = ZoekVeld;
     betrokkeneSelectControl = new FormControl<ZoekVeld>(null);
+    private laatsteBetrokkenheid: string;
 
-    constructor(private utilService: UtilService, private zoekenService: ZoekenService) {}
+    constructor(private utilService: UtilService, private zoekenService: ZoekenService) {
+    }
 
     ngOnInit(): void {
         this.zoekParameters.type = ZoekObjectType.ZAAK;
-        this.zoekParameters.zoeken.ZAAK_BETROKKENEN = this.klantIdentificatie;
     }
 
     private loadZaken(): Observable<ZoekResultaat<ZaakZoekObject>> {
-        if (!this.zoekParameters.zoeken) {
-            this.zoekParameters.zoeken = {};
+        if (this.laatsteBetrokkenheid) {
+            delete (this.zoekParameters.zoeken[this.laatsteBetrokkenheid]);
         }
         if (this.betrokkeneSelectControl.value) {
-            this.zoekParameters.zoeken[this.betrokkeneSelectControl.value] = this.klantIdentificatie;
-        } else {
-            this.zoekParameters.zoeken.ZAAK_BETROKKENEN = this.klantIdentificatie;
+            this.setZoekParameterBetrokkenheid(this.betrokkeneSelectControl.value);
+        }
+        this.actieveFilters = ZoekParameters.heeftActieveFilters(this.zoekParameters); // before default values
+        if (!this.betrokkeneSelectControl.value) {
+            this.setZoekParameterBetrokkenheid(ZoekVeld.ZAAK_BETROKKENEN);
         }
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.sorteerRichting = this.sort.direction;
@@ -65,12 +78,16 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
         return this.zoekenService.list(this.zoekParameters) as Observable<ZoekResultaat<ZaakZoekObject>>;
     }
 
+    private setZoekParameterBetrokkenheid(betrokkenheid: ZoekVeld) {
+        this.zoekParameters.zoeken[this.laatsteBetrokkenheid = betrokkenheid] = this.klantIdentificatie;
+    }
+
     ngAfterViewInit(): void {
         this.init = true;
         this.filtersChanged();
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         merge(this.sort.sortChange, this.paginator.page, this.filterChange).pipe(
-            startWith({}),
+                startWith({}),
                 switchMap(() => {
                     this.isLoadingResults = true;
                     this.utilService.setLoading(true);
@@ -110,5 +127,14 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
         if (this.init) {
             this.filtersChanged();
         }
+    }
+
+    clearFilters() {
+        this.sort.sort({id: null, start: 'asc', disableClear: false});
+        this.zoekParameters.zoeken = {};
+        this.zoekParameters.filters = {};
+        this.zoekParameters.datums = {};
+        this.betrokkeneSelectControl.setValue(null);
+        this.filtersChanged();
     }
 }

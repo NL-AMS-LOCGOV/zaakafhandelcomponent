@@ -137,7 +137,19 @@
                 </ng-container>
 
                 <ng-container matColumnDef="url_filter" stickyEnd>
-                    <th mat-header-cell *matHeaderCellDef id="url_filter"></th>
+                    <th mat-header-cell *matHeaderCellDef id="url_filter" class="filter-control">
+                        <button [disabled]="!actieveFilters"
+                                mat-icon-button (click)="clearFilters()" id="clearZoekopdrachtButton">
+                            <mat-icon [ngClass]="actieveFilters ? 'filter-icon' : 'material-icons-outlined'">
+                                filter_alt
+                            </mat-icon>
+                            <mat-icon *ngIf="actieveFilters"
+                                      class="filter-button"
+                                      title="{{ 'actie.zoekopdracht.wissen' | translate }}">
+                                filter_alt_off
+                            </mat-icon>
+                        </button>
+                    </th>
                 </ng-container>
                 <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
                     <th mat-header-cell *matHeaderCellDef></th>

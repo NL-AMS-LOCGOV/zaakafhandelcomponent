@@ -11,3 +11,24 @@ mat-slide-toggle {
   right: 30px;
   position: absolute;
 }
+
+.filter-control {
+  &:hover {
+    .filter-icon {
+      visibility: hidden;
+    }
+
+    .filter-button {
+      visibility: visible;
+    }
+  }
+
+  .filter-icon {
+    visibility: visible;
+  }
+
+  .filter-button {
+    visibility: hidden;
+    margin-left: -24px;
+  }
+}
