@@ -28,7 +28,7 @@
         <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
                                    [sideNav]="actionsSidenav"
                                    [zaak]="zaak"
-                                   (document)="documentToegevoegd($event)"></zac-informatie-object-add>
+                                   (document)="documentToegevoegd()"></zac-informatie-object-add>
         <zac-informatie-verzenden *ngSwitchCase="sideNavAction.DOCUMENT_VERZENDEN"
                                   [sideNav]="actionsSidenav"
                                   [zaak]="zaak"
@@ -66,7 +66,6 @@
 
     </mat-drawer>
     <mat-drawer-content>
-
         <div class="flex-row flex-wrap gap-10">
             <zac-zaak-initiator-toevoegen class="w100 flex-1"
                                           *ngIf="!zaak.initiatorIdentificatieType"
@@ -89,11 +88,11 @@
                                   (delete)="deleteInitiator()">
             </zac-bedrijfsgegevens>
 
-
             <mat-card class="zaken-card w50 flex-1">
                 <mat-card-header class="flex-row space-between">
                     <mat-card-title>{{zaak.identificatie}}</mat-card-title>
                     <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
+                    <mat-icon *ngIf="zaak.isProcesGestuurd && zaak.isOpen && !zaak.isHeropend">process_chart</mat-icon>
                     <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
@@ -181,12 +180,12 @@
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
                                                           [verlengingstermijn]="zaak.zaaktype.verlengingstermijn"
-                                                          [readonly]="!zaak.rechten.wijzigen"
+                                                          [readonly]="!zaak.rechten.wijzigen || zaak.isProcesGestuurd"
                                                           [actieOpschorten]="zaak.zaaktype.opschortingMogelijk && zaak.isOpen && !zaak.isHeropend
-                                                                         && !zaak.isOpgeschort && zaak.rechten.behandelen"
-                                                          [actieHervatten]="zaak.isOpgeschort && zaak.rechten.behandelen"
+                                                                         && !zaak.isOpgeschort && zaak.rechten.behandelen && !this.zaak.isProcesGestuurd"
+                                                          [actieHervatten]="zaak.isOpgeschort && zaak.rechten.behandelen && !this.zaak.isProcesGestuurd"
                                                           [actieVerlengen]="zaak.zaaktype.verlengingMogelijk && !zaak.duurVerlenging && zaak.isOpen
-                                                                        && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.wijzigenDoorlooptijd"
+                                                                        && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.wijzigenDoorlooptijd && !this.zaak.isProcesGestuurd"
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                     <mat-divider></mat-divider>
