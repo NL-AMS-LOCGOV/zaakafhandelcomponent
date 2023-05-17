@@ -43,6 +43,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -142,6 +143,7 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.BPMNService;
 import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.flowable.TakenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
@@ -227,6 +229,9 @@ public class ZakenRESTService {
 
     @Inject
     private CMMNService cmmnService;
+
+    @Inject
+    private BPMNService bpmnService;
 
     @Inject
     private TakenService takenService;
@@ -764,7 +769,7 @@ public class ZakenRESTService {
                         zaakAfzenderConverter.convertZaakAfzenders(
                                 zaakafhandelParameterService.readZaakafhandelParameters(
                                                 UriUtil.uuidFromURI(zaak.getZaaktype()))
-                                        .getZaakAfzenders()).stream(), zaak));
+                                        .getZaakAfzenders()).stream()));
     }
 
     /**
@@ -782,21 +787,20 @@ public class ZakenRESTService {
                                 UriUtil.uuidFromURI(zaak.getZaaktype()))
                         .getZaakAfzenders().stream()
                         .filter(ZaakAfzender::isDefault)
-                        .map(zaakAfzenderConverter::convertZaakAfzender), zaak)
+                        .map(zaakAfzenderConverter::convertZaakAfzender))
                 .findAny()
                 .orElse(null);
     }
 
-    private Stream<RESTZaakAfzender> resolveZaakAfzenderMail(final Stream<RESTZaakAfzender> afzenders,
-            final Zaak zaak) {
+    private Stream<RESTZaakAfzender> resolveZaakAfzenderMail(final Stream<RESTZaakAfzender> afzenders) {
         return afzenders
                 .peek(afzender -> {
                     final ZaakAfzender.Speciaal speciaal = speciaalMail(afzender.mail);
                     if (speciaal != null) {
                         afzender.suffix = "gegevens.mail.afzender." + speciaal;
-                        afzender.mail = resolveMail(speciaal, afzender.mail, zaak);
+                        afzender.mail = resolveMail(speciaal, afzender.mail);
                     }
-                    afzender.replyTo = resolveMail(speciaalMail(afzender.replyTo), afzender.replyTo, zaak);
+                    afzender.replyTo = resolveMail(speciaalMail(afzender.replyTo), afzender.replyTo);
                 })
                 .filter(afzender -> afzender.mail != null);
     }
@@ -808,7 +812,7 @@ public class ZakenRESTService {
         return null;
     }
 
-    private String resolveMail(ZaakAfzender.Speciaal speciaal, final String mail, final Zaak zaak) {
+    private String resolveMail(ZaakAfzender.Speciaal speciaal, final String mail) {
         if (speciaal != null) {
             return switch (speciaal) {
                 case GEMEENTE -> configuratieService.readGemeenteMail();
@@ -985,6 +989,16 @@ public class ZakenRESTService {
         assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
         return resultaattypeConverter.convertResultaattypes(
                 ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
+    }
+
+    @GET
+    @Path("{uuid}/procesdiagram")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadProcessDiagram(@PathParam("uuid") final UUID uuid) {
+        return Response.ok(bpmnService.getProcessDiagram(uuid))
+                .header("Content-Disposition",
+                        "attachment; filename=\"procesdiagram.gif\"")
+                .build();
     }
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {

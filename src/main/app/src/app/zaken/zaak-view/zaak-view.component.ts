@@ -50,7 +50,6 @@ import {Klant} from '../../klanten/model/klanten/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {LocationService} from '../../shared/location/location.service';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
@@ -262,16 +261,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                         .label('communicatiekanaal')
                         .validators(Validators.required)
                         .optionLabel('naam')
-                        .options(
-                                this.zakenService.listCommunicatiekanalen())
+                        .options(this.zakenService.listCommunicatiekanalen())
                         .build());
 
         this.editFormFields.set('medewerker-groep',
                 new MedewerkerGroepFieldBuilder(this.zaak.groep, this.zaak.behandelaar).id('medewerker-groep')
                         .groepLabel('groep.-kies-')
                         .groepRequired()
-                        .medewerkerLabel(
-                                'behandelaar.-kies-')
+                        .medewerkerLabel('behandelaar.-kies-')
                         .build());
         this.editFormFields.set('omschrijving',
                 new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
@@ -378,7 +375,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.rechten.behandelen) {
+        if (this.zaak.rechten.behandelen && !this.zaak.isProcesGestuurd) {
             if (!this.zaak.isOntvangstbevestigingVerstuurd) {
                 this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                     this.actionsSidenav.open();
@@ -408,7 +405,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'local_post_office'));
         }
 
-        if (this.zaak.isOpen && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.behandelen) {
+        if (this.zaak.isOpen && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig &&
+                this.zaak.rechten.behandelen && !this.zaak.isProcesGestuurd) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
@@ -923,7 +921,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+    documentToegevoegd(): void {
         this.updateZaak();
     }
 

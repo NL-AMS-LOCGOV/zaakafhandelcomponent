@@ -101,6 +101,8 @@ public class RESTZaak {
 
     public boolean isInIntakeFase;
 
+    public boolean isProcesGestuurd;
+
     public RESTZaakRechten rechten;
 
     public EnumSet<ZaakIndicatie> getIndicaties() {

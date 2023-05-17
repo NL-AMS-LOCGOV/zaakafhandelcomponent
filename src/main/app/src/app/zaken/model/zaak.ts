@@ -57,6 +57,7 @@ export class Zaak {
     isOntvangstbevestigingVerstuurd: boolean;
     isBesluittypeAanwezig: boolean;
     isInIntakeFase: boolean;
+    isProcesGestuurd : boolean;
     rechten: ZaakRechten;
     indicaties: ZaakIndicatie[];
     zaakdata: {};

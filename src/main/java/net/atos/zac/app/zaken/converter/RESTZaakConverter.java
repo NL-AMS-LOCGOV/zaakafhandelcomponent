@@ -30,7 +30,6 @@ import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Opschorting;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -43,10 +42,10 @@ import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
-import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.flowable.BPMNService;
 import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.PeriodUtil;
@@ -103,6 +102,9 @@ public class RESTZaakConverter {
 
     @Inject
     private ZaakVariabelenService zaakVariabelenService;
+
+    @Inject
+    private BPMNService bpmnService;
 
     public RESTZaak convert(final Zaak zaak) {
         final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
@@ -197,6 +199,7 @@ public class RESTZaakConverter {
         restZaak.isOntvangstbevestigingVerstuurd =
                 zaakVariabelenService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false);
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
+        restZaak.isProcesGestuurd = bpmnService.isProcesGestuurd(zaak.getUuid());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 
         restZaak.zaakdata = zaakVariabelenService.readZaakdata(zaak.getUuid());
@@ -259,17 +262,6 @@ public class RESTZaakConverter {
                                                     verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
                                    : new Verlenging(verlengGegevens.redenVerlenging,
                                                     Period.ofDays(verlengGegevens.duurDagen)));
-        return zaak;
-    }
-
-    public Zaak convertToPatch(final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
-        final Zaak zaak = new Zaak();
-        zaak.setEinddatumGepland(restZaakOpschortGegevens.einddatumGepland);
-        zaak.setUiterlijkeEinddatumAfdoening(restZaakOpschortGegevens.uiterlijkeEinddatumAfdoening);
-        if (restZaakOpschortGegevens.redenOpschorting != null) {
-            zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting,
-                                                restZaakOpschortGegevens.redenOpschorting));
-        }
         return zaak;
     }
 
