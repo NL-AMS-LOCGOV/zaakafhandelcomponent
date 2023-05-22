@@ -92,8 +92,18 @@
                 <mat-card-header class="flex-row space-between">
                     <mat-card-title>{{zaak.identificatie}}</mat-card-title>
                     <mat-card-subtitle>{{zaak.zaaktype.omschrijving}}</mat-card-subtitle>
-                    <mat-icon *ngIf="zaak.isProcesGestuurd && zaak.isOpen && !zaak.isHeropend">process_chart</mat-icon>
-                    <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
+                    <div class="flex-row">
+                        <zac-zaak-indicaties [layout]="indicatiesLayout.VIEW" [zaak]="zaak"></zac-zaak-indicaties>
+                        <button *ngIf="zaak.isProcesGestuurd && zaak.isOpen && !zaak.isHeropend"
+                                class="proces-button"
+                                (click)="showProces()"
+                                [title]="'actie.proces.bekijken' | translate"
+                                mat-icon-button>
+                            <mat-icon>
+                                play_shapes
+                            </mat-icon>
+                        </button>
+                    </div>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group mat-stretch-tabs="false">
