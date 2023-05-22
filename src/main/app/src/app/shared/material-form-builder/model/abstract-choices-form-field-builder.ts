@@ -30,6 +30,11 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         return this;
     }
 
+    optionsOrder(optionOrderFn: (a: any, b: any) => number): this {
+        this.formField.optionOrderFn = optionOrderFn;
+        return this;
+    }
+
     options(options: Observable<any[]> | any[]): this {
         if (isObservable(options)) {
             this.formField.options = options;

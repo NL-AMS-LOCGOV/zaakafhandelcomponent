@@ -19,17 +19,22 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {
+    SelectFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {ConfiguratieService} from '../../configuratie/configuratie.service';
 import {TranslateService} from '@ngx-translate/core';
 import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
-import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {
+    CheckboxFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
 import {Subscription} from 'rxjs';
+import {OrderUtil} from "../../shared/order/order-util";
 
 @Component({
     selector: 'zac-informatie-object-add',
@@ -138,6 +143,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         .label('vertrouwelijkheidaanduiding')
         .optionLabel('label')
         .options(vertrouwelijkheidsAanduidingen)
+        .optionsOrder(OrderUtil.orderAsIs())
         .validators(Validators.required)
         .build();
 

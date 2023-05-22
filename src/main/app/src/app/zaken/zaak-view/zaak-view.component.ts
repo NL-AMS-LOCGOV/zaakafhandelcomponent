@@ -84,6 +84,7 @@ import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-
 import {BAGObject} from '../../bag/model/bagobject';
 import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 import {GeometryGegevens} from '../model/geometry-gegevens';
+import {OrderUtil} from "../../shared/order/order-util";
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -287,7 +288,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                         .validators(Validators.required)
                         .optionLabel('label')
                         .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
-                                Vertrouwelijkheidaanduiding)).build());
+                                Vertrouwelijkheidaanduiding))
+                        .optionsOrder(OrderUtil.orderAsIs())
+                        .build());
 
         this.editFormFields.set('startdatum',
                 new DateFormFieldBuilder(this.zaak.startdatum).id('startdatum').label('startdatum')
