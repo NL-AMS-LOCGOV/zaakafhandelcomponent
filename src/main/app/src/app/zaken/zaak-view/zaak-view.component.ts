@@ -84,6 +84,9 @@ import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-
 import {BAGObject} from '../../bag/model/bagobject';
 import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 import {GeometryGegevens} from '../model/geometry-gegevens';
+import {
+    ReadonlyFormFieldBuilder
+} from "../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder";
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -453,7 +456,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                 humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
             }
             if (this.zaak.rechten.behandelen && processTaskPlanItems.length > 0) {
-                this.menu.push(new HeaderMenuItem('actie.process.starten'));
+                this.menu.push(new HeaderMenuItem('actie.proces.starten'));
                 this.menu = this.menu.concat(
                         processTaskPlanItems.map(
                                 processTaskPlanItem => this.createProcessTaskPlanItemMenuItem(processTaskPlanItem)));
@@ -1008,5 +1011,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.utilService.openSnackbar('msg.bagObject.verwijderen.uitgevoerd', {omschrijving: bagObject.omschrijving});
             }
         });
+    }
+
+    showProces() {
+        const dialogData = new DialogData([
+            new ReadonlyFormFieldBuilder('<img src="/rest/zaken/' + this.zaak.uuid + '/procesdiagram"/ alt="diagram">')
+                    .id('diagram')
+                    .label('proces.toestand')
+                    .build()]);
+        dialogData.confirmButtonActionKey = 'actie.ok';
+        dialogData.cancelButtonActionKey = null;
+        this.dialog.open(DialogComponent, {data: dialogData});
     }
 }
