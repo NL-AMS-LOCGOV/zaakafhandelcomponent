@@ -27,19 +27,19 @@ public class ValidatieFoutException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "[%d] %s %s %s %s %s: %s"
+        return "[%d %s] %s %s: %s (%s %s)"
                 .formatted(validatieFout.getStatus(),
                            validatieFout.getCode(),
                            validatieFout.getTitle(),
                            validatieFout.getDetail(),
-                           uri(validatieFout.getType()),
-                           uri(validatieFout.getInstance()),
                            validatieFout.getInvalidParams().stream()
-                                   .map(error -> "%s %s %s"
+                                   .map(error -> "[%s] %s %s"
                                            .formatted(error.getCode(),
                                                       error.getName(),
                                                       error.getReason()))
-                                   .collect(Collectors.joining(", ")));
+                                   .collect(Collectors.joining(", ")),
+                           uri(validatieFout.getType()),
+                           uri(validatieFout.getInstance()));
     }
 
     private String uri(final URI uri) {
