@@ -11,13 +11,17 @@
     </ng-container>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="disabled()" mat-button color="primary" (click)="confirm()" id="confirmButton">
+    <button *ngIf="data.confirmButtonActionKey"
+            [disabled]="disabled()" mat-button color="primary"
+            (click)="confirm()" id="confirmButton">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
         {{ data.confirmButtonActionKey | translate }}
     </button>
-    <button [disabled]="loading" mat-button (click)="cancel()" id="cancelButton">
+    <button *ngIf="data.cancelButtonActionKey"
+            [disabled]="loading" mat-button
+            (click)="cancel()" id="cancelButton">
         {{ data.cancelButtonActionKey | translate }}
     </button>
 </div>
