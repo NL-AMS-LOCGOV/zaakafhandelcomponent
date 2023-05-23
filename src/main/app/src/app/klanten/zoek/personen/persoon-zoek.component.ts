@@ -208,7 +208,10 @@ export class PersoonZoekComponent implements OnInit {
 
     createListPersonenParameters(): ListPersonenParameters {
         const params = new ListPersonenParameters();
-        for (const [k, v] of Object.entries(this.formGroup.value)) {
+        for (let [k, v] of Object.entries(this.formGroup.value)) {
+            if (typeof v == 'string') {
+                v = v.replace(/^\s+/, '').replace(/\s+$/, '');
+            }
             if (v) {
                 params[k] = v;
             }
