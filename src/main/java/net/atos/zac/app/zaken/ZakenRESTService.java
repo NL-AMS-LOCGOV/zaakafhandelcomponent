@@ -399,6 +399,7 @@ public class ZakenRESTService {
 
         //verwijder het verwerkte inbox productaanvraag item
         inboxProductaanvraagService.delete(inboxProductaanvraag.id);
+        zaakVariabelenService.setZaakdata(zaak.getUuid(), productaanvraagService.getFormulierData(productaanvraagObject));
     }
 
     @PATCH

@@ -95,7 +95,7 @@ public class BPMNService {
 
     private ProcessInstance findProcessInstance(final UUID zaakUUID) {
         return runtimeService.createProcessInstanceQuery()
-                .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
+                .processInstanceBusinessKey(zaakUUID.toString())
                 .singleResult();
     }
 }

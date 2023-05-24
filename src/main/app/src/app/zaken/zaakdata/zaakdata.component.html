@@ -1,12 +1,24 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
 <div class="sidenav-title">
     <h3>
         <mat-icon>folder_copy</mat-icon>
-        {{'actie.zaakdata.wijzigen' | translate}}</h3>
+        {{ (readonly ? 'actie.zaakdata.bekijken' : 'actie.zaakdata.wijzigen') | translate}}</h3>
     <button mat-icon-button (click)="sideNav.close()">
         <mat-icon>close</mat-icon>
     </button>
 </div>
 
-<div class="form">
-    <mfb-form (formSubmit)="onFormSubmit($event)" [formFields]="formItems" [config]="formConfig"></mfb-form>
+<zac-zaakdata-form class="zaak-data-form" [formItem]="form"></zac-zaakdata-form>
+
+<div class="button-group" *ngIf="!readonly">
+    <button mat-raised-button [disabled]="bezigMetOpslaan" color="primary" (click)="opslaan()">
+        {{'actie.opslaan' | translate}}
+    </button>
+    <button mat-raised-button [disabled]="bezigMetOpslaan" (click)="sideNav.close()">
+        {{'actie.annuleren' | translate}}
+    </button>
 </div>

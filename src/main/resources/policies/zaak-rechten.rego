@@ -14,6 +14,7 @@ zaak_rechten := {
     "behandelen": behandelen,
     "afbreken": afbreken,
     "heropenen": heropenen,
+    "wijzigenZaakdata": wijzigenZaakdata,
     "wijzigenDoorlooptijd": wijzigenDoorlooptijd
 }
 
@@ -62,6 +63,12 @@ afbreken {
 
 default heropenen := false
 heropenen {
+    recordmanager.rol in user.rollen
+    zaaktype_allowed == true
+}
+
+default wijzigenZaakdata := false
+wijzigenZaakdata {
     recordmanager.rol in user.rollen
     zaaktype_allowed == true
 }

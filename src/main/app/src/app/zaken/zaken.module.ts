@@ -36,6 +36,7 @@ import {ZaakdataComponent} from './zaakdata/zaakdata.component';
 import {ZaakInitiatorToevoegenComponent} from './zaak-initiator-toevoegen/zaak-initiator-toevoegen.component';
 import {DocumentIconComponent} from '../shared/document-icon/document-icon.component';
 import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
+import {ZaakdataFormComponent} from './zaakdata/zaakdata-form/zaakdata-form.component';
 
 @NgModule({
     declarations: [
@@ -58,7 +59,8 @@ import {InformatieObjectIndicatiesComponent} from '../shared/indicaties/informat
         NotitiesComponent,
         LocatieZoekComponent,
         ZaakDocumentenComponent,
-        ZaakdataComponent
+        ZaakdataComponent,
+        ZaakdataFormComponent
     ],
     exports: [
         ZaakVerkortComponent,
