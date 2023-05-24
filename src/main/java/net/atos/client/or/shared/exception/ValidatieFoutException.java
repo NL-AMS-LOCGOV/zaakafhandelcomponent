@@ -27,15 +27,15 @@ public class ValidatieFoutException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "[%d %s] %s %s: %s (%s)"
-                .formatted(validatieFout.getStatus(),
+        return "%s [%d %s] %s: %s (%s)"
+                .formatted(validatieFout.getTitle(),
+                           validatieFout.getStatus(),
                            validatieFout.getCode(),
-                           validatieFout.getTitle(),
                            validatieFout.getDetail(),
                            validatieFout.getFieldValidationErrors().stream()
-                                   .map(error -> "[%s] %s %s"
-                                           .formatted(error.getCode(),
-                                                      error.getName(),
+                                   .map(error -> "%s [%s] %s"
+                                           .formatted(error.getName(),
+                                                      error.getCode(),
                                                       error.getReason()))
                                    .collect(Collectors.joining(", ")),
                            uri(validatieFout.getInstance()));

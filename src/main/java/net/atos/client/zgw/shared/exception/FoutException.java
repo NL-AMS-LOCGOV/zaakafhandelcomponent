@@ -26,10 +26,10 @@ public class FoutException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "[%d %s] %s %s (%s %s)"
-                .formatted(fout.getStatus(),
+        return "%s [%d %s] %s (%s %s)"
+                .formatted(fout.getTitle(),
+                           fout.getStatus(),
                            fout.getCode(),
-                           fout.getTitle(),
                            fout.getDetail(),
                            uri(fout.getType()),
                            uri(fout.getInstance()));
