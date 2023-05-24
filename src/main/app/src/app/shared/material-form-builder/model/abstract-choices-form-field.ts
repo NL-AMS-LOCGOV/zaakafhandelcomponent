@@ -20,6 +20,7 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
     public optionLabel: string | null;
     public optionSuffix: string | null;
     public optionValue: string | null;
+    public optionOrderFn: (a: any, b: any) => number;
     loading$ = new EventEmitter<boolean>();
 
     protected constructor() {
@@ -63,7 +64,7 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlField 
             }),
             tap(value => {
                 this.valueOptions = value;
-                value.sort(OrderUtil.orderBy(this.optionLabel));
+                value.sort(this.optionOrderFn || OrderUtil.orderBy(this.optionLabel));
             }));
         this.optionsChanged$.next();
     }

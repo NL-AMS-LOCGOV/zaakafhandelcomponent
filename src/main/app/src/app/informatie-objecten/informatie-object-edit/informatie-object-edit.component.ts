@@ -15,7 +15,9 @@ import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {FormGroup, Validators} from '@angular/forms';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {
+    SelectFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ConfiguratieService} from '../../configuratie/configuratie.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -28,6 +30,7 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {Subscription} from 'rxjs';
+import {OrderUtil} from "../../shared/order/order-util";
 
 @Component({
     selector: 'zac-informatie-object-edit',
@@ -134,6 +137,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         .label('vertrouwelijkheidaanduiding')
         .optionLabel('label')
         .options(vertrouwelijkheidsAanduidingen)
+        .optionsOrder(OrderUtil.orderAsIs())
         .validators(Validators.required)
         .build();
 

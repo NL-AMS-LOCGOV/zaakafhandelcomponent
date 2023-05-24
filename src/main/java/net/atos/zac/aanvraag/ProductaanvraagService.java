@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -131,18 +132,37 @@ public class ProductaanvraagService {
         final Optional<UUID> zaaktypeUUID = zaakafhandelParameterBeheerService.findZaaktypeUUIDByProductaanvraagType(
                 productaanvraag.getType());
         if (zaaktypeUUID.isPresent()) {
-            registreerZaakMetCMMNCase(zaaktypeUUID.get(), productaanvraag, productaanvraagObject);
+            try {
+                registreerZaakMetCMMNCase(zaaktypeUUID.get(), productaanvraag, productaanvraagObject);
+            } catch (RuntimeException ex) {
+                warning("CMMN", productaanvraag, ex);
+            }
         } else {
             final var zaaktype = findZaaktypeByIdentificatie(productaanvraag.getType());
             if (zaaktype.isPresent()) {
-                registreerZaakMetBPMNProces(zaaktype.get(), productaanvraag, productaanvraagObject);
+                try {
+                    registreerZaakMetBPMNProces(zaaktype.get(), productaanvraag, productaanvraagObject);
+                } catch (RuntimeException ex) {
+                    warning("BPMN", productaanvraag, ex);
+                }
             } else {
-                LOG.info(String.format(
-                        "Er is geen zaaktype gevonden voor productaanvraag type: '%s'. Er wordt geen zaak aangemaakt.",
-                        productaanvraag.getType()));
+                LOG.info(message(productaanvraag,
+                                 "Er is geen zaaktype gevonden voor het type '%s'. Er wordt geen zaak aangemaakt."
+                                         .formatted(productaanvraag.getType())));
                 registreerInbox(productaanvraag, productaanvraagObject);
             }
         }
+    }
+
+    private void warning(final String type, final ProductaanvraagDenhaag productaanvraag, final RuntimeException ex) {
+        LOG.log(Level.WARNING,
+                message(productaanvraag, "Er is iets fout gegaan bij het aanmaken van een %s-zaak."
+                        .formatted(type)), ex);
+    }
+
+    private String message(final ProductaanvraagDenhaag productaanvraag, final String message) {
+        return "Productaanvraag %s: %s"
+                .formatted(productaanvraag.getSubmissionId(), message);
     }
 
     private void registreerZaakMetBPMNProces(final Zaaktype zaaktype, final ProductaanvraagDenhaag productaanvraag,

@@ -21,6 +21,7 @@ import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.Instance;
@@ -97,7 +98,8 @@ public class NotificatieReceiver {
     public Response notificatieReceive(@Context HttpHeaders headers, final Notificatie notificatie) {
         SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         if (isAuthenticated(headers)) {
-            LOG.info(() -> String.format("Notificatie ontvangen: %s", notificatie.toString()));
+            LOG.info(() -> "Notificatie ontvangen: %s"
+                    .formatted(notificatie.toString()));
             handleWebsockets(notificatie);
             if (!configuratieService.isLocalDevelopment()) {
                 handleSignaleringen(notificatie);
@@ -116,32 +118,37 @@ public class NotificatieReceiver {
         return secret.equals(headers.getHeaderString(HttpHeaders.AUTHORIZATION));
     }
 
-    private void handleZaaktype(final Notificatie notificatie) {
-        if (notificatie.getResource() == ZAAKTYPE) {
-            if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                zaakafhandelParameterBeheerService.zaaktypeAangepast(notificatie.getResourceUrl());
-            }
-        }
-    }
-
     private void handleWebsockets(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
-                    .forEach(eventingService::send);
+        try {
+            if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+                ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
+                                          notificatie.getResourceInfo())
+                        .forEach(eventingService::send);
+            }
+        } catch (RuntimeException ex) {
+            warning("Websockets", notificatie, ex);
         }
     }
 
     private void handleSignaleringen(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
-                                           notificatie.getResourceInfo())
-                    .forEach(eventingService::send);
+        try {
+            if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+                SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(),
+                                               notificatie.getResourceInfo())
+                        .forEach(eventingService::send);
+            }
+        } catch (RuntimeException ex) {
+            warning("Signaleringen", notificatie, ex);
         }
     }
 
     private void handleProductaanvraag(final Notificatie notificatie) {
-        if (isProductaanvraagDenHaag(notificatie)) {
-            productaanvraagService.verwerkProductaanvraag(notificatie.getResourceUrl());
+        try {
+            if (isProductaanvraagDenHaag(notificatie)) {
+                productaanvraagService.verwerkProductaanvraag(notificatie.getResourceUrl());
+            }
+        } catch (RuntimeException ex) {
+            warning("Productaanvraag", notificatie, ex);
         }
     }
 
@@ -155,41 +162,68 @@ public class NotificatieReceiver {
     }
 
     private void handleIndexering(final Notificatie notificatie) {
-        if (notificatie.getChannel() == Channel.ZAKEN) {
-            if (notificatie.getResource() == ZAAK) {
-                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    // Updaten van taak is nodig bij afsluiten zaak
-                    indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getResourceUrl()),
-                                                    notificatie.getAction() == UPDATE);
-                } else if (notificatie.getAction() == DELETE) {
-                    indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
-                }
-            } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT ||
-                    notificatie.getResource() == ROL || notificatie.getResource() == ZAAKOBJECT) {
-                indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
-            } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
-                indexeerService.addOrUpdateInformatieobjectByZaakinformatieobject(
-                        uuidFromURI(notificatie.getResourceUrl()));
-            }
-        }
-        if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
-            if (notificatie.getResource() == INFORMATIEOBJECT) {
-                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    indexeerService.addOrUpdateInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
-                } else if (notificatie.getAction() == DELETE) {
-                    indexeerService.removeInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+        try {
+            if (notificatie.getChannel() == Channel.ZAKEN) {
+                if (notificatie.getResource() == ZAAK) {
+                    if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                        // Updaten van taak is nodig bij afsluiten zaak
+                        indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getResourceUrl()),
+                                                        notificatie.getAction() == UPDATE);
+                    } else if (notificatie.getAction() == DELETE) {
+                        indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
+                    }
+                } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT ||
+                        notificatie.getResource() == ROL || notificatie.getResource() == ZAAKOBJECT) {
+                    indexeerService.addOrUpdateZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+                } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
+                    indexeerService.addOrUpdateInformatieobjectByZaakinformatieobject(
+                            uuidFromURI(notificatie.getResourceUrl()));
                 }
             }
+            if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
+                if (notificatie.getResource() == INFORMATIEOBJECT) {
+                    if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                        indexeerService.addOrUpdateInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                    } else if (notificatie.getAction() == DELETE) {
+                        indexeerService.removeInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                    }
+                }
+            }
+        } catch (RuntimeException ex) {
+            warning("Indexering", notificatie, ex);
         }
     }
 
     private void handleInboxDocumenten(final Notificatie notificatie) {
-        if (notificatie.getAction() == CREATE) {
-            if (notificatie.getResource() == INFORMATIEOBJECT) {
-                inboxDocumentenService.create(uuidFromURI(notificatie.getResourceUrl()));
-            } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
-                inboxDocumentenService.delete(uuidFromURI(notificatie.getResourceUrl()));
+        try {
+            if (notificatie.getAction() == CREATE) {
+                if (notificatie.getResource() == INFORMATIEOBJECT) {
+                    inboxDocumentenService.create(uuidFromURI(notificatie.getResourceUrl()));
+                } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
+                    inboxDocumentenService.delete(uuidFromURI(notificatie.getResourceUrl()));
+                }
             }
+        } catch (RuntimeException ex) {
+            warning("InboxDocumenten", notificatie, ex);
         }
+    }
+
+    private void handleZaaktype(final Notificatie notificatie) {
+        try {
+            if (notificatie.getResource() == ZAAKTYPE) {
+                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                    zaakafhandelParameterBeheerService.zaaktypeAangepast(notificatie.getResourceUrl());
+                }
+            }
+        } catch (RuntimeException ex) {
+            warning("Zaaktype", notificatie, ex);
+        }
+    }
+
+    private void warning(final String handler, final Notificatie notificatie, final RuntimeException ex) {
+        LOG.log(Level.WARNING,
+                "Er is iets fout gegaan in de %s-handler bij het afhandelen van notificatie: %s"
+                        .formatted(handler, notificatie.toString()),
+                ex);
     }
 }

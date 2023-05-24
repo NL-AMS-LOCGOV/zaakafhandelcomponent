@@ -5,6 +5,8 @@
 
 package net.atos.client.zgw.shared.exception;
 
+import java.net.URI;
+
 import net.atos.client.zgw.shared.model.Fout;
 
 /**
@@ -24,6 +26,16 @@ public class FoutException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return fout.toString();
+        return "[%d %s] %s %s (%s %s)"
+                .formatted(fout.getStatus(),
+                           fout.getCode(),
+                           fout.getTitle(),
+                           fout.getDetail(),
+                           uri(fout.getType()),
+                           uri(fout.getInstance()));
+    }
+
+    private String uri(final URI uri) {
+        return uri == null ? null : uri.toString();
     }
 }
