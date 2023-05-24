@@ -76,7 +76,7 @@ export class ZaakdataComponent implements OnInit {
     }
 
     opslaan(): void {
-        this.zaak.zaakdata = this.mergeDeep(this.zaak.zaakdata, this.form.value);
+        this.mergeDeep(this.zaak.zaakdata, this.form.value);
         this.bezigMetOpslaan = true;
         this.zakenService.updateZaakdata(this.zaak).subscribe(() => {
             this.bezigMetOpslaan = false;
@@ -84,18 +84,19 @@ export class ZaakdataComponent implements OnInit {
         });
     }
 
-    mergeDeep(object1: {}, object2: {}): {} {
-        Object.keys(object2).forEach(key => {
-            const val1 = object1[key];
-            const val2 = object2[key];
-            if (this.isArray(val1) && this.isArray(val2)) {
-                object1[key] = val1.concat(...val2);
-            } else if (this.isObject(val1) && this.isObject(val2)) {
-                object1[key] = this.mergeDeep(val1, val2);
-            } else {
-                object1[key] = val2;
+    mergeDeep(dest: {}, src: {}): void {
+        Object.keys(src).forEach(key => {
+            if (src.hasOwnProperty(key)) {
+                const destVal = dest[key];
+                const srcVal = src[key];
+                if (this.isArray(destVal) && this.isArray(srcVal)) {
+                    dest[key] = destVal.concat(...srcVal);
+                } else if (this.isObject(destVal) && this.isObject(srcVal)) {
+                    this.mergeDeep(destVal, srcVal);
+                } else {
+                    dest[key] = srcVal;
+                }
             }
         });
-        return object1;
     }
 }
