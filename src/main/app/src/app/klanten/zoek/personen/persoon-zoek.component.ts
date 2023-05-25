@@ -210,7 +210,7 @@ export class PersoonZoekComponent implements OnInit {
         const params = new ListPersonenParameters();
         for (let [k, v] of Object.entries(this.formGroup.value)) {
             if (typeof v == 'string') {
-                v = v.replace(/^\s+/, '').replace(/\s+$/, '');
+                v = v.trim();
             }
             if (v) {
                 params[k] = v;
