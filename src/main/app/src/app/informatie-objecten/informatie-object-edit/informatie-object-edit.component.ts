@@ -30,7 +30,7 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {Subscription} from 'rxjs';
-import {OrderUtil} from "../../shared/order/order-util";
+import {OrderUtil} from '../../shared/order/order-util';
 
 @Component({
     selector: 'zac-informatie-object-edit',

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Cardinaliteit} from "./cardinaliteit";
+import {Cardinaliteit} from './cardinaliteit';
 
 export class PersonenParameters {
     bsn: Cardinaliteit;

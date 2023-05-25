@@ -55,7 +55,7 @@ import {TextareaFormField} from '../../shared/material-form-builder/form-compone
 import {ZaakAanmaakGegevens} from '../model/zaak-aanmaak-gegevens';
 import {BAGObject} from '../../bag/model/bagobject';
 import {TranslateService} from '@ngx-translate/core';
-import {OrderUtil} from "../../shared/order/order-util";
+import {OrderUtil} from '../../shared/order/order-util';
 
 @Component({
     selector: 'zac-zaak-create',
