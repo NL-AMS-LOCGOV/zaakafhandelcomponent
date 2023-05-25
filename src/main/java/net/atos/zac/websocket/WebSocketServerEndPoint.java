@@ -39,7 +39,8 @@ public class WebSocketServerEndPoint {
     public void open(final Session session, final EndpointConfig conf) {
         // Check that there is a logged in employee (and that authentication has taken place).
         final HttpSession httpSession = (HttpSession) conf.getUserProperties().get(HTTP_SESSION);
-        final LoggedInUser loggedInUser = (LoggedInUser) httpSession.getAttribute(LOGGED_IN_USER_SESSION_ATTRIBUTE);
+        final LoggedInUser loggedInUser =
+                httpSession != null ? (LoggedInUser) httpSession.getAttribute(LOGGED_IN_USER_SESSION_ATTRIBUTE) : null;
         if (loggedInUser == null) {
             denyAccess(session, "no logged in user");
         } else {
@@ -51,7 +52,8 @@ public class WebSocketServerEndPoint {
     @OnMessage
     public void processMessage(final SubscriptionType.SubscriptionMessage message, final Session session) {
         if (message != null) {
-            LOG.fine(() -> String.format("WebSocket subscription %s for %s (%s)", message.getSubscriptionType(), user(session), message.getEvent()));
+            LOG.fine(() -> String.format("WebSocket subscription %s for %s (%s)", message.getSubscriptionType(),
+                                         user(session), message.getEvent()));
             message.register(registry, session);
         }
     }
@@ -64,7 +66,8 @@ public class WebSocketServerEndPoint {
 
     @OnClose
     public void close(final Session session, final CloseReason reason) {
-        LOG.fine(() -> String.format("WebSocket closed for %s (%s)", user(session), CloseReason.CloseCodes.getCloseCode(reason.getCloseCode().getCode())));
+        LOG.fine(() -> String.format("WebSocket closed for %s (%s)", user(session),
+                                     CloseReason.CloseCodes.getCloseCode(reason.getCloseCode().getCode())));
         // Prevent resource leaks by always processing a fictitious DELETE_ALL message when closing.
         processMessage(DELETE_ALL.message(), session);
     }
