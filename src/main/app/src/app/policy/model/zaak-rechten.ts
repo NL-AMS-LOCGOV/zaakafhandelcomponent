@@ -10,5 +10,6 @@ export class ZaakRechten {
     behandelen: boolean = false;
     afbreken: boolean = false;
     heropenen: boolean = false;
+    wijzigenZaakdata: boolean = false;
     wijzigenDoorlooptijd: boolean = false;
 }

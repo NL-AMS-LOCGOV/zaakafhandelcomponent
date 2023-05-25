@@ -7,7 +7,6 @@ package net.atos.zac.flowable;
 
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAKTYPE_UUUID;
-import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_DATA;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_IDENTIFICATIE;
 import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_UUID;
 import static net.atos.zac.flowable.bpmn.CreateUserTaskInterceptor.VAR_PROCESS_OWNER;
@@ -111,7 +110,7 @@ public class CMMNService {
                     .variable(VAR_ZAAKTYPE_UUUID, zaaktype.getUUID())
                     .variable(VAR_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving());
             if (zaakData != null) {
-                caseInstanceBuilder.variable(VAR_ZAAK_DATA, zaakData);
+                caseInstanceBuilder.variables(zaakData);
             }
             caseInstanceBuilder.start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {

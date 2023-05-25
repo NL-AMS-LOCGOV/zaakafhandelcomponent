@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {FormGroup} from '@angular/forms';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {ZaakFormulierenService} from '../../formulieren/zaken/zaak-formulieren.service';
+/*
+ * SPDX-FileCopyrightText: 2023 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+import {Component, Input, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Zaak} from '../model/zaak';
-import {AbstractZaakFormulier} from '../../formulieren/zaken/abstract-zaak-formulier';
 import {ZakenService} from '../zaken.service';
 import {MatDrawer} from '@angular/material/sidenav';
 
@@ -18,29 +18,85 @@ export class ZaakdataComponent implements OnInit {
 
     @Input() zaak: Zaak;
     @Input() sideNav: MatDrawer;
-    @Output() done = new EventEmitter<void>();
+    @Input() readonly = false;
+    bezigMetOpslaan = false;
+    form: FormGroup;
 
-    private formulier: AbstractZaakFormulier;
-    formConfig: FormConfig;
-    formItems: Array<AbstractFormField[]> = [];
-
-    constructor(private zaakFormulierenService: ZaakFormulierenService, private zakenService: ZakenService) { }
+    constructor(private formBuilder: FormBuilder, private zakenService: ZakenService) { }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder().saveText('actie.opslaan').cancelText('actie.annuleren').build();
-
-        this.formulier = this.zaakFormulierenService.getFormulierBuilder(this.zaak.zaaktype.identificatie)
-                             .form(this.zaak).build();
-        this.formItems = this.formulier.form;
+        this.form = this.buildForm(this.zaak.zaakdata, this.formBuilder.group({}));
+        if (this.readonly) {
+            this.form.disable();
+        }
     }
 
-    onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
-            this.zakenService.updateZaakdata(this.formulier.getZaak(formGroup)).subscribe(() => {
-                this.done.emit();
-            });
-        } else {// cancel button clicked
-            this.done.emit();
+    buildForm(data: {}, formData: FormGroup): FormGroup {
+        for (const [k, v] of Object.entries(data)) {
+            formData.addControl(k, this.getControl(v));
         }
+        return formData;
+    }
+
+    buildArray(values: []): FormArray {
+        if (!values?.length) {
+            return this.formBuilder.array([[]]);
+        }
+        return this.formBuilder.array(values.map(value => this.getControl(value)));
+    }
+
+    getControl(value: any): AbstractControl {
+        if (this.isValue(value)) {
+            return new FormControl(value);
+        } else if (this.isFile(value)) {
+            return new FormControl({value: value['originalName'], disabled: true});
+        } else if (this.isArray(value)) {
+            return this.buildArray(value);
+        } else if (this.isObject(value)) {
+            return this.buildForm(value, this.formBuilder.group({}));
+        } else {
+            return new FormControl(JSON.stringify(value)); // wat dit dan ook mag zijn
+        }
+    }
+
+    isFile(data): boolean {
+        return data?.hasOwnProperty('originalName');
+    }
+
+    isArray(data): boolean {
+        return Array.isArray(data);
+    }
+
+    isObject(data): boolean {
+        return typeof data === 'object' && !Array.isArray(data) && data !== null;
+    }
+
+    isValue(data): boolean {
+        return !this.isObject(data) && !this.isArray(data);
+    }
+
+    opslaan(): void {
+        this.mergeDeep(this.zaak.zaakdata, this.form.value);
+        this.bezigMetOpslaan = true;
+        this.zakenService.updateZaakdata(this.zaak).subscribe(() => {
+            this.bezigMetOpslaan = false;
+            this.sideNav.close();
+        });
+    }
+
+    mergeDeep(dest: {}, src: {}): void {
+        Object.keys(src).forEach(key => {
+            if (src.hasOwnProperty(key)) {
+                const destVal = dest[key];
+                const srcVal = src[key];
+                if (this.isArray(destVal) && this.isArray(srcVal)) {
+                    dest[key] = destVal.concat(...srcVal);
+                } else if (dest.hasOwnProperty(key) && this.isObject(destVal) && this.isObject(srcVal)) {
+                    this.mergeDeep(destVal, srcVal);
+                } else {
+                    dest[key] = srcVal;
+                }
+            }
+        });
     }
 }

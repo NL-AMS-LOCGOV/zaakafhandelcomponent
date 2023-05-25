@@ -19,5 +19,7 @@ public class RESTZaakRechten {
 
     public boolean heropenen;
 
+    public boolean wijzigenZaakdata;
+
     public boolean wijzigenDoorlooptijd;
 }

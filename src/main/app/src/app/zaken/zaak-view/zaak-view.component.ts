@@ -422,27 +422,28 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, processTaskPlanItems]) => {
             if (this.zaak.rechten.behandelen && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
-                        userEventListenerPlanItems.map(
-                                userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(
-                                        userEventListenerPlanItem)
-                        ).filter(menuItem => menuItem != null));
+                    userEventListenerPlanItems.map(
+                        userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(
+                            userEventListenerPlanItem)
+                    ).filter(menuItem => menuItem != null));
             }
             if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken &&
-                    this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
+                this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(
-                        new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+                    new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
-            if (this.zaak.rechten.wijzigen) {
-                this.menu.push(new ButtonMenuItem('actie.zaakdata.wijzigen', () => {
+            if (this.hasZaakData()) {
+                const title = this.zaak.rechten.wijzigenZaakdata ? 'actie.zaakdata.wijzigen' : 'actie.zaakdata.bekijken';
+                this.menu.push(new ButtonMenuItem(title, () => {
                     this.actionsSidenav.open();
-                    this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
+                    this.action = SideNavAction.ZAAKDATA_TONEN;
                 }, 'folder_copy'));
             }
             if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
-                        humanTaskPlanItems.map(
-                                humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
+                    humanTaskPlanItems.map(
+                        humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
             }
             if (this.zaak.rechten.behandelen && processTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.proces.starten'));
@@ -1005,11 +1006,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     showProces() {
         const dialogData = new DialogData([
             new ReadonlyFormFieldBuilder('<img src="/rest/zaken/' + this.zaak.uuid + '/procesdiagram"/ alt="diagram">')
-                    .id('diagram')
-                    .label('proces.toestand')
-                    .build()]);
+            .id('diagram')
+            .label('proces.toestand')
+            .build()]);
         dialogData.confirmButtonActionKey = 'actie.ok';
         dialogData.cancelButtonActionKey = null;
         this.dialog.open(DialogComponent, {data: dialogData});
+    }
+
+    hasZaakData() {
+        return this.zaak.zaakdata && (Object.keys(this.zaak.zaakdata).length > 0);
     }
 }

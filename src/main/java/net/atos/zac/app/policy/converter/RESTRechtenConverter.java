@@ -46,7 +46,7 @@ public class RESTRechtenConverter {
         restZaakRechten.afbreken = zaakRechten.getAfbreken();
         restZaakRechten.heropenen = zaakRechten.getHeropenen();
         restZaakRechten.wijzigenDoorlooptijd = zaakRechten.getWijzigenDoorlooptijd();
-
+        restZaakRechten.wijzigenZaakdata = zaakRechten.getWijzigenZaakdata();
         return restZaakRechten;
     }
 
