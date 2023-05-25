@@ -22,6 +22,8 @@ public class ZaakRechten {
 
     private final boolean heropenen;
 
+    private final boolean wijzigenZaakdata;
+
     private final boolean wijzigenDoorlooptijd;
 
     @JsonbCreator
@@ -32,6 +34,7 @@ public class ZaakRechten {
             @JsonbProperty("behandelen") final boolean behandelen,
             @JsonbProperty("afbreken") final boolean afbreken,
             @JsonbProperty("heropenen") final boolean heropenen,
+            @JsonbProperty("wijzigenZaakdata") final boolean wijzigenZaakdata,
             @JsonbProperty("wijzigenDoorlooptijd") final boolean wijzigenDoorlooptijd) {
         this.lezen = lezen;
         this.wijzigen = wijzigen;
@@ -39,6 +42,7 @@ public class ZaakRechten {
         this.behandelen = behandelen;
         this.afbreken = afbreken;
         this.heropenen = heropenen;
+        this.wijzigenZaakdata = wijzigenZaakdata;
         this.wijzigenDoorlooptijd = wijzigenDoorlooptijd;
     }
 
@@ -64,6 +68,10 @@ public class ZaakRechten {
 
     public boolean getHeropenen() {
         return heropenen;
+    }
+
+    public boolean getWijzigenZaakdata() {
+        return wijzigenZaakdata;
     }
 
     public boolean getWijzigenDoorlooptijd() {

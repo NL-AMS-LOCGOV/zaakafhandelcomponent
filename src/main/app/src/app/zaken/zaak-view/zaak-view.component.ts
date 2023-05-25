@@ -24,9 +24,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
-import {
-    TextareaFormFieldBuilder
-} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {LoggedInUser} from '../../identity/model/logged-in-user';
 import {IdentityService} from '../../identity/identity.service';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -39,9 +37,7 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
-import {
-    SelectFormFieldBuilder
-} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
@@ -58,10 +54,7 @@ import {forkJoin} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -72,9 +65,7 @@ import {ZaakBetrokkene} from '../model/zaak-betrokkene';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
-import {
-    MedewerkerGroepFieldBuilder
-} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {IndicatiesLayout} from '../../shared/indicaties/indicaties.component';
@@ -85,9 +76,7 @@ import {BAGObject} from '../../bag/model/bagobject';
 import {BesluitIntrekkenGegevens} from '../model/besluit-intrekken-gegevens';
 import {GeometryGegevens} from '../model/geometry-gegevens';
 import {OrderUtil} from "../../shared/order/order-util";
-import {
-    ReadonlyFormFieldBuilder
-} from "../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder";
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -436,27 +425,28 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, processTaskPlanItems]) => {
             if (this.zaak.rechten.behandelen && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
-                        userEventListenerPlanItems.map(
-                                userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(
-                                        userEventListenerPlanItem)
-                        ).filter(menuItem => menuItem != null));
+                    userEventListenerPlanItems.map(
+                        userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(
+                            userEventListenerPlanItem)
+                    ).filter(menuItem => menuItem != null));
             }
             if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken &&
-                    this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
+                this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(
-                        new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+                    new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
-            if (this.zaak.rechten.wijzigen) {
-                this.menu.push(new ButtonMenuItem('actie.zaakdata.wijzigen', () => {
+            if (this.hasZaakData()) {
+                const title = this.zaak.rechten.wijzigenZaakdata ? 'actie.zaakdata.wijzigen' : 'actie.zaakdata.bekijken';
+                this.menu.push(new ButtonMenuItem(title, () => {
                     this.actionsSidenav.open();
-                    this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
+                    this.action = SideNavAction.ZAAKDATA_TONEN;
                 }, 'folder_copy'));
             }
             if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
-                        humanTaskPlanItems.map(
-                                humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
+                    humanTaskPlanItems.map(
+                        humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
             }
             if (this.zaak.rechten.behandelen && processTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.proces.starten'));
@@ -1019,11 +1009,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     showProces() {
         const dialogData = new DialogData([
             new ReadonlyFormFieldBuilder('<img src="/rest/zaken/' + this.zaak.uuid + '/procesdiagram"/ alt="diagram">')
-                    .id('diagram')
-                    .label('proces.toestand')
-                    .build()]);
+            .id('diagram')
+            .label('proces.toestand')
+            .build()]);
         dialogData.confirmButtonActionKey = 'actie.ok';
         dialogData.cancelButtonActionKey = null;
         this.dialog.open(DialogComponent, {data: dialogData});
+    }
+
+    hasZaakData() {
+        return this.zaak.zaakdata && (Object.keys(this.zaak.zaakdata).length > 0);
     }
 }

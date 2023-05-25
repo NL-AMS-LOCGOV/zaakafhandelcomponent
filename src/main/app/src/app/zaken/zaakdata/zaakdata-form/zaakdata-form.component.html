@@ -1,0 +1,32 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<ng-container *ngIf="getType() === 'CONTROL'">
+    <mat-form-field class="zaakdata-form-field" floatLabel="always">
+        <mat-label>{{label}}</mat-label>
+        <input matInput [formControl]="getControl()">
+    </mat-form-field>
+</ng-container>
+
+<ng-container *ngIf="getType() === 'ARRAY'">
+    <zac-zaakdata-form
+            *ngFor="let elm of getArray().controls; let i=index" [label]="label+' ('+(i+1)+')'" [formItem]="elm"></zac-zaakdata-form>
+</ng-container>
+
+<ng-container *ngIf="getType() === 'GROUP'">
+    <form [formGroup]="getGroup()" class="form" *ngIf="label">
+        <fieldset>
+            <legend *ngIf="label">{{label}}</legend>
+            <div *ngFor="let item of getGroup().controls | keyvalue">
+                <zac-zaakdata-form [label]="item.key" [formItem]="item.value"></zac-zaakdata-form>
+            </div>
+        </fieldset>
+    </form>
+    <form [formGroup]="getGroup()" *ngIf="!label">
+        <div *ngFor="let item of getGroup().controls | keyvalue">
+            <zac-zaakdata-form [label]="item.key" [formItem]="item.value"></zac-zaakdata-form>
+        </div>
+    </form>
+</ng-container>
