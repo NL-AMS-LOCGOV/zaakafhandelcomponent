@@ -13,7 +13,7 @@ import {ActionIcon} from '../shared/edit/action-icon';
 import {UtilService} from '../core/service/util.service';
 import {Router} from '@angular/router';
 import {InformatieObjectenService} from './informatie-objecten.service';
-import {PaginaLocatieUtil} from '../locatie/pagina-locatie.util';
+import {ViewResourceUtil} from '../locatie/view-resource.util';
 
 @Injectable({
     providedIn: 'root'
@@ -25,7 +25,8 @@ export class InformatieObjectVerplaatsService {
 
     addTeVerplaatsenDocument(informatieobject: EnkelvoudigInformatieobject, bron: string): void {
         if (!this.isReedsTeVerplaatsen(informatieobject)) {
-            this._verplaatsenDocument(new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, bron));
+            this._verplaatsenDocument(
+                new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, informatieobject.informatieobjectTypeUUID, bron));
         }
     }
 
@@ -60,7 +61,7 @@ export class InformatieObjectVerplaatsService {
             SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
         }
         const action: ActionBarAction = new ActionBarAction(document.documentTitel, ActionEntityType.DOCUMENT, document.bron,
-            new ActionIcon('content_paste_go', 'actie.document.verplaatsen', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document.bron));
+            new ActionIcon('content_paste_go', 'actie.document.verplaatsen', verplaatsAction), dismiss, () => this.isDisabled(document));
         this.utilService.addAction(action);
     }
 
@@ -69,7 +70,18 @@ export class InformatieObjectVerplaatsService {
         SessionStorageUtil.setItem('teVerplaatsenDocumenten', documenten.filter(document => document.documentUUID !== documentVerplaatsGegevens.documentUUID));
     }
 
-    private isVerplaatsenToegestaan(zaakIdentificatie: string): boolean {
-        return PaginaLocatieUtil.actieveZaakViewIdentificatie && PaginaLocatieUtil.actieveZaakViewIdentificatie !== zaakIdentificatie;
+    /**
+     * @return null als toegestaan, string met reden indien disabled;
+     */
+    private isDisabled(verplaatsGegevens: DocumentVerplaatsGegevens): string | null {
+        const actieveZaak = ViewResourceUtil.actieveZaak;
+        if (actieveZaak && actieveZaak.identificatie !== verplaatsGegevens.bron) {
+            if (!actieveZaak.zaaktype.informatieobjecttypes.includes(verplaatsGegevens.documentTypeUUID)) {
+                return 'actie.document.verplaatsen.disabled.documenttype';
+            }
+        } else {
+            return 'actie.document.verplaatsen.disabled.zaak';
+        }
+        return null;
     }
 }

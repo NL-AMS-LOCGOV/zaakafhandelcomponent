@@ -44,5 +44,7 @@ public class RESTZaaktype {
 
     public List<RESTZaaktypeRelatie> zaaktypeRelaties;
 
+    public List<UUID> informatieobjecttypes;
+
     public RESTZaakafhandelParameters zaakafhandelparameters;
 }

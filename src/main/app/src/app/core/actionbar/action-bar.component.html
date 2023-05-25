@@ -6,7 +6,7 @@
 <ng-template>
     <mat-list>
         <mat-list-item *ngFor="let action of actions"
-                       title="{{(action.actionEnabled() ? null :action.action.title + '.disabled') | translate}}">
+                       title="{{(action.actionEnabled() ? null :action.disabledReden()) | translate}}">
             <div class="flex-row items-center">
                 <div>
                     <div class="flex-row items-center">
