@@ -18,11 +18,11 @@ import {AbstractFormControlField} from '../../../shared/material-form-builder/mo
 import {MatSidenav} from '@angular/material/sidenav';
 import {Router} from '@angular/router';
 import {UtilService} from '../../../core/service/util.service';
-import {PersonenParameters} from "../../model/personen/personen-parameters";
-import {Cardinaliteit} from "../../model/personen/cardinaliteit";
-import {ActionIcon} from "../../../shared/edit/action-icon";
-import {forkJoin, Subject} from "rxjs";
-import {ConfiguratieService} from "../../../configuratie/configuratie.service";
+import {PersonenParameters} from '../../model/personen/personen-parameters';
+import {Cardinaliteit} from '../../model/personen/cardinaliteit';
+import {ActionIcon} from '../../../shared/edit/action-icon';
+import {forkJoin, Subject} from 'rxjs';
+import {ConfiguratieService} from '../../../configuratie/configuratie.service';
 
 @Component({
     selector: 'zac-persoon-zoek',
