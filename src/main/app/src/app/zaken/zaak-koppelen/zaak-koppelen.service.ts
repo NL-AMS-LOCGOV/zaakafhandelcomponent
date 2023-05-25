@@ -13,7 +13,7 @@ import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
+import {ViewResourceUtil} from '../../locatie/view-resource.util';
 import {ZaakKoppelDialogGegevens} from '../model/zaak-koppel-dialog-gegevens';
 
 @Injectable({
@@ -60,7 +60,7 @@ export class ZaakKoppelenService {
         const action: ActionBarAction = new ActionBarAction(zaak.identificatie, ActionEntityType.ZAAK,
             zaak.identificatie,
             new ActionIcon('link', 'actie.zaak.koppelen', editAction), dismiss,
-            () => this.isKoppelenToegestaan(zaak.identificatie));
+            () => this.isDisabled(zaak.identificatie));
         this.utilService.addAction(action);
     }
 
@@ -79,7 +79,10 @@ export class ZaakKoppelenService {
         SessionStorageUtil.setItem('teKoppelenZaken', zaken.filter(_zaak => _zaak.uuid !== zaak.uuid));
     }
 
-    private isKoppelenToegestaan(zaakIdentificatie: string): boolean {
-        return PaginaLocatieUtil.actieveZaakViewIdentificatie && PaginaLocatieUtil.actieveZaakViewIdentificatie !== zaakIdentificatie;
+    /**
+     * @return null als toegestaan, string met reden indien disabled;
+     */
+    private isDisabled(zaakIdentificatie: string): string | null {
+        return ViewResourceUtil.actieveZaak && ViewResourceUtil.actieveZaak.identificatie !== zaakIdentificatie ? null : 'actie.zaak.koppelen.disabled';
     }
 }

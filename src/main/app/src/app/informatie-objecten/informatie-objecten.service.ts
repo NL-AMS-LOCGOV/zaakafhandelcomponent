@@ -183,10 +183,9 @@ export class InformatieObjectenService {
 
     editEnkelvoudigInformatieObjectInhoud(uuid: string, zaakUuid: string): Observable<string> {
         return this.http.get<string>(
-            InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid))
-                   .pipe(
-                       catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-                   );
+            InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid)).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
     }
 
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {

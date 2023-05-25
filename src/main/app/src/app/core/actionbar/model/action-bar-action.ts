@@ -7,11 +7,14 @@ import {ActionIcon} from '../../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 
 export class ActionBarAction {
+    public actionEnabled: () => boolean;
+
     constructor(public text: string, public entityType: ActionEntityType, public subText: string,
-                public action: ActionIcon, public dissmis: Subject<void>, public actionEnabled?: () => boolean) {
-        if (!this.actionEnabled) {
-            this.actionEnabled = () => true;
+                public action: ActionIcon, public dissmis: Subject<void>, public disabledReden?: () => null | string) {
+        if (!this.disabledReden) {
+            this.disabledReden = () => null;
         }
+        this.actionEnabled = () => this.disabledReden() == null;
     }
 }
 
