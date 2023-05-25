@@ -16,7 +16,7 @@ import {Resultaat} from '../shared/model/resultaat';
 import {Roltype} from './model/klanten/roltype';
 import {IdentificatieType} from './model/klanten/identificatieType';
 import {ContactGegevens} from './model/klanten/contact-gegevens';
-import {PersonenParameters} from "./model/personen/personen-parameters";
+import {PersonenParameters} from './model/personen/personen-parameters';
 
 @Injectable({
     providedIn: 'root'

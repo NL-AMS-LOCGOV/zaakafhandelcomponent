@@ -34,7 +34,7 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
 import {Subscription} from 'rxjs';
-import {OrderUtil} from "../../shared/order/order-util";
+import {OrderUtil} from '../../shared/order/order-util';
 
 @Component({
     selector: 'zac-informatie-object-add',
