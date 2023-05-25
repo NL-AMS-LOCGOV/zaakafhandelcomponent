@@ -191,9 +191,9 @@ export class PersoonZoekComponent implements OnInit {
     private requireField(control: AbstractFormControlField, required: boolean) {
         control.required = required;
         if (required) {
-            control.formControl.addValidators([Validators.required]);
+            control.formControl.addValidators(Validators.required);
         } else {
-            control.formControl.clearValidators();
+            control.formControl.removeValidators(Validators.required);
         }
     }
 
