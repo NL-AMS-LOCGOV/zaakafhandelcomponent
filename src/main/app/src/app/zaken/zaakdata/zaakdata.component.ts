@@ -91,7 +91,7 @@ export class ZaakdataComponent implements OnInit {
                 const srcVal = src[key];
                 if (this.isArray(destVal) && this.isArray(srcVal)) {
                     dest[key] = destVal.concat(...srcVal);
-                } else if (this.isObject(destVal) && this.isObject(srcVal)) {
+                } else if (dest.hasOwnProperty(key) && this.isObject(destVal) && this.isObject(srcVal)) {
                     this.mergeDeep(destVal, srcVal);
                 } else {
                     dest[key] = srcVal;
