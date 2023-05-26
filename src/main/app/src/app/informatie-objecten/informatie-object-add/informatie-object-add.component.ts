@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {UtilService} from '../../core/service/util.service';
@@ -35,13 +35,14 @@ import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
 import {Subscription} from 'rxjs';
 import {OrderUtil} from '../../shared/order/order-util';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 
 @Component({
     selector: 'zac-informatie-object-add',
     templateUrl: './informatie-object-add.component.html',
     styleUrls: ['./informatie-object-add.component.less']
 })
-export class InformatieObjectAddComponent implements OnInit, OnDestroy {
+export class InformatieObjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() zaak: Zaak;
     @Input() taak: Taak;
@@ -54,6 +55,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
     formConfig: FormConfig;
     ingelogdeMedewerker: User;
 
+    private informatieobjectStatussen: { label: string, value: string }[];
+    private status: SelectFormField;
     private subscriptions$: Subscription[] = [];
 
     constructor(private zakenService: ZakenService,
@@ -71,8 +74,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectListExceptFor('informatieobject.status',
-            InformatieobjectStatus, [InformatieobjectStatus.GEARCHIVEERD]);
+        this.informatieobjectStatussen = this.utilService.getEnumAsSelectListExceptFor('informatieobject.status',
+                InformatieobjectStatus, [InformatieobjectStatus.GEARCHIVEERD]);
 
         const titel = new InputFormFieldBuilder()
         .id('titel')
@@ -113,13 +116,13 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         .validators(Validators.required)
         .build();
 
-        const status = new SelectFormFieldBuilder()
-        .id('status')
-        .label('status')
-        .validators(Validators.required)
-        .optionLabel('label')
-        .options(informatieobjectStatussen)
-        .build();
+        this.status = new SelectFormFieldBuilder(this.isAfgehandeld() ? this.getStatusDefinitief() : null)
+                .id('status')
+                .label('status')
+                .validators(Validators.required)
+                .optionLabel('label')
+                .options(this.informatieobjectStatussen)
+                .build();
 
         const informatieobjectType = new SelectFormFieldBuilder()
         .id('informatieobjectTypeUUID')
@@ -165,8 +168,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         if (this.zaak) {
             this.fields =
-                [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk],
-                    [status, beginRegistratie], [auteur, taal], [ontvangstDatum, verzendDatum], [nogmaals]];
+                    [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk],
+                        [this.status, beginRegistratie], [auteur, taal], [ontvangstDatum, verzendDatum], [nogmaals]];
         } else if (this.taak) {
             this.fields = [[inhoudField], [titel], [informatieobjectType], [ontvangstDatum, verzendDatum], [nogmaals]];
         }
@@ -189,13 +192,13 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         this.subscriptions$.push(ontvangstDatum.formControl.valueChanges.subscribe(value => {
             if (value && verzendDatum.formControl.enabled) {
-                status.formControl.setValue(
-                    informatieobjectStatussen.find(
-                        option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus, InformatieobjectStatus.DEFINITIEF)));
-                status.formControl.disable();
+                this.status.formControl.setValue(this.getStatusDefinitief());
+                this.status.formControl.disable();
                 verzendDatum.formControl.disable();
             } else if (!value && verzendDatum.formControl.disabled) {
-                status.formControl.enable();
+                if (!this.isAfgehandeld()) {
+                    this.status.formControl.enable();
+                }
                 verzendDatum.formControl.enable();
             }
         }));
@@ -207,6 +210,21 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                 ontvangstDatum.formControl.enable();
             }
         }));
+    }
+
+    private isAfgehandeld(): boolean {
+        return this.zaak && !this.zaak.isOpen;
+    }
+
+    private getStatusDefinitief(): { label: string, value: string } {
+        return this.informatieobjectStatussen.find(
+                option => option.value === this.utilService.getEnumKeyByValue(InformatieobjectStatus, InformatieobjectStatus.DEFINITIEF));
+    }
+
+    ngAfterViewInit(): void {
+        if (this.isAfgehandeld()) {
+            this.status.formControl.disable();
+        }
     }
 
     ngOnDestroy(): void {
@@ -280,8 +298,10 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
     clearForm(formGroup: FormGroup) {
         if (this.zaak) {
+            console.log('C');
             formGroup.get('status').reset();
             formGroup.get('status').setErrors(null);
+            console.debug(formGroup.get('status').enabled);
             formGroup.get('vertrouwelijkheidaanduiding').reset();
             formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
         }
