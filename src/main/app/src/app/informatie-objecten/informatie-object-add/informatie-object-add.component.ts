@@ -298,10 +298,8 @@ export class InformatieObjectAddComponent implements OnInit, AfterViewInit, OnDe
 
     clearForm(formGroup: FormGroup) {
         if (this.zaak) {
-            console.log('C');
             formGroup.get('status').reset();
             formGroup.get('status').setErrors(null);
-            console.debug(formGroup.get('status').enabled);
             formGroup.get('vertrouwelijkheidaanduiding').reset();
             formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
         }
