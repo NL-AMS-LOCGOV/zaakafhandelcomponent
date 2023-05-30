@@ -9,11 +9,11 @@
             <div class="bag-gegevens flex-col">
                 <mat-card *ngIf="bagObject.bagObjectType === 'ADRES'">
                     <mat-card-header>
-                        <mat-card-title>{{adres.omschrijving}}</mat-card-title>
-                        <mat-card-subtitle>{{'objecttype.ADRES' | translate}}</mat-card-subtitle>
+                        <mat-card-title>{{'objecttype.ADRES' | translate}}</mat-card-title>
+                        <mat-card-subtitle>{{adres.omschrijving}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="rule"></div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'adres' | translate"
                                              [value]="adres.openbareRuimteNaam+' '+adres.huisnummerWeergave+' \n'+adres.postcode+' '+adres.woonplaatsNaam"></zac-static-text>
@@ -28,7 +28,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.status.'+adres.nummeraanduiding.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.PAND' | translate}}</div>
+                        <div class="rule title">{{'objecttype.PAND' | translate}}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="adres.panden[0].identificatie"></zac-static-text>
@@ -37,7 +37,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.pand.status.'+adres.panden[0]?.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'AdresseerbaarObject.' + adres.adresseerbaarObject.typeAdresseerbaarObject | translate}}</div>
+                        <div class="rule title">{{'AdresseerbaarObject.' + adres.adresseerbaarObject.typeAdresseerbaarObject | translate}}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="adres.adresseerbaarObject.identificatie"></zac-static-text>
@@ -52,7 +52,7 @@
                                              [label]="'oppervlakte' | translate"
                                              [value]="adres.adresseerbaarObject.vboOppervlakte+' m2'"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.NUMMERAANDUIDING' | translate }}</div>
+                        <div class="rule title">{{'objecttype.NUMMERAANDUIDING' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="adres.nummeraanduiding.identificatie"></zac-static-text>
@@ -63,7 +63,7 @@
                             <zac-static-text [label]="'huisnummer' | translate"
                                              [value]="adres.nummeraanduiding.huisnummerWeergave"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="rule title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="adres.openbareRuimte.identificatie"></zac-static-text>
@@ -72,7 +72,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.status.'+adres.openbareRuimte.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="rule title">{{'objecttype.WOONPLAATS' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="adres.woonplaats.identificatie"></zac-static-text>
@@ -86,11 +86,11 @@
 
                 <mat-card *ngIf="bagObject.bagObjectType === 'OPENBARE_RUIMTE'">
                     <mat-card-header>
-                        <mat-card-title>{{openbareRuimte.omschrijving}}</mat-card-title>
-                        <mat-card-subtitle>{{'objecttype.OPENBARE_RUIMTE' | translate}}</mat-card-subtitle>
+                        <mat-card-title>{{'objecttype.OPENBARE_RUIMTE' | translate}}</mat-card-title>
+                        <mat-card-subtitle>{{openbareRuimte.omschrijving}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="title mat-title">{{'gegevens' | translate}}</div>
+                        <div class="rule"></div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'naam' | translate"
                                              [value]="openbareRuimte.naam"></zac-static-text>
@@ -101,7 +101,7 @@
                             <zac-static-text [label]="'type' | translate"
                                              [value]="openbareRuimte.typeWeergave"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="rule title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="openbareRuimte.identificatie"></zac-static-text>
@@ -109,7 +109,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.status.'+openbareRuimte.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="rule title">{{'objecttype.WOONPLAATS' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="openbareRuimte.woonplaats.identificatie"></zac-static-text>
@@ -123,11 +123,11 @@
 
                 <mat-card *ngIf="bagObject.bagObjectType === 'WOONPLAATS'">
                     <mat-card-header>
-                        <mat-card-title>{{woonplaats.omschrijving}}</mat-card-title>
-                        <mat-card-subtitle>{{'objecttype.WOONPLAATS' | translate}}</mat-card-subtitle>
+                        <mat-card-title>{{'objecttype.WOONPLAATS' | translate}}</mat-card-title>
+                        <mat-card-subtitle>{{woonplaats.omschrijving}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="title">{{'gegevens' | translate }}</div>
+                        <div class="rule"></div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="woonplaats.identificatie"></zac-static-text>
@@ -141,11 +141,11 @@
 
                 <mat-card *ngIf="bagObject.bagObjectType === 'PAND'">
                     <mat-card-header>
-                        <mat-card-title>{{pand.omschrijving}}</mat-card-title>
-                        <mat-card-subtitle>{{'objecttype.PAND' | translate}}</mat-card-subtitle>
+                        <mat-card-title>{{'objecttype.PAND' | translate}}</mat-card-title>
+                        <mat-card-subtitle>{{pand.omschrijving}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="rule"></div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text class="" [label]="'identificatie' | translate"
                                              [value]="pand.identificatie"></zac-static-text>
@@ -159,11 +159,11 @@
 
                 <mat-card *ngIf="bagObject.bagObjectType === 'NUMMERAANDUIDING'">
                     <mat-card-header>
-                        <mat-card-title>{{nummeraanduiding.omschrijving}}</mat-card-title>
-                        <mat-card-subtitle>{{'objecttype.NUMMERAANDUIDING' | translate}}</mat-card-subtitle>
+                        <mat-card-title>{{'objecttype.NUMMERAANDUIDING' | translate}}</mat-card-title>
+                        <mat-card-subtitle>{{nummeraanduiding.omschrijving}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="title">{{'gegevens' | translate}}</div>
+                        <div class="rule"></div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'huisnummer' | translate"
                                              [value]="nummeraanduiding.huisnummer"></zac-static-text>
@@ -178,7 +178,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.status.'+nummeraanduiding.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
+                        <div class="rule title">{{'objecttype.OPENBARE_RUIMTE' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="nummeraanduiding.openbareRuimte.identificatie"></zac-static-text>
@@ -187,7 +187,7 @@
                             <zac-static-text [label]="'status' | translate"
                                              [value]="'bagObject.status.'+nummeraanduiding.openbareRuimte.status | translate"></zac-static-text>
                         </div>
-                        <div class="title">{{'objecttype.WOONPLAATS' | translate }}</div>
+                        <div class="rule title">{{'objecttype.WOONPLAATS' | translate }}</div>
                         <div class="content flex-row flex-wrap">
                             <zac-static-text [label]="'identificatie' | translate"
                                              [value]="nummeraanduiding.woonplaats.identificatie"></zac-static-text>

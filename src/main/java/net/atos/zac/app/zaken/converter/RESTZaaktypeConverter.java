@@ -59,6 +59,8 @@ public class RESTZaaktypeConverter {
                     .forEach(restZaaktype.zaaktypeRelaties::add);
         }
 
+        restZaaktype.informatieobjecttypes = zaaktype.getInformatieobjecttypen().stream().map(UriUtil::uuidFromURI).toList();
+
         if (zaaktype.getReferentieproces() != null) {
             restZaaktype.referentieproces = zaaktype.getReferentieproces().getNaam();
         }
