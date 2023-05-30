@@ -4,7 +4,11 @@
  */
 
 import {ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy} from '@angular/router';
+import {Injectable} from '@angular/core';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class RouteReuseStrategyService extends RouteReuseStrategy {
     handlers: { [key: string]: DetachedRouteHandle } = {};
 
