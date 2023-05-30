@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent} from '@angular/router';
+import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {UtilService} from '../../core/service/util.service';
@@ -16,19 +16,20 @@ import {SessionStorageUtil} from '../storage/session-storage.util';
 })
 export class NavigationService {
 
+    private static NAVIGATION_HISTORY: string = 'navigationHistory';
     private backDisabled: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public backDisabled$: Observable<boolean> = this.backDisabled.asObservable();
 
-    private static NAVIGATION_HISTORY: string = 'navigationHistory';
+
 
     constructor(private router: Router, private location: Location, private utilService: UtilService) {
         router.events.pipe(
             filter(
-                (e: RouterEvent): e is RouterEvent => e instanceof NavigationStart || e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError)
-        ).subscribe((e: RouterEvent) => this.handleRouterEvents(e));
+                (e) => e instanceof NavigationStart || e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError)
+        ).subscribe((e) => this.handleRouterEvents(e));
     }
 
-    private handleRouterEvents(e: RouterEvent): void {
+    private handleRouterEvents(e): void {
         if (e instanceof NavigationStart) {
             this.utilService.setLoading(true);
         } else {
