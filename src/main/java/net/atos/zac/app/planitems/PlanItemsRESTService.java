@@ -210,7 +210,7 @@ public class PlanItemsRESTService {
         cmmnService.startHumanTaskPlanItem(humanTaskData.planItemInstanceId, humanTaskData.groep.id,
                                            humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null,
                                            DateTimeConverterUtil.convertToDate(fataleDatum),
-                                           taakdata, zaakUUID);
+                                           humanTaskData.toelichting, taakdata, zaakUUID);
         indexeerService.addOrUpdateZaak(zaakUUID, false);
     }
 

@@ -21,6 +21,8 @@ public class RESTHumanTaskData {
 
     public LocalDate fataledatum;
 
+    public String toelichting;
+
     public Map<String, String> taakdata;
 
     public RESTTaakStuurGegevens taakStuurGegevens;

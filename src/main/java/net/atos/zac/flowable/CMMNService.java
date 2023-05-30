@@ -12,6 +12,7 @@ import static net.atos.zac.flowable.ZaakVariabelenService.VAR_ZAAK_UUID;
 import static net.atos.zac.flowable.bpmn.CreateUserTaskInterceptor.VAR_PROCESS_OWNER;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ASSIGNEE;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_CANDIDATE_GROUP;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_DESCRIPTION;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_DUE_DATE;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_OWNER;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_TAAKDATA;
@@ -136,7 +137,7 @@ public class CMMNService {
     }
 
     public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId, final String assignee,
-            final Date dueDate, final Map<String, String> taakdata, final UUID zaakUUID) {
+            final Date dueDate, final String description, final Map<String, String> taakdata, final UUID zaakUUID) {
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
                 .transientVariable(VAR_TRANSIENT_OWNER, loggedInUserInstance.get().getId())
@@ -144,6 +145,7 @@ public class CMMNService {
                 .transientVariable(VAR_TRANSIENT_ASSIGNEE, assignee)
                 .transientVariable(VAR_TRANSIENT_ZAAK_UUID, zaakUUID)
                 .transientVariable(VAR_TRANSIENT_DUE_DATE, dueDate)
+                .transientVariable(VAR_TRANSIENT_DESCRIPTION, description)
                 .transientVariable(VAR_TRANSIENT_TAAKDATA, taakdata)
                 .start();
     }

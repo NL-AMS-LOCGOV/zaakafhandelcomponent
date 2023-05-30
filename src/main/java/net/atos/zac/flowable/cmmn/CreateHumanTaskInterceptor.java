@@ -28,6 +28,8 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
     public static final String VAR_TRANSIENT_DUE_DATE = "dueDate";
 
+    public static final String VAR_TRANSIENT_DESCRIPTION = "description";
+
     public static final String VAR_TRANSIENT_CANDIDATE_GROUP = "candidateGroupId";
 
     public static final String VAR_TRANSIENT_ASSIGNEE = "assignee";
@@ -59,8 +61,10 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
         final Map<String, String> taakdata = (Map<String, String>) context.getPlanItemInstanceEntity()
                 .getTransientVariable(VAR_TRANSIENT_TAAKDATA);
         FlowableHelper.getInstance().getTaakVariabelenService().setTaakdata(context.getTaskEntity(), taakdata);
-        context.getTaskEntity()
-                .setDueDate((Date) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_DUE_DATE));
+        context.getTaskEntity().setDueDate((Date) context.getPlanItemInstanceEntity()
+                .getTransientVariable(VAR_TRANSIENT_DUE_DATE));
+        context.getTaskEntity().setDescription((String) context.getPlanItemInstanceEntity()
+                .getTransientVariable(VAR_TRANSIENT_DESCRIPTION));
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_ZAAK_UUID);
         final ScreenEvent screenEvent = ScreenEventType.ZAAK_TAKEN.updated(zaakUUID);
         // Wait some time before handling the event to make sure that the task has been created.
