@@ -10,6 +10,7 @@
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action" class="zaak-actions-drawer">
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
+                          [sideNav]="actionsSidenav"
                           (klantGegevens)="initiatorGeselecteerd($event.klant)"
                           [initiator]="true"></zac-klant-koppel>
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
