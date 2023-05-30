@@ -33,10 +33,8 @@ import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {DocumentViewerComponent} from './document-viewer/document-viewer.component';
-import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
 import {EditSelectComponent} from './edit/edit-select/edit-select.component';
-import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {DagenPipe} from './pipes/dagen.pipe';
 import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
 import {EditInputComponent} from './edit/edit-input/edit-input.component';
@@ -94,8 +92,6 @@ import {BesluitIndicatiesComponent} from './indicaties/besluit-indicaties/beslui
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
         TranslateModule,
-        PdfJsViewerModule,
-        NgxSkeletonLoaderModule.forRoot({animation: 'pulse'})
     ],
     exports: [
         BrowserAnimationsModule,
