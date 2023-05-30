@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Zaak} from './model/zaak';
 import {ZakenService} from './zaken.service';
@@ -12,7 +12,7 @@ import {ZakenService} from './zaken.service';
 @Injectable({
     providedIn: 'root'
 })
-export class ZaakUuidResolver implements Resolve<Zaak> {
+export class ZaakUuidResolver {
 
     constructor(private zakenService: ZakenService) {
     }
