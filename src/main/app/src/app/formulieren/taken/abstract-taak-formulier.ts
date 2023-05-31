@@ -15,8 +15,12 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {Zaak} from '../../zaken/model/zaak';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {
+    DocumentenLijstFieldBuilder
+} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {
+    TextareaFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 export abstract class AbstractTaakFormulier {
 
@@ -72,9 +76,11 @@ export abstract class AbstractTaakFormulier {
         const values = formGroup.value;
         const toekenning = values[AbstractTaakFormulier.TAAK_TOEKENNING];
         const fataledatum = values[AbstractTaakFormulier.TAAK_FATALEDATUM];
+        const toelichting = values[AbstractTaakFormulier.TOELICHTING_FIELD];
         this.humanTaskData.medewerker = toekenning.medewerker;
         this.humanTaskData.groep = toekenning.groep;
         this.humanTaskData.fataledatum = fataledatum;
+        this.humanTaskData.toelichting = toelichting;
         this.humanTaskData.taakdata = this.getDataElementen(formGroup);
         return this.humanTaskData;
     }
