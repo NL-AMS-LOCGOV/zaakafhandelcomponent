@@ -12,6 +12,7 @@ export class HumanTaskData {
     groep: Group;
     medewerker: User;
     fataledatum: string;
+    toelichting: string;
     taakdata: {};
     taakStuurGegevens: TaakStuurGegevens;
 }

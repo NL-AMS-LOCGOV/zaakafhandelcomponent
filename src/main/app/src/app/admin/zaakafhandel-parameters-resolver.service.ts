@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {ZaakafhandelParametersService} from './zaakafhandel-parameters.service';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
@@ -12,7 +12,7 @@ import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 @Injectable({
     providedIn: 'root'
 })
-export class ZaakafhandelParametersResolver implements Resolve<ZaakafhandelParameters> {
+export class ZaakafhandelParametersResolver {
 
     constructor(private adminService: ZaakafhandelParametersService) {
     }

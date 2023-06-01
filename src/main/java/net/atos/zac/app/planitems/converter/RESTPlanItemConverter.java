@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
-import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
@@ -37,15 +37,12 @@ public class RESTPlanItemConverter {
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
-    @Inject
-    private ZRCClientService zrcClientService;
-
-    public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final UUID zaakUuid) {
-        final UUID zaaktypeUUID = uuidFromURI(zrcClientService.readZaak(zaakUuid).getZaaktype());
+    public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final Zaak zaak) {
+        final UUID zaaktypeUUID = uuidFromURI(zaak.getZaaktype());
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 zaaktypeUUID);
         return planItems.stream()
-                .map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid, zaakafhandelParameters))
+                .map(planItemInstance -> this.convertPlanItem(planItemInstance, zaak.getUuid(), zaakafhandelParameters))
                 .toList();
     }
 

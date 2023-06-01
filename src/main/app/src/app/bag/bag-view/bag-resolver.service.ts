@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {BAGObject} from '../model/bagobject';
 import {BAGService} from '../bag.service';
@@ -12,7 +12,7 @@ import {BAGService} from '../bag.service';
 @Injectable({
     providedIn: 'root'
 })
-export class BAGResolverService implements Resolve<BAGObject> {
+export class BAGResolverService {
 
     constructor(private bagService: BAGService) {
     }

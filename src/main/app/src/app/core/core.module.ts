@@ -14,9 +14,6 @@ import {registerLocaleData} from '@angular/common';
 import localeNl from '@angular/common/locales/nl';
 import {LoadingComponent} from './loading/loading.component';
 import {SharedModule} from '../shared/shared.module';
-import {StoreModule} from '@ngrx/store';
-import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {environment} from '../../environments/environment';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogConfig} from '@angular/material/dialog';
 
 registerLocaleData(localeNl, 'nl-NL');
@@ -41,8 +38,6 @@ export function HttpLoaderFactory(http: HttpClient) {
             }
         }),
         SharedModule,
-        StoreModule.forRoot({}, {}),
-        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
     ],
     exports: [
         LoadingComponent

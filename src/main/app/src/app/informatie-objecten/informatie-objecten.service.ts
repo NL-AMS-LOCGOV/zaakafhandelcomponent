@@ -162,7 +162,7 @@ export class InformatieObjectenService {
 
     getZIPDownload(uuids: string[]): Observable<Blob> {
         return this.http.post(`${this.basepath}/download/zip`, uuids, {responseType: 'blob'}).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -170,22 +170,20 @@ export class InformatieObjectenService {
         return `${this.basepath}/informatieobject/upload/${documentReferentieId}`;
     }
 
-    getPreviewDocument(uuid: string, versie?: number): Observable<Blob> {
-        let url = `${this.basepath}/informatieobject/${uuid}/download`;
+    getPreviewUrl(uuid: string, versie?: number): string {
+        let url = `${this.basepath}/informatieobject/${uuid}/preview`;
         if (versie) {
-            url = `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
+            url = `${this.basepath}/informatieobject/${uuid}/${versie}/preview`;
         }
-
-        return this.http.get(url, {responseType: 'blob'}).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
+        return url;
     }
 
     editEnkelvoudigInformatieObjectInhoud(uuid: string, zaakUuid: string): Observable<string> {
         return this.http.get<string>(
-            InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid)).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
+                InformatieObjectenService.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid))
+                .pipe(
+                        catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                );
     }
 
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {

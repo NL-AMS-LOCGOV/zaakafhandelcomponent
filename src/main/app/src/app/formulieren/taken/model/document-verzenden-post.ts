@@ -7,12 +7,18 @@ import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 import {TranslateService} from '@ngx-translate/core';
 import {TakenService} from '../../../taken/taken.service';
 import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
-import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {
+    TextareaFormFieldBuilder
+} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {Validators} from '@angular/forms';
-import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {
+    DocumentenLijstFieldBuilder
+} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
-import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {
+    ParagraphFormFieldBuilder
+} from '../../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 
@@ -20,7 +26,7 @@ export class DocumentVerzendenPost extends AbstractTaakFormulier {
 
     fields = {
         DOCUMENTEN_VERZENDEN_POST: 'documentenVerzendenPost',
-        TOELICHTING: 'toelichting',
+        TOELICHTING: AbstractTaakFormulier.TOELICHTING_FIELD,
         VERZENDDATUM: 'verzenddatum'
     };
 

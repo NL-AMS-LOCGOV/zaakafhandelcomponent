@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {MailtemplateBeheerService} from './mailtemplate-beheer.service';
 import {Mailtemplate} from './model/mailtemplate';
@@ -12,7 +12,7 @@ import {Mailtemplate} from './model/mailtemplate';
 @Injectable({
     providedIn: 'root'
 })
-export class MailtemplateResolver implements Resolve<Mailtemplate> {
+export class MailtemplateResolver {
 
     constructor(private service: MailtemplateBeheerService) {
     }
