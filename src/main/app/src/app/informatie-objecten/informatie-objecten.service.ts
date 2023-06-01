@@ -171,7 +171,7 @@ export class InformatieObjectenService {
     }
 
     getPreviewUrl(uuid: string, versie?: number): string {
-        let url = `${this.basepath}/informatieobject/${uuid}/previe`;
+        let url = `${this.basepath}/informatieobject/${uuid}/preview`;
         if (versie) {
             url = `${this.basepath}/informatieobject/${uuid}/${versie}/preview`;
         }
