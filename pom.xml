@@ -378,6 +378,31 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>kvk-vestigingsprofiel-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/vestigingsprofiel-openapi.yaml</inputSpec>
+                            <output>${project.basedir}</output>
+                            <generatorName>java</generatorName>
+                            <modelPackage>net.atos.client.kvk.vestigingsprofiel.model</modelPackage>
+                            <generateApis>false</generateApis>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <strictSpec>true</strictSpec>
+                            <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
+                                <sourceFolder>src/generated/java</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>brp-client</id>
                         <goals>
                             <goal>generate</goal>
