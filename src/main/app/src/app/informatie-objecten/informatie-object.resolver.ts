@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject';
 import {InformatieObjectenService} from './informatie-objecten.service';
@@ -12,7 +12,7 @@ import {InformatieObjectenService} from './informatie-objecten.service';
 @Injectable({
     providedIn: 'root'
 })
-export class InformatieObjectResolver implements Resolve<EnkelvoudigInformatieobject> {
+export class InformatieObjectResolver {
     constructor(private informatieObjectenService: InformatieObjectenService) {
     }
 

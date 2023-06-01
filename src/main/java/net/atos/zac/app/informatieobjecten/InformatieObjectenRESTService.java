@@ -441,6 +441,24 @@ public class InformatieObjectenRESTService {
         }
     }
 
+    @GET
+    @Path("/informatieobject/{uuid}/{versie}/preview")
+    public Response preview(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
+                uuid);
+        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieObject).getLezen());
+        try (final ByteArrayInputStream inhoud = (versie != null) ?
+                drcClientService.downloadEnkelvoudigInformatieobjectVersie(uuid, versie) :
+                drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
+            return Response.ok(inhoud)
+                    .header("Content-Disposition",
+                            "inline; filename=\"%s\"".formatted(enkelvoudigInformatieObject.getBestandsnaam()))
+                    .header("Content-Type", enkelvoudigInformatieObject.getFormaat()).build();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @POST
     @Path("/download/zip")
     public Response readFilesAsZip(final List<String> uuids) {

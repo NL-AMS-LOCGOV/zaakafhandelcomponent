@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {TabelGegevens} from '../model/tabel-gegevens';
 import {GebruikersvoorkeurenService} from '../../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
@@ -12,7 +12,7 @@ import {GebruikersvoorkeurenService} from '../../../gebruikersvoorkeuren/gebruik
 @Injectable({
     providedIn: 'root'
 })
-export class TabelGegevensResolver implements Resolve<TabelGegevens> {
+export class TabelGegevensResolver {
     constructor(private gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
     }
 

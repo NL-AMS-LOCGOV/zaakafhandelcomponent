@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Bedrijf} from '../model/bedrijven/bedrijf';
 import {KlantenService} from '../klanten.service';
@@ -12,7 +12,7 @@ import {KlantenService} from '../klanten.service';
 @Injectable({
     providedIn: 'root'
 })
-export class BedrijfResolverService implements Resolve<Bedrijf> {
+export class BedrijfResolverService {
 
     constructor(private klantenService: KlantenService) {
     }
