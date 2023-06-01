@@ -36,6 +36,7 @@ import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
+import net.atos.zac.app.planitems.model.UserEventListenerActie;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.flowable.TaakVariabelenService;
@@ -114,7 +115,8 @@ public class PlanItemsRESTService {
     @Path("zaak/{uuid}/humanTaskPlanItems")
     public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> humanTaskPlanItems = cmmnService.listHumanTaskPlanItems(zaakUUID);
-        return planItemConverter.convertPlanItems(humanTaskPlanItems, zaakUUID).stream()
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return planItemConverter.convertPlanItems(humanTaskPlanItems, zaak).stream()
                 .filter(restPlanItem -> restPlanItem.actief)
                 .toList();
     }
@@ -123,14 +125,21 @@ public class PlanItemsRESTService {
     @Path("zaak/{uuid}/processTaskPlanItems")
     public List<RESTPlanItem> listProcessTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
         final var processTaskPlanItems = cmmnService.listProcessTaskPlanItems(zaakUUID);
-        return planItemConverter.convertPlanItems(processTaskPlanItems, zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return planItemConverter.convertPlanItems(processTaskPlanItems, zaak);
     }
 
     @GET
     @Path("zaak/{uuid}/userEventListenerPlanItems")
     public List<RESTPlanItem> listUserEventListenerPlanItems(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> userEventListenerPlanItems = cmmnService.listUserEventListenerPlanItems(zaakUUID);
-        return planItemConverter.convertPlanItems(userEventListenerPlanItems, zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return planItemConverter.convertPlanItems(userEventListenerPlanItems, zaak).stream()
+                .filter(restPlanItem ->
+                                restPlanItem.userEventListenerActie != UserEventListenerActie.ZAAK_AFHANDELEN ||
+                                        !zrcClientService.heeftOpenDeelzaken(zaak)
+                )
+                .toList();
     }
 
     @GET
