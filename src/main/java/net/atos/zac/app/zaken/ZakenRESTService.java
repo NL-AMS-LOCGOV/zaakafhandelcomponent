@@ -142,6 +142,7 @@ import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.BPMNService;
 import net.atos.zac.flowable.CMMNService;
@@ -295,6 +296,9 @@ public class ZakenRESTService {
 
     @Inject
     private RESTZaakAfzenderConverter zaakAfzenderConverter;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -655,7 +659,8 @@ public class ZakenRESTService {
         final Statustype statustype = zaak.getStatus() != null ? ztcClientService.readStatustype(
                 zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         assertPolicy(zaak.isOpen() && !isHeropend(statustype) && policyService.readZaakRechten(zaak)
-                .getAfbreken() && !zrcClientService.heeftOpenDeelzaken(zaak));
+                .getAfbreken() && !zrcClientService.heeftOpenDeelzaken(
+                zaak) && !enkelvoudigInformatieObjectLockService.hasLockedInformatieobjecten(zaak));
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 UriUtil.uuidFromURI(zaak.getZaaktype()));
         final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameters.readZaakbeeindigParameter(
