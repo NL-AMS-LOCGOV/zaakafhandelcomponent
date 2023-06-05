@@ -18,6 +18,7 @@ export class BedrijfViewComponent implements OnInit {
 
     bedrijf: Bedrijf;
     vestigingsprofiel: Vestigingsprofiel = null;
+    vestigingsprofielOphalenMogelijk = true;
 
     constructor(private utilService: UtilService, private _route: ActivatedRoute, public klantenService: KlantenService) {
     }
@@ -26,10 +27,12 @@ export class BedrijfViewComponent implements OnInit {
         this.utilService.setTitle('bedrijfsgegevens');
         this._route.data.subscribe(data => {
             this.bedrijf = data.bedrijf;
+            this.vestigingsprofielOphalenMogelijk = !!this.bedrijf.vestigingsnummer;
         });
     }
 
     ophalenVestigingsprofiel() {
+        this.vestigingsprofielOphalenMogelijk = false;
         this.klantenService.readVestigingsprofiel(this.bedrijf.vestigingsnummer).subscribe(value => {
             this.vestigingsprofiel = value;
         });

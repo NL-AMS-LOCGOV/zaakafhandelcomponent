@@ -11,6 +11,11 @@
         <mat-panel-description>
             {{bedrijf ? bedrijf.naam : ('msg.loading'| translate)}}
             <div class="flex-row">
+                <button mat-icon-button [disabled]="!vestigingsprofielOphalenMogelijk"
+                        title="{{ 'bedrijf.profiel.ophalen' | translate }}"
+                        (click)="$event.stopPropagation(); ophalenVestigingsprofiel()">
+                    <mat-icon outlined>other_admission</mat-icon>
+                </button>
                 <button *ngIf="bedrijf && isWijzigbaar" [title]="'actie.initiator.wijzigen' | translate" mat-icon-button
                         (click)="$event.stopPropagation(); edit.emit(bedrijf)">
                     <mat-icon>edit</mat-icon>
@@ -39,11 +44,29 @@
                          [value]="bedrijf.rsin"></zac-static-text>
         <zac-static-text [label]="'type' | translate"
                          [value]="bedrijf.type | translate"></zac-static-text>
-        <zac-static-text [label]="'adres' | translate"
+        <zac-static-text *ngIf="!vestigingsprofiel"
+                         [label]="'adres' | translate"
                          [value]="bedrijf.adres | empty"></zac-static-text>
+        <zac-static-text *ngFor="let adres of vestigingsprofiel?.adressen"
+                         [label]="adres.type | titlecase"
+                         [value]="adres.volledigAdres | empty"></zac-static-text>
+        <zac-static-text [label]="'telefoonnummer' | translate"
+                         [value]="bedrijf.telefoonnummer | empty"></zac-static-text>
         <zac-static-text [label]="'telefoonnummer' | translate"
                          [value]="bedrijf.telefoonnummer | empty"></zac-static-text>
         <zac-static-text [label]="'emailadres' | translate"
                          [value]="bedrijf.emailadres | empty"></zac-static-text>
+        <zac-static-text *ngIf="vestigingsprofiel"
+                         [label]="'totaalWerkzamePersonen' | translate"
+                         [value]="vestigingsprofiel.totaalWerkzamePersonen | empty"></zac-static-text>
+        <zac-static-text *ngIf="vestigingsprofiel"
+                         [label]="'hoofdactiviteit' | translate"
+                         [value]="vestigingsprofiel.sbiHoofdActiviteit | empty"></zac-static-text>
+        <zac-static-text *ngIf="vestigingsprofiel"
+                         [label]="'activiteiten' | translate"
+                         [value]="vestigingsprofiel.sbiActiviteiten?.join(',\r\n') "></zac-static-text>
+        <zac-static-text *ngIf="vestigingsprofiel"
+                         [label]="'website' | translate"
+                         [value]="vestigingsprofiel.website | empty"></zac-static-text>
     </div>
 </mat-expansion-panel>
