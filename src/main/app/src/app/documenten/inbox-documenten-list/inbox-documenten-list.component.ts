@@ -12,7 +12,6 @@ import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
@@ -87,19 +86,23 @@ export class InboxDocumentenListComponent extends WerklijstComponent implements 
         SessionStorageUtil.setItem(Werklijst.INBOX_DOCUMENTEN + '_ZOEKPARAMETERS', this.listParameters);
     }
 
-    getDownloadURL(od: InboxDocument): string {
-        return this.infoService.getDownloadURL(od.enkelvoudiginformatieobjectUUID);
+    getDownloadURL(id: InboxDocument): string {
+        return this.infoService.getDownloadURL(id.enkelvoudiginformatieobjectUUID);
     }
 
-    documentVerplaatsen(od: InboxDocument): void {
-        this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(InboxDocumentenListComponent.getInformatieobject(od), 'inbox-documenten');
+    documentVerplaatsen(id: InboxDocument): void {
+        id['disabled'] = true;
+        this.infoService.readEnkelvoudigInformatieobject((id.enkelvoudiginformatieobjectUUID))
+                .subscribe(i => {
+                    this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(i, 'inbox-documenten');
+                });
     }
 
     documentVerwijderen(inboxDocument: InboxDocument): void {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                {key: 'msg.document.verwijderen.bevestigen', args: {document: inboxDocument.titel}},
-                this.inboxDocumentenService.delete(inboxDocument)
+                    {key: 'msg.document.verwijderen.bevestigen', args: {document: inboxDocument.titel}},
+                    this.inboxDocumentenService.delete(inboxDocument)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -110,17 +113,8 @@ export class InboxDocumentenListComponent extends WerklijstComponent implements 
     }
 
     isDocumentVerplaatsenDisabled(inboxDocument: InboxDocument): boolean {
-        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(InboxDocumentenListComponent.getInformatieobject(inboxDocument));
+        return inboxDocument['disabled'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(inboxDocument.enkelvoudiginformatieobjectUUID);
     }
-
-    private static getInformatieobject(inboxDocument: InboxDocument): EnkelvoudigInformatieobject {
-        const informatieobject = new EnkelvoudigInformatieobject();
-        informatieobject.titel = inboxDocument.titel;
-        informatieobject.uuid = inboxDocument.enkelvoudiginformatieobjectUUID;
-        informatieobject.identificatie = inboxDocument.enkelvoudiginformatieobjectID;
-        return informatieobject;
-    }
-
     filtersChanged(): void {
         this.paginator.pageIndex = 0;
         this.clearZoekopdracht.emit();

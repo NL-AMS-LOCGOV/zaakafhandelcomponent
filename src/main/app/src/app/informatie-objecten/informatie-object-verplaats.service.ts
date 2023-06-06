@@ -24,16 +24,17 @@ export class InformatieObjectVerplaatsService {
     }
 
     addTeVerplaatsenDocument(informatieobject: EnkelvoudigInformatieobject, bron: string): void {
-        if (!this.isReedsTeVerplaatsen(informatieobject)) {
+        if (!this.isReedsTeVerplaatsen(informatieobject.uuid)) {
             this._verplaatsenDocument(
-                new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, informatieobject.informatieobjectTypeUUID, bron));
+                    new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, informatieobject.informatieobjectTypeUUID, bron));
         }
     }
 
-    isReedsTeVerplaatsen(informatieobject: EnkelvoudigInformatieobject): boolean {
+    isReedsTeVerplaatsen(informatieobjectUUID: string): boolean {
         const teVerplaatsenDocumenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
-        return teVerplaatsenDocumenten.find(dvg => dvg.documentUUID === informatieobject.uuid) !== undefined;
+        return teVerplaatsenDocumenten.find(dvg => dvg.documentUUID === informatieobjectUUID) !== undefined;
     }
+
 
     appInit() {
         const documenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
