@@ -22,8 +22,7 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="dagenTotStreefdatum">
-            <th mat-header-cell *matHeaderCellDef
-                mat-sort-header="einddatumGepland"> {{'dagenTotStreefdatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef> {{'dagenTotStreefdatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.einddatumGepland | dagen }} </td>
         </ng-container>
         <ng-container matColumnDef="fataledatum">
@@ -37,8 +36,7 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="dagenTotFataledatum">
-            <th mat-header-cell *matHeaderCellDef
-                mat-sort-header="uiterlijkeEinddatumAfdoening"> {{'dagenTotFataledatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef> {{'dagenTotFataledatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak">
                 {{zaak.uiterlijkeEinddatumAfdoening | dagen }}
             </td>
