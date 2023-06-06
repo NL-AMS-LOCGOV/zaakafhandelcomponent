@@ -9,6 +9,10 @@
             <mat-card class="flex-1">
                 <mat-card-header>
                     <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
+                    <button mat-icon-button [disabled]="!vestigingsprofielOphalenMogelijk"
+                            title="{{ 'bedrijf.profiel.ophalen' | translate }}" (click)="ophalenVestigingsprofiel()">
+                        <mat-icon outlined>other_admission</mat-icon>
+                    </button>
                 </mat-card-header>
                 <mat-card-content>
                         <div id="bedrijfsgegevens" class="content flex-row flex-wrap space-between">
@@ -22,12 +26,27 @@
                                              [value]="bedrijf.rsin"></zac-static-text>
                             <zac-static-text [label]="'type' | translate"
                                              [value]="bedrijf.type | translate"></zac-static-text>
-                            <zac-static-text [label]="'adres' | translate"
+                            <zac-static-text *ngIf="!vestigingsprofiel" [label]="'adres' | translate"
                                              [value]="bedrijf.adres | empty"></zac-static-text>
+                            <zac-static-text
+                                    *ngFor="let adres of vestigingsprofiel?.adressen" [label]="adres.type | titlecase"
+                                    [value]="adres.volledigAdres | empty"></zac-static-text>
                             <zac-static-text [label]="'telefoonnummer' | translate"
                                              [value]="bedrijf.telefoonnummer | empty"></zac-static-text>
                             <zac-static-text [label]="'emailadres' | translate"
                                              [value]="bedrijf.emailadres | empty"></zac-static-text>
+                            <zac-static-text *ngIf="vestigingsprofiel"
+                                             [label]="'totaalWerkzamePersonen' | translate"
+                                             [value]="vestigingsprofiel.totaalWerkzamePersonen | empty"></zac-static-text>
+                            <zac-static-text *ngIf="vestigingsprofiel"
+                                             [label]="'hoofdactiviteit' | translate"
+                                             [value]="vestigingsprofiel.sbiHoofdActiviteit | empty"></zac-static-text>
+                            <zac-static-text *ngIf="vestigingsprofiel"
+                                             [label]="'activiteiten' | translate"
+                                             [value]="vestigingsprofiel.sbiActiviteiten?.join(',\r\n') "></zac-static-text>
+                            <zac-static-text *ngIf="vestigingsprofiel"
+                                             [label]="'website' | translate"
+                                             [value]="vestigingsprofiel.website | empty"></zac-static-text>
                         </div>
                 </mat-card-content>
             </mat-card>

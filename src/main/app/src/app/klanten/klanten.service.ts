@@ -17,6 +17,7 @@ import {Roltype} from './model/klanten/roltype';
 import {IdentificatieType} from './model/klanten/identificatieType';
 import {ContactGegevens} from './model/klanten/contact-gegevens';
 import {PersonenParameters} from './model/personen/personen-parameters';
+import {Vestigingsprofiel} from './model/bedrijven/vestigingsprofiel';
 
 @Injectable({
     providedIn: 'root'
@@ -40,6 +41,12 @@ export class KlantenService {
 
     readVestiging(vestigingsnummer: string): Observable<Bedrijf> {
         return this.http.get<Bedrijf>(`${this.basepath}/vestiging/${vestigingsnummer}`).pipe(
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    readVestigingsprofiel(vestigingsnummer: string): Observable<Vestigingsprofiel> {
+        return this.http.get<Bedrijf>(`${this.basepath}/vestigingsprofiel/${vestigingsnummer}`).pipe(
                 catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

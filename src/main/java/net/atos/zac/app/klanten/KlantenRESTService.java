@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,6 +35,7 @@ import net.atos.client.klanten.KlantenClientService;
 import net.atos.client.klanten.model.Klant;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
+import net.atos.client.kvk.vestigingsprofiel.model.Vestiging;
 import net.atos.client.kvk.zoeken.model.Resultaat;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -42,8 +44,10 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.klanten.converter.RESTBedrijfConverter;
 import net.atos.zac.app.klanten.converter.RESTPersoonConverter;
 import net.atos.zac.app.klanten.converter.RESTRoltypeConverter;
+import net.atos.zac.app.klanten.converter.RESTVestigingsprofielConverter;
 import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
+import net.atos.zac.app.klanten.model.bedrijven.RESTVestigingsprofiel;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
 import net.atos.zac.app.klanten.model.klant.RESTContactGegevens;
 import net.atos.zac.app.klanten.model.klant.RESTKlant;
@@ -85,6 +89,9 @@ public class KlantenRESTService {
     private RESTBedrijfConverter bedrijfConverter;
 
     @Inject
+    private RESTVestigingsprofielConverter vestigingsprofielConverter;
+
+    @Inject
     private RESTRoltypeConverter roltypeConverter;
 
     @Inject
@@ -124,6 +131,16 @@ public class KlantenRESTService {
                              this::convertToRESTBedrijf)
                 .toCompletableFuture()
                 .get();
+    }
+
+    @GET
+    @Path("vestigingsprofiel/{vestigingsnummer}")
+    public RESTVestigingsprofiel readVestigingsprofiel(@PathParam("vestigingsnummer") final String vestigingsnummer) {
+        Optional<Vestiging> vestiging = kvkClientService.findVestigingsprofiel(vestigingsnummer);
+        if (vestiging.isPresent()) {
+            return vestigingsprofielConverter.convert(vestiging.get());
+        }
+        throw new NotFoundException("Geen vestigingsprofiel gevonden voor vestiging met vestigingsnummer \"%s\"".formatted(vestigingsnummer));
     }
 
     private RESTBedrijf convertToRESTBedrijf(final Optional<ResultaatItem> vestiging, final Optional<Klant> klant) {
