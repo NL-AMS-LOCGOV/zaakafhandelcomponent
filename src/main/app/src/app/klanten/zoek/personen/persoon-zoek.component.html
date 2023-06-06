@@ -21,8 +21,10 @@
         <mfb-form-field class="flex-1" [field]="straatFormField"></mfb-form-field>
         <mfb-form-field class="flex-1 w33" [field]="gemeenteVanInschrijvingFormField"></mfb-form-field>
     </div>
-    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekPersonen()">Zoek
+    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekPersonen()">
+        {{'actie.zoeken' | translate}}
     </button>
+    <button mat-flat-button (click)="wissen()">{{'actie.wissen' | translate}}</button>
 </div>
 
 <div class="table-wrapper">

@@ -35,7 +35,10 @@
             <mfb-form-field [field]="huisnummerFormField"></mfb-form-field>
         </div>
     </div>
-    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekBedrijven()">Zoek</button>
+    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekBedrijven()">
+        {{'actie.zoeken' | translate}}
+    </button>
+    <button mat-flat-button (click)="wissen()">{{'actie.wissen' | translate}}</button>
 </div>
 
 <div class="table-wrapper">
