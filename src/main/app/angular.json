@@ -14,13 +14,21 @@
           "skipTests": true
         }
       },
-      "root": "",
+      "root": "src",
       "sourceRoot": "src",
       "prefix": "zac",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "moment",
+              "xml-utils",
+              "web-worker",
+              "pbf",
+              "rbush",
+              "earcut"
+            ],
             "outputPath": "dist/zaakafhandelcomponent",
             "index": "src/index.html",
             "main": "src/main.ts",
