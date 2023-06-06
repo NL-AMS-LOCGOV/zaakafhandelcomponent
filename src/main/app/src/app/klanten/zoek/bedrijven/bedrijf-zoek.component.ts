@@ -125,8 +125,8 @@ export class BedrijfZoekComponent implements OnInit {
         return this.removeEmpty(this.formGroup.value);
     }
 
-    removeEmpty(parameters: ListBedrijvenParameters): ListBedrijvenParameters {
-        return Object.fromEntries(Object.entries(parameters).filter(([, v]) => !!v)) as ListBedrijvenParameters;
+    removeEmpty<T>(parameters: T): T {
+        return Object.fromEntries(Object.entries(parameters).filter(([, v]) => !!v)) as T;
     }
 
     zoekBedrijven() {
