@@ -149,4 +149,9 @@ export class BedrijfZoekComponent implements OnInit {
         this.sideNav?.close();
         this.router.navigate(['/bedrijf/', bedrijf.identificatie]);
     }
+
+    wissen() {
+        this.formGroup.reset();
+
+    }
 }

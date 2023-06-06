@@ -50,7 +50,9 @@ export class PersoonZoekComponent implements OnInit {
     foutmelding: string;
     loading = false;
 
-    constructor(private klantenService: KlantenService, private utilService: UtilService, private formBuilder: FormBuilder, private router: Router, private configuratieService: ConfiguratieService) {
+    constructor(private klantenService: KlantenService, private utilService: UtilService,
+                private formBuilder: FormBuilder, private router: Router,
+                private configuratieService: ConfiguratieService) {
     }
 
     ngOnInit(): void {
@@ -89,7 +91,7 @@ export class PersoonZoekComponent implements OnInit {
                 .build();
         gemeenteIcon.iconClicked.subscribe(() => {
             this.gemeenteVanInschrijvingFormField.formControl.setValue(this.mijnGemeente);
-        })
+        });
         this.straatFormField = new InputFormFieldBuilder()
                 .id('straat')
                 .label('straat')
@@ -160,30 +162,28 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     exclude(queries: PersonenParameters[], key: string, value: Cardinaliteit): PersonenParameters[] {
-        return queries.filter(function (query) {
-            return query[key] != value;
-        });
+        return queries.filter(query => query[key] !== value);
     }
 
     include(queries: PersonenParameters[], key: string, value: Cardinaliteit): PersonenParameters[] {
-        return queries.filter(function (query) {
-            return query[key] == value;
-        });
+        return queries.filter(query => query[key] === value);
     }
 
     all(queries: PersonenParameters[], key: string, value: Cardinaliteit) {
-        return this.include(queries, key, value).length == queries.length;
+        return this.include(queries, key, value).length === queries.length;
     }
 
     private updateControls(potential: PersonenParameters[]) {
         for (const key in this.queryFields) {
-            const control: AbstractFormControlField = this.queryFields[key];
-            if (this.all(potential, key, Cardinaliteit.NON)) {
-                this.requireField(control, false);
-                this.enableField(control, false);
-            } else {
-                this.requireField(control, this.all(potential, key, Cardinaliteit.REQ));
-                this.enableField(control, true);
+            if (this.queryFields.hasOwnProperty(key)) {
+                const control: AbstractFormControlField = this.queryFields[key];
+                if (this.all(potential, key, Cardinaliteit.NON)) {
+                    this.requireField(control, false);
+                    this.enableField(control, false);
+                } else {
+                    this.requireField(control, this.all(potential, key, Cardinaliteit.REQ));
+                    this.enableField(control, true);
+                }
             }
         }
     }
@@ -209,7 +209,7 @@ export class PersoonZoekComponent implements OnInit {
     createListPersonenParameters(): ListPersonenParameters {
         const params = new ListPersonenParameters();
         for (let [k, v] of Object.entries(this.formGroup.value)) {
-            if (typeof v == 'string') {
+            if (typeof v === 'string') {
                 v = v.trim();
             }
             if (v) {
@@ -238,5 +238,9 @@ export class PersoonZoekComponent implements OnInit {
     openPersoonPagina(persoon: Persoon): void {
         this.sideNav?.close();
         this.router.navigate(['/persoon/', persoon.identificatie]);
+    }
+
+    wissen() {
+        this.formGroup.reset();
     }
 }
