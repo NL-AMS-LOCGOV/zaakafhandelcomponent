@@ -14,7 +14,10 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+import net.atos.zac.util.UriUtil;
 
 @ApplicationScoped
 @Transactional
@@ -25,6 +28,10 @@ public class EnkelvoudigInformatieObjectLockService {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
 
     public EnkelvoudigInformatieObjectLock createLock(final UUID enkelvoudiginformatieobejctUUID, final String idUser) {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieobjectLock = new EnkelvoudigInformatieObjectLock();
@@ -59,5 +66,17 @@ public class EnkelvoudigInformatieObjectLockService {
                     drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID, lock.getLock());
                     entityManager.remove(lock);
                 });
+    }
+
+    public boolean hasLockedInformatieobjecten(final Zaak zaak) {
+        final List<UUID> informatieobjectUUIDs = zrcClientService.listZaakinformatieobjecten(zaak).stream()
+                .map(zaakInformatieobject -> UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject())).toList();
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<EnkelvoudigInformatieObjectLock> query = builder.createQuery(
+                EnkelvoudigInformatieObjectLock.class);
+        final Root<EnkelvoudigInformatieObjectLock> root = query.from(EnkelvoudigInformatieObjectLock.class);
+        query.select(root).where(root.get("enkelvoudiginformatieobjectUUID").in(informatieobjectUUIDs));
+        final List<EnkelvoudigInformatieObjectLock> resultList = entityManager.createQuery(query).getResultList();
+        return !resultList.isEmpty();
     }
 }

@@ -38,6 +38,7 @@ import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.app.planitems.model.UserEventListenerActie;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
@@ -111,6 +112,9 @@ public class PlanItemsRESTService {
     @Inject
     private OpschortenZaakHelper opschortenZaakHelper;
 
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
+
     @GET
     @Path("zaak/{uuid}/humanTaskPlanItems")
     public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
@@ -137,7 +141,7 @@ public class PlanItemsRESTService {
         return planItemConverter.convertPlanItems(userEventListenerPlanItems, zaak).stream()
                 .filter(restPlanItem ->
                                 restPlanItem.userEventListenerActie != UserEventListenerActie.ZAAK_AFHANDELEN ||
-                                        !zrcClientService.heeftOpenDeelzaken(zaak)
+                                        isAfsluitbaar(zaak)
                 )
                 .toList();
     }
@@ -249,7 +253,7 @@ public class PlanItemsRESTService {
                 }
             }
             case ZAAK_AFHANDELEN -> {
-                assertPolicy(!zrcClientService.heeftOpenDeelzaken(zaak));
+                assertPolicy(isAfsluitbaar(zaak));
                 if (brcClientService.listBesluiten(zaak).isPresent()) {
                     final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
                     resultaat.setToelichting(userEventListenerData.resultaatToelichting);
@@ -261,5 +265,10 @@ public class PlanItemsRESTService {
             }
         }
         cmmnService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId);
+    }
+
+    private boolean isAfsluitbaar(final Zaak zaak) {
+        return !zrcClientService.heeftOpenDeelzaken(
+                zaak) && !enkelvoudigInformatieObjectLockService.hasLockedInformatieobjecten(zaak);
     }
 }
