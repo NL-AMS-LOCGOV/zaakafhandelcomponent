@@ -25,23 +25,19 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import net.atos.client.kvk.exception.RuntimeExceptionMapper;
 import net.atos.client.kvk.vestigingsprofiel.model.Vestiging;
 
-/**
- * API Vestigingsprofiel
- *
- * <p>Documentatie voor API Vestigingsprofiel.
- */
 @RegisterRestClient(configKey = "KVK-API-Client")
 @RegisterProviders({
         @RegisterProvider(RuntimeExceptionMapper.class)
 })
 @Produces({"application/hal+json"})
-@Path("api/v1/vestigingsprofielen/{vestigingsnummer}")
+@Path("api/v1/vestigingsprofielen")
 public interface VestigingsprofielClient {
 
     /**
      * Voor een specifieke vestiging informatie opvragen.
      */
     @GET
+    @Path("{vestigingsnummer}")
     Vestiging getVestigingByVestigingsnummer(@PathParam("vestigingsnummer") String vestigingsnummer,
             @QueryParam("geoData") @DefaultValue("false") Boolean geoData);
 

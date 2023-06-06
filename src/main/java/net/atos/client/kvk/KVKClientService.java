@@ -50,7 +50,7 @@ public class KVKClientService {
                 .handle(this::handleListAsync);
     }
 
-    public Optional<Vestiging> readVestigingsprofiel(final String vestigingsnummer) {
+    public Optional<Vestiging> findVestigingsprofiel(final String vestigingsnummer) {
         return Optional.of(vestigingsprofielClient.getVestigingByVestigingsnummer(vestigingsnummer, false));
     }
 

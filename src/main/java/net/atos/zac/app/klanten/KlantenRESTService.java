@@ -136,7 +136,7 @@ public class KlantenRESTService {
     @GET
     @Path("vestigingsprofiel/{vestigingsnummer}")
     public RESTVestigingsprofiel readVestigingsprofiel(@PathParam("vestigingsnummer") final String vestigingsnummer) {
-        Optional<Vestiging> vestiging = kvkClientService.readVestigingsprofiel(vestigingsnummer);
+        Optional<Vestiging> vestiging = kvkClientService.findVestigingsprofiel(vestigingsnummer);
         if (vestiging.isPresent()) {
             return vestigingsprofielConverter.convert(vestiging.get());
         }

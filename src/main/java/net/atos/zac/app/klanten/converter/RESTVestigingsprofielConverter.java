@@ -23,13 +23,14 @@ public class RESTVestigingsprofielConverter {
         restVestigingsprofiel.totaalWerkzamePersonen = vestiging.getTotaalWerkzamePersonen();
         restVestigingsprofiel.deeltijdWerkzamePersonen = vestiging.getDeeltijdWerkzamePersonen();
         restVestigingsprofiel.voltijdWerkzamePersonen = vestiging.getVoltijdWerkzamePersonen();
-        restVestigingsprofiel.commercieleVestiging = indicatie(vestiging.getIndCommercieleVestiging());
+        restVestigingsprofiel.commercieleVestiging = isIndicatie(vestiging.getIndCommercieleVestiging());
 
-        restVestigingsprofiel.type = indicatie(vestiging.getIndHoofdvestiging()) ? "HOOFDVESTIGING" : "NEVENVESTIGING";
+        restVestigingsprofiel.type = isIndicatie(
+                vestiging.getIndHoofdvestiging()) ? "HOOFDVESTIGING" : "NEVENVESTIGING";
         restVestigingsprofiel.sbiHoofdActiviteit =
                 vestiging.getSbiActiviteiten()
                         .stream()
-                        .filter(a -> indicatie(a.getIndHoofdactiviteit()))
+                        .filter(a -> isIndicatie(a.getIndHoofdactiviteit()))
                         .findAny()
                         .map(SBIActiviteit::getSbiOmschrijving)
                         .orElse(null);
@@ -37,14 +38,14 @@ public class RESTVestigingsprofielConverter {
         restVestigingsprofiel.sbiActiviteiten =
                 vestiging.getSbiActiviteiten()
                         .stream()
-                        .filter(a -> !indicatie(a.getIndHoofdactiviteit()))
+                        .filter(a -> !isIndicatie(a.getIndHoofdactiviteit()))
                         .map(SBIActiviteit::getSbiOmschrijving)
                         .toList();
 
         restVestigingsprofiel.adressen = vestiging.getAdressen()
                 .stream()
                 .map(adres -> new RESTAdres(adres.getType(),
-                                            indicatie(adres.getIndAfgeschermd()),
+                                            isIndicatie(adres.getIndAfgeschermd()),
                                             adres.getVolledigAdres()))
                 .toList();
 
@@ -52,16 +53,14 @@ public class RESTVestigingsprofielConverter {
         return restVestigingsprofiel;
     }
 
-    public boolean indicatie(String stringIndicatie) {
+    public boolean isIndicatie(String stringIndicatie) {
         if (stringIndicatie == null) {
             return false;
         }
-        if (stringIndicatie.equalsIgnoreCase("ja")) {
-            return true;
-        }
-        if (stringIndicatie.equalsIgnoreCase("nee")) {
-            return false;
-        }
-        throw new IllegalArgumentException("Onbekende waarde voor indicatie \"%s\"".formatted(stringIndicatie));
+        return switch (stringIndicatie.toLowerCase()) {
+            case "ja" -> true;
+            case "nee" -> false;
+            default -> throw new IllegalStateException("Unexpected value: " + stringIndicatie);
+        };
     }
 }
