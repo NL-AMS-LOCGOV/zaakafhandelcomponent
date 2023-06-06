@@ -122,11 +122,11 @@ export class BedrijfZoekComponent implements OnInit {
     }
 
     createListParameters(): ListBedrijvenParameters {
-        return this.removeEmpty(this.formGroup.value) as ListBedrijvenParameters;
+        return this.removeEmpty(this.formGroup.value);
     }
 
-    removeEmpty(obj: object): object {
-        return Object.fromEntries(Object.entries(obj).filter(([, v]) => !!v));
+    removeEmpty(parameters: ListBedrijvenParameters): ListBedrijvenParameters {
+        return Object.fromEntries(Object.entries(parameters).filter(([, v]) => !!v)) as ListBedrijvenParameters;
     }
 
     zoekBedrijven() {
