@@ -13,7 +13,6 @@ import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
@@ -97,7 +96,11 @@ export class OntkoppeldeDocumentenListComponent extends WerklijstComponent imple
     }
 
     documentVerplaatsen(od: OntkoppeldDocument): void {
-        this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(OntkoppeldeDocumentenListComponent.getInformatieobject(od), 'ontkoppelde-documenten');
+        od['disabled'] = true;
+        this.infoService.readEnkelvoudigInformatieobject((od.documentUUID))
+                .subscribe(i => {
+                    this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(i, 'ontkoppelde-documenten');
+                });
     }
 
     documentVerwijderen(od: OntkoppeldDocument): void {
@@ -114,15 +117,7 @@ export class OntkoppeldeDocumentenListComponent extends WerklijstComponent imple
     }
 
     isDocumentVerplaatsenDisabled(od: OntkoppeldDocument): boolean {
-        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(OntkoppeldeDocumentenListComponent.getInformatieobject(od));
-    }
-
-    private static getInformatieobject(ontkoppeldDocument: OntkoppeldDocument): EnkelvoudigInformatieobject {
-        const informatieobject = new EnkelvoudigInformatieobject();
-        informatieobject.titel = ontkoppeldDocument.titel;
-        informatieobject.uuid = ontkoppeldDocument.documentUUID;
-        informatieobject.identificatie = ontkoppeldDocument.documentID;
-        return informatieobject;
+        return od['disabled'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(od.documentUUID);
     }
 
     filtersChanged(): void {
@@ -159,7 +154,7 @@ export class OntkoppeldeDocumentenListComponent extends WerklijstComponent imple
 
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
-    };
+    }
 
     getWerklijst(): Werklijst {
         return Werklijst.ONTKOPPELDE_DOCUMENTEN;

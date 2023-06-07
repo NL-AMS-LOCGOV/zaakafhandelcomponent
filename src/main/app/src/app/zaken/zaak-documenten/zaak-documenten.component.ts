@@ -18,7 +18,9 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {MatSort} from '@angular/material/sort';
 import {map} from 'rxjs/operators';
 import {DialogData} from '../../shared/dialog/dialog-data';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {
+    TextareaFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
@@ -26,7 +28,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
-import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
+import {
+    GekoppeldeZaakEnkelvoudigInformatieobject
+} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {Validators} from '@angular/forms';
@@ -178,12 +182,12 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(informatieobject);
+        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(informatieobject.uuid);
     }
 
     isOntkoppelenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
         return informatieobject['loading'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(
-                informatieobject);
+                informatieobject.uuid);
     }
 
     isPreviewBeschikbaar(formaat: FileFormat): boolean {
