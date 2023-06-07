@@ -1,9 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2023 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.formulieren;
+package net.atos.zac.formulieren.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
@@ -63,7 +63,7 @@ public class FormulierVeldDefinitie {
     private boolean verplicht;
 
     @Column(name = "default_waarde")
-    private String default_waarde;
+    private String defaultWaarde;
 
     @Column(name = "meerkeuze_waarden")
     private String meerkeuzeWaarden;
@@ -144,12 +144,12 @@ public class FormulierVeldDefinitie {
         this.verplicht = verplicht;
     }
 
-    public String getDefault_waarde() {
-        return default_waarde;
+    public String getDefaultWaarde() {
+        return defaultWaarde;
     }
 
-    public void setDefault_waarde(final String default_waarde) {
-        this.default_waarde = default_waarde;
+    public void setDefaultWaarde(final String defaultWaarde) {
+        this.defaultWaarde = defaultWaarde;
     }
 
     public String getMeerkeuzeWaarden() {

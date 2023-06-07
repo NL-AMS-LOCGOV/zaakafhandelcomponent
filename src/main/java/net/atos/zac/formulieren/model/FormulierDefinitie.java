@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.formulieren;
+package net.atos.zac.formulieren.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
