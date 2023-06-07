@@ -13,6 +13,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -71,6 +73,9 @@ public class EnkelvoudigInformatieObjectLockService {
     public boolean hasLockedInformatieobjecten(final Zaak zaak) {
         final List<UUID> informatieobjectUUIDs = zrcClientService.listZaakinformatieobjecten(zaak).stream()
                 .map(zaakInformatieobject -> UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject())).toList();
+        if (CollectionUtils.isEmpty(informatieobjectUUIDs)) {
+            return false;
+        }
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<EnkelvoudigInformatieObjectLock> query = builder.createQuery(
                 EnkelvoudigInformatieObjectLock.class);
