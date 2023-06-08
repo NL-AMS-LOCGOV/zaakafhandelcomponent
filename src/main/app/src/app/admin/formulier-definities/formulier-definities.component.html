@@ -1,0 +1,83 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content class="flex-col gap-20">
+        <mat-card>
+            <mat-card-content class="table-container">
+                <div class="table-wrapper">
+                    <table mat-table [dataSource]="dataSource">
+
+                        <ng-container matColumnDef="systeemnaam">
+                            <th mat-header-cell *matHeaderCellDef>{{'systeemnaam' | translate}}</th>
+                            <td mat-cell *matCellDef="let row">{{row.systeemnaam}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="naam">
+                            <th mat-header-cell *matHeaderCellDef>{{'naam' | translate}}</th>
+                            <td mat-cell *matCellDef="let row">{{row.naam}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="beschrijving">
+                            <th mat-header-cell *matHeaderCellDef>{{'beschrijving' | translate}}</th>
+                            <td mat-cell *matCellDef="let row">{{row.beschrijving}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="creatiedatum">
+                            <th mat-header-cell *matHeaderCellDef>{{'creatiedatum' | translate}}</th>
+                            <td mat-cell *matCellDef="let row">{{row.creatiedatum | datum:'short'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="wijzigingsdatum">
+                            <th mat-header-cell *matHeaderCellDef>{{'wijzigingsdatum' | translate}}</th>
+                            <td mat-cell *matCellDef="let row">{{row.wijzigingsdatum | datum:'short'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="aantal">
+                            <th mat-header-cell *matHeaderCellDef>
+                                # {{'veldDefinities' | translate}}
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{row.aantalVeldDefinities}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="id" stickyEnd>
+                            <th mat-header-cell *matHeaderCellDef>
+                                <button mat-icon-button
+                                        id="toevoegen"
+                                        [routerLink]="'/admin/formulierdefinities/add'"
+                                        title="{{ 'actie.toevoegen' | translate}}">
+                                    <mat-icon>add_circle</mat-icon>
+                                </button>
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                <a mat-icon-button
+                                   [routerLink]="['/admin/formulierdefinities/', row.id]"
+                                   id="edit"
+                                   title="{{ 'actie.bewerken' | translate}}">
+                                    <mat-icon>visibility</mat-icon>
+                                </a>
+                                <button mat-icon-button
+                                        id="verwijderen"
+                                        title="{{ 'actie.verwijderen' | translate}}"
+                                        (click)="verwijderen(row)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+                        <tr mat-row *matNoDataRow>
+                            <td [colSpan]="columns.length">{{'msg.geen.gegevens.gevonden' | translate}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>

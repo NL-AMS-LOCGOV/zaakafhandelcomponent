@@ -27,4 +27,6 @@ public class RESTFormulierDefinitie {
 
     public List<RESTFormulierVeldDefinitie> veldDefinities = new ArrayList<>();
 
+    public int aantalVeldDefinities;
+
 }

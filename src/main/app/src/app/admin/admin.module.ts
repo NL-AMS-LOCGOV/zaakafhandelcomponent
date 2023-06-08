@@ -11,18 +11,22 @@ import {AdminRoutingModule} from './admin-routing.module';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZoekenModule} from '../zoeken/zoeken.module';
 import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
-import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
+import {FormulierDefinitiesComponent} from './formulier-definities/formulier-definities.component';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
 import {MailtemplatesComponent} from './mailtemplates/mailtemplates.component';
 import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
 import {NgxEditorModule} from 'ngx-editor';
+import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
+import {FormulierDefinitieEditComponent} from './formulier-definitie-edit/formulier-definitie-edit.component';
 
 @NgModule({
     declarations: [
         GroepSignaleringenComponent,
         ParametersComponent,
         ParameterEditComponent,
+        FormulierDefinitiesComponent,
+        FormulierDefinitieEditComponent,
         ReferentieTabellenComponent,
         ReferentieTabelComponent,
         InrichtingscheckComponent,

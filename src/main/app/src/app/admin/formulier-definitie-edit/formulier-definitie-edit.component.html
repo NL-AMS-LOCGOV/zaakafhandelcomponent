@@ -1,0 +1,13 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content class="flex-col gap-20">
+
+    </mat-sidenav-content>
+</mat-sidenav-container>

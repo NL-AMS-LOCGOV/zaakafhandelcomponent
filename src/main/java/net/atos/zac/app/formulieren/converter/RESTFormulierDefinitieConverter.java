@@ -24,6 +24,7 @@ public class RESTFormulierDefinitieConverter {
         restFormulierDefinitie.wijzigingsdatum = formulierDefinitie.getWijzigingsdatum();
         restFormulierDefinitie.uitleg = formulierDefinitie.getUitleg();
         restFormulierDefinitie.systeemnaam = formulierDefinitie.getSysteemnaam();
+        restFormulierDefinitie.aantalVeldDefinities = formulierDefinitie.getVeldDefinities().size();
         if (inclusiefVelden) {
             restFormulierDefinitie.veldDefinities = formulierDefinitie.getVeldDefinities().stream()
                     .map(veldDefinitieConverter::convert)

@@ -13,7 +13,7 @@ import {FormulierDefinitie} from './model/formulieren/formulier-definitie';
 @Injectable({
     providedIn: 'root'
 })
-export class ReferentieTabelService {
+export class FormulierDefinitieService {
 
     private basepath: string = '/rest/formulierDefinities';
 
