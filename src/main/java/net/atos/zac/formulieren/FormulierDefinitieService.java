@@ -66,7 +66,7 @@ public class FormulierDefinitieService {
         valideerObject(formulierDefinitie);
         findFormulierDefinitie(formulierDefinitie.getSysteemnaam()).ifPresent(e -> {
             if (!e.getId().equals(formulierDefinitie.getId())) {
-                throw new RuntimeException("Er bestaat al een formulier definitie met systeemnaam \"%s\"".formatted(formulierDefinitie.getSysteemnaam()));
+                throw new RuntimeException("Er bestaat al een formulier definitie met systeemnaam '%s'".formatted(formulierDefinitie.getSysteemnaam()));
             }
         });
         return entityManager.merge(formulierDefinitie);

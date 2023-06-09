@@ -19,7 +19,7 @@ public class RESTFormulierVeldDefinitie {
 
     public String label;
 
-    public FormulierVeldType type;
+    public FormulierVeldType veldType;
 
     public String beschrijving;
 
@@ -29,7 +29,7 @@ public class RESTFormulierVeldDefinitie {
 
     public String defaultWaarde;
 
-    public List<String> meerkeuzeWaarden;
+    public List<String> meerkeuzeOpties;
 
     public List<String> validaties;
 

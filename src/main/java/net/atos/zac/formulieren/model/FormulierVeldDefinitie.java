@@ -51,7 +51,7 @@ public class FormulierVeldDefinitie {
     @NotNull
     @Column(name = "veldtype", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FormulierVeldType type;
+    private FormulierVeldType veldType;
 
     @Column(name = "beschrijving")
     private String beschrijving;
@@ -66,7 +66,7 @@ public class FormulierVeldDefinitie {
     private String defaultWaarde;
 
     @Column(name = "meerkeuze_waarden")
-    private String meerkeuzeWaarden;
+    private String meerkeuzeOpties;
 
     @Column(name = "validaties")
     private String validaties;
@@ -112,12 +112,12 @@ public class FormulierVeldDefinitie {
         this.label = label;
     }
 
-    public FormulierVeldType getType() {
-        return type;
+    public FormulierVeldType getVeldType() {
+        return veldType;
     }
 
-    public void setType(final FormulierVeldType type) {
-        this.type = type;
+    public void setVeldType(final FormulierVeldType veldType) {
+        this.veldType = veldType;
     }
 
     public String getBeschrijving() {
@@ -152,12 +152,12 @@ public class FormulierVeldDefinitie {
         this.defaultWaarde = defaultWaarde;
     }
 
-    public String getMeerkeuzeWaarden() {
-        return meerkeuzeWaarden;
+    public String getMeerkeuzeOpties() {
+        return meerkeuzeOpties;
     }
 
-    public void setMeerkeuzeWaarden(final String meerkeuzeWaarden) {
-        this.meerkeuzeWaarden = meerkeuzeWaarden;
+    public void setMeerkeuzeOpties(final String meerkeuzeWaarden) {
+        this.meerkeuzeOpties = meerkeuzeWaarden;
     }
 
     public String getValidaties() {
