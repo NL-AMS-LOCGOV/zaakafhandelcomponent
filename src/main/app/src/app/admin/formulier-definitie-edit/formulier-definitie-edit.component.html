@@ -14,9 +14,7 @@
                 <mat-card-header>
                     <mat-card-title>{{'formulierDefinitie'| translate}}</mat-card-title>
                 </mat-card-header>
-
                 <mat-card-content>
-
                     <div class="flex-row flex-wrap gap-20">
                         <mat-form-field class="w50" floatLabel="always">
                             <mat-label>{{'naam' | translate}}</mat-label>
@@ -39,18 +37,16 @@
                             <input matInput formControlName="uitleg">
                         </mat-form-field>
                     </div>
-
                 </mat-card-content>
             </mat-card>
-
             <mat-card>
-
                 <mat-card-header>
                     <mat-card-title>{{'veldDefinities'| translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-table [dataSource]="dataSource">
-                        <ng-container matColumnDef="label">
+
+                    <ng-container matColumnDef="label">
                             <mat-header-cell *matHeaderCellDef>{{'label' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
@@ -106,7 +102,6 @@
 
                             </mat-cell>
                         </ng-container>
-
 
                         <ng-container matColumnDef="defaultWaarde">
                             <mat-header-cell *matHeaderCellDef>{{'defaultWaarde' | translate}}</mat-header-cell>
@@ -179,7 +174,6 @@
                     </ng-container>
                 </mat-card-content>
             </mat-card>
-
         </form>
 
         <div class="button-group flex-row">
