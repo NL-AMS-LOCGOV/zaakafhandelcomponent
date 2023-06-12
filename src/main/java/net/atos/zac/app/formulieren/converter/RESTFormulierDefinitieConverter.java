@@ -5,10 +5,13 @@
 
 package net.atos.zac.app.formulieren.converter;
 
+import java.util.Comparator;
+
 import javax.inject.Inject;
 
 import net.atos.zac.app.formulieren.model.RESTFormulierDefinitie;
 import net.atos.zac.formulieren.model.FormulierDefinitie;
+import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
 
 public class RESTFormulierDefinitieConverter {
 
@@ -27,7 +30,9 @@ public class RESTFormulierDefinitieConverter {
         restFormulierDefinitie.aantalVeldDefinities = formulierDefinitie.getVeldDefinities().size();
         if (inclusiefVelden) {
             restFormulierDefinitie.veldDefinities = formulierDefinitie.getVeldDefinities().stream()
+                    .sorted(Comparator.comparingInt(FormulierVeldDefinitie::getVolgorde))
                     .map(veldDefinitieConverter::convert)
+
                     .toList();
         }
         return restFormulierDefinitie;

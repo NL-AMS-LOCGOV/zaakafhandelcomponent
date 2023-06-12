@@ -8,11 +8,15 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content class="flex-col gap-20">
+        <form [formGroup]="definitieFormGroup">
 
-        <mat-card>
-            <mat-card-content>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{'formulierDefinitie'| translate}}</mat-card-title>
+                </mat-card-header>
 
-                <form [formGroup]="definitieFormGroup">
+                <mat-card-content>
+
                     <div class="flex-row flex-wrap gap-20">
                         <mat-form-field class="w50" floatLabel="always">
                             <mat-label>{{'naam' | translate}}</mat-label>
@@ -36,9 +40,16 @@
                         </mat-form-field>
                     </div>
 
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card>
+
+                <mat-card-header>
+                    <mat-card-title>{{'veldDefinities'| translate}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
                     <mat-table [dataSource]="dataSource">
-
-
                         <ng-container matColumnDef="label">
                             <mat-header-cell *matHeaderCellDef>{{'label' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
@@ -79,13 +90,14 @@
                             </mat-cell>
                         </ng-container>
 
-                        <ng-container matColumnDef="veldtype">
-                            <mat-header-cell *matHeaderCellDef>{{'veldtype' | translate}}</mat-header-cell>
+                        <ng-container matColumnDef="veldType">
+                            <mat-header-cell *matHeaderCellDef>{{'veldType' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
 
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
-                                    <mat-label>{{'veldtype' | translate}}</mat-label>
-                                    <mat-select formControlName="veldtype" (selectionChange)="onVeldTypeChange($event, element)" required>
+                                    <mat-label>{{'veldType' | translate}}</mat-label>
+                                    <mat-select formControlName="veldType"
+                                                (selectionChange)="onVeldTypeChange($event, element)" required>
                                         <mat-option *ngFor="let type of getVeldTypes()" [value]="type">
                                             {{ type }}
                                         </mat-option>
@@ -116,7 +128,9 @@
                         <ng-container matColumnDef="meerkeuzeOpties">
                             <mat-header-cell *matHeaderCellDef>
                                 {{'meerkeuzeOpties' | translate}}
-                                <mat-icon color="primary" matTooltip="; geschijden">info</mat-icon>
+                                <mat-icon color="primary"
+                                          matTooltip="scheidingsteken ';'. Bijvoorbeeld: Ja;Nee;Weet ik niet">info
+                                </mat-icon>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
@@ -126,7 +140,19 @@
                             </mat-cell>
                         </ng-container>
 
-                        <ng-container matColumnDef="actions">
+                        <ng-container matColumnDef="volgorde">
+                            <mat-header-cell *matHeaderCellDef>
+                                {{'volgorde' | translate}}
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element;" [formGroup]="element">
+                                <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
+                                    <mat-label>{{'volgorde' | translate}}</mat-label>
+                                    <input matInput formControlName="volgorde">
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acties">
                             <mat-header-cell *matHeaderCellDef>
                                 <button mat-icon-button
                                         id="toevoegen"
@@ -151,28 +177,17 @@
                     <ng-container *ngIf="definitieFormGroup?.get('veldDefinities').value.length === 0">
                         <p>{{'msg.geen.gegevens.gevonden'  | translate}}</p>
                     </ng-container>
-                </form>
+                </mat-card-content>
+            </mat-card>
 
-                <div class="button-group flex-row flex-wrap">
-                    <button mat-raised-button color="primary" [disabled]="definitieFormGroup.invalid"
-                            (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
-                </div>
+        </form>
 
-            </mat-card-content>
-        </mat-card>
-
-        <mat-accordion>
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        debug
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <code>
-                    <pre>{{definitieFormGroup?.value | json}}</pre>
-                </code>
-            </mat-expansion-panel>
-        </mat-accordion>
+        <div class="button-group flex-row">
+            <button mat-raised-button color="primary" [disabled]="bezigMetOpslaan || definitieFormGroup.invalid"
+                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+            <button mat-raised-button [disabled]="bezigMetOpslaan"
+                    (click)="annuleren()">{{"actie.annuleren" | translate}}</button>
+        </div>
 
     </mat-sidenav-content>
 </mat-sidenav-container>

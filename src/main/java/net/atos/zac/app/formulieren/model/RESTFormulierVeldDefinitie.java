@@ -29,7 +29,7 @@ public class RESTFormulierVeldDefinitie {
 
     public String defaultWaarde;
 
-    public List<String> meerkeuzeOpties;
+    public String meerkeuzeOpties;
 
     public List<String> validaties;
 

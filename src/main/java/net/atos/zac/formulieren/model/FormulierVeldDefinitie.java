@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(schema = SCHEMA, name = "formulier_veld_definitie")
@@ -40,7 +41,7 @@ public class FormulierVeldDefinitie {
     @Column(name = "systeemnaam", nullable = false, unique = true)
     private String systeemnaam;
 
-    @NotBlank
+    @PositiveOrZero
     @Column(name = "volgorde", nullable = false)
     private int volgorde;
 

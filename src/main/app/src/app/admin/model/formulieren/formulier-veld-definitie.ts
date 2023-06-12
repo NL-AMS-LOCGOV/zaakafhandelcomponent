@@ -11,7 +11,7 @@ export class FormulierVeldDefinitie {
     systeemnaam: string;
     volgorde: number;
     label: string;
-    veldtype: FormulierVeldType;
+    veldType: FormulierVeldType;
     beschrijving: string;
     helptekst: string;
     verplicht: boolean;
@@ -21,15 +21,23 @@ export class FormulierVeldDefinitie {
 
     static asFormGroup(vd: FormulierVeldDefinitie): FormGroup {
         return new FormGroup({
-            id: new FormControl({value: vd.id, disabled: true}),
+            id: new FormControl(vd.id),
             label: new FormControl(vd.label, Validators.required),
             systeemnaam: new FormControl(vd.systeemnaam, Validators.required),
             beschrijving: new FormControl(vd.beschrijving),
             helptekst: new FormControl(vd.helptekst),
-            veldtype: new FormControl(vd.veldtype),
+            veldType: new FormControl(vd.veldType, Validators.required),
             defaultWaarde: new FormControl(vd.defaultWaarde),
-            verplicht: new FormControl(vd.verplicht),
-            meerkeuzeOpties: new FormControl(vd.meerkeuzeOpties)
+            verplicht: new FormControl(!!vd.verplicht),
+            meerkeuzeOpties: new FormControl({
+                value: vd.meerkeuzeOpties,
+                disabled: !this.isMeerkeuzeVeld(vd.veldType)
+            }),
+            volgorde: new FormControl(vd.volgorde, Validators.required)
         });
+    }
+
+    static isMeerkeuzeVeld(veldType: FormulierVeldType) {
+        return veldType === FormulierVeldType.CHECKBOXES || veldType === FormulierVeldType.RADIO || veldType === FormulierVeldType.KEUZELIJST;
     }
 }

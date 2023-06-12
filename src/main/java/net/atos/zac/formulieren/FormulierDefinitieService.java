@@ -63,6 +63,7 @@ public class FormulierDefinitieService {
 
     public FormulierDefinitie createFormulierDefinitie(final FormulierDefinitie formulierDefinitie) {
         formulierDefinitie.setCreatiedatum(ZonedDateTime.now());
+        formulierDefinitie.setWijzigingsdatum(ZonedDateTime.now());
         valideerObject(formulierDefinitie);
         findFormulierDefinitie(formulierDefinitie.getSysteemnaam()).ifPresent(e -> {
             if (!e.getId().equals(formulierDefinitie.getId())) {

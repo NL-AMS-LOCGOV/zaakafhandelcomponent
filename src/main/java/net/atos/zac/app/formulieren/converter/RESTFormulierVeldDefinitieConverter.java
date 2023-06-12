@@ -24,12 +24,11 @@ public class RESTFormulierVeldDefinitieConverter {
         restVeldDefinitie.volgorde = veldDefinitie.getVolgorde();
         restVeldDefinitie.label = veldDefinitie.getLabel();
         restVeldDefinitie.veldType = veldDefinitie.getVeldType();
+        restVeldDefinitie.verplicht = veldDefinitie.isVerplicht();
         restVeldDefinitie.beschrijving = veldDefinitie.getBeschrijving();
         restVeldDefinitie.helptekst = veldDefinitie.getHelptekst();
         restVeldDefinitie.defaultWaarde = veldDefinitie.getDefaultWaarde();
-        if (StringUtils.isNotBlank(veldDefinitie.getMeerkeuzeOpties())) {
-            restVeldDefinitie.meerkeuzeOpties = List.of(StringUtils.split(veldDefinitie.getMeerkeuzeOpties(), SEPORATOR));
-        }
+        restVeldDefinitie.meerkeuzeOpties = veldDefinitie.getMeerkeuzeOpties();
         if (StringUtils.isNotBlank(veldDefinitie.getValidaties())) {
             restVeldDefinitie.validaties = List.of(StringUtils.split(veldDefinitie.getValidaties(), SEPORATOR));
         }
@@ -43,12 +42,11 @@ public class RESTFormulierVeldDefinitieConverter {
         veldDefinitie.setVolgorde(restVeldDefinitie.volgorde);
         veldDefinitie.setLabel(restVeldDefinitie.label);
         veldDefinitie.setVeldType(restVeldDefinitie.veldType);
+        veldDefinitie.setVerplicht(restVeldDefinitie.verplicht);
         veldDefinitie.setBeschrijving(restVeldDefinitie.beschrijving);
         veldDefinitie.setHelptekst(restVeldDefinitie.helptekst);
         veldDefinitie.setDefaultWaarde(restVeldDefinitie.defaultWaarde);
-        if (CollectionUtils.isNotEmpty(restVeldDefinitie.meerkeuzeOpties)) {
-            veldDefinitie.setMeerkeuzeOpties(String.join(SEPORATOR, restVeldDefinitie.meerkeuzeOpties));
-        }
+        veldDefinitie.setMeerkeuzeOpties(restVeldDefinitie.meerkeuzeOpties);
         if (CollectionUtils.isNotEmpty(restVeldDefinitie.validaties)) {
             veldDefinitie.setValidaties(String.join(SEPORATOR, restVeldDefinitie.validaties));
         }
