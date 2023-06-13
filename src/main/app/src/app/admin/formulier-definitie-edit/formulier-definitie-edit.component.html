@@ -9,7 +9,6 @@
     </mat-sidenav>
     <mat-sidenav-content class="flex-col gap-20">
         <form [formGroup]="definitieFormGroup">
-
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>{{'formulierDefinitie'| translate}}</mat-card-title>
@@ -34,7 +33,7 @@
                     <div class="flex-row">
                         <mat-form-field class="row w100" floatLabel="always">
                             <mat-label>{{'uitleg' | translate}}</mat-label>
-                            <input matInput formControlName="uitleg">
+                            <textarea matInput formControlName="uitleg"></textarea>
                         </mat-form-field>
                     </div>
                 </mat-card-content>
