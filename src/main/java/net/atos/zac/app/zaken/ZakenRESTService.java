@@ -142,7 +142,6 @@ import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.BPMNService;
 import net.atos.zac.flowable.CMMNService;
@@ -153,7 +152,6 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.shared.helper.OpschortenZaakHelper;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -296,9 +294,6 @@ public class ZakenRESTService {
 
     @Inject
     private RESTZaakAfzenderConverter zaakAfzenderConverter;
-
-    @Inject
-    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -658,9 +653,8 @@ public class ZakenRESTService {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
         final Statustype statustype = zaak.getStatus() != null ? ztcClientService.readStatustype(
                 zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        assertPolicy(zaak.isOpen() && !isHeropend(statustype) && policyService.readZaakRechten(zaak)
-                .getAfbreken() && !zrcClientService.heeftOpenDeelzaken(
-                zaak) && !enkelvoudigInformatieObjectLockService.hasLockedInformatieobjecten(zaak));
+        assertPolicy(zaak.isOpen() && !isHeropend(statustype) && policyService.readZaakRechten(zaak).getAfbreken());
+        policyService.checkZaakAfsluitbaar(zaak);
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 UriUtil.uuidFromURI(zaak.getZaaktype()));
         final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameters.readZaakbeeindigParameter(
@@ -684,11 +678,8 @@ public class ZakenRESTService {
     @Path("/zaak/{uuid}/afsluiten")
     public void afsluiten(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak)
-                .getBehandelen());
-        if (zrcClientService.heeftOpenDeelzaken(zaak)) {
-            throw new FoutmeldingException("Deze hoofdzaak heeft open deelzaken en kan niet afgesloten worden.");
-        }
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getBehandelen());
+        policyService.checkZaakAfsluitbaar(zaak);
         zgwApiService.updateResultaatForZaak(zaak, afsluitenGegevens.resultaattypeUuid, afsluitenGegevens.reden);
         zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
     }
