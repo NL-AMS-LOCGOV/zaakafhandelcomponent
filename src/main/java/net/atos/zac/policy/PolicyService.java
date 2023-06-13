@@ -16,6 +16,7 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -36,6 +37,7 @@ import net.atos.zac.policy.output.OverigeRechten;
 import net.atos.zac.policy.output.TaakRechten;
 import net.atos.zac.policy.output.WerklijstRechten;
 import net.atos.zac.policy.output.ZaakRechten;
+import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
 import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
@@ -43,8 +45,6 @@ import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 @ApplicationScoped
 public class PolicyService {
-
-    private static final String ALLE_ZAAKTYPEN = "-ALLE-ZAAKTYPEN-";
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -61,6 +61,12 @@ public class PolicyService {
 
     @Inject
     private TaakVariabelenService taakVariabelenService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     public OverigeRechten readOverigeRechten() {
         return evaluationClient.readOverigeRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get())))
@@ -144,6 +150,15 @@ public class PolicyService {
     public WerklijstRechten readWerklijstRechten() {
         return evaluationClient.readWerklijstRechten(new RuleQuery<>(new UserInput(loggedInUserInstance.get())))
                 .getResult();
+    }
+
+    public void checkZaakAfsluitbaar(final Zaak zaak) {
+        if (zrcClientService.heeftOpenDeelzaken(zaak)) {
+            throw new FoutmeldingException("Deze hoofdzaak heeft open deelzaken en kan niet afgesloten worden.");
+        }
+        if (enkelvoudigInformatieObjectLockService.hasLockedInformatieobjecten(zaak)) {
+            throw new FoutmeldingException("Deze zaak heeft vergrendelde documenten en kan niet afgesloten worden.");
+        }
     }
 
     public static void assertPolicy(final boolean policy) {

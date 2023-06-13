@@ -122,24 +122,24 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.disableClose = true;
         this.loading = true;
         const values = this.formGroup.value;
-
-        if (values.sendMail && this.mailtemplate) {
-            const mailGegevens: MailGegevens = new MailGegevens();
-            mailGegevens.verzender = values.verzender.mail;
-            mailGegevens.replyTo = values.verzender.replyTo;
-            mailGegevens.ontvanger = values.ontvanger;
-            mailGegevens.onderwerp = this.mailtemplate.onderwerp;
-            mailGegevens.body = this.mailtemplate.body;
-            mailGegevens.createDocumentFromMail = true;
-            this.mailService.sendMail(this.zaak.uuid, mailGegevens).subscribe(() => {});
-        }
-
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.planItem.id,
             this.zaak.uuid);
         userEventListenerData.resultaattypeUuid = this.zaak.resultaat ? this.zaak.resultaat.resultaattype.id : values.resultaattype.id;
         userEventListenerData.resultaatToelichting = values.toelichting;
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
-            next: () => this.dialogRef.close(true),
+            next: () => {
+                if (values.sendMail && this.mailtemplate) {
+                    const mailGegevens: MailGegevens = new MailGegevens();
+                    mailGegevens.verzender = values.verzender.mail;
+                    mailGegevens.replyTo = values.verzender.replyTo;
+                    mailGegevens.ontvanger = values.ontvanger;
+                    mailGegevens.onderwerp = this.mailtemplate.onderwerp;
+                    mailGegevens.body = this.mailtemplate.body;
+                    mailGegevens.createDocumentFromMail = true;
+                    this.mailService.sendMail(this.zaak.uuid, mailGegevens).subscribe(() => {});
+                }
+                this.dialogRef.close(true);
+                },
             error: () => this.dialogRef.close(false)
         });
     }
