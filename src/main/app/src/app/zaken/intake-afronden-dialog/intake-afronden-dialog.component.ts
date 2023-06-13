@@ -116,24 +116,25 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.disableClose = true;
         this.loading = true;
         const values = this.formGroup.value;
-        const mailtemplate = values.ontvankelijk ? this.zaakOntvankelijkMail : this.zaakNietOntvankelijkMail;
-
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden,
             this.data.planItem.id, this.data.zaak.uuid);
         userEventListenerData.zaakOntvankelijk = values.ontvankelijk;
         userEventListenerData.resultaatToelichting = values.reden;
-        if (values.sendMail && mailtemplate) {
-            const mailObject: MailGegevens = new MailGegevens();
-            mailObject.verzender = values.verzender.mail;
-            mailObject.replyTo = values.verzender.replyTo;
-            mailObject.ontvanger = values.ontvanger;
-            mailObject.onderwerp = mailtemplate.onderwerp;
-            mailObject.body = mailtemplate.body;
-            mailObject.createDocumentFromMail = true;
-            this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
-        }
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
-            next: () => this.dialogRef.close(true),
+            next: () => {
+                const mailtemplate = values.ontvankelijk ? this.zaakOntvankelijkMail : this.zaakNietOntvankelijkMail;
+                if (values.sendMail && mailtemplate) {
+                    const mailObject: MailGegevens = new MailGegevens();
+                    mailObject.verzender = values.verzender.mail;
+                    mailObject.replyTo = values.verzender.replyTo;
+                    mailObject.ontvanger = values.ontvanger;
+                    mailObject.onderwerp = mailtemplate.onderwerp;
+                    mailObject.body = mailtemplate.body;
+                    mailObject.createDocumentFromMail = true;
+                    this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
+                }
+                this.dialogRef.close(true);
+            },
             error: () => this.dialogRef.close(false)
         });
     }

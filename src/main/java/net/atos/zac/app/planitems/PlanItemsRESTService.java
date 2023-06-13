@@ -234,9 +234,9 @@ public class PlanItemsRESTService {
                         userEventListenerData.planItemInstanceId);
                 zaakVariabelenService.setOntvankelijk(planItemInstance, userEventListenerData.zaakOntvankelijk);
                 if (!userEventListenerData.zaakOntvankelijk) {
-                    final ZaakafhandelParameters zaakafhandelParameters =
-                            zaakafhandelParameterService.readZaakafhandelParameters(
-                                    UriUtil.uuidFromURI(zaak.getZaaktype()));
+                    policyService.checkZaakAfsluitbaar(zaak);
+                    final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
+                            UriUtil.uuidFromURI(zaak.getZaaktype()));
                     zgwApiService.createResultaatForZaak(zaak,
                                                          zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
