@@ -52,7 +52,7 @@ public class FormulierVeldDefinitie {
     @NotNull
     @Column(name = "veldtype", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FormulierVeldType veldType;
+    private FormulierVeldtype veldtype;
 
     @Column(name = "beschrijving")
     private String beschrijving;
@@ -66,7 +66,7 @@ public class FormulierVeldDefinitie {
     @Column(name = "default_waarde")
     private String defaultWaarde;
 
-    @Column(name = "meerkeuze_waarden")
+    @Column(name = "meerkeuze_opties")
     private String meerkeuzeOpties;
 
     @Column(name = "validaties")
@@ -113,12 +113,12 @@ public class FormulierVeldDefinitie {
         this.label = label;
     }
 
-    public FormulierVeldType getVeldType() {
-        return veldType;
+    public FormulierVeldtype getVeldtype() {
+        return veldtype;
     }
 
-    public void setVeldType(final FormulierVeldType veldType) {
-        this.veldType = veldType;
+    public void setVeldtype(final FormulierVeldtype veldType) {
+        this.veldtype = veldType;
     }
 
     public String getBeschrijving() {

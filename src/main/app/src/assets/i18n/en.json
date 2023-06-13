@@ -861,7 +861,7 @@
   "label": "Label",
   "uitleg": "Explanation",
   "helptekst": "Help text",
-  "veldType": "Field type",
+  "veldtype": "Field type",
   "defaultWaarde": "Default value",
   "verplicht": "Required",
   "meerkeuzeOpties": "Multiple choice options",

@@ -15,7 +15,7 @@ import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
 
 public class RESTFormulierVeldDefinitieConverter {
 
-    private final String SEPORATOR = "|";
+    private final String SEPARATOR = "|";
 
     public RESTFormulierVeldDefinitie convert(final FormulierVeldDefinitie veldDefinitie) {
         final RESTFormulierVeldDefinitie restVeldDefinitie = new RESTFormulierVeldDefinitie();
@@ -23,14 +23,14 @@ public class RESTFormulierVeldDefinitieConverter {
         restVeldDefinitie.systeemnaam = veldDefinitie.getSysteemnaam();
         restVeldDefinitie.volgorde = veldDefinitie.getVolgorde();
         restVeldDefinitie.label = veldDefinitie.getLabel();
-        restVeldDefinitie.veldType = veldDefinitie.getVeldType();
+        restVeldDefinitie.veldtype = veldDefinitie.getVeldtype();
         restVeldDefinitie.verplicht = veldDefinitie.isVerplicht();
         restVeldDefinitie.beschrijving = veldDefinitie.getBeschrijving();
         restVeldDefinitie.helptekst = veldDefinitie.getHelptekst();
         restVeldDefinitie.defaultWaarde = veldDefinitie.getDefaultWaarde();
         restVeldDefinitie.meerkeuzeOpties = veldDefinitie.getMeerkeuzeOpties();
         if (StringUtils.isNotBlank(veldDefinitie.getValidaties())) {
-            restVeldDefinitie.validaties = List.of(StringUtils.split(veldDefinitie.getValidaties(), SEPORATOR));
+            restVeldDefinitie.validaties = List.of(StringUtils.split(veldDefinitie.getValidaties(), SEPARATOR));
         }
         return restVeldDefinitie;
     }
@@ -41,14 +41,14 @@ public class RESTFormulierVeldDefinitieConverter {
         veldDefinitie.setSysteemnaam(restVeldDefinitie.systeemnaam);
         veldDefinitie.setVolgorde(restVeldDefinitie.volgorde);
         veldDefinitie.setLabel(restVeldDefinitie.label);
-        veldDefinitie.setVeldType(restVeldDefinitie.veldType);
+        veldDefinitie.setVeldtype(restVeldDefinitie.veldtype);
         veldDefinitie.setVerplicht(restVeldDefinitie.verplicht);
         veldDefinitie.setBeschrijving(restVeldDefinitie.beschrijving);
         veldDefinitie.setHelptekst(restVeldDefinitie.helptekst);
         veldDefinitie.setDefaultWaarde(restVeldDefinitie.defaultWaarde);
         veldDefinitie.setMeerkeuzeOpties(restVeldDefinitie.meerkeuzeOpties);
         if (CollectionUtils.isNotEmpty(restVeldDefinitie.validaties)) {
-            veldDefinitie.setValidaties(String.join(SEPORATOR, restVeldDefinitie.validaties));
+            veldDefinitie.setValidaties(String.join(SEPARATOR, restVeldDefinitie.validaties));
         }
         return veldDefinitie;
     }

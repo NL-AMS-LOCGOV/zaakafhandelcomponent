@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export enum FormulierVeldType {
+export enum FormulierVeldtype {
     TEKST_VELD = 'TEKST_VELD',
     TEKST_VLAK = 'TEKST_VLAK',
     NUMMER = 'NUMMER',

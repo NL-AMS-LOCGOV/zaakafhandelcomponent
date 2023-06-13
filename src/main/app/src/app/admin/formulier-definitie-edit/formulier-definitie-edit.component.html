@@ -86,15 +86,15 @@
                             </mat-cell>
                         </ng-container>
 
-                        <ng-container matColumnDef="veldType">
-                            <mat-header-cell *matHeaderCellDef>{{'veldType' | translate}}</mat-header-cell>
+                        <ng-container matColumnDef="veldtype">
+                            <mat-header-cell *matHeaderCellDef>{{'veldtype' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
 
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
-                                    <mat-label>{{'veldType' | translate}}</mat-label>
-                                    <mat-select formControlName="veldType"
-                                                (selectionChange)="onVeldTypeChange($event, element)" required>
-                                        <mat-option *ngFor="let type of getVeldTypes()" [value]="type">
+                                    <mat-label>{{'veldtype' | translate}}</mat-label>
+                                    <mat-select formControlName="veldtype"
+                                                (selectionChange)="onVeldtypeChange($event, element)" required>
+                                        <mat-option *ngFor="let type of getVeldtypes()" [value]="type">
                                             {{ type }}
                                         </mat-option>
                                     </mat-select>

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormulierVeldType} from './formulier-veld-type.enum';
+import {FormulierVeldtype} from './formulier-veld-type.enum';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 export class FormulierVeldDefinitie {
@@ -11,7 +11,7 @@ export class FormulierVeldDefinitie {
     systeemnaam: string;
     volgorde: number;
     label: string;
-    veldType: FormulierVeldType;
+    veldtype: FormulierVeldtype;
     beschrijving: string;
     helptekst: string;
     verplicht: boolean;
@@ -26,18 +26,18 @@ export class FormulierVeldDefinitie {
             systeemnaam: new FormControl(vd.systeemnaam, Validators.required),
             beschrijving: new FormControl(vd.beschrijving),
             helptekst: new FormControl(vd.helptekst),
-            veldType: new FormControl(vd.veldType, Validators.required),
+            veldtype: new FormControl(vd.veldtype, Validators.required),
             defaultWaarde: new FormControl(vd.defaultWaarde),
             verplicht: new FormControl(!!vd.verplicht),
             meerkeuzeOpties: new FormControl({
                 value: vd.meerkeuzeOpties,
-                disabled: !this.isMeerkeuzeVeld(vd.veldType)
+                disabled: !this.isMeerkeuzeVeld(vd.veldtype)
             }),
             volgorde: new FormControl(vd.volgorde, Validators.required)
         });
     }
 
-    static isMeerkeuzeVeld(veldType: FormulierVeldType) {
-        return veldType === FormulierVeldType.CHECKBOXES || veldType === FormulierVeldType.RADIO || veldType === FormulierVeldType.KEUZELIJST;
+    static isMeerkeuzeVeld(veldtype: FormulierVeldtype) {
+        return veldtype === FormulierVeldtype.CHECKBOXES || veldtype === FormulierVeldtype.RADIO || veldtype === FormulierVeldtype.KEUZELIJST;
     }
 }

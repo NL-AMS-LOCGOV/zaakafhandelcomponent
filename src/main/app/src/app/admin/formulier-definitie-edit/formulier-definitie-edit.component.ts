@@ -15,7 +15,7 @@ import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from '@a
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormulierVeldDefinitie} from '../model/formulieren/formulier-veld-definitie';
 import {MatTableDataSource} from '@angular/material/table';
-import {FormulierVeldType} from '../model/formulieren/formulier-veld-type.enum';
+import {FormulierVeldtype} from '../model/formulieren/formulier-veld-type.enum';
 import {MatSelectChange} from '@angular/material/select';
 
 @Component({
@@ -29,7 +29,7 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
 
     definitie: FormulierDefinitie;
     definitieFormGroup: FormGroup;
-    veldColumns = ['label', 'systeemnaam', 'beschrijving', 'helptekst', 'veldType', 'defaultWaarde', 'verplicht', 'meerkeuzeOpties', 'volgorde', 'acties'];
+    veldColumns = ['label', 'systeemnaam', 'beschrijving', 'helptekst', 'veldtype', 'defaultWaarde', 'verplicht', 'meerkeuzeOpties', 'volgorde', 'acties'];
     vorigeSysteemnaam: string;
     bezigMetOpslaan = false;
 
@@ -118,10 +118,10 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
         this.dataSource.data = veldDefinities.controls;
     }
 
-    onVeldTypeChange($event: MatSelectChange, veldDefinitieFormGroup: FormGroup): void {
+    onVeldtypeChange($event: MatSelectChange, veldDefinitieFormGroup: FormGroup): void {
         console.log($event, veldDefinitieFormGroup);
-        const veldType: FormulierVeldType = $event.value;
-        if (veldType === FormulierVeldType.CHECKBOXES || veldType === FormulierVeldType.RADIO || veldType === FormulierVeldType.KEUZELIJST) {
+        const veldtype: FormulierVeldtype = $event.value;
+        if (FormulierVeldDefinitie.isMeerkeuzeVeld(veldtype)) {
             veldDefinitieFormGroup.get('meerkeuzeOpties').enable();
             veldDefinitieFormGroup.get('meerkeuzeOpties').setValidators(Validators.required);
         } else {
@@ -131,8 +131,8 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
         veldDefinitieFormGroup.get('meerkeuzeOpties').updateValueAndValidity();
     }
 
-    getVeldTypes(): string[] {
-        return Object.keys(FormulierVeldType);
+    getVeldtypes(): string[] {
+        return Object.keys(FormulierVeldtype);
     }
 
     opslaan(): void {

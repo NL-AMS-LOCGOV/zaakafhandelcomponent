@@ -36,7 +36,7 @@ CREATE TABLE ${schema}.formulier_veld_definitie
     helptekst                   VARCHAR,
     verplicht                   BOOLEAN NOT NULL DEFAULT FALSE,
     default_waarde              VARCHAR,
-    meerkeuze_waarden           VARCHAR,
+    meerkeuze_opties            VARCHAR,
     validaties                  VARCHAR,
     CONSTRAINT pk_formulier_veld_definitie PRIMARY KEY (id_formulier_veld_definitie),
     CONSTRAINT un_formulier_veld_definitie_formulier_definitie UNIQUE (id_formulier_veld_definitie, id_formulier_definitie),

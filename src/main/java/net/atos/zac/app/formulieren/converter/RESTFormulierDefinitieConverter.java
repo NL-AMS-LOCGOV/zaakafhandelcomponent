@@ -32,7 +32,6 @@ public class RESTFormulierDefinitieConverter {
             restFormulierDefinitie.veldDefinities = formulierDefinitie.getVeldDefinities().stream()
                     .sorted(Comparator.comparingInt(FormulierVeldDefinitie::getVolgorde))
                     .map(veldDefinitieConverter::convert)
-
                     .toList();
         }
         return restFormulierDefinitie;
