@@ -62,18 +62,21 @@ public class FormulierDefinitieService {
     }
 
     public FormulierDefinitie createFormulierDefinitie(final FormulierDefinitie formulierDefinitie) {
-        formulierDefinitie.setCreatiedatum(ZonedDateTime.now());
+        final ZonedDateTime now = ZonedDateTime.now();
+        formulierDefinitie.setCreatiedatum(now);
+        formulierDefinitie.setWijzigingsdatum(now);
         valideerObject(formulierDefinitie);
         findFormulierDefinitie(formulierDefinitie.getSysteemnaam()).ifPresent(e -> {
             if (!e.getId().equals(formulierDefinitie.getId())) {
-                throw new RuntimeException("Er bestaat al een formulier definitie met systeemnaam \"%s\"".formatted(formulierDefinitie.getSysteemnaam()));
+                throw new RuntimeException("Er bestaat al een formulier definitie met systeemnaam '%s'".formatted(
+                        formulierDefinitie.getSysteemnaam()));
             }
         });
         return entityManager.merge(formulierDefinitie);
     }
 
     public FormulierDefinitie updateFormulierDefinitie(final FormulierDefinitie formulierDefinitie) {
-        FormulierDefinitie bestaandeDefinitie = readFormulierDefinitie(formulierDefinitie.getId());
+        final FormulierDefinitie bestaandeDefinitie = readFormulierDefinitie(formulierDefinitie.getId());
         formulierDefinitie.setSysteemnaam(bestaandeDefinitie.getSysteemnaam());
         formulierDefinitie.setCreatiedatum(bestaandeDefinitie.getCreatiedatum());
         formulierDefinitie.setWijzigingsdatum(ZonedDateTime.now());

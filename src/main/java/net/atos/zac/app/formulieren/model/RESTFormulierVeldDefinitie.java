@@ -7,7 +7,7 @@ package net.atos.zac.app.formulieren.model;
 
 import java.util.List;
 
-import net.atos.zac.formulieren.model.FormulierVeldType;
+import net.atos.zac.formulieren.model.FormulierVeldtype;
 
 public class RESTFormulierVeldDefinitie {
 
@@ -19,7 +19,7 @@ public class RESTFormulierVeldDefinitie {
 
     public String label;
 
-    public FormulierVeldType type;
+    public FormulierVeldtype veldtype;
 
     public String beschrijving;
 
@@ -29,7 +29,7 @@ public class RESTFormulierVeldDefinitie {
 
     public String defaultWaarde;
 
-    public List<String> meerkeuzeWaarden;
+    public String meerkeuzeOpties;
 
     public List<String> validaties;
 

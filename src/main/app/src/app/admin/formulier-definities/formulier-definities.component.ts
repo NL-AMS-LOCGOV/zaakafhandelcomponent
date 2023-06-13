@@ -35,7 +35,7 @@ export class FormulierDefinitiesComponent extends AdminComponent implements OnIn
     }
 
     ngOnInit(): void {
-        this.setupMenu('title.formulier.definities');
+        this.setupMenu('title.formulierdefinities');
         this.ophalenFormulierDefinities();
     }
 

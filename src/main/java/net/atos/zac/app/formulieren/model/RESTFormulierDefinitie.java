@@ -6,7 +6,6 @@
 package net.atos.zac.app.formulieren.model;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RESTFormulierDefinitie {
@@ -25,7 +24,7 @@ public class RESTFormulierDefinitie {
 
     public ZonedDateTime wijzigingsdatum;
 
-    public List<RESTFormulierVeldDefinitie> veldDefinities = new ArrayList<>();
+    public List<RESTFormulierVeldDefinitie> veldDefinities;
 
     public int aantalVeldDefinities;
 

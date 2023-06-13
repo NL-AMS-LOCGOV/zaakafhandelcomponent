@@ -638,6 +638,10 @@
   "actie.nee": "Nee",
   "actie.ok": "OK",
   " 7 ": ">>--> MELDINGEN <--<<",
+  "msg.formulierdefinitie.toegevoegd": "Formulierdefinitie is toegevoegd",
+  "msg.formulierdefinitie.gewijzigd": "Formulierdefinitie is gewijzigd",
+  "msg.formulierdefinitie.verwijderd": "Formulierdefinitie is verwijderd",
+  "msg.formulier.definitie.verwijderen.bevestigen": "Formulierdefinitie '{{naam}}' verwijderen?",
   "msg.advies.behandelen": "De behandelaar van de zaak vraagt om een advies.<br> Beoordeel de vraag en eventueel de documenten en geef je advies met daarbij een toelichting.",
   "msg.bagObject.toegevoegd": "Het BAG object is toegevoegd",
   "msg.bagObject.verwijderen.bevestigen": "Het BAG object \"{{omschrijving}}\" ontkoppelen van de zaak?",
@@ -853,5 +857,13 @@
   "naamEvenement": "Naam evenement",
   "omschrijvingEvenement": "Omschrijving evenement",
   "datumEvenement": "Datum evenement",
-  "verwachtAantalDeelnemers": "Verwacht aantal deelnemers"
+  "verwachtAantalDeelnemers": "Verwacht aantal deelnemers",
+  "label": "Label",
+  "uitleg": "Uitleg",
+  "helptekst": "Helptekst",
+  "veldtype": "Veldtype",
+  "defaultWaarde": "Standaardwaarde",
+  "verplicht": "Verplicht",
+  "meerkeuzeOpties": "Meerkeuze opties",
+  "volgorde": "Volgorde"
 }

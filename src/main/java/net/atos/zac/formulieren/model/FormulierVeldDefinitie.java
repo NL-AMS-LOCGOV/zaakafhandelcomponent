@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(schema = SCHEMA, name = "formulier_veld_definitie")
@@ -40,7 +41,7 @@ public class FormulierVeldDefinitie {
     @Column(name = "systeemnaam", nullable = false, unique = true)
     private String systeemnaam;
 
-    @NotBlank
+    @PositiveOrZero
     @Column(name = "volgorde", nullable = false)
     private int volgorde;
 
@@ -51,7 +52,7 @@ public class FormulierVeldDefinitie {
     @NotNull
     @Column(name = "veldtype", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FormulierVeldType type;
+    private FormulierVeldtype veldtype;
 
     @Column(name = "beschrijving")
     private String beschrijving;
@@ -65,8 +66,8 @@ public class FormulierVeldDefinitie {
     @Column(name = "default_waarde")
     private String defaultWaarde;
 
-    @Column(name = "meerkeuze_waarden")
-    private String meerkeuzeWaarden;
+    @Column(name = "meerkeuze_opties")
+    private String meerkeuzeOpties;
 
     @Column(name = "validaties")
     private String validaties;
@@ -112,12 +113,12 @@ public class FormulierVeldDefinitie {
         this.label = label;
     }
 
-    public FormulierVeldType getType() {
-        return type;
+    public FormulierVeldtype getVeldtype() {
+        return veldtype;
     }
 
-    public void setType(final FormulierVeldType type) {
-        this.type = type;
+    public void setVeldtype(final FormulierVeldtype veldType) {
+        this.veldtype = veldType;
     }
 
     public String getBeschrijving() {
@@ -152,12 +153,12 @@ public class FormulierVeldDefinitie {
         this.defaultWaarde = defaultWaarde;
     }
 
-    public String getMeerkeuzeWaarden() {
-        return meerkeuzeWaarden;
+    public String getMeerkeuzeOpties() {
+        return meerkeuzeOpties;
     }
 
-    public void setMeerkeuzeWaarden(final String meerkeuzeWaarden) {
-        this.meerkeuzeWaarden = meerkeuzeWaarden;
+    public void setMeerkeuzeOpties(final String meerkeuzeWaarden) {
+        this.meerkeuzeOpties = meerkeuzeWaarden;
     }
 
     public String getValidaties() {

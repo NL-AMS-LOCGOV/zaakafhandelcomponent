@@ -638,6 +638,10 @@
   "actie.nee": "No",
   "actie.ok": "OK",
   " 7 ": ">>--> MELDINGEN <--<<",
+  "msg.formulierdefinitie.toegevoegd": "Form definition has been added",
+  "msg.formulierdefinitie.gewijzigd": "Form definition has been updated",
+  "msg.formulierdefinitie.verwijderen.uitgevoerd": "Form definition has been deleted",
+  "msg.formulier.definitie.verwijderen.bevestigen": "Delete form definition '{{naam}}'?",
   "msg.advies.behandelen": "The case handler asks for advice.<br>Assess the question and, if necessary, the documents and provide your advice with an explanation.",
   "msg.bagObject.toegevoegd": "The BAG object has been added",
   "msg.bagObject.verwijderen.bevestigen": "Unlink BAG object \"{{omschrijving}}\" form the case?",
@@ -853,5 +857,13 @@
   "naamEvenement": "Event name",
   "omschrijvingEvenement": "Event description",
   "datumEvenement": "Event date",
-  "verwachtAantalDeelnemers": "Expected number of participants"
+  "verwachtAantalDeelnemers": "Expected number of participants",
+  "label": "Label",
+  "uitleg": "Explanation",
+  "helptekst": "Help text",
+  "veldtype": "Field type",
+  "defaultWaarde": "Default value",
+  "verplicht": "Required",
+  "meerkeuzeOpties": "Multiple choice options",
+  "volgorde": "Order"
 }

@@ -5,7 +5,7 @@
 
 package net.atos.zac.formulieren.model;
 
-public enum FormulierVeldType {
+public enum FormulierVeldtype {
     TEKST_VELD,
     TEKST_VLAK,
     NUMMER,
