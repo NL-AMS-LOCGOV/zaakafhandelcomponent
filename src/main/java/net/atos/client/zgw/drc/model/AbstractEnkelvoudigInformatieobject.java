@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import javax.json.bind.annotation.JsonbDateFormat;
-import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
@@ -137,7 +136,6 @@ public abstract class AbstractEnkelvoudigInformatieobject {
      * Ontvangst en verzending is voorbehouden aan documenten die van of naar andere personen ontvangen of verzonden zijn
      * waarbij die personen niet deel uit maken van de behandeling van de zaak waarin het document een rol speelt.
      */
-    @JsonbProperty(nillable = true)
     private LocalDate ontvangstdatum;
 
     /**
@@ -147,7 +145,6 @@ public abstract class AbstractEnkelvoudigInformatieobject {
      * Ontvangst en verzending is voorbehouden aan documenten die van of naar andere personen ontvangen of verzonden zijn
      * waarbij die personen niet deel uit maken van de behandeling van de zaak waarin het document een rol speelt.
      */
-    @JsonbProperty(nillable = true)
     private LocalDate verzenddatum;
 
     /**
