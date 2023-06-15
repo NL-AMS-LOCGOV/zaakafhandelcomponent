@@ -26,8 +26,14 @@ export class FormulierDefinitieService {
         );
     }
 
-    read(id: string): Observable<FormulierDefinitie> {
+    read(id: number | string): Observable<FormulierDefinitie> {
         return this.http.get<FormulierDefinitie[]>(`${this.basepath}/${id}`).pipe(
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    run(systeemnaam: string): Observable<FormulierDefinitie> {
+        return this.http.get<FormulierDefinitie[]>(`${this.basepath}/runtime/${systeemnaam}`).pipe(
                 catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -4,12 +4,23 @@
  */
 
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {FormulierComponent} from './formulier/formulier.component';
+import {SharedModule} from '../shared/shared.module';
+import {DocumentenFormulierVeldComponent} from './formulier/velden/documenten/documenten-formulier-veld.component';
+import {DocumentIconComponent} from '../shared/document-icon/document-icon.component';
+import {
+    InformatieObjectIndicatiesComponent
+} from '../shared/indicaties/informatie-object-indicaties/informatie-object-indicaties.component';
 
 @NgModule({
-    declarations: [],
+    declarations: [FormulierComponent, DocumentenFormulierVeldComponent],
+    exports: [
+        FormulierComponent
+    ],
     imports: [
-        CommonModule
+        SharedModule,
+        DocumentIconComponent,
+        InformatieObjectIndicatiesComponent
     ]
 })
 export class FormulierenModule {}

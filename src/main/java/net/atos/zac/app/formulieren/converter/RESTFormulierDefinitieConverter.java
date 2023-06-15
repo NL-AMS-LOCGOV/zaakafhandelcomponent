@@ -18,7 +18,8 @@ public class RESTFormulierDefinitieConverter {
     @Inject
     private RESTFormulierVeldDefinitieConverter veldDefinitieConverter;
 
-    public RESTFormulierDefinitie convert(final FormulierDefinitie formulierDefinitie, boolean inclusiefVelden) {
+    public RESTFormulierDefinitie convert(final FormulierDefinitie formulierDefinitie,
+            boolean inclusiefVelden, boolean runtime) {
         final RESTFormulierDefinitie restFormulierDefinitie = new RESTFormulierDefinitie();
         restFormulierDefinitie.id = formulierDefinitie.getId();
         restFormulierDefinitie.beschrijving = formulierDefinitie.getBeschrijving();
@@ -31,7 +32,7 @@ public class RESTFormulierDefinitieConverter {
         if (inclusiefVelden) {
             restFormulierDefinitie.veldDefinities = formulierDefinitie.getVeldDefinities().stream()
                     .sorted(Comparator.comparingInt(FormulierVeldDefinitie::getVolgorde))
-                    .map(veldDefinitieConverter::convert)
+                    .map(vd -> veldDefinitieConverter.convert(vd, runtime))
                     .toList();
         }
         return restFormulierDefinitie;

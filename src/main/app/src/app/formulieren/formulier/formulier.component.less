@@ -1,0 +1,56 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+form {
+  padding: 14px;
+
+  > div, p {
+    margin-bottom: 10px;
+  }
+
+}
+
+label {
+  font-size: small;
+  font-weight: 500;
+
+  &.required:after {
+    content: " *";
+  }
+}
+
+p {
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+.mat-mdc-radio-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  ::ng-deep .mat-mdc-radio-button .mdc-radio {
+    padding: 6px;
+  }
+}
+
+mat-hint {
+  color: dimgray;
+  font-size: 14px;
+}
+
+.radios, .checkboxes {
+  mat-hint {
+    margin-left: 10px;
+  }
+}
+
+.daysSuffix {
+  color: #808080;
+  position: relative;
+  bottom: 7px;
+}
+
+
