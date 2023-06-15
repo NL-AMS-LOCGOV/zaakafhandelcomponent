@@ -45,7 +45,7 @@ public class FormulierDefinitieRESTService {
     public List<RESTFormulierDefinitie> list() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return service.listFormulierDefinities().stream()
-                .map(formulierDefinitie -> converter.convert(formulierDefinitie, false))
+                .map(formulierDefinitie -> converter.convert(formulierDefinitie, false, false))
                 .toList();
     }
 
@@ -54,7 +54,7 @@ public class FormulierDefinitieRESTService {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return converter.convert(
                 service.createFormulierDefinitie(
-                        converter.convert(restFormulierDefinitie)), true);
+                        converter.convert(restFormulierDefinitie)), true, false);
     }
 
     @GET
@@ -62,7 +62,13 @@ public class FormulierDefinitieRESTService {
     public RESTFormulierDefinitie read(@PathParam("id") final long id) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return converter.convert(
-                service.readFormulierDefinitie(id), true);
+                service.readFormulierDefinitie(id), true, false);
+    }
+
+    @GET
+    @Path("runtime/{systeemnaam}")
+    public RESTFormulierDefinitie find(@PathParam("systeemnaam") final String systeemnaam) {
+        return converter.convert(service.readFormulierDefinitie(systeemnaam), true, true);
     }
 
     @PUT
@@ -70,7 +76,7 @@ public class FormulierDefinitieRESTService {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return converter.convert(
                 service.updateFormulierDefinitie(
-                        converter.convert(restFormulierDefinitie)), true);
+                        converter.convert(restFormulierDefinitie)), true, false);
     }
 
     @DELETE

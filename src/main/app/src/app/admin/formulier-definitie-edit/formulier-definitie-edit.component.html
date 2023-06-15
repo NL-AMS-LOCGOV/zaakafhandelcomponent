@@ -36,6 +36,14 @@
                             <textarea matInput formControlName="uitleg"></textarea>
                         </mat-form-field>
                     </div>
+
+                    <div class="button-group flex-row">
+                        <button mat-raised-button color="primary"
+                                [disabled]="bezigMetOpslaan || definitieFormGroup.invalid"
+                                (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                        <button mat-raised-button [disabled]="bezigMetOpslaan"
+                                (click)="annuleren()">{{"actie.annuleren" | translate}}</button>
+                    </div>
                 </mat-card-content>
             </mat-card>
             <mat-card>
@@ -44,7 +52,6 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-table [dataSource]="dataSource">
-
                     <ng-container matColumnDef="label">
                             <mat-header-cell *matHeaderCellDef>{{'label' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
@@ -107,7 +114,9 @@
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
                                     <mat-label>{{'defaultWaarde' | translate}}</mat-label>
-                                    <input matInput formControlName="defaultWaarde">
+                                    <input *ngIf="!isTekstvlak(element)" matInput formControlName="defaultWaarde">
+                                    <textarea *ngIf="isTekstvlak(element)" matInput
+                                              formControlName="defaultWaarde"></textarea>
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
@@ -122,9 +131,6 @@
                         <ng-container matColumnDef="meerkeuzeOpties">
                             <mat-header-cell *matHeaderCellDef>
                                 {{'meerkeuzeOpties' | translate}}
-                                <mat-icon color="primary"
-                                          matTooltip="scheidingsteken ';'. Bijvoorbeeld: Ja;Nee;Weet ik niet">info
-                                </mat-icon>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
@@ -175,12 +181,54 @@
             </mat-card>
         </form>
 
-        <div class="button-group flex-row">
-            <button mat-raised-button color="primary" [disabled]="bezigMetOpslaan || definitieFormGroup.invalid"
-                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
-            <button mat-raised-button [disabled]="bezigMetOpslaan"
-                    (click)="annuleren()">{{"actie.annuleren" | translate}}</button>
-        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Uitleg meerkeuze opties
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <small>
+                <b>RADIO, CHECKBOXES EN KEUZELIJST</b><br/>
+                Mogelijke waarden:<br/>
+                <ul>
+                    <li>Een lijst <b>;</b> gescheiden, bijvoorbeeld: Ja;Nee;Weet ik niet;Anders</li>
+                    <li>Een referentietabel <b>REF:CODE</b>, bijvoorbeeld: REF:AFZENDER</li>
+                </ul>
+                Beschikbare referentietabellen: [{{referentieLijsten.join(', ')}}]
+                <br/>
+                <br/>
+                <b>DOCUMENTEN_LIJST</b><br/>
+                Mogelijke waarden:<br/>
+                <ul>
+                    <li><b>ZAAK</b>: Alle zaak documenten</li>
+                    <li><b>ZAAK_VERZENDBAAR</b>: Alleen verzendbare documenten van een zaak</li>
+                    <li>een <i><b>systeemnaam</b></i> van een veld definitie op een reeds ingediend formulier</li>
+                </ul>
+            </small>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Uitleg speciale systeemnamen
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <small>
+                <ul>
+                    <li><b>zaak-opschorten</b>: de zaak opschorten (met aantal dagen tot de fatale datum van de taak)
+                        indien het CHECKBOX veld is aangevinkt
+                    </li>
+                    <li><b>zaak-hervatten</b>: de zaak hervatten indien het CHECKBOX veld is aangevinkt</li>
+                    <li><b>taak-fatale-datum</b>: de taak fatale datum wordt aangepast volgens de gekozen DATUM waarde
+                    </li>
+                    <li><b>taak-toekennen-groep</b>: de taak wordt toegekend aan de gekozen GROEP_KEUZELIJST waarde</li>
+                    <li><b>taak-toekennen-behandelaar</b>: de taak wordt toegekend aan de gekozen MEDEWERKER_KEUZELIJST
+                        waarde
+                    </li>
+                </ul>
+                Indien het niet mogelijk is om de gekozen conditie uit te voeren zal het veld niet worden weergegeven.
+            </small>
+        </mat-expansion-panel>
 
     </mat-sidenav-content>
 </mat-sidenav-container>

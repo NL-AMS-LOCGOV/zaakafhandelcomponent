@@ -17,6 +17,7 @@ import {FormulierVeldDefinitie} from '../model/formulieren/formulier-veld-defini
 import {MatTableDataSource} from '@angular/material/table';
 import {FormulierVeldtype} from '../model/formulieren/formulier-veld-type.enum';
 import {MatSelectChange} from '@angular/material/select';
+import {ReferentieTabelService} from '../referentie-tabel.service';
 
 @Component({
     templateUrl: './formulier-definitie-edit.component.html',
@@ -33,10 +34,13 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     vorigeSysteemnaam: string;
     bezigMetOpslaan = false;
 
+    referentieLijsten: string[] = [];
+
     dataSource: MatTableDataSource<AbstractControl>;
 
     constructor(private identityService: IdentityService,
                 private service: FormulierDefinitieService,
+                private referentieService: ReferentieTabelService,
                 public dialog: MatDialog,
                 private route: ActivatedRoute,
                 private formBuilder: FormBuilder,
@@ -46,6 +50,10 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     }
 
     ngOnInit(): void {
+        this.referentieService.listReferentieTabellen().subscribe(tabellen => {
+            this.referentieLijsten = tabellen.map(value => value.code);
+        });
+
         this.route.data.subscribe(data => {
             this.definitie = data.definitie;
             this.init();
@@ -152,10 +160,13 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
                 this.router.navigate(['admin/formulierdefinities', data.id]);
             });
         }
-
     }
 
     annuleren() {
         this.router.navigate(['/admin/formulierdefinities']);
+    }
+
+    isTekstvlak(element: FormGroup) {
+        return element.get('veldtype')?.value === FormulierVeldtype.TEKST_VLAK;
     }
 }

@@ -5,19 +5,29 @@
 
 package net.atos.zac.app.formulieren.converter;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.zac.app.formulieren.model.RESTFormulierVeldDefinitie;
 import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
+import net.atos.zac.zaaksturing.ReferentieTabelService;
+import net.atos.zac.zaaksturing.model.ReferentieTabel;
+import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
 
 public class RESTFormulierVeldDefinitieConverter {
 
-    private final String SEPARATOR = "|";
+    @Inject
+    private ReferentieTabelService referentieTabelService;
 
-    public RESTFormulierVeldDefinitie convert(final FormulierVeldDefinitie veldDefinitie) {
+    private final String SEPARATOR = ";";
+
+    public RESTFormulierVeldDefinitie convert(final FormulierVeldDefinitie veldDefinitie, boolean runtime) {
         final RESTFormulierVeldDefinitie restVeldDefinitie = new RESTFormulierVeldDefinitie();
         restVeldDefinitie.id = veldDefinitie.getId();
         restVeldDefinitie.systeemnaam = veldDefinitie.getSysteemnaam();
@@ -31,6 +41,18 @@ public class RESTFormulierVeldDefinitieConverter {
         restVeldDefinitie.meerkeuzeOpties = veldDefinitie.getMeerkeuzeOpties();
         if (StringUtils.isNotBlank(veldDefinitie.getValidaties())) {
             restVeldDefinitie.validaties = List.of(StringUtils.split(veldDefinitie.getValidaties(), SEPARATOR));
+        }
+
+        if (runtime) {
+            final String referentietabelCode = StringUtils.substringAfter(veldDefinitie.getMeerkeuzeOpties(), "REF:");
+            if (StringUtils.isNotBlank(referentietabelCode)) {
+                final ReferentieTabel referentieTabel = referentieTabelService.readReferentieTabel(referentietabelCode);
+                restVeldDefinitie.meerkeuzeOpties = referentieTabel.getWaarden()
+                        .stream()
+                        .sorted(Comparator.comparingInt(ReferentieTabelWaarde::getVolgorde))
+                        .map(ReferentieTabelWaarde::getNaam)
+                        .collect(Collectors.joining(SEPARATOR));
+            }
         }
         return restVeldDefinitie;
     }

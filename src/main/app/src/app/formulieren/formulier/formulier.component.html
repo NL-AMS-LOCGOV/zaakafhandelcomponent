@@ -1,0 +1,143 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2023 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<form [formGroup]="formGroup">
+    <p>{{definitie.uitleg}}</p>
+    <ng-container *ngFor="let veldDefinitie of definitie.veldDefinities" [ngSwitch]="veldDefinitie.veldtype">
+        <div *ngSwitchCase="FormulierVeldtype.TEKST_VELD">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <input matInput [formControlName]="veldDefinitie.systeemnaam">
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.EMAIL">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <input type="email" matInput [formControlName]="veldDefinitie.systeemnaam">
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.NUMMER">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <input type="number" matInput [formControlName]="veldDefinitie.systeemnaam">
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.RADIO" class="radios">
+            <label [ngClass]="{'required': veldDefinitie.verplicht}">{{veldDefinitie.label}}</label>
+            <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            <mat-radio-group [formControlName]="veldDefinitie.systeemnaam">
+                <mat-radio-button *ngFor="let optie of veldDefinitie.meerkeuzeOpties.split(';')" [value]="optie">
+                    {{optie}}
+                </mat-radio-button>
+
+            </mat-radio-group>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.KEUZELIJST">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <mat-select [formControlName]="veldDefinitie.systeemnaam">
+                    <mat-option *ngIf="!veldDefinitie.verplicht">{{'-geen-'}}</mat-option>
+                    <mat-option *ngFor="let optie of veldDefinitie.meerkeuzeOpties.split(';')" [value]="optie">
+                        {{optie}}
+                    </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.MEDEWERKER_KEUZELIJST">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <mat-select [formControlName]="veldDefinitie.systeemnaam">
+                    <mat-option *ngIf="!veldDefinitie.verplicht">{{'-geen-'}}</mat-option>
+                    <mat-option *ngFor="let optie of medewerkers" [value]="optie.naam">
+                        {{optie.naam}}
+                    </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.GROEP_KEUZELIJST">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <mat-select [formControlName]="veldDefinitie.systeemnaam">
+                    <mat-option *ngIf="!veldDefinitie.verplicht">{{'-geen-'}}</mat-option>
+                    <mat-option *ngFor="let optie of groepen" [value]="optie.naam">
+                        {{optie.naam}}
+                    </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.TEKST_VLAK">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <textarea style="font-size: 10px" [formControlName]="veldDefinitie.systeemnaam"
+                          matInput cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15">
+                </textarea>
+                <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.CHECKBOX">
+            <mat-checkbox [formControlName]="veldDefinitie.systeemnaam">{{veldDefinitie.label}}</mat-checkbox>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.CHECKBOXES" class="checkboxes">
+            <label [ngClass]="{'required': veldDefinitie.verplicht}">{{veldDefinitie.label}}</label>
+            <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+            <div *ngFor="let optie of veldDefinitie.meerkeuzeOpties.split(';')">
+                <mat-checkbox (change)="toggleCheckboxes(veldDefinitie.systeemnaam, optie)">{{optie}}</mat-checkbox>
+            </div>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.DATUM">
+            <mat-form-field class="full-width" floatLabel="always">
+                <mat-label>{{veldDefinitie.label}}</mat-label>
+                <input [formControlName]="veldDefinitie.systeemnaam" matInput [matDatepicker]="picker">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <span *ngIf="hasValue(veldDefinitie.systeemnaam)" class="daysSuffix"
+                      matSuffix>{{days(veldDefinitie.systeemnaam)}} {{'dagen' | translate}}</span>
+            </mat-form-field>
+        </div>
+        <div *ngSwitchCase="FormulierVeldtype.DOCUMENTEN_LIJST">
+            <zac-documenten-formulier-veld
+                    [control]="getControl(veldDefinitie.systeemnaam)"
+                    [veldDefinitie]="veldDefinitie"
+                    [zaak]="zaak">
+            </zac-documenten-formulier-veld>
+        </div>
+
+        <div *ngSwitchDefault>
+            [ {{veldDefinitie.veldtype}} nog niet beschikbaar ]
+        </div>
+    </ng-container>
+
+    <div class="flex-row justify-start">
+        <button mat-raised-button color="primary"
+                [disabled]="formGroup.invalid||bezigMetOpslaan"
+                id="opslaan_button"
+                (click)="opslaan()"
+                type="submit">
+            {{'actie.opslaan' | translate}}
+        </button>
+        <button mat-raised-button [disabled]="bezigMetOpslaan"
+                id="annuleren_button"
+                type="button"
+                (click)="cancel()">
+            {{'actie.annuleren' | translate}}
+        </button>
+    </div>
+</form>

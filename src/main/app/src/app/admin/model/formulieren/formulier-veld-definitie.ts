@@ -32,12 +32,39 @@ export class FormulierVeldDefinitie {
             meerkeuzeOpties: new FormControl({
                 value: vd.meerkeuzeOpties,
                 disabled: !this.isMeerkeuzeVeld(vd.veldtype)
-            }),
+            }, Validators.required),
             volgorde: new FormControl(vd.volgorde, Validators.required)
         });
     }
 
     static isMeerkeuzeVeld(veldtype: FormulierVeldtype) {
-        return veldtype === FormulierVeldtype.CHECKBOXES || veldtype === FormulierVeldtype.RADIO || veldtype === FormulierVeldtype.KEUZELIJST;
+        return veldtype === FormulierVeldtype.CHECKBOXES ||
+                veldtype === FormulierVeldtype.RADIO ||
+                veldtype === FormulierVeldtype.KEUZELIJST ||
+                veldtype === FormulierVeldtype.DOCUMENTEN_LIJST;
+    }
+
+    static isFataldatum(fvd: FormulierVeldDefinitie) {
+        return fvd.veldtype === FormulierVeldtype.DATUM && fvd.systeemnaam === 'fatale-datum';
+    }
+
+    static isOpschorten(fvd: FormulierVeldDefinitie) {
+        return fvd.veldtype === FormulierVeldtype.CHECKBOX && fvd.systeemnaam === 'zaak-opschorten';
+    }
+
+    static isHervatten(fvd: FormulierVeldDefinitie) {
+        return fvd.veldtype === FormulierVeldtype.CHECKBOX && fvd.systeemnaam === 'zaak-hervatten';
+    }
+
+    static isToekenningGroep(fvd: FormulierVeldDefinitie) {
+        return fvd.veldtype === FormulierVeldtype.GROEP_KEUZELIJST && fvd.systeemnaam === 'toekenning-groep';
+    }
+
+    static isToekenningBehandelaar(fvd: FormulierVeldDefinitie) {
+        return fvd.veldtype === FormulierVeldtype.MEDEWERKER_KEUZELIJST && fvd.systeemnaam === 'toekenning-behandelaar';
+    }
+
+    static isOndertekenen(fvd: FormulierVeldDefinitie) { // zou ook een eigen veldtype kunnen zijn
+        return fvd.veldtype === FormulierVeldtype.DOCUMENTEN_LIJST && fvd.systeemnaam === 'ondertekenen';
     }
 }
