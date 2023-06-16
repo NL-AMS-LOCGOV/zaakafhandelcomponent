@@ -20,7 +20,6 @@ import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.UserEventListenerActie;
@@ -74,18 +73,11 @@ public class RESTPlanItemConverter {
         zaakafhandelParameters.findHumanTaskParameter(humanTaskPlanItem.getPlanItemDefinitionId())
                 .ifPresent(humanTaskParameters -> {
                     restPlanItem.actief = humanTaskParameters.isActief();
-                    if (humanTaskParameters.getFormulierDefinitieID() != null) {
-                        restPlanItem.formulierDefinitie =
-                                FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
-                        humanTaskParameters.getReferentieTabellen().forEach(
-                                rt -> restPlanItem.tabellen.put(rt.getVeld(), rt.getTabel().getWaarden().stream()
-                                        .map(ReferentieTabelWaarde::getNaam)
-                                        .toList()));
-                    } else {
-                        restPlanItem.formulierDefinitie =
-                                DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(
-                                        humanTaskPlanItem.getPlanItemDefinitionId());
-                    }
+                    restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
+                    humanTaskParameters.getReferentieTabellen().forEach(
+                            rt -> restPlanItem.tabellen.put(rt.getVeld(), rt.getTabel().getWaarden().stream()
+                                    .map(ReferentieTabelWaarde::getNaam)
+                                    .toList()));
                     restPlanItem.groepId = humanTaskParameters.getGroepID();
                     if (humanTaskParameters.getDoorlooptijd() != null) {
                         restPlanItem.fataleDatum = LocalDate.now().plusDays(humanTaskParameters.getDoorlooptijd());

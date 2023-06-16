@@ -16,6 +16,7 @@ import {TakenVrijgevenDialogComponent} from './taken-vrijgeven-dialog/taken-vrij
 import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
 import {ZoekenModule} from '../zoeken/zoeken.module';
 import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.module';
+import {FormulierenModule} from '../formulieren/formulieren.module';
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoor
         ZakenModule,
         InformatieObjectenModule,
         ZoekenModule,
-        GebruikersvoorkeurenModule
+        GebruikersvoorkeurenModule,
+        FormulierenModule
     ]
 })
 export class TakenModule {
