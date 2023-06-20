@@ -5,7 +5,7 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {FormulierVeldtype} from '../../admin/model/formulieren/formulier-veld-type.enum';
 import {SelectionModel} from '@angular/cdk/collections';
 import {IdentityService} from '../../identity/identity.service';
@@ -13,6 +13,7 @@ import {User} from '../../identity/model/user';
 import {Group} from '../../identity/model/group';
 import {Zaak} from '../../zaken/model/zaak';
 import * as moment from 'moment/moment';
+import {FormulierVeldDefinitie} from '../../admin/model/formulieren/formulier-veld-definitie';
 
 @Component({
     selector: 'zac-formulier',
@@ -23,7 +24,7 @@ export class FormulierComponent implements OnInit {
 
     @Input() definitie: FormulierDefinitie;
     @Input() zaak: Zaak;
-    @Output() data = new EventEmitter<{}>();
+    @Output() submit = new EventEmitter<{}>();
 
     formGroup: FormGroup;
     FormulierVeldtype = FormulierVeldtype;
@@ -52,32 +53,13 @@ export class FormulierComponent implements OnInit {
     createForm() {
         this.formGroup = this.formBuilder.group({});
         this.definitie.veldDefinities.forEach(vd => {
-            let control: FormControl;
-            control = new FormControl(vd.defaultWaarde, vd.verplicht ? Validators.required : null);
-            switch (vd.veldtype) {
-                case FormulierVeldtype.NUMMER:
-                    control = new FormControl<string>(vd.defaultWaarde,
-                            vd.verplicht ?
-                                    [Validators.required, Validators.min(0), Validators.max(2147483647)] :
-                                    [Validators.min(0), Validators.max(2147483647)]);
-                    break;
-                case FormulierVeldtype.EMAIL:
-                    control = new FormControl<string>(vd.defaultWaarde,
-                            vd.verplicht ? [Validators.required, Validators.email] : Validators.email);
-                    break;
-                case FormulierVeldtype.CHECKBOXES:
-                    this.checked.set(vd.systeemnaam, new SelectionModel<string>(true));
-                    break;
-                case FormulierVeldtype.DATUM:
-                    control.setValue(this.toDate(vd.defaultWaarde));
-                    break;
-                default:
-                    break;
+
+            if (vd.veldtype === FormulierVeldtype.CHECKBOXES) {
+                this.checked.set(vd.systeemnaam, new SelectionModel<string>(true));
             }
-            this.formGroup.addControl(vd.systeemnaam, control);
+            this.formGroup.addControl(vd.systeemnaam, FormulierVeldDefinitie.asControl(vd));
         });
     }
-
 
     toggleCheckboxes(systeemnaam: string, optie: string) {
         this.checked.get(systeemnaam).toggle(optie);
@@ -95,13 +77,6 @@ export class FormulierComponent implements OnInit {
         }
     }
 
-    toDate(dateStr): Date {
-        if (dateStr) {
-            const [day, month, year] = dateStr.split('-');
-            return new Date(year, month - 1, day);
-        }
-        return new Date();
-    }
 
     hasValue(systeemnaam: string) {
         return this.formGroup.get(systeemnaam).value !== null && this.formGroup.get(systeemnaam).value !== '';
@@ -109,11 +84,11 @@ export class FormulierComponent implements OnInit {
 
     opslaan() {
         this.bezigMetOpslaan = true;
-        this.data.emit(this.formGroup.value);
+        this.submit.emit(this.formGroup.value);
     }
 
     cancel() {
         this.bezigMetOpslaan = true;
-        this.data.emit(null);
+        this.submit.emit(null);
     }
 }

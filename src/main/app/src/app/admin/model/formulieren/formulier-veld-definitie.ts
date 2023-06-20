@@ -37,6 +37,38 @@ export class FormulierVeldDefinitie {
         });
     }
 
+    static asControl(vd: FormulierVeldDefinitie): FormControl {
+
+        let control: FormControl;
+        control = new FormControl(vd.defaultWaarde, vd.verplicht ? Validators.required : null);
+        switch (vd.veldtype) {
+            case FormulierVeldtype.NUMMER:
+                control = new FormControl<string>(vd.defaultWaarde,
+                        vd.verplicht ?
+                                [Validators.required, Validators.min(0), Validators.max(2147483647)] :
+                                [Validators.min(0), Validators.max(2147483647)]);
+                break;
+            case FormulierVeldtype.EMAIL:
+                control = new FormControl<string>(vd.defaultWaarde,
+                        vd.verplicht ? [Validators.required, Validators.email] : Validators.email);
+                break;
+            case FormulierVeldtype.DATUM:
+                control.setValue(this.toDate(vd.defaultWaarde));
+                break;
+            default:
+                break;
+        }
+        return control;
+    }
+
+    private static toDate(dateStr): Date {
+        if (dateStr) {
+            const [day, month, year] = dateStr.split('-');
+            return new Date(year, month - 1, day);
+        }
+        return new Date();
+    }
+
     static isMeerkeuzeVeld(veldtype: FormulierVeldtype) {
         return veldtype === FormulierVeldtype.CHECKBOXES ||
                 veldtype === FormulierVeldtype.RADIO ||
