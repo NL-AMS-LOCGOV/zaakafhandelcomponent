@@ -19,6 +19,9 @@ import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
 import {NgxEditorModule} from 'ngx-editor';
 import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
 import {FormulierDefinitieEditComponent} from './formulier-definitie-edit/formulier-definitie-edit.component';
+import {
+    TekstvlakEditDialogComponent
+} from './formulier-definitie-edit/tekstvlak-edit-dialog/tekstvlak-edit-dialog.component';
 
 @NgModule({
     declarations: [
@@ -31,7 +34,8 @@ import {FormulierDefinitieEditComponent} from './formulier-definitie-edit/formul
         ReferentieTabelComponent,
         InrichtingscheckComponent,
         MailtemplatesComponent,
-        MailtemplateComponent
+        MailtemplateComponent,
+        TekstvlakEditDialogComponent
     ],
     exports: [],
     imports: [

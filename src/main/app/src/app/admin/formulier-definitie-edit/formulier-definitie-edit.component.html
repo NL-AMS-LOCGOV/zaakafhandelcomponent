@@ -115,8 +115,8 @@
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
                                     <mat-label>{{'defaultWaarde' | translate}}</mat-label>
                                     <input *ngIf="!isTekstvlak(element)" matInput formControlName="defaultWaarde">
-                                    <textarea *ngIf="isTekstvlak(element)" matInput
-                                              formControlName="defaultWaarde"></textarea>
+                                    <input *ngIf="isTekstvlak(element)" matInput formControlName="defaultWaarde"
+                                           (click)="openTekstvlakEditDialog(element)">
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
