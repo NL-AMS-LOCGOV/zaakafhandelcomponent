@@ -8,6 +8,7 @@ import {NgModule} from '@angular/core';
 import {HumanTaskDoComponent} from './human-task-do/human-task-do.component';
 import {SharedModule} from '../shared/shared.module';
 import {ProcessTaskDoComponent} from './process-task-do/process-task-do.component';
+import {FormulierenModule} from '../formulieren/formulieren.module';
 
 @NgModule({
     declarations: [HumanTaskDoComponent, ProcessTaskDoComponent],
@@ -16,7 +17,8 @@ import {ProcessTaskDoComponent} from './process-task-do/process-task-do.componen
         ProcessTaskDoComponent
     ],
     imports: [
-        SharedModule
+        SharedModule,
+        FormulierenModule,
     ]
 })
 export class PlanItemsModule {
