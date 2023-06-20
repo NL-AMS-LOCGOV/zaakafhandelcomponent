@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+    <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
+        <mat-label>{{'defaultWaarde' | translate}}</mat-label>
+        <textarea rows="18" matInput [(ngModel)]="data['value']"></textarea>
+    </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary"
+            [mat-dialog-close]="data['value']">{{"actie.opslaan" | translate}}</button>
+    <button mat-raised-button [mat-dialog-close]="undefined">{{"actie.annuleren" | translate}}</button>
+</div>
