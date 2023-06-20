@@ -13,6 +13,5 @@ export class FormulierDefinitie {
     uitleg: string;
     creatiedatum: string;
     wijzigingsdatum: string;
-    aantalVeldDefinities: number;
     veldDefinities: FormulierVeldDefinitie[];
 }

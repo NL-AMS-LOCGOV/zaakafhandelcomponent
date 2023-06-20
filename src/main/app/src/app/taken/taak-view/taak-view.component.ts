@@ -14,7 +14,7 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
@@ -43,6 +43,7 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {MatDialog} from '@angular/material/dialog';
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -59,6 +60,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     zaak: Zaak;
     formulier: AbstractTaakFormulier;
     formConfig: FormConfig;
+    formulierDefinitie: FormulierDefinitie;
 
     menu: MenuItem[] = [];
     readonly sideNavAction = SideNavAction;
@@ -143,20 +145,34 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createTaakForm(taak: Taak, zaak: Zaak): void {
+        if (taak.formulierDefinitieId) {
+            this.createHardCodedTaakForm(taak, zaak);
+        } else {
+             this.createConfigurableTaakForm(taak);
+        }
+    }
+
+    private createHardCodedTaakForm(taak: Taak, zaak: Zaak): void {
         if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
             this.formConfig = new FormConfigBuilder()
-            .partialText('actie.opslaan')
-            .saveText('actie.opslaan.afronden')
-            .build();
+                    .partialText('actie.opslaan')
+                    .saveText('actie.opslaan.afronden')
+                    .build();
         } else {
             this.formConfig = null;
         }
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak, zaak).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitieId)
+                .behandelForm(taak, zaak).build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
         this.utilService.setTitle('title.taak', {taak: this.formulier.getBehandelTitel()});
+    }
+
+    private createConfigurableTaakForm(taak: Taak): void {
+        this.formulierDefinitie = taak.formulierDefinitie;
+        this.utilService.setTitle('title.taak', {taak: this.formulierDefinitie.naam});
     }
 
     private setEditableFormFields(): void {

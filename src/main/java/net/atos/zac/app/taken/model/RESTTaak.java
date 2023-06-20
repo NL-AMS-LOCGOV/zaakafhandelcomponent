@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.atos.zac.app.formulieren.model.RESTFormulierDefinitie;
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.policy.model.RESTTaakRechten;
@@ -46,7 +47,13 @@ public class RESTTaak {
 
     public TaakStatus status;
 
-    public String formulierDefinitie;
+    // Identificatie van een vooraf gecodeerde combinatie van taak start en afhandel formulieren.
+    // Deze worden enkel gebruikt door taken welke handmatig worden gestart vanuit een CMMN model
+    public String formulierDefinitieId;
+
+    // Definitie van een via de user interface gebouwd formulier.
+    // Deze worden enkel gebruikt voor het afhandelen van taken welke automatische worden gestart vanuit een BPMN proces
+    public RESTFormulierDefinitie formulierDefinitie;
 
     public Map<String, List<String>> tabellen = new HashMap<>();
 

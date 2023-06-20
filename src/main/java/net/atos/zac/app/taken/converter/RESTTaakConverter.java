@@ -17,12 +17,15 @@ import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.zac.app.formulieren.converter.RESTFormulierDefinitieConverter;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
+import net.atos.zac.formulieren.FormulierDefinitieService;
+import net.atos.zac.formulieren.model.FormulierDefinitie;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -54,6 +57,11 @@ public class RESTTaakConverter {
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
+    @Inject
+    private RESTFormulierDefinitieConverter formulierDefinitieConverter;
+
+    @Inject
+    private FormulierDefinitieService formulierDefinitieService;
 
     public List<RESTTaak> convert(final List<? extends TaskInfo> tasks) {
         return tasks.stream()
@@ -87,7 +95,9 @@ public class RESTTaakConverter {
                                                               taakVariabelenService.readZaaktypeUUID(taskInfo),
                                                               taskInfo.getTaskDefinitionKey());
             } else {
-                restTaak.formulierDefinitie = taskInfo.getFormKey();
+                final FormulierDefinitie formulierDefinitie = formulierDefinitieService.readFormulierDefinitie(
+                        taskInfo.getFormKey());
+                restTaak.formulierDefinitie = formulierDefinitieConverter.convert(formulierDefinitie, true, false);
             }
         }
         return restTaak;
@@ -113,13 +123,12 @@ public class RESTTaakConverter {
 
     private void verwerkZaakafhandelParameters(final RESTTaak restTaak,
             final HumanTaskParameters humanTaskParameters) {
-        restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
+        restTaak.formulierDefinitieId = humanTaskParameters.getFormulierDefinitieID();
         humanTaskParameters.getReferentieTabellen()
-                .forEach(referentieTabel -> {
-                    restTaak.tabellen.put(referentieTabel.getVeld(),
-                                          referentieTabel.getTabel().getWaarden().stream()
-                                                  .map(ReferentieTabelWaarde::getNaam)
-                                                  .toList());
-                });
+                .forEach(referentieTabel -> restTaak.tabellen.put(
+                        referentieTabel.getVeld(),
+                        referentieTabel.getTabel().getWaarden().stream()
+                                .map(ReferentieTabelWaarde::getNaam)
+                                .toList()));
     }
 }
