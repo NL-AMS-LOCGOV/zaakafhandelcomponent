@@ -4,18 +4,14 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
-import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
-import {PlanItemType} from '../model/plan-item-type.enum';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
-import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 import {Zaak} from '../../zaken/model/zaak';
 import {MatDrawer} from '@angular/material/sidenav';
+import {FormulierDefinitieService} from '../../admin/formulier-defintie.service';
+import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
+import {HumanTaskData} from '../model/human-task-data';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -24,42 +20,46 @@ import {MatDrawer} from '@angular/material/sidenav';
 })
 export class HumanTaskDoComponent implements OnInit {
 
-    formItems: Array<AbstractFormField[]>;
-    formConfig: FormConfig;
-    private formulier: AbstractTaakFormulier;
     @Input() planItem: PlanItem;
     @Input() sideNav: MatDrawer;
     @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService) {
+    formulierDefinitie: FormulierDefinitie;
+
+    constructor(private route: ActivatedRoute,
+                private formulierDefinitieService: FormulierDefinitieService,
+                private planItemsService: PlanItemsService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder()
-        .saveText('actie.starten')
-        .cancelText('actie.annuleren')
-        .build();
-
-        if (this.planItem.type === PlanItemType.HumanTask) {
-            this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
-                                 .startForm(this.planItem, this.zaak).build();
-            if (this.formulier.disablePartialSave) {
-                this.formConfig.partialButtonText = null;
-            }
-            this.formItems = this.formulier.form;
-        } else {
-            this.formItems = [[]];
-        }
+        this.formulierDefinitieService.run(this.planItem.startformulierDefinitie).subscribe(fd => {
+            this.formulierDefinitie = fd;
+        });
     }
 
-    onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
-            this.planItemsService.doHumanTaskPlanItem(this.formulier.getHumanTaskData(formGroup)).subscribe(() => {
-                this.done.emit();
-            });
-        } else { // cancel button clicked
-            this.done.emit();
-        }
+    onFormSubmit(formState: {}): void {
+
+        this.done.emit();
+
+        // if (formState) {
+        //     this.planItemsService.doHumanTaskPlanItem(this.getHumanTaskData(formState)).subscribe(() => {
+        //         this.done.emit();
+        //     });
+        // } else { // cancel button clicked
+        //     this.done.emit();
+        // }
     }
+
+
+    getHumanTaskData(formState: {}): HumanTaskData {
+
+        const humanTaskData = new HumanTaskData();
+
+
+        return humanTaskData;
+
+    }
+
+
 }

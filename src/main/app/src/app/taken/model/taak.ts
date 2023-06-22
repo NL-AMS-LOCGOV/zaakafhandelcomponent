@@ -8,7 +8,6 @@ import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {Taakinformatie} from './taakinformatie';
 import {TaakRechten} from '../../policy/model/taak-rechten';
-import {FormulierDefinitieID} from '../../admin/model/formulier-definitie';
 import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
 
 export class Taak {
@@ -24,7 +23,6 @@ export class Taak {
     zaakIdentificatie: string;
     zaaktypeOmschrijving: string;
     status: TaakStatus;
-    formulierDefinitieId: FormulierDefinitieID;
     formulierDefinitie: FormulierDefinitie;
     tabellen: { [key: string]: string[] };
     taakdata: {};

@@ -105,28 +105,41 @@
                                                  class="flex-col" hideToggle>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        <mat-icon outlined *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">
+                                        <mat-icon outlined *ngIf="isHumanTaskParameterValid(humanTaskParameter)"
+                                                  color="primary">
                                             check_circle
                                         </mat-icon>
-                                        <mat-icon outlined *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">
+                                        <mat-icon outlined *ngIf="!isHumanTaskParameterValid(humanTaskParameter)"
+                                                  color="warn">
                                             error
                                         </mat-icon>
                                         <span [ngClass]="{'disabled': !getHumanTaskControl(humanTaskParameter, 'actief').value}">
                                             {{humanTaskParameter.planItemDefinition.naam}}
                                         </span>
                                     </mat-panel-title>
-                                    <mat-slide-toggle formControlName="actief" (click)="$event.stopPropagation()"
+                                    <mat-slide-toggle formControlName="actief"
+                                                      (click)="actiefChanged(humanTaskParameter.planItemDefinition.id); $event.stopPropagation()"
                                                       color="primary"></mat-slide-toggle>
                                 </mat-expansion-panel-header>
                                 <div class="flex-row flex-wrap">
                                     <mat-form-field class="w33 w100-md" floatLabel="always">
-                                        <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
+                                        <mat-label>{{'startformulierDefinitie' | translate}}</mat-label>
                                         <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
-                                                    (selectionChange)="formulierDefinitieChanged($event, humanTaskParameter)"
-                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')"
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'startformulierDefinitie')"
                                                     [compareWith]="compareObject">
                                             <mat-option *ngFor="let formDef of formulierDefinities"
-                                                        [value]="formDef.id">{{ 'formulierDefinitie.' + formDef.id | translate }}</mat-option>
+                                                        [value]="formDef.systeemnaam">{{formDef.naam + '(' + formDef.systeemnaam + ')'}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="flex-row flex-wrap">
+                                    <mat-form-field class="w33 w100-md" floatLabel="always">
+                                        <mat-label>{{'afhandelformulierDefinitie' | translate}}</mat-label>
+                                        <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'afhandelformulierDefinitie')"
+                                                    [compareWith]="compareObject">
+                                            <mat-option *ngFor="let formDef of formulierDefinities"
+                                                        [value]="formDef.systeemnaam">{{formDef.naam + '(' + formDef.systeemnaam + ')'}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
@@ -149,18 +162,6 @@
                                                formControlName="doorlooptijd"
                                                min="0" max="2147483647">
                                         <span matSuffix>{{'kalenderdagen' | translate}}</span>
-                                    </mat-form-field>
-                                </div>
-                                <div class="flex-row flex-wrap"
-                                     *ngFor="let veld of getVeldDefinities(humanTaskParameter.formulierDefinitieId)">
-                                    <mat-form-field class="w33 w100-md" floatLabel="always">
-                                        <mat-label>{{'referentietabel.' + veld.naam | translate}}</mat-label>
-                                        <mat-select placeholder="{{'referentietabel.-geen-' | translate}}"
-                                                    [formControlName]="'referentieTabel'+veld.naam"
-                                                    [compareWith]="compareObject">
-                                            <mat-option *ngFor="let tabel of referentieTabellen"
-                                                        [value]="tabel">{{ tabel.naam }}</mat-option>
-                                        </mat-select>
                                     </mat-form-field>
                                 </div>
                             </mat-expansion-panel>

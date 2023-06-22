@@ -4,16 +4,12 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
 import {PlanItemsService} from '../plan-items.service';
-import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {ProcessTaskData} from '../model/process-task-data';
-import {AbstractProcessFormulier} from '../../formulieren/process/abstract-process-formulier';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {ProcessFormulierenService} from '../../formulieren/process/process-formulieren.service';
 import {Zaak} from '../../zaken/model/zaak';
+import {FormulierDefinitieService} from '../../admin/formulier-defintie.service';
+import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
 
 @Component({
     selector: 'zac-process-task-do',
@@ -22,30 +18,23 @@ import {Zaak} from '../../zaken/model/zaak';
 })
 export class ProcessTaskDoComponent implements OnInit {
 
-    formItems: Array<AbstractFormField[]>;
-    formConfig: FormConfig;
-    private formulier: AbstractProcessFormulier;
+    formulierDefinitie: FormulierDefinitie;
     @Input() planItem: PlanItem;
     @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private planItemsService: PlanItemsService, private processFormulierenService: ProcessFormulierenService) {
+    constructor(private planItemsService: PlanItemsService, private formulierDefinitieService: FormulierDefinitieService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder()
-        .saveText('actie.starten')
-        .cancelText('actie.annuleren')
-        .build();
-        this.formulier = this.processFormulierenService
-                             .getFormulierBuilder(this.planItem.formulierDefinitie)
-                             .form(this.planItem, this.zaak)
-                             .build();
+        this.formulierDefinitieService.run(this.planItem.startformulierDefinitie)
+                .subscribe(fd => this.formulierDefinitie = fd);
     }
 
-    onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
-            const processTaskData: ProcessTaskData = this.formulier.getData(formGroup);
+    onFormSubmit(formState: {}): void {
+        if (formState) {
+            const processTaskData = new ProcessTaskData();
+            processTaskData.data = formState;
             processTaskData.planItemInstanceId = this.planItem.id;
             this.planItemsService.doProcessTaskPlanItem(processTaskData).subscribe(() => {
                 this.done.emit();

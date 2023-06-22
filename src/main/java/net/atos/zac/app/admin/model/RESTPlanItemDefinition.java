@@ -5,9 +5,9 @@
 
 package net.atos.zac.app.admin.model;
 
-import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
+
 import net.atos.zac.app.planitems.model.PlanItemType;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
+
 
 public class RESTPlanItemDefinition {
 
@@ -17,8 +17,6 @@ public class RESTPlanItemDefinition {
 
     public PlanItemType type;
 
-    public FormulierDefinitie defaultFormulierDefinitie;
-
     public RESTPlanItemDefinition() {
     }
 
@@ -26,6 +24,5 @@ public class RESTPlanItemDefinition {
         this.id = id;
         this.naam = naam;
         this.type = type;
-        this.defaultFormulierDefinitie = DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(id);
     }
 }

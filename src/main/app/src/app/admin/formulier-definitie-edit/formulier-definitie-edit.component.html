@@ -179,6 +179,52 @@
                     </ng-container>
                 </mat-card-content>
             </mat-card>
+
+            <mat-expansion-panel class="mail-panel" hideToggle="true" disabled="true"
+                                 [expanded]="definitieFormGroup.get('mailVersturen').value">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Mail versturen na indienen formulier
+                    </mat-panel-title>
+                    <mat-slide-toggle formControlName="mailVersturen"
+                                      (click)="$event.stopPropagation()"
+                                      color="primary"></mat-slide-toggle>
+                </mat-expansion-panel-header>
+                <div formGroupName="mailGegevens">
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'mail.afzender' | translate}}</mat-label>
+                            <input matInput formControlName="from"
+                                   placeholder="GEMEENTE, MEDEWERKER, of een emailadres"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'ontvanger' | translate}}</mat-label>
+                            <input matInput formControlName="to"
+                                   placeholder="INITIATOR of systeemnaam van een velddefinitie"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'onderwerp' | translate}}</mat-label>
+                            <input matInput formControlName="subject"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-row">
+                        <mat-form-field class="row w100" floatLabel="always">
+                            <mat-label>{{'body' | translate}}</mat-label>
+                            <textarea matInput formControlName="body"
+                                      rows="8"
+                                      [required]="definitieFormGroup.get('mailVersturen').value"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-expansion-panel>
         </form>
 
         <mat-expansion-panel>

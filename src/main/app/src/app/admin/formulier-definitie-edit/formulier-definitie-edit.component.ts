@@ -19,6 +19,7 @@ import {FormulierVeldtype} from '../model/formulieren/formulier-veld-type.enum';
 import {MatSelectChange} from '@angular/material/select';
 import {ReferentieTabelService} from '../referentie-tabel.service';
 import {TekstvlakEditDialogComponent} from './tekstvlak-edit-dialog/tekstvlak-edit-dialog.component';
+import {FormulierDefinitieMailGegevens} from '../model/formulieren/formulier-definitie-mail-gegevens';
 
 @Component({
     templateUrl: './formulier-definitie-edit.component.html',
@@ -73,6 +74,9 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
         if (!this.definitie.veldDefinities?.length) {
             this.definitie.veldDefinities = [];
         }
+        if (!this.definitie.mailGegevens) {
+            this.definitie.mailGegevens = new FormulierDefinitieMailGegevens();
+        }
 
         this.definitieFormGroup = this.formBuilder.group({
             id: [this.definitie.id],
@@ -83,7 +87,9 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
             }, [Validators.required, Validators.pattern('[a-z0-9_-]*')]],
             beschrijving: [this.definitie.beschrijving, [Validators.required, Validators.maxLength(200)]],
             uitleg: [this.definitie.uitleg],
-            veldDefinities: this.formBuilder.array(this.definitie.veldDefinities.map(veld => FormulierVeldDefinitie.asFormGroup(veld)))
+            veldDefinities: this.formBuilder.array(this.definitie.veldDefinities.map(veld => FormulierVeldDefinitie.asFormGroup(veld))),
+            mailVersturen: [this.definitie.mailVersturen],
+            mailGegevens: FormulierDefinitieMailGegevens.asFormGroup(this.definitie.mailGegevens)
         });
         (this.definitieFormGroup.get('veldDefinities') as FormArray).addValidators(Validators.required); // minimaal 1 veld definitie
         this.dataSource = new MatTableDataSource((this.definitieFormGroup.get('veldDefinities') as FormArray).controls);
@@ -128,7 +134,6 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     }
 
     onVeldtypeChange($event: MatSelectChange, veldDefinitieFormGroup: FormGroup): void {
-        console.log($event, veldDefinitieFormGroup);
         const veldtype: FormulierVeldtype = $event.value;
         if (FormulierVeldDefinitie.isMeerkeuzeVeld(veldtype)) {
             veldDefinitieFormGroup.get('meerkeuzeOpties').enable();
@@ -183,5 +188,4 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
             }
         });
     }
-
 }

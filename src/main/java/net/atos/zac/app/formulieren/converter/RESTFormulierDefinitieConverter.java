@@ -10,6 +10,7 @@ import java.util.Comparator;
 import javax.inject.Inject;
 
 import net.atos.zac.app.formulieren.model.RESTFormulierDefinitie;
+import net.atos.zac.app.formulieren.model.RESTFormulierMailGegevens;
 import net.atos.zac.formulieren.model.FormulierDefinitie;
 import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
 
@@ -34,6 +35,13 @@ public class RESTFormulierDefinitieConverter {
                     .map(vd -> veldDefinitieConverter.convert(vd, runtime))
                     .toList();
         }
+
+        restFormulierDefinitie.mailVersturen = formulierDefinitie.isMailVersturen();
+        restFormulierDefinitie.mailGegevens = new RESTFormulierMailGegevens();
+        restFormulierDefinitie.mailGegevens.to = formulierDefinitie.getMailTo();
+        restFormulierDefinitie.mailGegevens.from = formulierDefinitie.getMailFrom();
+        restFormulierDefinitie.mailGegevens.subject = formulierDefinitie.getMailSubject();
+        restFormulierDefinitie.mailGegevens.body = formulierDefinitie.getMailBody();
         return restFormulierDefinitie;
     }
 
@@ -50,6 +58,12 @@ public class RESTFormulierDefinitieConverter {
         formulierDefinitie.setVeldDefinities(restFormulierDefinitie.veldDefinities.stream()
                                                      .map(veldDefinitieConverter::convert)
                                                      .toList());
+
+        formulierDefinitie.setMailVersturen(restFormulierDefinitie.mailVersturen);
+        formulierDefinitie.setMailTo(restFormulierDefinitie.mailGegevens.to);
+        formulierDefinitie.setMailFrom(restFormulierDefinitie.mailGegevens.from);
+        formulierDefinitie.setMailSubject(restFormulierDefinitie.mailGegevens.subject);
+        formulierDefinitie.setMailBody(restFormulierDefinitie.mailGegevens.body);
         return formulierDefinitie;
     }
 }

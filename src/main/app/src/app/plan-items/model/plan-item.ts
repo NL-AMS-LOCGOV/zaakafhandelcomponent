@@ -5,7 +5,6 @@
 
 import {PlanItemType} from './plan-item-type.enum';
 import {UserEventListenerActie} from './user-event-listener-actie-enum';
-import {FormulierDefinitieID} from '../../admin/model/formulier-definitie';
 
 export class PlanItem {
     id: string;
@@ -13,7 +12,8 @@ export class PlanItem {
     actief: boolean;
     type: PlanItemType;
     groepId: string;
-    formulierDefinitie: FormulierDefinitieID;
+    startformulierDefinitie: string;
+    afhandelformulierDefinitie: string;
     tabellen: { [key: string]: string[] };
     zaakUuid: string;
     userEventListenerActie: UserEventListenerActie;

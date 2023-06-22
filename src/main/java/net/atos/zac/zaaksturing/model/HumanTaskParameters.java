@@ -7,27 +7,18 @@ package net.atos.zac.zaaksturing.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 
 @Entity
 @Table(schema = SCHEMA, name = "humantask_parameters")
@@ -48,8 +39,11 @@ public class HumanTaskParameters {
     @Column(name = "actief")
     private boolean actief;
 
-    @Column(name = "id_formulier_definition")
-    private String formulierDefinitieID;
+    @Column(name = "id_start_formulier_definition")
+    private String startformulierDefinitieID;
+
+    @Column(name = "id_afhandel_formulier_definition")
+    private String afhandelformulierDefinitieID;
 
     @NotBlank
     @Column(name = "id_planitem_definition", nullable = false)
@@ -61,9 +55,6 @@ public class HumanTaskParameters {
     @Min(value = 0)
     @Column(name = "doorlooptijd")
     private Integer doorlooptijd;
-
-    @OneToMany(mappedBy = "humantask", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<HumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -81,12 +72,20 @@ public class HumanTaskParameters {
         this.zaakafhandelParameters = zaakafhandelParameters;
     }
 
-    public String getFormulierDefinitieID() {
-        return formulierDefinitieID != null ? formulierDefinitieID : DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(planItemDefinitionID).name();
+    public String getStartformulierDefinitieID() {
+        return startformulierDefinitieID;
     }
 
-    public void setFormulierDefinitieID(final String formulierDefinitieID) {
-        this.formulierDefinitieID = formulierDefinitieID;
+    public void setStartformulierDefinitieID(final String startformulierDefinitieID) {
+        this.startformulierDefinitieID = startformulierDefinitieID;
+    }
+
+    public String getAfhandelformulierDefinitieID() {
+        return afhandelformulierDefinitieID;
+    }
+
+    public void setAfhandelformulierDefinitieID(final String afhandelformulierDefinitieID) {
+        this.afhandelformulierDefinitieID = afhandelformulierDefinitieID;
     }
 
     public String getPlanItemDefinitionID() {
@@ -111,57 +110,6 @@ public class HumanTaskParameters {
 
     public void setDoorlooptijd(final Integer doorlooptijd) {
         this.doorlooptijd = doorlooptijd;
-    }
-
-    public List<HumanTaskReferentieTabel> getReferentieTabellen() {
-        return Collections.unmodifiableList(referentieTabellen);
-    }
-
-    public void setReferentieTabellen(final List<HumanTaskReferentieTabel> referentieTabellen) {
-        this.referentieTabellen.clear();
-        referentieTabellen.forEach(this::addReferentieTabel);
-    }
-
-    private HumanTaskReferentieTabel getReferentieTabel(final String veld) {
-        return referentieTabellen.stream()
-                .filter(referentieTabel -> referentieTabel.getVeld().equals(veld))
-                .findAny()
-                .orElse(null);
-    }
-
-    private boolean addReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
-        referentieTabel.setHumantask(this);
-        return referentieTabellen.add(referentieTabel);
-    }
-
-    private boolean removeReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
-        return referentieTabellen.remove(referentieTabel);
-    }
-
-    public ReferentieTabel getTabel(final String veld) {
-        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
-        return referentieTabel == null ? null : referentieTabel.getTabel();
-    }
-
-    public ReferentieTabel putTabel(final String veld, final ReferentieTabel tabel) {
-        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
-        if (referentieTabel == null) {
-            addReferentieTabel(new HumanTaskReferentieTabel(veld, tabel));
-            return null;
-        } else {
-            final ReferentieTabel previous = referentieTabel.getTabel();
-            referentieTabel.setTabel(tabel);
-            return previous;
-        }
-    }
-
-    public ReferentieTabel removeTabel(final String veld) {
-        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
-        if (referentieTabel == null) {
-            return null;
-        }
-        removeReferentieTabel(referentieTabel);
-        return referentieTabel.getTabel();
     }
 
     public boolean isActief() {

@@ -5,6 +5,7 @@
 
 package net.atos.zac.formulieren.model;
 
+
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.time.ZonedDateTime;
@@ -24,6 +25,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+
+import org.apache.commons.lang3.BooleanUtils;
 
 @Entity
 @Table(schema = SCHEMA, name = "formulier_definitie")
@@ -57,6 +60,21 @@ public class FormulierDefinitie {
 
     @OneToMany(mappedBy = "formulierDefinitie", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<FormulierVeldDefinitie> veldDefinities;
+
+    @Column(name = "mail_from")
+    private String mailFrom;
+
+    @Column(name = "mail_to")
+    private String mailTo;
+
+    @Column(name = "mail_subject")
+    private String mailSubject;
+
+    @Column(name = "mail_body")
+    private String mailBody;
+
+    @Column(name = "mail_versturen")
+    private Boolean mailVersturen;
 
     public Long getId() {
         return id;
@@ -131,6 +149,46 @@ public class FormulierDefinitie {
     private void addVeldDefinitie(final FormulierVeldDefinitie veldDefinitie) {
         veldDefinitie.setFormulierDefinitie(this);
         veldDefinities.add(veldDefinitie);
+    }
+
+    public String getMailFrom() {
+        return mailFrom;
+    }
+
+    public void setMailFrom(final String mailFrom) {
+        this.mailFrom = mailFrom;
+    }
+
+    public String getMailTo() {
+        return mailTo;
+    }
+
+    public void setMailTo(final String mailTo) {
+        this.mailTo = mailTo;
+    }
+
+    public String getMailSubject() {
+        return mailSubject;
+    }
+
+    public void setMailSubject(final String mailSubject) {
+        this.mailSubject = mailSubject;
+    }
+
+    public String getMailBody() {
+        return mailBody;
+    }
+
+    public void setMailBody(final String mailBody) {
+        this.mailBody = mailBody;
+    }
+
+    public boolean isMailVersturen() {
+        return BooleanUtils.isTrue(mailVersturen);
+    }
+
+    public void setMailVersturen(final boolean mailVersturen) {
+        this.mailVersturen = mailVersturen;
     }
 }
 

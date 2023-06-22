@@ -24,8 +24,6 @@ import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.UserEventListenerActie;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
-import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 /**
@@ -73,11 +71,8 @@ public class RESTPlanItemConverter {
         zaakafhandelParameters.findHumanTaskParameter(humanTaskPlanItem.getPlanItemDefinitionId())
                 .ifPresent(humanTaskParameters -> {
                     restPlanItem.actief = humanTaskParameters.isActief();
-                    restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
-                    humanTaskParameters.getReferentieTabellen().forEach(
-                            rt -> restPlanItem.tabellen.put(rt.getVeld(), rt.getTabel().getWaarden().stream()
-                                    .map(ReferentieTabelWaarde::getNaam)
-                                    .toList()));
+                    restPlanItem.startformulierDefinitie = humanTaskParameters.getStartformulierDefinitieID();
+                    restPlanItem.afhandelformulierDefinitie = humanTaskParameters.getAfhandelformulierDefinitieID();
                     restPlanItem.groepId = humanTaskParameters.getGroepID();
                     if (humanTaskParameters.getDoorlooptijd() != null) {
                         restPlanItem.fataleDatum = LocalDate.now().plusDays(humanTaskParameters.getDoorlooptijd());

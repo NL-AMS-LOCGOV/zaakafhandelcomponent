@@ -27,11 +27,9 @@ import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-param
 import {AdminComponent} from '../admin/admin.component';
 import {Resultaattype} from '../../zaken/model/resultaattype';
 import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
-import {ReferentieTabel} from '../model/referentie-tabel';
 import {ReferentieTabelService} from '../referentie-tabel.service';
-import {FormulierDefinitie} from '../model/formulier-definitie';
-import {HumanTaskReferentieTabel} from '../model/human-task-referentie-tabel';
-import {FormulierVeldDefinitie} from '../model/formulier-veld-definitie';
+import {FormulierDefinitie} from '../model/formulieren/formulier-definitie';
+
 import {MailtemplateKoppeling} from '../model/mailtemplate-koppeling';
 import {MailtemplateKoppelingMail, MailtemplateKoppelingMailUtil} from '../model/mailtemplate-koppeling-mail';
 import {Mailtemplate} from '../model/mailtemplate';
@@ -73,7 +71,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
     groepen: Group[];
     medewerkers: User[];
     resultaattypes: Resultaattype[];
-    referentieTabellen: ReferentieTabel[];
     formulierDefinities: FormulierDefinitie[];
     zaakbeeindigRedenen: ZaakbeeindigReden[];
     mailtemplates: Mailtemplate[];
@@ -96,7 +93,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
             forkJoin([
                 adminService.listCaseDefinitions(),
                 adminService.listFormulierDefinities(),
-                referentieTabelService.listReferentieTabellen(),
                 referentieTabelService.listDomeinen(),
                 referentieTabelService.listAfzenders(),
                 adminService.listReplyTos(),
@@ -105,20 +101,19 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
                 adminService.listZaakbeeindigRedenen(),
                 mailtemplateBeheerService.listKoppelbareMailtemplates()
             ]).subscribe(
-                ([caseDefinitions, formulierDefinities, referentieTabellen, domeinen, afzenders, replyTos, groepen,
-                     medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
-                    this.caseDefinitions = caseDefinitions;
-                    this.formulierDefinities = formulierDefinities;
-                    this.referentieTabellen = referentieTabellen;
-                    this.domeinen = domeinen;
-                    this.groepen = groepen;
-                    this.medewerkers = medewerkers;
-                    this.zaakbeeindigRedenen = zaakbeeindigRedenen;
-                    this.mailtemplates = mailtemplates;
-                    this.zaakAfzenders = afzenders;
-                    this.replyTos = replyTos;
-                    this.createForm();
-                });
+                    ([caseDefinitions, formulierDefinities, domeinen, afzenders, replyTos, groepen,
+                         medewerkers, zaakbeeindigRedenen, mailtemplates]) => {
+                        this.caseDefinitions = caseDefinitions;
+                        this.formulierDefinities = formulierDefinities;
+                        this.domeinen = domeinen;
+                        this.groepen = groepen;
+                        this.medewerkers = medewerkers;
+                        this.zaakbeeindigRedenen = zaakbeeindigRedenen;
+                        this.mailtemplates = mailtemplates;
+                        this.zaakAfzenders = afzenders;
+                        this.replyTos = replyTos;
+                        this.createForm();
+                    });
         });
     }
 
@@ -144,8 +139,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
                 const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
                 humanTaskParameter.planItemDefinition = humanTaskDefinition;
                 humanTaskParameter.defaultGroepId = this.parameters.defaultGroepId;
-                humanTaskParameter.formulierDefinitieId = humanTaskDefinition.defaultFormulierDefinitie;
-                humanTaskParameter.referentieTabellen = [];
                 humanTaskParameter.actief = true;
                 this.humanTaskParameters.push(humanTaskParameter);
             });
@@ -207,27 +200,28 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
     }
 
     private getHumanTaskFormGroup(humanTaskParameters: HumanTaskParameter): FormGroup {
-        const humanTaskFormGroup: FormGroup = this.formBuilder.group({
-            formulierDefinitie: [humanTaskParameters.formulierDefinitieId, [Validators.required]],
+        return this.formBuilder.group({
+            startformulierDefinitie: [humanTaskParameters.startformulierDefinitieId, humanTaskParameters.actief ? [Validators.required] : []],
+            afhandelformulierDefinitie: [humanTaskParameters.afhandelformulierDefinitieId, humanTaskParameters.actief ? [Validators.required] : []],
             defaultGroep: [humanTaskParameters.defaultGroepId],
             doorlooptijd: [humanTaskParameters.doorlooptijd, [Validators.min(0)]],
             actief: [humanTaskParameters.actief]
         });
-
-        if (humanTaskParameters.formulierDefinitieId) {
-            for (const veld of this.getVeldDefinities(humanTaskParameters.formulierDefinitieId)) {
-                humanTaskFormGroup.addControl('referentieTabel' + veld.naam,
-                    this.formBuilder.control(this.getReferentieTabel(humanTaskParameters, veld), Validators.required));
-            }
-        }
-        return humanTaskFormGroup;
     }
 
-    private getReferentieTabel(humanTaskParameters: HumanTaskParameter, veld: FormulierVeldDefinitie): ReferentieTabel {
-        const humanTaskReferentieTabel: HumanTaskReferentieTabel = humanTaskParameters.referentieTabellen.find(
-            r => r.veld = veld.naam);
-        return humanTaskReferentieTabel != null ? humanTaskReferentieTabel.tabel : this.referentieTabellen.find(
-            r => r.code = veld.naam);
+    actiefChanged(formGroupID: string) {
+        const formGroup = this.humanTasksFormGroup.get(formGroupID);
+        const actief: boolean = formGroup.get('actief').value;
+        if (actief) {
+            formGroup.get('startformulierDefinitie').setValidators([Validators.required]);
+            formGroup.get('afhandelformulierDefinitie').setValidators([Validators.required]);
+        } else {
+            formGroup.get('startformulierDefinitie').setValidators(null);
+            formGroup.get('afhandelformulierDefinitie').setValidators(null);
+        }
+        formGroup.get('startformulierDefinitie').updateValueAndValidity();
+        formGroup.get('afhandelformulierDefinitie').updateValueAndValidity();
+
     }
 
     private createUserEventListenerForm() {
@@ -413,22 +407,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
         this.loading = true;
         Object.assign(this.parameters, this.algemeenFormGroup.value);
         this.humanTaskParameters.forEach(param => {
-            param.formulierDefinitieId = this.getHumanTaskControl(param, 'formulierDefinitie').value;
+            param.startformulierDefinitieId = this.getHumanTaskControl(param, 'startformulierDefinitie').value;
+            param.afhandelformulierDefinitieId = this.getHumanTaskControl(param, 'afhandelformulierDefinitie').value;
             param.defaultGroepId = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.actief = this.getHumanTaskControl(param, 'actief').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
-            const bestaandeHumanTaskParameter: HumanTaskParameter = this.parameters.humanTaskParameters.find(
-                htp => htp.planItemDefinition.id === param.planItemDefinition.id);
-            const bestaandeReferentietabellen = bestaandeHumanTaskParameter ? bestaandeHumanTaskParameter.referentieTabellen : [];
-            param.referentieTabellen = [];
-            this.getVeldDefinities(param.formulierDefinitieId).forEach(value => {
-                const bestaandeHumanTaskReferentieTabel: HumanTaskReferentieTabel = bestaandeReferentietabellen.find(
-                    o => o.veld === value.naam);
-                const tabel = bestaandeHumanTaskReferentieTabel != null ? bestaandeHumanTaskReferentieTabel : new HumanTaskReferentieTabel();
-                tabel.veld = value.naam;
-                tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
-                param.referentieTabellen.push(tabel);
-            });
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;
         this.userEventListenerParameters.forEach(param => {
@@ -497,20 +480,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit, On
             return object1 === object2;
         }
         return false;
-    }
-
-    formulierDefinitieChanged($event: MatSelectChange, humanTaskParameter: HumanTaskParameter): void {
-        humanTaskParameter.formulierDefinitieId = $event.value;
-        this.humanTasksFormGroup.setControl(humanTaskParameter.planItemDefinition.id,
-            this.getHumanTaskFormGroup(humanTaskParameter));
-    }
-
-    getVeldDefinities(formulierDefinitieId: string): FormulierVeldDefinitie[] {
-        if (formulierDefinitieId) {
-            return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
-        } else {
-            return [];
-        }
     }
 
     getBeschikbareMailtemplates(mailtemplate: MailtemplateKoppelingMail): any {

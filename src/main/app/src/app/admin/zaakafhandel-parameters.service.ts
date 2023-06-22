@@ -12,8 +12,8 @@ import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 import {CaseDefinition} from './model/case-definition';
 import {ZaakbeeindigReden} from './model/zaakbeeindig-reden';
 import {Resultaattype} from '../zaken/model/resultaattype';
-import {FormulierDefinitie} from './model/formulier-definitie';
 import {ReplyTo} from './model/replyto';
+import {FormulierDefinitie} from './model/formulieren/formulier-definitie';
 
 @Injectable({
     providedIn: 'root'
