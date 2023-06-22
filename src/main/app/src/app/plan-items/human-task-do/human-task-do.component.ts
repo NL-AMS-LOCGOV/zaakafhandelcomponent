@@ -40,26 +40,26 @@ export class HumanTaskDoComponent implements OnInit {
 
     onFormSubmit(formState: {}): void {
 
-        this.done.emit();
-
-        // if (formState) {
-        //     this.planItemsService.doHumanTaskPlanItem(this.getHumanTaskData(formState)).subscribe(() => {
-        //         this.done.emit();
-        //     });
-        // } else { // cancel button clicked
-        //     this.done.emit();
-        // }
+        if (formState) {
+            this.planItemsService.doHumanTaskPlanItem(this.getHumanTaskData(formState)).subscribe(() => {
+                this.done.emit();
+            });
+        } else { // cancel button clicked
+            this.done.emit();
+        }
     }
 
 
     getHumanTaskData(formState: {}): HumanTaskData {
-
         const humanTaskData = new HumanTaskData();
-
-
+        humanTaskData.planItemInstanceId = this.planItem.id;
+        humanTaskData.formulierDefinitie = this.planItem.startformulierDefinitie;
+        Object.entries(formState).map(([key, value]) => {
+            if (typeof formState[key] === 'boolean') {
+                formState[key] = `${formState[key]}`; // convert to string, boolean not allowed in string map (yasson/jsonb exception)
+            }
+        });
+        humanTaskData.data = formState;
         return humanTaskData;
-
     }
-
-
 }
