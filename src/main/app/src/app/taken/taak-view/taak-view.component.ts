@@ -135,8 +135,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.zakenService.readZaak(this.taak.zaakUuid).subscribe(zaak => {
                 this.zaak = zaak;
                 this.initialized = true;
-
-
             });
         }
         this.createTaakForm(taak);

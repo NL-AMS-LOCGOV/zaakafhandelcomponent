@@ -88,7 +88,7 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
             beschrijving: [this.definitie.beschrijving, [Validators.required, Validators.maxLength(200)]],
             uitleg: [this.definitie.uitleg],
             veldDefinities: this.formBuilder.array(this.definitie.veldDefinities.map(veld => FormulierVeldDefinitie.asFormGroup(veld))),
-            mailVersturen: [this.definitie.mailVersturen],
+            mailVersturen: [!!this.definitie.mailVersturen],
             mailGegevens: FormulierDefinitieMailGegevens.asFormGroup(this.definitie.mailGegevens)
         });
         (this.definitieFormGroup.get('veldDefinities') as FormArray).addValidators(Validators.required); // minimaal 1 veld definitie

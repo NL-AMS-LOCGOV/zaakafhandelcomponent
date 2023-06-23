@@ -25,6 +25,7 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.TakenService;
 import net.atos.zac.formulieren.FormulierDefinitieService;
+import net.atos.zac.formulieren.FormulierRuntimeHelper;
 import net.atos.zac.formulieren.model.FormulierDefinitie;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
@@ -100,7 +101,9 @@ public class RESTTaakConverter {
             if (formulierSysteemnaam != null) {
                 final FormulierDefinitie formulierDefinitie = formulierDefinitieService.readFormulierDefinitie(
                         formulierSysteemnaam);
-                restTaak.formulierDefinitie = formulierDefinitieConverter.convert(formulierDefinitie, true, false);
+                FormulierRuntimeHelper.resolveDefaultwaarden(formulierDefinitie, restTaak.taakdata);
+                FormulierRuntimeHelper.resolveDefaultwaarden(formulierDefinitie, restTaak);
+                restTaak.formulierDefinitie = formulierDefinitieConverter.convert(formulierDefinitie, true, true);
             }
         }
         return restTaak;

@@ -120,6 +120,12 @@
             </zac-documenten-formulier-veld>
         </div>
 
+        <div *ngSwitchCase="FormulierVeldtype.READONLY" class="readonly-form-field">
+            <label [ngClass]="{'required': veldDefinitie.verplicht}">{{veldDefinitie.label}}</label>
+            <div [innerHTML]="veldDefinitie.defaultWaarde | datum | empty" class="value"></div>
+            <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
+        </div>
+
         <div *ngSwitchDefault>
             [ {{veldDefinitie.veldtype}} nog niet beschikbaar ]
         </div>

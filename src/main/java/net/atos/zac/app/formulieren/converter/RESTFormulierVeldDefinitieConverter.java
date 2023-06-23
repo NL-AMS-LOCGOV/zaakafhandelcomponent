@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.formulieren.converter;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.atos.zac.app.formulieren.model.RESTFormulierVeldDefinitie;
 import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
+import net.atos.zac.formulieren.model.FormulierVeldtype;
 import net.atos.zac.zaaksturing.ReferentieTabelService;
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
 import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
@@ -52,6 +55,22 @@ public class RESTFormulierVeldDefinitieConverter {
                         .sorted(Comparator.comparingInt(ReferentieTabelWaarde::getVolgorde))
                         .map(ReferentieTabelWaarde::getNaam)
                         .collect(Collectors.joining(SEPARATOR));
+            }
+
+            if (veldDefinitie.getVeldtype() == FormulierVeldtype.DATUM) {
+                String defaultWaarde = veldDefinitie.getDefaultWaarde();
+                if (StringUtils.isNotBlank(defaultWaarde)) {
+                    if (defaultWaarde.matches("^[+-]\\d{1,4}$")) {
+                        int dagen = Integer.parseInt(StringUtils.substring(defaultWaarde, 1));
+                        if (defaultWaarde.startsWith("+")) {
+                            restVeldDefinitie.defaultWaarde = LocalDate.now().plusDays(dagen)
+                                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                        } else {
+                            restVeldDefinitie.defaultWaarde = LocalDate.now().minusDays(dagen)
+                                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                        }
+                    }
+                }
             }
         }
         return restVeldDefinitie;
