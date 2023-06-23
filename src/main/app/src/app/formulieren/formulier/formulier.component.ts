@@ -57,7 +57,24 @@ export class FormulierComponent implements OnInit {
             if (vd.veldtype === FormulierVeldtype.CHECKBOXES) {
                 this.checked.set(vd.systeemnaam, new SelectionModel<string>(true));
             }
-            this.formGroup.addControl(vd.systeemnaam, FormulierVeldDefinitie.asControl(vd));
+
+            if (FormulierVeldDefinitie.isOpschorten(vd)) {
+                const control = FormulierVeldDefinitie.asControl(vd);
+                if (!this.isOpgeschortenMogelijk()) {
+                    control.setValue(false);
+                    control.disable();
+                }
+                this.formGroup.addControl(vd.systeemnaam, control);
+            } else if (FormulierVeldDefinitie.isHervatten(vd)) {
+                const control = FormulierVeldDefinitie.asControl(vd);
+                if (!this.isHervatenMogelijk()) {
+                    control.setValue(false);
+                    control.disable();
+                }
+                this.formGroup.addControl(vd.systeemnaam, control);
+            } else {
+                this.formGroup.addControl(vd.systeemnaam, FormulierVeldDefinitie.asControl(vd));
+            }
         });
     }
 
@@ -85,6 +102,14 @@ export class FormulierComponent implements OnInit {
     opslaan() {
         this.bezigMetOpslaan = true;
         this.submit.emit(this.formGroup.value);
+    }
+
+    isOpgeschortenMogelijk() {
+        return !this.zaak.isOpgeschort && this.zaak.isOpen && !this.zaak.isHeropend;
+    }
+
+    isHervatenMogelijk() {
+        return this.zaak.isOpgeschort;
     }
 
     cancel() {

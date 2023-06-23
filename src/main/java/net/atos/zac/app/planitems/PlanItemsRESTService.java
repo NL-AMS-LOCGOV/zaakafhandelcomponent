@@ -237,11 +237,11 @@ public class PlanItemsRESTService {
             case "INITIATOR" -> null; // deze moet nog
             case default -> data.substitute(fd.getMailTo());
         };
-        final String body = data.substitute(fd.getMailBody());
-        final String subject = data.substitute(fd.getMailSubject());
-        return new MailGegevens(new MailAdres(afzender, gemeente), new MailAdres(ontvanger), subject, body);
+        final String body = data.substituteText(fd.getMailBody());
+        final String subject = data.substituteText(fd.getMailSubject());
+        return new MailGegevens(new MailAdres(afzender, gemeente), new MailAdres(ontvanger), null, subject, body,
+                                data.mailBijlagen, true);
     }
-
 
     @POST
     @Path("doProcessTaskPlanItem")

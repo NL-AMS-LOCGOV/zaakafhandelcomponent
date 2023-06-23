@@ -21,6 +21,8 @@ public class RESTFormData {
 
     private static final String TAAK_TOEKENNEN_MEDEWERKER = "taak-toekennen-behandelaar";
 
+    private static final String MAIL_BIJLAGEN = "mail-bijlagen";
+
     private static final String TOELICHTING = "toelichting";
 
     public boolean zaakOpschorten;
@@ -35,9 +37,12 @@ public class RESTFormData {
 
     public String toelichting;
 
+    public String mailBijlagen;
+
     public Map<String, String> dataElementen;
 
     public Map<String, String> formState;
+
 
     public RESTFormData(final Map<String, String> dataElementen) {
         this.formState = new HashMap<>(dataElementen);
@@ -69,14 +74,25 @@ public class RESTFormData {
             this.taakToekennenMedewerker = dataElementen.get(TAAK_TOEKENNEN_MEDEWERKER);
             dataElementen.remove(TAAK_TOEKENNEN_MEDEWERKER);
         }
+        if (dataElementen.containsKey(MAIL_BIJLAGEN)) {
+            this.mailBijlagen = dataElementen.get(MAIL_BIJLAGEN);
+            dataElementen.remove(MAIL_BIJLAGEN);
+        }
         this.dataElementen = dataElementen;
     }
 
 
-    public String substitute(String tekst) {
+    public String substituteText(String tekst) {
         for (final Map.Entry<String, String> entry : this.formState.entrySet()) {
             final String search = "[%s]".formatted(entry.getKey());
             tekst = StringUtils.replace(tekst, search, entry.getValue());
+        }
+        return tekst;
+    }
+
+    public String substitute(String tekst) {
+        for (final Map.Entry<String, String> entry : this.formState.entrySet()) {
+            tekst = StringUtils.replace(tekst, entry.getKey(), entry.getValue());
         }
         return tekst;
     }

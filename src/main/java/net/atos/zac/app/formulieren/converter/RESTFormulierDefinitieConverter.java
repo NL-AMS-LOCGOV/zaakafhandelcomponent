@@ -35,7 +35,6 @@ public class RESTFormulierDefinitieConverter {
                     .map(vd -> veldDefinitieConverter.convert(vd, runtime))
                     .toList();
         }
-
         restFormulierDefinitie.mailVersturen = formulierDefinitie.isMailVersturen();
         restFormulierDefinitie.mailGegevens = new RESTFormulierMailGegevens();
         restFormulierDefinitie.mailGegevens.to = formulierDefinitie.getMailTo();
