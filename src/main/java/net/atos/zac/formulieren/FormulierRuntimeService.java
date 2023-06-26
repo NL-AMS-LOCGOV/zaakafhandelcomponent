@@ -10,28 +10,41 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.zac.app.formulieren.model.RESTFormData;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectUpdateService;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.formulieren.model.FormulierDefinitie;
 import net.atos.zac.formulieren.model.FormulierVeldDefinitie;
 import net.atos.zac.formulieren.model.FormulierVeldtype;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Bronnen;
+import net.atos.zac.mail.model.MailAdres;
+import net.atos.zac.mailtemplates.model.MailGegevens;
 import net.atos.zac.zaaksturing.ReferentieTabelService;
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
 import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
@@ -45,24 +58,40 @@ public class FormulierRuntimeService {
     private IdentityService identityService;
 
     @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectUpdateService enkelvoudigInformatieObjectUpdateService;
+
+    @Inject
     private ReferentieTabelService referentieTabelService;
+
+    @Inject
+    private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private ConfiguratieService configuratieService;
+
+    @Inject
+    private MailService mailService;
 
     private static final String SEPARATOR = ";";
 
     public static final DateTimeFormatter DATUM_FORMAAT = DateTimeFormatter.ofPattern("dd-MM-yyy");
 
     public void resolveDefaultwaarden(final FormulierDefinitie formulierDefinitie) {
-        formulierDefinitie.getVeldDefinities().forEach(this::setDefaults);
+        formulierDefinitie.getVeldDefinities().forEach(this::resolveDefaultVeldWaardenZonderContext);
     }
 
+    /**
+     * @param dataElementen set ingevulde waarden van een voorgaande formulieren
+     */
     public void resolveDefaultwaarden(FormulierDefinitie formulierDefinitie, Map<String, String> dataElementen) {
-        formulierDefinitie.getVeldDefinities().forEach(veldDefinitie -> {
-            dataElementen.forEach((k, v) -> {
-                if (k.equals(veldDefinitie.getDefaultWaarde())) {
-                    veldDefinitie.setDefaultWaarde(v);
-                }
-            });
-        });
+        formulierDefinitie.getVeldDefinities().forEach(veldDefinitie -> dataElementen.forEach((k, v) -> {
+            if (k.equals(veldDefinitie.getDefaultWaarde())) {
+                veldDefinitie.setDefaultWaarde(v);
+            }
+        }));
     }
 
     public void resolveDefaultwaarden(final FormulierDefinitie formulierDefinitie, RESTTaak taak) {
@@ -144,6 +173,63 @@ public class FormulierRuntimeService {
         });
     }
 
+    public void verstuurMail(final FormulierDefinitie formulierDefinitie, final RESTFormData data, final Zaak zaak) {
+        if (formulierDefinitie.isMailVersturen()) {
+
+            final String gemeente = configuratieService.readGemeenteNaam();
+            final String afzender = switch (formulierDefinitie.getMailFrom()) {
+                case "GEMEENTE" -> configuratieService.readGemeenteMail();
+                case "MEDEWERKER" -> loggedInUserInstance.get().getEmail();
+                case default -> data.substitute(formulierDefinitie.getMailFrom());
+            };
+            final String ontvanger = switch (formulierDefinitie.getMailTo()) {
+                case "INITIATOR" -> null; // deze moet nog
+                case default -> data.substitute(formulierDefinitie.getMailTo());
+            };
+            final String body = data.substituteText(formulierDefinitie.getMailBody());
+            final String subject = data.substituteText(formulierDefinitie.getMailSubject());
+            MailGegevens mailGegevens = new MailGegevens(
+                    new MailAdres(afzender, gemeente),
+                    new MailAdres(ontvanger),
+                    null, subject, body, data.mailBijlagen, true);
+
+
+            final String bodyZoalsVerzonden = mailService.sendMail(mailGegevens, Bronnen.fromZaak(zaak));
+            data.formState.put("mail-bericht", bodyZoalsVerzonden);
+            data.formState.put("mail-onderwerp", mailGegevens.getSubject());
+            data.formState.put("mail-afzender", mailGegevens.getFrom().getEmail());
+            data.formState.put("mail-ontvanger", mailGegevens.getTo().getEmail());
+        }
+    }
+
+
+    public void versturenDocumenten(RESTFormData formData) {
+        if (formData.documentenVerzenden != null) {
+            Arrays.stream(formData.documentenVerzenden.split(SEPARATOR))
+                    .map(UUID::fromString)
+                    .map(drcClientService::readEnkelvoudigInformatieobject)
+                    .forEach(
+                            informatieobject -> enkelvoudigInformatieObjectUpdateService.verzendEnkelvoudigInformatieObject(
+                                    informatieobject.getUUID(), formData.documentenVerzendenDatum,
+                                    formData.toelichting));
+
+        }
+    }
+
+    public void ondertekenDocumenten(RESTFormData formData) {
+        if (formData.documentenOndertekenen != null) {
+            Arrays.stream(formData.documentenVerzenden.split(SEPARATOR))
+                    .map(UUID::fromString)
+                    .map(drcClientService::readEnkelvoudigInformatieobject)
+                    .filter(enkelvoudigInformatieobject -> enkelvoudigInformatieobject.getOndertekening() != null)
+                    .forEach(enkelvoudigInformatieobject ->
+                                     enkelvoudigInformatieObjectUpdateService.ondertekenEnkelvoudigInformatieObject(
+                                             enkelvoudigInformatieobject.getUUID()));
+
+        }
+    }
+
+
     private User findBehandelaar(final Zaak zaak) {
         return zgwApiService.findBehandelaarForZaak(zaak)
                 .map(behandelaar -> identityService.readUser(
@@ -158,7 +244,7 @@ public class FormulierRuntimeService {
                 .orElse(null);
     }
 
-    public String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
+    private String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
         return identityLinks.stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                 .findAny()
@@ -166,7 +252,7 @@ public class FormulierRuntimeService {
                 .orElse(null);
     }
 
-    private void setDefaults(final FormulierVeldDefinitie veldDefinitie) {
+    private void resolveDefaultVeldWaardenZonderContext(final FormulierVeldDefinitie veldDefinitie) {
         final String referentietabelCode = StringUtils.substringAfter(veldDefinitie.getMeerkeuzeOpties(), "REF:");
         if (StringUtils.isNotBlank(referentietabelCode)) {
             final ReferentieTabel referentieTabel = referentieTabelService.readReferentieTabel(referentietabelCode);
@@ -176,6 +262,14 @@ public class FormulierRuntimeService {
                                                              ReferentieTabelWaarde::getVolgorde))
                                                      .map(ReferentieTabelWaarde::getNaam)
                                                      .collect(Collectors.joining(SEPARATOR)));
+        }
+
+        if (veldDefinitie.getVeldtype() == FormulierVeldtype.CHECKBOX) {
+            String defaultWaarde = veldDefinitie.getDefaultWaarde();
+            if (StringUtils.equalsIgnoreCase("ja", defaultWaarde) ||
+                    StringUtils.equalsIgnoreCase("true", defaultWaarde) || StringUtils.equals("1", defaultWaarde)) {
+                veldDefinitie.setDefaultWaarde(BooleanUtils.TRUE);
+            }
         }
 
         if (veldDefinitie.getVeldtype() == FormulierVeldtype.DATUM) {
@@ -194,6 +288,5 @@ public class FormulierRuntimeService {
             }
         }
     }
-
 
 }

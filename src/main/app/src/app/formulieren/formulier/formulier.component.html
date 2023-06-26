@@ -131,7 +131,7 @@
         </div>
     </ng-container>
 
-    <div class="flex-row justify-start">
+    <div class="flex-row justify-start" *ngIf="!readonly">
         <button mat-raised-button color="primary"
                 [disabled]="formGroup.invalid||bezigMetOpslaan"
                 id="opslaan_button"

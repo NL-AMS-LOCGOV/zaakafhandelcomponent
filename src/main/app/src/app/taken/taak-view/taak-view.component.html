@@ -19,6 +19,7 @@
                     <div class="form">
                         <zac-formulier *ngIf="formulierDefinitie"
                                        [definitie]="formulierDefinitie"
+                                       [readonly]="isReadonly()"
                                        (submit)="onFormSubmit($event)"
                                        [zaak]="zaak"></zac-formulier>
                         <mat-progress-bar *ngIf="!formulierDefinitie" mode="query"></mat-progress-bar>

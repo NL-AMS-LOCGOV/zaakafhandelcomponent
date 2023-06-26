@@ -23,6 +23,7 @@ import {FormulierVeldDefinitie} from '../../admin/model/formulieren/formulier-ve
 export class FormulierComponent implements OnInit {
 
     @Input() definitie: FormulierDefinitie;
+    @Input() readonly: boolean;
     @Input() zaak: Zaak;
     @Output() submit = new EventEmitter<{}>();
 
@@ -48,6 +49,9 @@ export class FormulierComponent implements OnInit {
             this.groepen = g;
         });
         this.createForm();
+        if (this.readonly) {
+            this.formGroup.disable();
+        }
     }
 
     createForm() {

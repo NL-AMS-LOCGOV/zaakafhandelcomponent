@@ -147,6 +147,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
+    isReadonly() {
+        return this.taak.status === TaakStatus.Afgerond || !this.taak.rechten.wijzigen;
+    }
+
     private setEditableFormFields(): void {
         this.editFormFields.set('medewerker-groep',
                 new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar)
@@ -211,9 +215,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     onFormSubmit(formState: {}): void {
         if (formState) {
             this.taak.taakdata = formState;
-            if (formState.hasOwnProperty('toelichting')) {
-                this.taak.toelichting = formState['toelichting'];
-            }
             this.websocketService.suspendListener(this.taakListener);
             this.takenService.complete(this.taak).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.afgerond');

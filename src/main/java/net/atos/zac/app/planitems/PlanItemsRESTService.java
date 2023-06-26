@@ -32,22 +32,19 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.zac.app.formulieren.model.RESTFormData;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTProcessTaskData;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CMMNService;
 import net.atos.zac.flowable.TaakVariabelenService;
 import net.atos.zac.flowable.ZaakVariabelenService;
 import net.atos.zac.formulieren.FormulierDefinitieService;
+import net.atos.zac.formulieren.FormulierRuntimeService;
 import net.atos.zac.formulieren.model.FormulierDefinitie;
-import net.atos.zac.mail.MailService;
-import net.atos.zac.mail.model.Bronnen;
-import net.atos.zac.mail.model.MailAdres;
-import net.atos.zac.mailtemplates.model.MailGegevens;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.helper.OpschortenZaakHelper;
 import net.atos.zac.util.DateTimeConverterUtil;
@@ -96,10 +93,7 @@ public class PlanItemsRESTService {
     private IndexeerService indexeerService;
 
     @Inject
-    private MailService mailService;
-
-    @Inject
-    private ConfiguratieService configuratieService;
+    private FormulierRuntimeService runtimeService;
 
     @Inject
     private FormulierDefinitieService formulierDefinitieService;
@@ -198,14 +192,9 @@ public class PlanItemsRESTService {
         zaakVariablen.putAll(formData.dataElementen);
         zaakVariabelenService.setZaakdata(zaakUUID, zaakVariablen);
 
-        if (formulierDefinitie.isMailVersturen()) {
-            MailGegevens mailGegevens = getMailGegevens(formulierDefinitie, formData);
-            final String body = mailService.sendMail(mailGegevens, Bronnen.fromZaak(zaak));
-            formData.formState.put("mail-bericht", body);
-            formData.formState.put("mail-onderwerp", mailGegevens.getSubject());
-            formData.formState.put("mail-afzender", mailGegevens.getFrom().getEmail());
-            formData.formState.put("mail-ontvanger", mailGegevens.getTo().getEmail());
-        }
+        runtimeService.versturenDocumenten(formData);
+        runtimeService.ondertekenDocumenten(formData);
+        runtimeService.verstuurMail(formulierDefinitie, formData, zaak);
 
         final String groepID;
         if (formData.taakToekennenGroep != null) {
@@ -228,23 +217,6 @@ public class PlanItemsRESTService {
                                            DateTimeConverterUtil.convertToDate(fataleDatum),
                                            toelichting, formData.formState, zaakUUID);
         indexeerService.addOrUpdateZaak(zaakUUID, false);
-    }
-
-    public MailGegevens getMailGegevens(final FormulierDefinitie fd, final RESTFormData data) {
-        final String gemeente = configuratieService.readGemeenteNaam();
-        final String afzender = switch (fd.getMailFrom()) {
-            case "GEMEENTE" -> configuratieService.readGemeenteMail();
-            case "MEDEWERKER" -> loggedInUserInstance.get().getEmail();
-            case default -> data.substitute(fd.getMailFrom());
-        };
-        final String ontvanger = switch (fd.getMailTo()) {
-            case "INITIATOR" -> null; // deze moet nog
-            case default -> data.substitute(fd.getMailTo());
-        };
-        final String body = data.substituteText(fd.getMailBody());
-        final String subject = data.substituteText(fd.getMailSubject());
-        return new MailGegevens(new MailAdres(afzender, gemeente), new MailAdres(ontvanger), null, subject, body,
-                                data.mailBijlagen, true);
     }
 
     @POST

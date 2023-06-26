@@ -1,4 +1,4 @@
-package net.atos.zac.app.planitems;
+package net.atos.zac.app.formulieren.model;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -21,6 +21,12 @@ public class RESTFormData {
 
     private static final String TAAK_TOEKENNEN_MEDEWERKER = "taak-toekennen-behandelaar";
 
+    private static final String DOCUMENTEN_VERZENDEN = "documenten-verzenden";
+
+    private static final String DOCUMENTEN_VERZENDEN_DATUM = "documenten-verzenden-datum";
+
+    private static final String DOCUMENTEN_ONDERTEKENEN = "documenten-onderteken";
+
     private static final String MAIL_BIJLAGEN = "mail-bijlagen";
 
     private static final String TOELICHTING = "toelichting";
@@ -38,6 +44,12 @@ public class RESTFormData {
     public String toelichting;
 
     public String mailBijlagen;
+
+    public LocalDate documentenVerzendenDatum;
+
+    public String documentenVerzenden;
+
+    public String documentenOndertekenen;
 
     public Map<String, String> dataElementen;
 
@@ -62,6 +74,8 @@ public class RESTFormData {
             this.taakFataleDatum = new LocalDateAdapter().adaptFromJson(dataElementen.get(TAAK_FATALE_DATUM));
             dataElementen.remove(TAAK_FATALE_DATUM);
         }
+
+
         if (dataElementen.containsKey(TOELICHTING)) {
             this.toelichting = dataElementen.get(TOELICHTING);
             dataElementen.remove(TOELICHTING);
@@ -78,6 +92,24 @@ public class RESTFormData {
             this.mailBijlagen = dataElementen.get(MAIL_BIJLAGEN);
             dataElementen.remove(MAIL_BIJLAGEN);
         }
+
+        if (dataElementen.containsKey(DOCUMENTEN_VERZENDEN)) {
+            this.mailBijlagen = dataElementen.get(DOCUMENTEN_VERZENDEN);
+            dataElementen.remove(DOCUMENTEN_VERZENDEN);
+        }
+
+        if (dataElementen.containsKey(DOCUMENTEN_VERZENDEN_DATUM)) {
+            this.taakFataleDatum = new LocalDateAdapter().adaptFromJson(dataElementen.get(DOCUMENTEN_VERZENDEN_DATUM));
+            dataElementen.remove(DOCUMENTEN_VERZENDEN_DATUM);
+        } else {
+            this.documentenVerzendenDatum = LocalDate.now();
+        }
+
+        if (dataElementen.containsKey(DOCUMENTEN_ONDERTEKENEN)) {
+            this.mailBijlagen = dataElementen.get(DOCUMENTEN_ONDERTEKENEN);
+            dataElementen.remove(DOCUMENTEN_ONDERTEKENEN);
+        }
+
         this.dataElementen = dataElementen;
     }
 
