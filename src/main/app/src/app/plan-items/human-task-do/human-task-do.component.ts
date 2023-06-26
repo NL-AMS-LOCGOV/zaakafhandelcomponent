@@ -9,9 +9,10 @@ import {PlanItemsService} from '../plan-items.service';
 import {PlanItem} from '../model/plan-item';
 import {Zaak} from '../../zaken/model/zaak';
 import {MatDrawer} from '@angular/material/sidenav';
-import {FormulierDefinitieService} from '../../admin/formulier-defintie.service';
 import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
 import {HumanTaskData} from '../model/human-task-data';
+import {FormulierRuntimeService} from '../../admin/formulier-runtime.service';
+import {FormulierRuntimeContext} from '../../admin/model/formulieren/formulier-runtime-context';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -28,18 +29,20 @@ export class HumanTaskDoComponent implements OnInit {
     formulierDefinitie: FormulierDefinitie;
 
     constructor(private route: ActivatedRoute,
-                private formulierDefinitieService: FormulierDefinitieService,
+                private formulierRuntimeService: FormulierRuntimeService,
                 private planItemsService: PlanItemsService) {
     }
 
     ngOnInit(): void {
-        this.formulierDefinitieService.run(this.planItem.startformulierDefinitie).subscribe(fd => {
+        const context = new FormulierRuntimeContext();
+        context.formulierSysteemnaam = this.planItem.startformulierDefinitie;
+        context.zaak = this.zaak;
+        this.formulierRuntimeService.run(context).subscribe(fd => {
             this.formulierDefinitie = fd;
         });
     }
 
     onFormSubmit(formState: {}): void {
-
         if (formState) {
             this.planItemsService.doHumanTaskPlanItem(this.getHumanTaskData(formState)).subscribe(() => {
                 this.done.emit();
@@ -48,7 +51,6 @@ export class HumanTaskDoComponent implements OnInit {
             this.done.emit();
         }
     }
-
 
     getHumanTaskData(formState: {}): HumanTaskData {
         const humanTaskData = new HumanTaskData();

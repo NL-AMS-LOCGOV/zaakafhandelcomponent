@@ -278,17 +278,52 @@
                 <i>NB: Opschorten en hervatten, als het niet mogelijk is om de conditie uit te voeren, wordt het veld
                     uitgeschakeld op het formulier.</i>
                 <br/><br/>
-                Indien er in een voorgaande taak een mail is verstuurd, zijn de volgende variabelen beschikbaar in een
-                vervolg taak-formulier:
+            </small>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Uitleg standaardwaarden
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <small>
+                Variabelen kunnen worden gebruikt als standaardwaarde voor een velddefinitie
                 <ul>
-                    <li><b>mail-bericht</b></li>
-                    <li><b>mail-onderwerp</b></li>
-                    <li><b>mail-afzender</b></li>
-                    <li><b>mail-ontvanger</b></li>
+                    <li><b>ZAAK:STARTDATUM</b>: De startdatum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:FATALE_DATUM</b>: De fatale datum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:STREEFDATUM</b>: De streefdatum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:BEHANDELAAR</b>: De volledige naam van de zaak toegewezen behandelaar</li>
+                    <li><b>ZAAK:GROEP</b>: De naam van de zaak toegewezen groep</li>
+                </ul>
+                Indien een formulierdefinitie is toegewezen als taak afhandelformulier dan zijn ook de volgende
+                variabelen beschikbaar
+                <br/>
+                <ul>
+                    <li><b>TAAK:STARTDATUM</b>: De startdatum van de taak (dd-mm-yyyy)</li>
+                    <li><b>TAAK:FATALE_DATUM</b>: De fatale datum van de taak (dd-mm-yyyy)</li>
+                    <li><b>TAAK:BEHANDELAAR</b>: De volledige naam van de taak toegewezen behandelaar</li>
+                    <li><b>TAAK:GROEP</b>: De naam van de taak toegewezen groep</li>
+                </ul>
+                <br/>
+                DATUM velddefinities ondersteunen naast de bovenstaande datum variabelen ook de volgende
+                standaardwaarden
+                <ul>
+                    <li><b>+3</b>: vandaag plus 3 dagen</li>
+                    <li><b>-2</b>: vandaag min 2 dagen</li>
+                    <li><b>24-05-2023</b>: een vaste datum</li>
+                </ul>
+
+                Indien een formulierdefinitie is toegewezen als taak afhandelformulier EN het toegewezen taak
+                startformulier heeft een mail verzonden, dan zijn ook de volgende variabelen beschikbaar
+                <ul>
+                    <li><b>mail-bericht</b>De inhoud van de verzonden mail</li>
+                    <li><b>mail-onderwerp</b> Het onderwerp van de verzonden mail</li>
+                    <li><b>mail-afzender</b>: Het e-mailadres van de verzender</li>
+                    <li><b>mail-ontvanger</b>: Het e-mailadres van de ontvanger(s)</li>
                 </ul>
 
             </small>
         </mat-expansion-panel>
-
     </mat-sidenav-content>
 </mat-sidenav-container>

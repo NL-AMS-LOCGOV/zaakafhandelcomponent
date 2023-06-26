@@ -8,8 +8,9 @@ import {PlanItem} from '../model/plan-item';
 import {PlanItemsService} from '../plan-items.service';
 import {ProcessTaskData} from '../model/process-task-data';
 import {Zaak} from '../../zaken/model/zaak';
-import {FormulierDefinitieService} from '../../admin/formulier-defintie.service';
 import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
+import {FormulierRuntimeContext} from '../../admin/model/formulieren/formulier-runtime-context';
+import {FormulierRuntimeService} from '../../admin/formulier-runtime.service';
 
 @Component({
     selector: 'zac-process-task-do',
@@ -23,11 +24,14 @@ export class ProcessTaskDoComponent implements OnInit {
     @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private planItemsService: PlanItemsService, private formulierDefinitieService: FormulierDefinitieService) {
+    constructor(private planItemsService: PlanItemsService, private formulierRuntimeService: FormulierRuntimeService) {
     }
 
     ngOnInit(): void {
-        this.formulierDefinitieService.run(this.planItem.startformulierDefinitie)
+        const context = new FormulierRuntimeContext();
+        context.formulierSysteemnaam = this.planItem.startformulierDefinitie;
+        context.zaak = this.zaak;
+        this.formulierRuntimeService.run(context)
                 .subscribe(fd => this.formulierDefinitie = fd);
     }
 

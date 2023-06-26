@@ -190,6 +190,10 @@ public class PlanItemsRESTService {
             opschortenZaakHelper.opschortenZaak(zaak, aantalDagen, formulierDefinitie.getNaam());
         }
 
+        if (formData.zaakHervatten && zaak.isOpgeschort()) {
+            opschortenZaakHelper.hervattenZaak(zaak, formulierDefinitie.getNaam());
+        }
+
         Map<String, Object> zaakVariablen = zaakVariabelenService.findVariables(zaakUUID);
         zaakVariablen.putAll(formData.dataElementen);
         zaakVariabelenService.setZaakdata(zaakUUID, zaakVariablen);

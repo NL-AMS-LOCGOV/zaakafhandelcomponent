@@ -81,7 +81,6 @@ public class RESTFormData {
         this.dataElementen = dataElementen;
     }
 
-
     public String substituteText(String tekst) {
         for (final Map.Entry<String, String> entry : this.formState.entrySet()) {
             final String search = "[%s]".formatted(entry.getKey());
