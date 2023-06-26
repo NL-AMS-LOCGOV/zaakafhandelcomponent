@@ -274,9 +274,18 @@
                     <li><b>toelichting</b>: toelichting op de taak</li>
                     <li><b>mail-bijlagen</b>: een DOCUMENTEN_LIJST veld voor het toevoegen van bijlagen aan een mail
                     </li>
+                    <li><b>documenten-verzenden</b>: een DOCUMENTEN_LIJST veld voor het markeren van documenten met de
+                        indicatie verzonden
+                    </li>
+                    <li><b>documenten-verzenden-datum</b>: een DATUM veld welke aangeeft wanneer de betreffende
+                        documenten worden/zijn verzonden
+                    </li>
+                    <li><b>documenten-onderteken</b>: een DOCUMENTEN_LIJST veld voor het ondertekend van documenten na
+                        het afronden van het formulier
+                    </li>
                 </ul>
-                <i>NB: Opschorten en hervatten, als het niet mogelijk is om de conditie uit te voeren, wordt het veld
-                    uitgeschakeld op het formulier.</i>
+                <i>NB: Opschorten en hervatten zijn alleen actief als het mogelijk is de betreffende actie uit te
+                    voeren</i>
                 <br/><br/>
             </small>
         </mat-expansion-panel>
@@ -288,7 +297,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <small>
-                Variabelen kunnen worden gebruikt als standaardwaarde voor een velddefinitie
+                de volgende variabelen kunnen worden gebruikt als standaardwaarde voor een velddefinitie
                 <ul>
                     <li><b>ZAAK:STARTDATUM</b>: De startdatum van de zaak (dd-mm-yyyy)</li>
                     <li><b>ZAAK:FATALE_DATUM</b>: De fatale datum van de zaak (dd-mm-yyyy)</li>
@@ -317,8 +326,8 @@
                 Indien een formulierdefinitie is toegewezen als taak afhandelformulier EN het toegewezen taak
                 startformulier heeft een mail verzonden, dan zijn ook de volgende variabelen beschikbaar
                 <ul>
-                    <li><b>mail-bericht</b>De inhoud van de verzonden mail</li>
-                    <li><b>mail-onderwerp</b> Het onderwerp van de verzonden mail</li>
+                    <li><b>mail-bericht</b>: De inhoud van de verzonden mail</li>
+                    <li><b>mail-onderwerp</b>: Het onderwerp van de verzonden mail</li>
                     <li><b>mail-afzender</b>: Het e-mailadres van de verzender</li>
                     <li><b>mail-ontvanger</b>: Het e-mailadres van de ontvanger(s)</li>
                 </ul>
