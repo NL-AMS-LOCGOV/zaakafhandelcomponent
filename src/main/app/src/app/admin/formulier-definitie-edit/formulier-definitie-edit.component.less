@@ -57,3 +57,30 @@ mat-card, mat-expansion-panel {
 .button-group {
   padding-left: 10px;
 }
+
+
+::ng-deep .editor {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-right: 20px;
+
+  .NgxEditor__MenuBar {
+    background-color: whitesmoke;
+  }
+
+  .NgxEditor {
+    background-color: #fdfdfd;
+    border-radius: 0;
+    border: none;
+  }
+
+  .CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+    width: max-content;
+    margin-bottom: 0.7rem;
+
+    pre {
+      white-space: pre !important;
+    }
+  }
+}

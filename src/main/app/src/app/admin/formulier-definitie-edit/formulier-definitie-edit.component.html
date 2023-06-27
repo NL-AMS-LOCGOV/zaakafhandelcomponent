@@ -52,7 +52,7 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-table [dataSource]="dataSource">
-                    <ng-container matColumnDef="label">
+                        <ng-container matColumnDef="label">
                             <mat-header-cell *matHeaderCellDef>{{'label' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
@@ -215,13 +215,49 @@
                                    [required]="definitieFormGroup.get('mailVersturen').value">
                         </mat-form-field>
                     </div>
-                    <div class="flex-row">
-                        <mat-form-field class="row w100" floatLabel="always">
-                            <mat-label>{{'body' | translate}}</mat-label>
-                            <textarea matInput formControlName="body"
-                                      rows="8"
-                                      [required]="definitieFormGroup.get('mailVersturen').value"></textarea>
-                        </mat-form-field>
+                    <div class="flex-col editor">
+
+                        <ngx-editor-menu [editor]="editor"
+                                         [customMenuRef]="variabelenMenu"
+                                         [toolbar]="toolbar">
+                        </ngx-editor-menu>
+                        <ngx-editor
+                                [editor]="editor"
+                                [placeholder]="'body' | translate"
+                                formControlName="body">
+                        </ngx-editor>
+
+                        <ng-template #variabelenMenu>
+
+                            <button class="menu-item" type="button" mat-button
+                                    [matMenuTriggerFor]="zaakVariabelenMenu">
+                                {{'Zaak' | translate}}
+                            </button>
+
+                            <mat-menu #zaakVariabelenMenu="matMenu" class="editor-variabelen-menu">
+                                <div *ngFor="let variabele of zaakVariabelen">
+                                    <button mat-menu-item
+                                            (click)=" this.editor.commands.insertText('{' + variabele + '}').exec();">
+                                        {{variabele + ': ' + ('mailtemplate.variabele.' + variabele | translate)}}
+                                    </button>
+                                </div>
+
+                            </mat-menu>
+
+                            <button class="menu-item" type="button" mat-button
+                                    [matMenuTriggerFor]="formulierVariabelenMenu">
+                                {{'Formulier' | translate}}
+                            </button>
+                            <mat-menu #formulierVariabelenMenu="matMenu" class="editor-variabelen-menu">
+                                <div *ngFor="let variabele of getVeldDefiniteVariabelen()">
+                                    <button mat-menu-item
+                                            (click)=" this.editor.commands.insertText('[' + variabele + ']').exec();">
+                                        {{variabele}}
+                                    </button>
+                                </div>
+                            </mat-menu>
+                        </ng-template>
+
                     </div>
                 </div>
             </mat-expansion-panel>

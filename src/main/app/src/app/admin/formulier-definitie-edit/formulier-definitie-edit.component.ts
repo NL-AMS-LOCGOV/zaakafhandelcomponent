@@ -20,6 +20,9 @@ import {MatSelectChange} from '@angular/material/select';
 import {ReferentieTabelService} from '../referentie-tabel.service';
 import {TekstvlakEditDialogComponent} from './tekstvlak-edit-dialog/tekstvlak-edit-dialog.component';
 import {FormulierDefinitieMailGegevens} from '../model/formulieren/formulier-definitie-mail-gegevens';
+import {Editor, Toolbar} from 'ngx-editor';
+import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
+import {Mail} from '../model/mail';
 
 @Component({
     templateUrl: './formulier-definitie-edit.component.html',
@@ -35,13 +38,27 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     veldColumns = ['label', 'systeemnaam', 'beschrijving', 'helptekst', 'veldtype', 'defaultWaarde', 'verplicht', 'meerkeuzeOpties', 'volgorde', 'acties'];
     vorigeSysteemnaam: string;
     bezigMetOpslaan = false;
-
     referentieLijsten: string[] = [];
+
+    editor: Editor = new Editor();
+    toolbar: Toolbar = [
+        ['bold', 'italic', 'underline'],
+        ['blockquote'],
+        ['ordered_list', 'bullet_list'],
+        [{heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']}],
+        ['link', 'image'],
+        ['text_color', 'background_color'],
+        ['align_left', 'align_center', 'align_right', 'align_justify'],
+        []
+    ];
+
+    zaakVariabelen: string[] = [];
 
     dataSource: MatTableDataSource<AbstractControl>;
 
     constructor(private identityService: IdentityService,
                 private service: FormulierDefinitieService,
+                private mailService: MailtemplateBeheerService,
                 private referentieService: ReferentieTabelService,
                 public dialog: MatDialog,
                 private route: ActivatedRoute,
@@ -52,6 +69,11 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     }
 
     ngOnInit(): void {
+
+        this.mailService.ophalenVariabelenVoorMail(Mail.ZAAK_ALGEMEEN).subscribe(m => {
+            this.zaakVariabelen = m as string[];
+        });
+
         this.referentieService.listReferentieTabellen().subscribe(tabellen => {
             this.referentieLijsten = tabellen.map(value => value.code);
         });
@@ -187,5 +209,15 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
                 element.get('defaultWaarde').setValue(value);
             }
         });
+    }
+
+
+    getVeldDefiniteVariabelen() {
+        const vals: string[] = [];
+        const veldDefinities = this.definitieFormGroup.get('veldDefinities') as FormArray;
+        veldDefinities.controls.forEach(control => {
+            vals.push(control.get('systeemnaam').value);
+        });
+        return vals;
     }
 }
