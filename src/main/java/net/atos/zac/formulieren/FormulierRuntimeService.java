@@ -182,10 +182,16 @@ public class FormulierRuntimeService {
     public void verstuurMail(final FormulierDefinitie formulierDefinitie, final RESTFormData data, final Zaak zaak) {
         if (formulierDefinitie.isMailVersturen()) {
 
-            final String ontvanger = switch (formulierDefinitie.getMailTo()) {
+            String ontvanger = switch (formulierDefinitie.getMailTo()) {
                 case "INITIATOR" -> getInitiatorMail(zaak); // deze moet nog
                 case default -> data.substitute(formulierDefinitie.getMailTo());
             };
+
+            if (!ValidationUtil.isValidEmail(ontvanger)) { // kan ook een medewerker veld zijn
+                final String o = ontvanger;
+                ontvanger = identityService.listUsers().stream().filter(m -> m.getFullName().equals(o)).findAny()
+                        .map(User::getEmail).orElse(o);
+            }
 
             final String gemeente = configuratieService.readGemeenteNaam();
             final String afzender = switch (formulierDefinitie.getMailFrom()) {
