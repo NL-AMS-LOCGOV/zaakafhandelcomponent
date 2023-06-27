@@ -139,10 +139,11 @@
                 id="opslaan_button"
                 (click)="opslaan()"
                 type="submit">
-            {{'actie.opslaan' | translate}}
+            {{submitButtonLabel | translate}}
         </button>
         <button mat-raised-button [disabled]="bezigMetOpslaan"
                 id="annuleren_button"
+                *ngIf="toonAnnulerenButton"
                 type="button"
                 (click)="cancel()">
             {{'actie.annuleren' | translate}}

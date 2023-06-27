@@ -252,10 +252,10 @@ public class FormulierRuntimeService {
 
     public void ondertekenDocumenten(RESTFormData formData) {
         if (formData.documentenOndertekenen != null) {
-            Arrays.stream(formData.documentenVerzenden.split(SEPARATOR))
+            Arrays.stream(formData.documentenOndertekenen.split(SEPARATOR))
                     .map(UUID::fromString)
                     .map(drcClientService::readEnkelvoudigInformatieobject)
-                    .filter(enkelvoudigInformatieobject -> enkelvoudigInformatieobject.getOndertekening() != null)
+                    .filter(enkelvoudigInformatieobject -> enkelvoudigInformatieobject.getOndertekening() == null)
                     .forEach(enkelvoudigInformatieobject ->
                                      enkelvoudigInformatieObjectUpdateService.ondertekenEnkelvoudigInformatieObject(
                                              enkelvoudigInformatieobject.getUUID()));

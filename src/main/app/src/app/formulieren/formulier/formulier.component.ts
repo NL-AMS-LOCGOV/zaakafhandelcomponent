@@ -24,6 +24,8 @@ export class FormulierComponent implements OnInit {
 
     @Input() definitie: FormulierDefinitie;
     @Input() readonly: boolean;
+    @Input() submitButtonLabel: 'actie.starten' | 'actie.opslaan.afronden' | 'actie.opslaan' = 'actie.starten';
+    @Input() toonAnnulerenButton = true;
     @Input() zaak: Zaak;
     @Output() submit = new EventEmitter<{}>();
 
