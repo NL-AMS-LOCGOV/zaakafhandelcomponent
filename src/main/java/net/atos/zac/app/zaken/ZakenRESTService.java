@@ -998,6 +998,12 @@ public class ZakenRESTService {
                 .build();
     }
 
+    @GET
+    @Path("procesvariabelen")
+    public List<String> listProcesVariabelen() {
+        return zaakVariabelenService.VARS;
+    }
+
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());

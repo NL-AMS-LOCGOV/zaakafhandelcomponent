@@ -1,6 +1,7 @@
 package net.atos.zac.flowable;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +39,11 @@ public class ZaakVariabelenService {
 
     // Wordt gebruikt binnen het CMMN model
     private static final String VAR_ONTVANKELIJK = "ontvankelijk";
+
+    public static final List<String> VARS = List.of(VAR_ZAAK_UUID, VAR_ZAAK_IDENTIFICATIE, VAR_ZAAKTYPE_UUUID,
+                                                    VAR_ZAAKTYPE_OMSCHRIJVING, VAR_ONTVANGSTBEVESTIGING_VERSTUURD,
+                                                    VAR_DATUMTIJD_OPGESCHORT, VAR_VERWACHTE_DAGEN_OPGESCHORT,
+                                                    VAR_ONTVANKELIJK);
 
     @Inject
     private CmmnRuntimeService cmmnRuntimeService;
