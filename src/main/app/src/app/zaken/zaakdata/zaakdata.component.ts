@@ -21,42 +21,49 @@ export class ZaakdataComponent implements OnInit {
     @Input() readonly = false;
     bezigMetOpslaan = false;
     form: FormGroup;
+    procesVariabelen: string[];
 
-    constructor(private formBuilder: FormBuilder, private zakenService: ZakenService) { }
+    constructor(private formBuilder: FormBuilder, private zakenService: ZakenService) {
+    }
 
     ngOnInit(): void {
-        this.form = this.buildForm(this.zaak.zaakdata, this.formBuilder.group({}));
-        if (this.readonly) {
-            this.form.disable();
-        }
+        this.zakenService.listProcesVariabelen().subscribe(data => {
+            this.procesVariabelen = data;
+            this.form = this.buildForm(this.zaak.zaakdata, this.formBuilder.group({}));
+            if (this.readonly) {
+                this.form.disable();
+            }
+        })
     }
 
     buildForm(data: {}, formData: FormGroup): FormGroup {
         for (const [k, v] of Object.entries(data)) {
-            formData.addControl(k, this.getControl(v));
+            formData.addControl(k, this.getControl(v, this.isProcesVariabele(k)));
         }
         return formData;
     }
 
-    buildArray(values: []): FormArray {
+    buildArray(values: [], proces: boolean): FormArray {
         if (!values?.length) {
             return this.formBuilder.array([[]]);
         }
-        return this.formBuilder.array(values.map(value => this.getControl(value)));
+        return this.formBuilder.array(values.map(value => this.getControl(value, proces)));
     }
 
-    getControl(value: any): AbstractControl {
+    getControl(value: any, proces: boolean): AbstractControl {
         if (this.isValue(value)) {
-            return new FormControl(value);
+            return new FormControl({value: value, disabled: proces});
         } else if (this.isFile(value)) {
             return new FormControl({value: value['originalName'], disabled: true});
         } else if (this.isArray(value)) {
-            return this.buildArray(value);
+            return this.buildArray(value, proces);
         } else if (this.isObject(value)) {
             return this.buildForm(value, this.formBuilder.group({}));
-        } else {
-            return new FormControl(JSON.stringify(value)); // wat dit dan ook mag zijn
         }
+    }
+
+    isProcesVariabele(key): boolean {
+        return this.procesVariabelen.includes(key);
     }
 
     isFile(data): boolean {

@@ -324,13 +324,19 @@ export class ZakenService {
 
     listBesluitenForZaak(zaakUuid: string): Observable<Besluit[]> {
         return this.http.get<Besluit[]>(`${this.basepath}/besluit/zaakUuid/${zaakUuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listBesluitHistorie(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/besluit/${uuid}/historie`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listProcesVariabelen(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/procesvariabelen`).pipe(
+                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }
