@@ -24,6 +24,7 @@ export class DocumentenFormulierVeldComponent implements OnInit {
 
     @Input() veldDefinitie: FormulierVeldDefinitie;
     @Input() control: FormControl;
+    @Input() readonly readonly;
     @Input() zaak: Zaak;
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'indicaties', 'url'];
     loading = false;

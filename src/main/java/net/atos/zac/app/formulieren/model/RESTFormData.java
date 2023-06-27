@@ -75,7 +75,6 @@ public class RESTFormData {
             dataElementen.remove(TAAK_FATALE_DATUM);
         }
 
-
         if (dataElementen.containsKey(TOELICHTING)) {
             this.toelichting = dataElementen.get(TOELICHTING);
             dataElementen.remove(TOELICHTING);
@@ -89,24 +88,31 @@ public class RESTFormData {
             dataElementen.remove(TAAK_TOEKENNEN_MEDEWERKER);
         }
         if (dataElementen.containsKey(MAIL_BIJLAGEN)) {
-            this.mailBijlagen = dataElementen.get(MAIL_BIJLAGEN);
+            if (StringUtils.isNotBlank(dataElementen.get(MAIL_BIJLAGEN))) {
+                this.mailBijlagen = dataElementen.get(MAIL_BIJLAGEN);
+            }
             dataElementen.remove(MAIL_BIJLAGEN);
         }
 
         if (dataElementen.containsKey(DOCUMENTEN_VERZENDEN)) {
-            this.mailBijlagen = dataElementen.get(DOCUMENTEN_VERZENDEN);
+            if (StringUtils.isNotBlank(dataElementen.get(DOCUMENTEN_VERZENDEN))) {
+                this.documentenVerzenden = dataElementen.get(DOCUMENTEN_VERZENDEN);
+            }
             dataElementen.remove(DOCUMENTEN_VERZENDEN);
         }
 
         if (dataElementen.containsKey(DOCUMENTEN_VERZENDEN_DATUM)) {
-            this.taakFataleDatum = new LocalDateAdapter().adaptFromJson(dataElementen.get(DOCUMENTEN_VERZENDEN_DATUM));
+            this.documentenVerzendenDatum = new LocalDateAdapter().adaptFromJson(
+                    dataElementen.get(DOCUMENTEN_VERZENDEN_DATUM));
             dataElementen.remove(DOCUMENTEN_VERZENDEN_DATUM);
         } else {
             this.documentenVerzendenDatum = LocalDate.now();
         }
 
         if (dataElementen.containsKey(DOCUMENTEN_ONDERTEKENEN)) {
-            this.mailBijlagen = dataElementen.get(DOCUMENTEN_ONDERTEKENEN);
+            if (StringUtils.isNotBlank(dataElementen.get(DOCUMENTEN_ONDERTEKENEN))) {
+                this.documentenOndertekenen = dataElementen.get(DOCUMENTEN_ONDERTEKENEN);
+            }
             dataElementen.remove(DOCUMENTEN_ONDERTEKENEN);
         }
 

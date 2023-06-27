@@ -106,6 +106,7 @@ export class FormulierComponent implements OnInit {
     opslaan() {
         this.bezigMetOpslaan = true;
         this.submit.emit(this.formGroup.value);
+        this.formGroup.disable();
     }
 
     isOpgeschortenMogelijk() {
@@ -119,5 +120,15 @@ export class FormulierComponent implements OnInit {
     cancel() {
         this.bezigMetOpslaan = true;
         this.submit.emit(null);
+    }
+
+    toonVeld(veldDefinitie: FormulierVeldDefinitie): boolean {
+        if (FormulierVeldDefinitie.isOpschorten(veldDefinitie)) {
+            return this.isOpgeschortenMogelijk();
+        }
+        if (FormulierVeldDefinitie.isHervatten(veldDefinitie)) {
+            return this.isHervatenMogelijk();
+        }
+        return true;
     }
 }

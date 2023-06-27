@@ -100,4 +100,5 @@ export class FormulierVeldDefinitie {
     static isOndertekenen(fvd: FormulierVeldDefinitie) { // zou ook een eigen veldtype kunnen zijn
         return fvd.veldtype === FormulierVeldtype.DOCUMENTEN_LIJST && fvd.systeemnaam === 'ondertekenen';
     }
+
 }

@@ -307,7 +307,6 @@
                 </ul>
                 Indien een formulierdefinitie is toegewezen als taak afhandelformulier dan zijn ook de volgende
                 variabelen beschikbaar
-                <br/>
                 <ul>
                     <li><b>TAAK:STARTDATUM</b>: De startdatum van de taak (dd-mm-yyyy)</li>
                     <li><b>TAAK:FATALE_DATUM</b>: De fatale datum van de taak (dd-mm-yyyy)</li>
@@ -323,13 +322,21 @@
                     <li><b>24-05-2023</b>: een vaste datum</li>
                 </ul>
 
-                Indien een formulierdefinitie is toegewezen als taak afhandelformulier EN het toegewezen taak
-                startformulier heeft een mail verzonden, dan zijn ook de volgende variabelen beschikbaar
+                Indien <i>[Mail versturen na indienen formulier]</i> aan staat, dan zijn ook de volgende variabelen
+                beschikbaar in een vervolg-formulier
                 <ul>
-                    <li><b>mail-bericht</b>: De inhoud van de verzonden mail</li>
-                    <li><b>mail-onderwerp</b>: Het onderwerp van de verzonden mail</li>
-                    <li><b>mail-afzender</b>: Het e-mailadres van de verzender</li>
-                    <li><b>mail-ontvanger</b>: Het e-mailadres van de ontvanger(s)</li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-bericht</b>: De inhoud van de verzonden
+                        mail
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-onderwerp</b>: Het onderwerp van de
+                        verzonden mail
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-afzender</b>: Het e-mailadres van de
+                        verzender
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-ontvanger</b>: Het e-mailadres van de
+                        ontvanger(s)
+                    </li>
                 </ul>
             </small>
         </mat-expansion-panel>

@@ -91,7 +91,8 @@
         </div>
 
         <div *ngSwitchCase="FormulierVeldtype.CHECKBOX">
-            <mat-checkbox [formControlName]="veldDefinitie.systeemnaam">{{veldDefinitie.label}}</mat-checkbox>
+            <mat-checkbox *ngIf="toonVeld(veldDefinitie)"
+                          [formControlName]="veldDefinitie.systeemnaam">{{veldDefinitie.label}}</mat-checkbox>
         </div>
 
         <div *ngSwitchCase="FormulierVeldtype.CHECKBOXES" class="checkboxes">
@@ -116,6 +117,7 @@
             <zac-documenten-formulier-veld
                     [control]="getControl(veldDefinitie.systeemnaam)"
                     [veldDefinitie]="veldDefinitie"
+                    [readonly]="readonly"
                     [zaak]="zaak">
             </zac-documenten-formulier-veld>
         </div>

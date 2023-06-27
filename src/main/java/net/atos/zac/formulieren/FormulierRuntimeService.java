@@ -26,6 +26,8 @@ import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.klanten.KlantenClientService;
+import net.atos.client.klanten.model.Klant;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -45,6 +47,7 @@ import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Bronnen;
 import net.atos.zac.mail.model.MailAdres;
 import net.atos.zac.mailtemplates.model.MailGegevens;
+import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.ReferentieTabelService;
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
 import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
@@ -71,6 +74,9 @@ public class FormulierRuntimeService {
 
     @Inject
     private ConfiguratieService configuratieService;
+
+    @Inject
+    private KlantenClientService klantenClientService;
 
     @Inject
     private MailService mailService;
@@ -176,30 +182,58 @@ public class FormulierRuntimeService {
     public void verstuurMail(final FormulierDefinitie formulierDefinitie, final RESTFormData data, final Zaak zaak) {
         if (formulierDefinitie.isMailVersturen()) {
 
+            final String ontvanger = switch (formulierDefinitie.getMailTo()) {
+                case "INITIATOR" -> getInitiatorMail(zaak); // deze moet nog
+                case default -> data.substitute(formulierDefinitie.getMailTo());
+            };
+
             final String gemeente = configuratieService.readGemeenteNaam();
             final String afzender = switch (formulierDefinitie.getMailFrom()) {
                 case "GEMEENTE" -> configuratieService.readGemeenteMail();
                 case "MEDEWERKER" -> loggedInUserInstance.get().getEmail();
                 case default -> data.substitute(formulierDefinitie.getMailFrom());
             };
-            final String ontvanger = switch (formulierDefinitie.getMailTo()) {
-                case "INITIATOR" -> null; // deze moet nog
-                case default -> data.substitute(formulierDefinitie.getMailTo());
-            };
+
             final String body = data.substituteText(formulierDefinitie.getMailBody());
             final String subject = data.substituteText(formulierDefinitie.getMailSubject());
-            MailGegevens mailGegevens = new MailGegevens(
-                    new MailAdres(afzender, gemeente),
-                    new MailAdres(ontvanger),
-                    null, subject, body, data.mailBijlagen, true);
+
+            if (StringUtils.isNotBlank(ontvanger) && ValidationUtil.isValidEmail(ontvanger)) {
+
+                MailGegevens mailGegevens = new MailGegevens(
+                        new MailAdres(afzender, gemeente),
+                        new MailAdres(ontvanger),
+                        null, subject, body, data.mailBijlagen, true);
 
 
-            final String bodyZoalsVerzonden = mailService.sendMail(mailGegevens, Bronnen.fromZaak(zaak));
-            data.formState.put("mail-bericht", bodyZoalsVerzonden);
-            data.formState.put("mail-onderwerp", mailGegevens.getSubject());
-            data.formState.put("mail-afzender", mailGegevens.getFrom().getEmail());
-            data.formState.put("mail-ontvanger", mailGegevens.getTo().getEmail());
+                final String bodyZoalsVerzonden = mailService.sendMail(mailGegevens, Bronnen.fromZaak(zaak));
+                data.formState.put("%s_mail-bericht".formatted(formulierDefinitie.getSysteemnaam()),
+                                   bodyZoalsVerzonden);
+                data.formState.put("%s_mail-onderwerp".formatted(formulierDefinitie.getSysteemnaam()),
+                                   mailGegevens.getSubject());
+                data.formState.put("%s_mail-afzender".formatted(formulierDefinitie.getSysteemnaam()),
+                                   mailGegevens.getFrom().getEmail());
+                data.formState.put("%s_mail-ontvanger".formatted(formulierDefinitie.getSysteemnaam()),
+                                   mailGegevens.getTo().getEmail());
+            } else {
+                data.formState.put("%s_mail-bericht".formatted(formulierDefinitie.getSysteemnaam()), body);
+                data.formState.put("%s_mail-onderwerp".formatted(formulierDefinitie.getSysteemnaam()), subject);
+                data.formState.put("%s_mail-afzender".formatted(formulierDefinitie.getSysteemnaam()), afzender);
+                data.formState.put("%s_mail-ontvanger".formatted(formulierDefinitie.getSysteemnaam()),
+                                   "%s [NIET VERZONDEN]".formatted(StringUtils.isNotBlank(ontvanger) ?
+                                                                           "Ongeldig: %s".formatted(ontvanger) :
+                                                                           "Geen e-mail adres"));
+            }
         }
+    }
+
+    private String getInitiatorMail(Zaak zaak) {
+        return zgwApiService.findInitiatorForZaak(zaak).map(initiator -> switch (initiator.getBetrokkeneType()) {
+            case NATUURLIJK_PERSOON -> klantenClientService.findPersoon(initiator.getIdentificatienummer()).map(
+                    Klant::getEmailadres).orElse(null);
+            case VESTIGING -> klantenClientService.findVestiging(initiator.getIdentificatienummer()).map(
+                    Klant::getEmailadres).orElse(null);
+            case null, default -> null;
+        }).orElse(null);
     }
 
 
@@ -288,5 +322,6 @@ public class FormulierRuntimeService {
             }
         }
     }
+
 
 }

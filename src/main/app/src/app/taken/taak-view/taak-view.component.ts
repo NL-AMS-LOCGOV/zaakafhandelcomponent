@@ -134,10 +134,11 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (initZaak) {
             this.zakenService.readZaak(this.taak.zaakUuid).subscribe(zaak => {
                 this.zaak = zaak;
+                this.createTaakForm(taak);
                 this.initialized = true;
             });
         }
-        this.createTaakForm(taak);
+
     }
 
     private createTaakForm(taak: Taak): void {
@@ -218,7 +219,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.websocketService.suspendListener(this.taakListener);
             this.takenService.complete(this.taak).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.afgerond');
-                this.init(taak, false);
+                this.init(taak, true);
             });
         }
     }
