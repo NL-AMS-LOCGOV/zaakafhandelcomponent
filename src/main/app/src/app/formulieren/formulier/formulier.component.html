@@ -83,7 +83,7 @@
         <div *ngSwitchCase="FormulierVeldtype.TEKST_VLAK">
             <mat-form-field class="full-width" floatLabel="always">
                 <mat-label>{{veldDefinitie.label}}</mat-label>
-                <textarea style="font-size: 10px" [formControlName]="veldDefinitie.systeemnaam"
+                <textarea style="font-size: 14px" [formControlName]="veldDefinitie.systeemnaam"
                           matInput cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15">
                 </textarea>
                 <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>

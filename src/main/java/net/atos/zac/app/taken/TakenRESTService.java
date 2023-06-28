@@ -302,7 +302,11 @@ public class TakenRESTService {
         runtimeService.versturenDocumenten(formData);
         runtimeService.ondertekenDocumenten(formData);
         runtimeService.verstuurMail(formulierDefinitie, formData, zaak);
-        taakVariabelenService.setTaakdata(task, formData.formState);
+
+
+        final Map<String, String> taskdata = taakVariabelenService.readTaakdata(task);
+        taskdata.putAll(formData.formState);
+        taakVariabelenService.setTaakdata(task, taskdata);
 
         Map<String, Object> zaakVariablen = zaakVariabelenService.findVariables(zaak.getUuid());
         zaakVariablen.putAll(formData.dataElementen);

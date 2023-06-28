@@ -187,7 +187,8 @@ public class FormulierRuntimeService {
                 case default -> data.substitute(formulierDefinitie.getMailTo());
             };
 
-            if (!ValidationUtil.isValidEmail(ontvanger)) { // kan ook een medewerker veld zijn
+            if (StringUtils.isNotBlank(ontvanger) && !ValidationUtil.isValidEmail(ontvanger)) {
+                // kan ook een medewerker veld zijn
                 final String o = ontvanger;
                 ontvanger = identityService.listUsers().stream().filter(m -> m.getFullName().equals(o)).findAny()
                         .map(User::getEmail).orElse(o);
