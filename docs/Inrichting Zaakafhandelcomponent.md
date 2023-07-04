@@ -65,6 +65,25 @@ Stel de lijst van mogelijke mailafzenders op en kies de 'Aantwoord aan' bij iede
   0- Zaak is een duplicaat | dit is een van de opties wanneer een gebruiker de [Zaak afbreken] actie gebruikt. Om de optie te activeren vink je deze aan en stel je het resultaat in dat de zaak krijgt wanneer deze optie gekozen wordt.
 9. Klik op ‘Opslaan’ om de zaps voor het zaaktype te bewaren. Het zaaktype is hierna actief te gebruiken in de ZAC.
 
+## Formulier definities
+
+### Werking van formulier definities
+Een formulier definitie is een formulier dat te gebruiken is als taakscherm bij één van de taken in een CMMN-model of BPMN-proces. In een formulier definitie is vastgelegd welke velden het scherm bevat. Via de zaps is een formulier definitie aan een taak van een zaaktype te koppelen.
+Een formulier kan als startformulierdefinitie of als afhandelformulierdefinitie toegewezen worden. Waar de formulier definitie voor gebruikt wordt is toe te wijzen onder de 'Taakgegevens' van de zaps.
+
+Een nieuwe formulier definitie kan aangemaakt worden door de volgende stappen te volgen:
+Stappen:
+1. In het Beheer-instellingen menu kies je ‘Formulier definities’
+2. Klik op het + icoon rechtsboven om een nieuwe formulier definitie te maken
+3. Vul de gegevens van de formulier definitie in
+4. Voeg minimaal één veld definitie toe aan het formulier
+5. Klik op 'Opslaan' om de formulier definitie toe te voegen
+
+### Formulier definitie bewerken
+Een formulier definitie kan bewerkt worden door deze te openen vanuit het overzicht. De toewijzing van een formulierdefinitie als startformulierdefinitie of als afhandelformulierdefinitie bepaalt welke veld definities en andere opties beschikbaar zijn.
+Bij 'Veld definities' kan met het + icoon een veld worden toegevoegd en kunnen velden geconfigureerd worden. Onderaan het scherm is uitleg beschikbaar over het gebruik van de veld definities en de configuratiemogelijkheden.
+Bij 'Mail versturen na indienen formulier' kan ingesteld worden dat na het afronden van het formulier een mail wordt verzonden en hoe die mail eruit komt te zien.
+
 ## Referentietabellen
 
 Referentietabellen worden in de ZAC gebruikt om de keuzes in keuzelijsten te beheren. Een keuzelijst heeft een standaard referentietabel gekoppeld waarin de waarden bewerkt kunnen worden. Er kan een referentietabel toegevoegd worden om deze vervolgens via de zaakafhandelparameters te koppelen aan een zaaktype en zo te gebruiken. Hiermee is het mogelijk om voor een zaaktype een van de standaard afwijkende referentietabel te gebruiken.
