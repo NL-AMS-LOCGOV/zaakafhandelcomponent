@@ -17,16 +17,14 @@
             <mat-card class="taak-formulier w50 flex">
                 <mat-card-content>
                     <div class="form">
-                        <mfb-form *ngIf="formulier"
-                                  (formPartial)="onFormPartial($event)"
-                                  (formSubmit)="onFormSubmit($event)"
-                                  [formFields]="formulier.form"
-                                  [config]="formConfig"
-                                  [submitted]="posts"></mfb-form>
                         <zac-formulier *ngIf="formulierDefinitie"
                                        [definitie]="formulierDefinitie"
+                                       [readonly]="isReadonly()"
+                                       submitButtonLabel="actie.opslaan.afronden"
+                                       [toonAnnulerenButton]="false"
+                                       (submit)="onFormSubmit($event)"
                                        [zaak]="zaak"></zac-formulier>
-                        <mat-progress-bar *ngIf="!formulier && !formulierDefinitie" mode="query"></mat-progress-bar>
+                        <mat-progress-bar *ngIf="!formulierDefinitie" mode="query"></mat-progress-bar>
                     </div>
                 </mat-card-content>
             </mat-card>

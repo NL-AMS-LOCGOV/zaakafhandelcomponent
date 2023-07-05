@@ -188,11 +188,11 @@ public class ZaakafhandelParameterBeheerService {
             final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
             nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
             nieuweHumanTaskParameters.setActief(humanTaskParameters.isActief());
-            nieuweHumanTaskParameters.setFormulierDefinitieID(humanTaskParameters.getFormulierDefinitieID());
+            nieuweHumanTaskParameters.setStartformulierDefinitieID(humanTaskParameters.getStartformulierDefinitieID());
+            nieuweHumanTaskParameters.setAfhandelformulierDefinitieID(
+                    humanTaskParameters.getAfhandelformulierDefinitieID());
             nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
             nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
-            nieuweHumanTaskParameters.setReferentieTabellen(humanTaskParameters.getReferentieTabellen());
-            nieuweHumanTaskParameters.setFormulierDefinitieID(humanTaskParameters.getFormulierDefinitieID());
             humanTaskParametersCollection.add(nieuweHumanTaskParameters);
         });
         nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);

@@ -52,12 +52,15 @@ export class FormulierDefinitiesComponent extends AdminComponent implements OnIn
     verwijderen(formulierDefinitie: FormulierDefinitie): void {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                    {key: 'msg.formulier.definitie.verwijderen.bevestigen', args: {naam: formulierDefinitie.systeemnaam}},
+                    {
+                        key: 'msg.formulierdefinitie.verwijderen.bevestigen',
+                        args: {naam: formulierDefinitie.systeemnaam}
+                    },
                     this.service.delete(formulierDefinitie.id)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('msg.formulier.definitie.verwijderen.uitgevoerd', {naam: formulierDefinitie.systeemnaam});
+                this.utilService.openSnackbar('msg.formulierdefinitie.verwijderen.uitgevoerd', {naam: formulierDefinitie.systeemnaam});
                 this.ophalenFormulierDefinities();
             }
         });

@@ -4,18 +4,15 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
-import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
-import {PlanItemType} from '../model/plan-item-type.enum';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
-import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 import {Zaak} from '../../zaken/model/zaak';
 import {MatDrawer} from '@angular/material/sidenav';
+import {FormulierDefinitie} from '../../admin/model/formulieren/formulier-definitie';
+import {HumanTaskData} from '../model/human-task-data';
+import {FormulierRuntimeService} from '../../admin/formulier-runtime.service';
+import {FormulierRuntimeContext} from '../../admin/model/formulieren/formulier-runtime-context';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -24,42 +21,47 @@ import {MatDrawer} from '@angular/material/sidenav';
 })
 export class HumanTaskDoComponent implements OnInit {
 
-    formItems: Array<AbstractFormField[]>;
-    formConfig: FormConfig;
-    private formulier: AbstractTaakFormulier;
     @Input() planItem: PlanItem;
     @Input() sideNav: MatDrawer;
     @Input() zaak: Zaak;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService) {
+    formulierDefinitie: FormulierDefinitie;
+
+    constructor(private route: ActivatedRoute,
+                private formulierRuntimeService: FormulierRuntimeService,
+                private planItemsService: PlanItemsService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder()
-        .saveText('actie.starten')
-        .cancelText('actie.annuleren')
-        .build();
-
-        if (this.planItem.type === PlanItemType.HumanTask) {
-            this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
-                                 .startForm(this.planItem, this.zaak).build();
-            if (this.formulier.disablePartialSave) {
-                this.formConfig.partialButtonText = null;
-            }
-            this.formItems = this.formulier.form;
-        } else {
-            this.formItems = [[]];
-        }
+        const context = new FormulierRuntimeContext();
+        context.formulierSysteemnaam = this.planItem.startformulierDefinitie;
+        context.zaak = this.zaak;
+        this.formulierRuntimeService.run(context).subscribe(fd => {
+            this.formulierDefinitie = fd;
+        });
     }
 
-    onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
-            this.planItemsService.doHumanTaskPlanItem(this.formulier.getHumanTaskData(formGroup)).subscribe(() => {
+    onFormSubmit(formState: {}): void {
+        if (formState) {
+            this.planItemsService.doHumanTaskPlanItem(this.getHumanTaskData(formState)).subscribe(() => {
                 this.done.emit();
             });
         } else { // cancel button clicked
             this.done.emit();
         }
+    }
+
+    getHumanTaskData(formState: {}): HumanTaskData {
+        const humanTaskData = new HumanTaskData();
+        humanTaskData.planItemInstanceId = this.planItem.id;
+        humanTaskData.formulierDefinitie = this.planItem.startformulierDefinitie;
+        Object.entries(formState).map(([key, value]) => {
+            if (typeof formState[key] === 'boolean') {
+                formState[key] = `${formState[key]}`; // convert to string, boolean not allowed in string map (yasson/jsonb exception)
+            }
+        });
+        humanTaskData.data = formState;
+        return humanTaskData;
     }
 }

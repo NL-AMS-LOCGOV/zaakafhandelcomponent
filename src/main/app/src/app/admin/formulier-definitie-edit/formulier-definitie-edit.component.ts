@@ -19,6 +19,10 @@ import {FormulierVeldtype} from '../model/formulieren/formulier-veld-type.enum';
 import {MatSelectChange} from '@angular/material/select';
 import {ReferentieTabelService} from '../referentie-tabel.service';
 import {TekstvlakEditDialogComponent} from './tekstvlak-edit-dialog/tekstvlak-edit-dialog.component';
+import {FormulierDefinitieMailGegevens} from '../model/formulieren/formulier-definitie-mail-gegevens';
+import {Editor, Toolbar} from 'ngx-editor';
+import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
+import {Mail} from '../model/mail';
 
 @Component({
     templateUrl: './formulier-definitie-edit.component.html',
@@ -34,13 +38,27 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     veldColumns = ['label', 'systeemnaam', 'beschrijving', 'helptekst', 'veldtype', 'defaultWaarde', 'verplicht', 'meerkeuzeOpties', 'volgorde', 'acties'];
     vorigeSysteemnaam: string;
     bezigMetOpslaan = false;
-
     referentieLijsten: string[] = [];
+
+    editor: Editor = new Editor();
+    toolbar: Toolbar = [
+        ['bold', 'italic', 'underline'],
+        ['blockquote'],
+        ['ordered_list', 'bullet_list'],
+        [{heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']}],
+        ['link', 'image'],
+        ['text_color', 'background_color'],
+        ['align_left', 'align_center', 'align_right', 'align_justify'],
+        []
+    ];
+
+    zaakVariabelen: string[] = [];
 
     dataSource: MatTableDataSource<AbstractControl>;
 
     constructor(private identityService: IdentityService,
                 private service: FormulierDefinitieService,
+                private mailService: MailtemplateBeheerService,
                 private referentieService: ReferentieTabelService,
                 public dialog: MatDialog,
                 private route: ActivatedRoute,
@@ -51,6 +69,11 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     }
 
     ngOnInit(): void {
+
+        this.mailService.ophalenVariabelenVoorMail(Mail.ZAAK_ALGEMEEN).subscribe(m => {
+            this.zaakVariabelen = m as string[];
+        });
+
         this.referentieService.listReferentieTabellen().subscribe(tabellen => {
             this.referentieLijsten = tabellen.map(value => value.code);
         });
@@ -73,6 +96,9 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
         if (!this.definitie.veldDefinities?.length) {
             this.definitie.veldDefinities = [];
         }
+        if (!this.definitie.mailGegevens) {
+            this.definitie.mailGegevens = new FormulierDefinitieMailGegevens();
+        }
 
         this.definitieFormGroup = this.formBuilder.group({
             id: [this.definitie.id],
@@ -83,7 +109,9 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
             }, [Validators.required, Validators.pattern('[a-z0-9_-]*')]],
             beschrijving: [this.definitie.beschrijving, [Validators.required, Validators.maxLength(200)]],
             uitleg: [this.definitie.uitleg],
-            veldDefinities: this.formBuilder.array(this.definitie.veldDefinities.map(veld => FormulierVeldDefinitie.asFormGroup(veld)))
+            veldDefinities: this.formBuilder.array(this.definitie.veldDefinities.map(veld => FormulierVeldDefinitie.asFormGroup(veld))),
+            mailVersturen: [!!this.definitie.mailVersturen],
+            mailGegevens: FormulierDefinitieMailGegevens.asFormGroup(this.definitie.mailGegevens)
         });
         (this.definitieFormGroup.get('veldDefinities') as FormArray).addValidators(Validators.required); // minimaal 1 veld definitie
         this.dataSource = new MatTableDataSource((this.definitieFormGroup.get('veldDefinities') as FormArray).controls);
@@ -128,7 +156,6 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
     }
 
     onVeldtypeChange($event: MatSelectChange, veldDefinitieFormGroup: FormGroup): void {
-        console.log($event, veldDefinitieFormGroup);
         const veldtype: FormulierVeldtype = $event.value;
         if (FormulierVeldDefinitie.isMeerkeuzeVeld(veldtype)) {
             veldDefinitieFormGroup.get('meerkeuzeOpties').enable();
@@ -184,4 +211,13 @@ export class FormulierDefinitieEditComponent extends AdminComponent implements O
         });
     }
 
+
+    getVeldDefiniteVariabelen() {
+        const vals: string[] = [];
+        const veldDefinities = this.definitieFormGroup.get('veldDefinities') as FormArray;
+        veldDefinities.controls.forEach(control => {
+            vals.push(control.get('systeemnaam').value);
+        });
+        return vals;
+    }
 }

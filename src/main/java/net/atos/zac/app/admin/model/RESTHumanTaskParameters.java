@@ -5,9 +5,6 @@
 
 package net.atos.zac.app.admin.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RESTHumanTaskParameters {
 
     public boolean actief;
@@ -20,7 +17,8 @@ public class RESTHumanTaskParameters {
 
     public String defaultGroepId;
 
-    public String formulierDefinitieId;
+    public String startformulierDefinitieId;
 
-    public List<RESTHumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
+    public String afhandelformulierDefinitieId;
+
 }

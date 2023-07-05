@@ -28,6 +28,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Entity
@@ -322,7 +323,12 @@ public class ZaakafhandelParameters {
      * @return true indien er een zaak kan worden gestart
      */
     public boolean isValide() {
-        return StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(
+        boolean humantaskValide = CollectionUtils.emptyIfNull(humanTaskParametersCollection)
+                .stream()
+                .filter(HumanTaskParameters::isActief)
+                .allMatch(
+                        htp -> htp.getAfhandelformulierDefinitieID() != null && htp.getStartformulierDefinitieID() != null);
+        return humantaskValide && StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(
                 caseDefinitionID) && nietOntvankelijkResultaattype != null;
     }
 

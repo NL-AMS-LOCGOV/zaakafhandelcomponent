@@ -52,7 +52,7 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-table [dataSource]="dataSource">
-                    <ng-container matColumnDef="label">
+                        <ng-container matColumnDef="label">
                             <mat-header-cell *matHeaderCellDef>{{'label' | translate}}</mat-header-cell>
                             <mat-cell *matCellDef="let element;" [formGroup]="element">
                                 <mat-form-field class="full-width" floatLabel="always" subscriptSizing="dynamic">
@@ -179,6 +179,88 @@
                     </ng-container>
                 </mat-card-content>
             </mat-card>
+
+            <mat-expansion-panel class="mail-panel" hideToggle="true" disabled="true"
+                                 [expanded]="definitieFormGroup.get('mailVersturen').value">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Mail versturen na indienen formulier
+                    </mat-panel-title>
+                    <mat-slide-toggle formControlName="mailVersturen"
+                                      (click)="$event.stopPropagation()"
+                                      color="primary"></mat-slide-toggle>
+                </mat-expansion-panel-header>
+                <div formGroupName="mailGegevens">
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'mail.afzender' | translate}}</mat-label>
+                            <input matInput formControlName="from"
+                                   placeholder="GEMEENTE, MEDEWERKER, of een emailadres"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'ontvanger' | translate}}</mat-label>
+                            <input matInput formControlName="to"
+                                   placeholder="INITIATOR of systeemnaam van een velddefinitie"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-row">
+                        <mat-form-field class="w100" floatLabel="always">
+                            <mat-label>{{'onderwerp' | translate}}</mat-label>
+                            <input matInput formControlName="subject"
+                                   [required]="definitieFormGroup.get('mailVersturen').value">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex-col editor">
+
+                        <ngx-editor-menu [editor]="editor"
+                                         [customMenuRef]="variabelenMenu"
+                                         [toolbar]="toolbar">
+                        </ngx-editor-menu>
+                        <ngx-editor
+                                [editor]="editor"
+                                [placeholder]="'body' | translate"
+                                formControlName="body">
+                        </ngx-editor>
+
+                        <ng-template #variabelenMenu>
+
+                            <button class="menu-item" type="button" mat-button
+                                    [matMenuTriggerFor]="zaakVariabelenMenu">
+                                {{'Zaak' | translate}}
+                            </button>
+
+                            <mat-menu #zaakVariabelenMenu="matMenu" class="editor-variabelen-menu">
+                                <div *ngFor="let variabele of zaakVariabelen">
+                                    <button mat-menu-item
+                                            (click)=" this.editor.commands.insertText('{' + variabele + '}').exec();">
+                                        {{variabele + ': ' + ('mailtemplate.variabele.' + variabele | translate)}}
+                                    </button>
+                                </div>
+
+                            </mat-menu>
+
+                            <button class="menu-item" type="button" mat-button
+                                    [matMenuTriggerFor]="formulierVariabelenMenu">
+                                {{'Formulier' | translate}}
+                            </button>
+                            <mat-menu #formulierVariabelenMenu="matMenu" class="editor-variabelen-menu">
+                                <div *ngFor="let variabele of getVeldDefiniteVariabelen()">
+                                    <button mat-menu-item
+                                            (click)=" this.editor.commands.insertText('[' + variabele + ']').exec();">
+                                        {{variabele}}
+                                    </button>
+                                </div>
+                            </mat-menu>
+                        </ng-template>
+
+                    </div>
+                </div>
+            </mat-expansion-panel>
         </form>
 
         <mat-expansion-panel>
@@ -225,10 +307,74 @@
                     <li><b>taak-toekennen-behandelaar</b>: de taak wordt toegekend aan de gekozen MEDEWERKER_KEUZELIJST
                         waarde
                     </li>
+                    <li><b>toelichting</b>: toelichting op de taak</li>
+                    <li><b>mail-bijlagen</b>: een DOCUMENTEN_LIJST veld voor het toevoegen van bijlagen aan een mail
+                    </li>
+                    <li><b>documenten-verzenden</b>: een DOCUMENTEN_LIJST veld voor het markeren van documenten met de
+                        indicatie verzonden
+                    </li>
+                    <li><b>documenten-verzenden-datum</b>: een DATUM veld welke aangeeft wanneer de betreffende
+                        documenten worden/zijn verzonden
+                    </li>
+                    <li><b>documenten-onderteken</b>: een DOCUMENTEN_LIJST veld voor het ondertekend van documenten na
+                        het afronden van het formulier
+                    </li>
                 </ul>
-                Indien het niet mogelijk is om de gekozen conditie uit te voeren zal het veld niet worden weergegeven.
+                <i>NB: Opschorten en hervatten zijn alleen actief als het mogelijk is de betreffende actie uit te
+                    voeren</i>
+                <br/><br/>
             </small>
         </mat-expansion-panel>
 
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Uitleg standaardwaarden
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <small>
+                de volgende variabelen kunnen worden gebruikt als standaardwaarde voor een velddefinitie
+                <ul>
+                    <li><b>ZAAK:STARTDATUM</b>: De startdatum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:FATALE_DATUM</b>: De fatale datum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:STREEFDATUM</b>: De streefdatum van de zaak (dd-mm-yyyy)</li>
+                    <li><b>ZAAK:BEHANDELAAR</b>: De volledige naam van de zaak toegewezen behandelaar</li>
+                    <li><b>ZAAK:GROEP</b>: De naam van de zaak toegewezen groep</li>
+                </ul>
+                Indien een formulierdefinitie is toegewezen als taak afhandelformulier dan zijn ook de volgende
+                variabelen beschikbaar
+                <ul>
+                    <li><b>TAAK:STARTDATUM</b>: De startdatum van de taak (dd-mm-yyyy)</li>
+                    <li><b>TAAK:FATALE_DATUM</b>: De fatale datum van de taak (dd-mm-yyyy)</li>
+                    <li><b>TAAK:BEHANDELAAR</b>: De volledige naam van de taak toegewezen behandelaar</li>
+                    <li><b>TAAK:GROEP</b>: De naam van de taak toegewezen groep</li>
+                </ul>
+                <br/>
+                DATUM velddefinities ondersteunen naast de bovenstaande datum variabelen ook de volgende
+                standaardwaarden
+                <ul>
+                    <li><b>+3</b>: vandaag plus 3 dagen</li>
+                    <li><b>-2</b>: vandaag min 2 dagen</li>
+                    <li><b>24-05-2023</b>: een vaste datum</li>
+                </ul>
+
+                Indien <i>[Mail versturen na indienen formulier]</i> aan staat, dan zijn ook de volgende variabelen
+                beschikbaar in een vervolg-formulier
+                <ul>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-bericht</b>: De inhoud van de verzonden
+                        mail
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-onderwerp</b>: Het onderwerp van de
+                        verzonden mail
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-afzender</b>: Het e-mailadres van de
+                        verzender
+                    </li>
+                    <li><b>{{definitieFormGroup.get('systeemnaam').value}}_mail-ontvanger</b>: Het e-mailadres van de
+                        ontvanger(s)
+                    </li>
+                </ul>
+            </small>
+        </mat-expansion-panel>
     </mat-sidenav-content>
 </mat-sidenav-container>

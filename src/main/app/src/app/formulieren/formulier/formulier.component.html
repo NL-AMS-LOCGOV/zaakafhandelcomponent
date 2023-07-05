@@ -83,7 +83,7 @@
         <div *ngSwitchCase="FormulierVeldtype.TEKST_VLAK">
             <mat-form-field class="full-width" floatLabel="always">
                 <mat-label>{{veldDefinitie.label}}</mat-label>
-                <textarea style="font-size: 10px" [formControlName]="veldDefinitie.systeemnaam"
+                <textarea style="font-size: 14px" [formControlName]="veldDefinitie.systeemnaam"
                           matInput cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15">
                 </textarea>
                 <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
@@ -91,7 +91,8 @@
         </div>
 
         <div *ngSwitchCase="FormulierVeldtype.CHECKBOX">
-            <mat-checkbox [formControlName]="veldDefinitie.systeemnaam">{{veldDefinitie.label}}</mat-checkbox>
+            <mat-checkbox *ngIf="toonVeld(veldDefinitie)"
+                          [formControlName]="veldDefinitie.systeemnaam">{{veldDefinitie.label}}</mat-checkbox>
         </div>
 
         <div *ngSwitchCase="FormulierVeldtype.CHECKBOXES" class="checkboxes">
@@ -116,8 +117,15 @@
             <zac-documenten-formulier-veld
                     [control]="getControl(veldDefinitie.systeemnaam)"
                     [veldDefinitie]="veldDefinitie"
+                    [readonly]="readonly"
                     [zaak]="zaak">
             </zac-documenten-formulier-veld>
+        </div>
+
+        <div *ngSwitchCase="FormulierVeldtype.READONLY" class="readonly-form-field">
+            <label [ngClass]="{'required': veldDefinitie.verplicht}">{{veldDefinitie.label}}</label>
+            <div [innerHTML]="veldDefinitie.defaultWaarde | datum | empty" class="value"></div>
+            <mat-hint *ngIf="veldDefinitie.helptekst">{{veldDefinitie.helptekst}}</mat-hint>
         </div>
 
         <div *ngSwitchDefault>
@@ -125,16 +133,17 @@
         </div>
     </ng-container>
 
-    <div class="flex-row justify-start">
+    <div class="flex-row justify-start" *ngIf="!readonly">
         <button mat-raised-button color="primary"
                 [disabled]="formGroup.invalid||bezigMetOpslaan"
                 id="opslaan_button"
                 (click)="opslaan()"
                 type="submit">
-            {{'actie.opslaan' | translate}}
+            {{submitButtonLabel | translate}}
         </button>
         <button mat-raised-button [disabled]="bezigMetOpslaan"
                 id="annuleren_button"
+                *ngIf="toonAnnulerenButton"
                 type="button"
                 (click)="cancel()">
             {{'actie.annuleren' | translate}}

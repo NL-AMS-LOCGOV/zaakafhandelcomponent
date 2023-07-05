@@ -24,6 +24,7 @@ export class DocumentenFormulierVeldComponent implements OnInit {
 
     @Input() veldDefinitie: FormulierVeldDefinitie;
     @Input() control: FormControl;
+    @Input() readonly readonly;
     @Input() zaak: Zaak;
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'indicaties', 'url'];
     loading = false;
@@ -51,6 +52,11 @@ export class DocumentenFormulierVeldComponent implements OnInit {
         }
         observable.subscribe(documenten => {
             this.dataSource.data = documenten;
+            documenten.forEach(document => {
+                if (this.veldDefinitie.defaultWaarde?.includes(document.uuid)) {
+                    this.selection.toggle(document);
+                }
+            });
         });
     }
 

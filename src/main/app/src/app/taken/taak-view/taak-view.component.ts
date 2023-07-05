@@ -14,13 +14,11 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {FormGroup} from '@angular/forms';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {
+    TextareaFormFieldBuilder
+} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
@@ -33,12 +31,16 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TaakStatus} from '../model/taak-status.enum';
-import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
-import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
+import {
+    MedewerkerGroepFieldBuilder
+} from '../../shared/material-form-builder/form-components/medewerker-groep/medewerker-groep-field-builder';
 import {Zaak} from '../../zaken/model/zaak';
 import {ZakenService} from '../../zaken/zaken.service';
 import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatDialog} from '@angular/material/dialog';
 import {Zaaktype} from '../../zaken/model/zaaktype';
@@ -58,8 +60,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taak: Taak;
     zaak: Zaak;
-    formulier: AbstractTaakFormulier;
-    formConfig: FormConfig;
     formulierDefinitie: FormulierDefinitie;
 
     menu: MenuItem[] = [];
@@ -85,7 +85,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                 public utilService: UtilService,
                 private dialog: MatDialog,
                 private websocketService: WebsocketService,
-                private taakFormulierenService: TaakFormulierenService,
                 private identityService: IdentityService,
                 protected translate: TranslateService) {
         super();
@@ -135,60 +134,38 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (initZaak) {
             this.zakenService.readZaak(this.taak.zaakUuid).subscribe(zaak => {
                 this.zaak = zaak;
+                this.createTaakForm(taak);
                 this.initialized = true;
-                this.createTaakForm(taak, zaak);
-
             });
-        } else {
-            this.createTaakForm(taak, this.zaak);
+        }
+
+    }
+
+    private createTaakForm(taak: Taak): void {
+        if (taak.formulierDefinitie) {
+            this.formulierDefinitie = taak.formulierDefinitie;
+            this.utilService.setTitle('title.taak', {taak: this.formulierDefinitie.naam});
         }
     }
 
-    private createTaakForm(taak: Taak, zaak: Zaak): void {
-        if (taak.formulierDefinitieId) {
-            this.createHardCodedTaakForm(taak, zaak);
-        } else {
-             this.createConfigurableTaakForm(taak);
-        }
-    }
-
-    private createHardCodedTaakForm(taak: Taak, zaak: Zaak): void {
-        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
-            this.formConfig = new FormConfigBuilder()
-                    .partialText('actie.opslaan')
-                    .saveText('actie.opslaan.afronden')
-                    .build();
-        } else {
-            this.formConfig = null;
-        }
-
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitieId)
-                .behandelForm(taak, zaak).build();
-        if (this.formulier.disablePartialSave && this.formConfig) {
-            this.formConfig.partialButtonText = null;
-        }
-        this.utilService.setTitle('title.taak', {taak: this.formulier.getBehandelTitel()});
-    }
-
-    private createConfigurableTaakForm(taak: Taak): void {
-        this.formulierDefinitie = taak.formulierDefinitie;
-        this.utilService.setTitle('title.taak', {taak: this.formulierDefinitie.naam});
+    isReadonly() {
+        return this.taak.status === TaakStatus.Afgerond || !this.taak.rechten.wijzigen;
     }
 
     private setEditableFormFields(): void {
         this.editFormFields.set('medewerker-groep',
-            new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar)
-            .id('medewerker-groep')
-            .groepLabel('groep.-kies-')
-            .groepRequired()
-            .medewerkerLabel('behandelaar.-kies-')
-            .build());
+                new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar)
+                        .id('medewerker-groep')
+                        .groepLabel('groep.-kies-')
+                        .groepRequired()
+                        .medewerkerLabel('behandelaar.-kies-')
+                        .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder(this.taak.toelichting)
-            .id('toelichting')
-            .label('toelichting')
-            .maxlength(1000)
-            .build());
+                new TextareaFormFieldBuilder(this.taak.toelichting)
+                        .id('toelichting')
+                        .label('toelichting')
+                        .maxlength(1000)
+                        .build());
         this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden')
                                                                     .label('reden')
                                                                     .maxlength(80)
@@ -236,28 +213,20 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    onFormPartial(formGroup: FormGroup): void {
-        this.websocketService.suspendListener(this.taakListener);
-        this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.opgeslagen');
-            this.init(taak, false);
-            this.posts++;
-        });
-    }
-
-    onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
+    onFormSubmit(formState: {}): void {
+        if (formState) {
+            this.taak.taakdata = formState;
             this.websocketService.suspendListener(this.taakListener);
-            this.takenService.complete(this.formulier.getTaak(formGroup)).subscribe(taak => {
+            this.takenService.complete(this.taak).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.afgerond');
-                this.init(taak, false);
+                this.init(taak, true);
             });
         }
     }
 
     editToewijzing(event: any) {
         if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id &&
-            this.taak.groep === event['medewerker-groep'].groep) {
+                this.taak.groep === event['medewerker-groep'].groep) {
             this.assignToMe();
         } else {
             this.taak.groep = event['medewerker-groep'].groep;
@@ -309,9 +278,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (!this.taak.taakdocumenten) {
             this.taak.taakdocumenten = [];
         }
-
         this.taak.taakdocumenten.push(informatieobject.uuid);
-        this.formulier.refreshTaakdocumentenEnBijlagen();
     }
 
     /**

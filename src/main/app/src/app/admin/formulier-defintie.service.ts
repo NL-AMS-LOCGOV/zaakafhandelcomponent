@@ -32,12 +32,6 @@ export class FormulierDefinitieService {
         );
     }
 
-    run(systeemnaam: string): Observable<FormulierDefinitie> {
-        return this.http.get<FormulierDefinitie[]>(`${this.basepath}/runtime/${systeemnaam}`).pipe(
-                catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
     update(definitie: FormulierDefinitie): Observable<FormulierDefinitie> {
         return this.http.put<FormulierDefinitie>(`${this.basepath}`, definitie).pipe(
                 catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
