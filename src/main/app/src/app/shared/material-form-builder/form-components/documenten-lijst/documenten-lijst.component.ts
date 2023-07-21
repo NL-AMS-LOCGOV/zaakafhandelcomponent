@@ -92,7 +92,7 @@ export class DocumentenLijstComponent
     }
   }
 
-  selectDisabled(document): boolean {
+  selectDisabled(): boolean {
     return this.data.readonly;
   }
 

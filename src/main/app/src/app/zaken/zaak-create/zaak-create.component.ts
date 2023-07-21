@@ -371,7 +371,7 @@ export class ZaakCreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  bagGeselecteerd($event: BAGObject): void {
+  bagGeselecteerd(): void {
     this.bagObjectenField.formControl.setValue(
       this.bagObjecten.map((b) => b.omschrijving).join(" | "),
     );

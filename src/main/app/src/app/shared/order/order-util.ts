@@ -12,7 +12,7 @@ export class OrderUtil {
 
   static orderAsIs(): { (a: any, b: any) } {
     // Array sort is stable since node.js 12
-    return (a: any, b: any): number => {
+    return (): number => {
       return 0;
     };
   }

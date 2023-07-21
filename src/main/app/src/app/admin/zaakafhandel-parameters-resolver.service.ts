@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { ZaakafhandelParametersService } from "./zaakafhandel-parameters.service";
 import { ZaakafhandelParameters } from "./model/zaakafhandel-parameters";
@@ -15,10 +15,7 @@ import { ZaakafhandelParameters } from "./model/zaakafhandel-parameters";
 export class ZaakafhandelParametersResolver {
   constructor(private adminService: ZaakafhandelParametersService) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Observable<ZaakafhandelParameters> {
+  resolve(route: ActivatedRouteSnapshot): Observable<ZaakafhandelParameters> {
     return this.adminService.readZaakafhandelparameters(
       route.paramMap.get("uuid"),
     );

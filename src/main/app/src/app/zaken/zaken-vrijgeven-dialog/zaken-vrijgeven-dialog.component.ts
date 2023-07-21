@@ -6,9 +6,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ZakenService } from "../zaken.service";
-import { TextareaFormFieldBuilder } from "../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder";
 import { MaterialFormBuilderService } from "../../shared/material-form-builder/material-form-builder.service";
-import { AbstractFormField } from "../../shared/material-form-builder/model/abstract-form-field";
 import { ZaakZoekObject } from "../../zoeken/model/zaken/zaak-zoek-object";
 import { InputFormField } from "../../shared/material-form-builder/form-components/input/input-form-field";
 import { InputFormFieldBuilder } from "../../shared/material-form-builder/form-components/input/input-form-field-builder";

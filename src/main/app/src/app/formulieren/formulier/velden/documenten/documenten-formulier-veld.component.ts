@@ -77,7 +77,7 @@ export class DocumentenFormulierVeldComponent implements OnInit {
     );
   }
 
-  selectDisabled(document): boolean {
+  selectDisabled(): boolean {
     return this.control.disabled;
   }
 

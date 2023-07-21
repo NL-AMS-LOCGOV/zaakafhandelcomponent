@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { TabelGegevens } from "../model/tabel-gegevens";
 import { GebruikersvoorkeurenService } from "../../../gebruikersvoorkeuren/gebruikersvoorkeuren.service";
@@ -17,10 +17,7 @@ export class TabelGegevensResolver {
     private gebruikersvoorkeurenService: GebruikersvoorkeurenService,
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Observable<TabelGegevens> {
+  resolve(route: ActivatedRouteSnapshot): Observable<TabelGegevens> {
     return this.gebruikersvoorkeurenService.readTabelGegevens(
       route.data.werklijst,
     );

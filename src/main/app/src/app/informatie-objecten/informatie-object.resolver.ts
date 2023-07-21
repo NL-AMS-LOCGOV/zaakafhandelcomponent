@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { EnkelvoudigInformatieobject } from "./model/enkelvoudig-informatieobject";
 import { InformatieObjectenService } from "./informatie-objecten.service";
@@ -17,7 +17,6 @@ export class InformatieObjectResolver {
 
   resolve(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
   ): Observable<EnkelvoudigInformatieobject> {
     const informatieObjectUUID: string = route.paramMap.get("uuid");
     const informatieObjectVersie: string = route.paramMap.get("versie");

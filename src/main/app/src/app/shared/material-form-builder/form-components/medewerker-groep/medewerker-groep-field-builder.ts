@@ -5,7 +5,7 @@
 
 import { AbstractFormFieldBuilder } from "../../model/abstract-form-field-builder";
 import { MedewerkerGroepFormField } from "./medewerker-groep-form-field";
-import { ValidatorFn, Validators } from "@angular/forms";
+import { Validators } from "@angular/forms";
 import { AbstractFormField } from "../../model/abstract-form-field";
 import { User } from "../../../../identity/model/user";
 import { Group } from "../../../../identity/model/group";
@@ -33,7 +33,7 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
     return this;
   }
 
-  validators(...validators: ValidatorFn[]): this {
+  validators(): this {
     throw new Error("Not implemented");
   }
 

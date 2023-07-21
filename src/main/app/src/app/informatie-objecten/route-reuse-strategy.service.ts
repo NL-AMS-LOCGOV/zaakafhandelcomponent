@@ -16,7 +16,7 @@ import { Injectable } from "@angular/core";
 export class RouteReuseStrategyService extends RouteReuseStrategy {
   handlers: { [key: string]: DetachedRouteHandle } = {};
 
-  shouldDetach(route: ActivatedRouteSnapshot): boolean {
+  shouldDetach(): boolean {
     return false;
   }
 

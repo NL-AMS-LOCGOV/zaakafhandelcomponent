@@ -8,11 +8,9 @@ import {
   EventEmitter,
   HostBinding,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
 } from "@angular/core";
 import { AbstractFormField } from "../material-form-builder/model/abstract-form-field";
 import { MaterialFormBuilderService } from "../material-form-builder/material-form-builder.service";

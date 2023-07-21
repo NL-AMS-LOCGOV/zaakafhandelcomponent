@@ -10,7 +10,6 @@ import {
   OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from "@angular/core";
 import { TextIcon } from "../edit/text-icon";
 import { FormControl } from "@angular/forms";
@@ -35,7 +34,7 @@ export class StaticTextComponent implements OnInit, OnChanges {
     this.setIcon();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.setIcon();
   }
 

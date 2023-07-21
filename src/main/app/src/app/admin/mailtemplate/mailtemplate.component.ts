@@ -171,7 +171,7 @@ export class MailtemplateComponent
     const persistMailtemplate: Observable<Mailtemplate> =
       this.service.persistMailtemplate(this.template);
     persistMailtemplate
-      .pipe(catchError((error) => of(this.template)))
+      .pipe(catchError(() => of(this.template)))
       .subscribe(() => {
         this.utilService.openSnackbar("msg.mailtemplate.opgeslagen");
         this.router.navigate(["/admin/mailtemplates"]);
