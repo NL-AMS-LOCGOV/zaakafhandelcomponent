@@ -4,11 +4,11 @@
  */
 
 export class HistorieRegel {
-    datumTijd: string;
-    door: string;
-    applicatie: string;
-    attribuutLabel: string;
-    oudeWaarde: string;
-    nieuweWaarde: string;
-    toelichting: string;
+  datumTijd: string;
+  door: string;
+  applicatie: string;
+  attribuutLabel: string;
+  oudeWaarde: string;
+  nieuweWaarde: string;
+  toelichting: string;
 }

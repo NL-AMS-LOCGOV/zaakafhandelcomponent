@@ -4,6 +4,6 @@
  */
 
 export class ZaakbeeindigReden {
-    id: string;
-    naam: string;
+  id: string;
+  naam: string;
 }

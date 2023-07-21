@@ -4,6 +4,6 @@
  */
 
 export class ZaakOpschorting {
-    vanafDatumTijd: string;
-    duurDagen: number;
+  vanafDatumTijd: string;
+  duurDagen: number;
 }

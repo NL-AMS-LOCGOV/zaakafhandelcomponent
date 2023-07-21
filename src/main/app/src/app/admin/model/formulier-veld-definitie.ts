@@ -4,6 +4,6 @@
  */
 
 export class FormulierVeldDefinitie {
-    naam: string;
-    tabel: string;
+  naam: string;
+  tabel: string;
 }

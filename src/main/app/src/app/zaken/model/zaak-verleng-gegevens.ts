@@ -4,9 +4,9 @@
  */
 
 export class ZaakVerlengGegevens {
-    einddatumGepland: string;
-    uiterlijkeEinddatumAfdoening: string;
-    redenVerlenging: string;
-    duurDagen: number;
-    takenVerlengen: boolean;
+  einddatumGepland: string;
+  uiterlijkeEinddatumAfdoening: string;
+  redenVerlenging: string;
+  duurDagen: number;
+  takenVerlengen: boolean;
 }

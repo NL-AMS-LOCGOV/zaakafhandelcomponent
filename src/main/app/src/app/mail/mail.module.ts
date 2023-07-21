@@ -3,21 +3,15 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {NgModule} from '@angular/core';
+import { NgModule } from "@angular/core";
 
-import {SharedModule} from '../shared/shared.module';
-import {MailCreateComponent} from './mail-create/mail-create.component';
-import {OntvangstbevestigingComponent} from './ontvangstbevestiging/ontvangstbevestiging.component';
+import { SharedModule } from "../shared/shared.module";
+import { MailCreateComponent } from "./mail-create/mail-create.component";
+import { OntvangstbevestigingComponent } from "./ontvangstbevestiging/ontvangstbevestiging.component";
 
 @NgModule({
-    declarations: [MailCreateComponent, OntvangstbevestigingComponent],
-    exports: [
-        MailCreateComponent,
-        OntvangstbevestigingComponent
-    ],
-    imports: [
-        SharedModule,
-    ]
+  declarations: [MailCreateComponent, OntvangstbevestigingComponent],
+  exports: [MailCreateComponent, OntvangstbevestigingComponent],
+  imports: [SharedModule],
 })
-export class MailModule {
-}
+export class MailModule {}

@@ -1,5 +1,5 @@
 export enum ColumnPickerValue {
-    VISIBLE = 'VISIBLE',
-    HIDDEN = 'HIDDEN',
-    STICKY = 'STICKY'
+  VISIBLE = "VISIBLE",
+  HIDDEN = "HIDDEN",
+  STICKY = "STICKY",
 }

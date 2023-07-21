@@ -4,10 +4,10 @@
  */
 
 export class ScreenEventId {
-    resource: string;
-    detail: string;
+  resource: string;
+  detail: string;
 
-    constructor(objectId: string) {
-        this.resource = objectId;
-    }
+  constructor(objectId: string) {
+    this.resource = objectId;
+  }
 }

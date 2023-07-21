@@ -3,6 +3,4 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class MailtemplateVariabele {
-
-}
+export class MailtemplateVariabele {}

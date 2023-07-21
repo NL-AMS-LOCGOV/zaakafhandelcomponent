@@ -3,57 +3,57 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {SessionStorageUtil} from './session-storage.util';
+import { SessionStorageUtil } from "./session-storage.util";
 
-describe('SessionStorageService', () => {
+describe("SessionStorageService", () => {
+  afterEach(() => {
+    SessionStorageUtil.clearSessionStorage();
+  });
 
-    afterEach(() => {
-        SessionStorageUtil.clearSessionStorage();
-    });
+  it("should return a gebruikersnaam with naam Jaap", () => {
+    const gebruiker = { gebruikersnaam: "Jaap" };
+    const gebruikerJSON = JSON.stringify(gebruiker);
 
-    it('should return a gebruikersnaam with naam Jaap', () => {
+    spyOn(sessionStorage, "getItem").and.returnValue(gebruikerJSON);
 
-        const gebruiker = {gebruikersnaam: 'Jaap'};
-        const gebruikerJSON = JSON.stringify(gebruiker);
+    expect(SessionStorageUtil.getItem("gebruikersnaam")).toEqual(
+      JSON.parse(gebruikerJSON),
+    );
+    expect(sessionStorage.getItem).toHaveBeenCalled();
+  });
 
-        spyOn(sessionStorage, 'getItem').and.returnValue(gebruikerJSON);
+  it("key value v should be equal to v", () => {
+    expect(SessionStorageUtil.getItem("k", "v")).toEqual("v");
+  });
 
-        expect(SessionStorageUtil.getItem('gebruikersnaam')).toEqual(JSON.parse(gebruikerJSON));
-        expect(sessionStorage.getItem).toHaveBeenCalled();
-    });
+  it("should return Jaap", () => {
+    const naam = SessionStorageUtil.setItem("gebruikersnaam", "Jaap");
+    expect(naam).toBe("Jaap");
+  });
 
-    it('key value v should be equal to v', () => {
-        expect(SessionStorageUtil.getItem('k', 'v')).toEqual('v');
-    });
+  it("should break the reference", () => {
+    spyOn(JSON, "parse");
+    spyOn(JSON, "stringify");
+    spyOn(sessionStorage, "setItem");
 
-    it('should return Jaap', () => {
-        const naam = SessionStorageUtil.setItem('gebruikersnaam', 'Jaap');
-        expect(naam).toBe('Jaap');
-    });
+    const gebruiker = SessionStorageUtil.getItem("", "Jaap");
 
-    it('should break the reference', () => {
-        spyOn(JSON, 'parse');
-        spyOn(JSON, 'stringify');
-        spyOn(sessionStorage, 'setItem');
+    expect(JSON.parse).toHaveBeenCalled();
+    expect(JSON.stringify).toHaveBeenCalled();
+    expect(sessionStorage.setItem).toHaveBeenCalled();
 
-        const gebruiker = SessionStorageUtil.getItem('', 'Jaap');
+    const jaap = { gebruikersnaam: "Jaap" };
+    const gebruikerJSON = JSON.stringify(jaap);
 
-        expect(JSON.parse).toHaveBeenCalled();
-        expect(JSON.stringify).toHaveBeenCalled();
-        expect(sessionStorage.setItem).toHaveBeenCalled();
+    expect(gebruikerJSON).toEqual(gebruiker);
+  });
 
-        const jaap = {gebruikersnaam: 'Jaap'};
-        const gebruikerJSON = JSON.stringify(jaap);
-
-        expect(gebruikerJSON).toEqual(gebruiker);
-    });
-
-    // session storage word momenteel niet leeggegooid. Echter, in de afterAll() gebeurt dit wel
-    xit('should call clear', () => {
-        spyOn(sessionStorage, 'clear');
-        SessionStorageUtil.setItem('testWaarde', 'waarde');
-        SessionStorageUtil.clearSessionStorage();
-        expect(sessionStorage.clear).toHaveBeenCalled();
-        expect(SessionStorageUtil.getItem('testWaarde')).toBe(undefined);
-    });
+  // session storage word momenteel niet leeggegooid. Echter, in de afterAll() gebeurt dit wel
+  xit("should call clear", () => {
+    spyOn(sessionStorage, "clear");
+    SessionStorageUtil.setItem("testWaarde", "waarde");
+    SessionStorageUtil.clearSessionStorage();
+    expect(sessionStorage.clear).toHaveBeenCalled();
+    expect(SessionStorageUtil.getItem("testWaarde")).toBe(undefined);
+  });
 });

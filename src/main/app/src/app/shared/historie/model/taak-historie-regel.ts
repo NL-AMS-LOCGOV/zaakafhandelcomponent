@@ -4,9 +4,9 @@
  */
 
 export class TaakHistorieRegel {
-    datumTijd: string;
-    attribuutLabel: string;
-    oudeWaarde: string;
-    nieuweWaarde: string;
-    toelichting: string;
+  datumTijd: string;
+  attribuutLabel: string;
+  oudeWaarde: string;
+  nieuweWaarde: string;
+  toelichting: string;
 }

@@ -4,6 +4,6 @@
  */
 
 export class ZaakStatus {
-    naam: string;
-    toelichting: string;
+  naam: string;
+  toelichting: string;
 }

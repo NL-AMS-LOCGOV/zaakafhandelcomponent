@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {DocumentenLijstFieldBuilder} from '../documenten-lijst/documenten-lijst-field-builder';
-import {DocumentenOndertekenenFormField} from './documenten-ondertekenen-form-field';
+import { DocumentenLijstFieldBuilder } from "../documenten-lijst/documenten-lijst-field-builder";
+import { DocumentenOndertekenenFormField } from "./documenten-ondertekenen-form-field";
 
 export class DocumentenOndertekenenFieldBuilder extends DocumentenLijstFieldBuilder {
+  readonly formField: DocumentenOndertekenenFormField;
 
-    readonly formField: DocumentenOndertekenenFormField;
-
-    constructor() {
-        super();
-        this.formField = new DocumentenOndertekenenFormField();
-        this.formField.selectLabel = 'ondertekenen';
-        this.formField.initControl();
-    }
+  constructor() {
+    super();
+    this.formField = new DocumentenOndertekenenFormField();
+    this.formField.selectLabel = "ondertekenen";
+    this.formField.initControl();
+  }
 }

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormFieldDirective} from './form-field.directive';
+import { FormFieldDirective } from "./form-field.directive";
 
-describe('FormFieldDirective', () => {
-    let directive;
-    let mockViewContainerRef;
+describe("FormFieldDirective", () => {
+  let directive;
+  let mockViewContainerRef;
 
-    beforeEach(() => {
-        mockViewContainerRef = jasmine.createSpyObj(['']);
+  beforeEach(() => {
+    mockViewContainerRef = jasmine.createSpyObj([""]);
 
-        directive = new FormFieldDirective(mockViewContainerRef);
-    });
+    directive = new FormFieldDirective(mockViewContainerRef);
+  });
 
-    it('should create an instance', () => {
-        expect(directive).toBeTruthy();
-    });
+  it("should create an instance", () => {
+    expect(directive).toBeTruthy();
+  });
 });

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ReferentieTabel} from './referentie-tabel';
+import { ReferentieTabel } from "./referentie-tabel";
 
 export class HumanTaskReferentieTabel {
-    id: number;
-    veld: string;
-    tabel: ReferentieTabel;
+  id: number;
+  veld: string;
+  tabel: ReferentieTabel;
 }

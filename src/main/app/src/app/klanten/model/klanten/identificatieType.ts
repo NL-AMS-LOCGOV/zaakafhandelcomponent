@@ -4,7 +4,7 @@
  */
 
 export enum IdentificatieType {
-    BSN = 'BSN',
-    VN = 'VN',
-    RSIN = 'RSIN'
+  BSN = "BSN",
+  VN = "VN",
+  RSIN = "RSIN",
 }

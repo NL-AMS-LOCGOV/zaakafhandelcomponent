@@ -3,29 +3,28 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
-import {HeadingFormField, HeadingLevel} from './heading-form-field';
+import { AbstractFormFieldBuilder } from "../../model/abstract-form-field-builder";
+import { HeadingFormField, HeadingLevel } from "./heading-form-field";
 
 export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
+  readonly formField: HeadingFormField;
 
-    readonly formField: HeadingFormField;
+  constructor() {
+    super();
+    this.formField = new HeadingFormField();
+  }
 
-    constructor() {
-        super();
-        this.formField = new HeadingFormField();
+  level(level: HeadingLevel): this {
+    this.formField.level = level;
+    return this;
+  }
+
+  validate(): void {
+    if (this.formField.label == null) {
+      throw new Error("label is required");
     }
-
-    level(level: HeadingLevel): this {
-        this.formField.level = level;
-        return this;
+    if (this.formField.level == null) {
+      throw new Error("level is required");
     }
-
-    validate(): void {
-        if (this.formField.label == null) {
-            throw new Error('label is required');
-        }
-        if (this.formField.level == null) {
-            throw new Error('level is required');
-        }
-    }
+  }
 }

@@ -3,29 +3,28 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ParagraphFormField} from './paragraph-form-field';
+import { ParagraphFormField } from "./paragraph-form-field";
 
 export class ParagraphFormFieldBuilder {
+  protected readonly formField: ParagraphFormField;
 
-    protected readonly formField: ParagraphFormField;
+  constructor() {
+    this.formField = new ParagraphFormField();
+  }
 
-    constructor() {
-        this.formField = new ParagraphFormField();
+  validate(): void {
+    if (this.formField.label == null) {
+      throw new Error("label is required");
     }
+  }
 
-    validate(): void {
-        if (this.formField.label == null) {
-            throw new Error('label is required');
-        }
-    }
+  text(text: string): this {
+    this.formField.label = text;
+    return this;
+  }
 
-    text(text: string): this {
-        this.formField.label = text;
-        return this;
-    }
-
-    build() {
-        this.validate();
-        return this.formField;
-    }
+  build() {
+    this.validate();
+    return this.formField;
+  }
 }

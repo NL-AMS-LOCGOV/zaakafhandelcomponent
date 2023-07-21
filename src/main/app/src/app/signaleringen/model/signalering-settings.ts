@@ -4,8 +4,8 @@
  */
 
 export class SignaleringSettings {
-    type: string;
-    subjecttype: string;
-    dashboard: boolean;
-    mail: boolean;
+  type: string;
+  subjecttype: string;
+  dashboard: boolean;
+  mail: boolean;
 }

@@ -3,13 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {NgModule} from '@angular/core';
-import {IdentityService} from './identity.service';
+import { NgModule } from "@angular/core";
+import { IdentityService } from "./identity.service";
 
 @NgModule({
-    providers: [
-        IdentityService
-    ]
+  providers: [IdentityService],
 })
-export class IdentityModule {
-}
+export class IdentityModule {}

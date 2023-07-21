@@ -4,7 +4,7 @@
  */
 
 export class Resultaat<TYPE> {
-    resultaten: TYPE[];
-    totaal: number;
-    foutmelding: string;
+  resultaten: TYPE[];
+  totaal: number;
+  foutmelding: string;
 }

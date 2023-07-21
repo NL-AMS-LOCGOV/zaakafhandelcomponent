@@ -3,33 +3,43 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FieldType} from '../../model/field-type.enum';
-import {Observable} from 'rxjs';
-import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {AbstractFormControlField} from '../../model/abstract-form-control-field';
+import { FieldType } from "../../model/field-type.enum";
+import { Observable } from "rxjs";
+import { EnkelvoudigInformatieobject } from "../../../../informatie-objecten/model/enkelvoudig-informatieobject";
+import { AbstractFormControlField } from "../../model/abstract-form-control-field";
 
 export class DocumentenLijstFormField extends AbstractFormControlField {
+  fieldType = FieldType.DOCUMENTEN_LIJST;
+  documenten: Observable<EnkelvoudigInformatieobject[]>;
+  documentenChecked: string[];
+  columns: string[] = [
+    "select",
+    "titel",
+    "documentType",
+    "status",
+    "versie",
+    "auteur",
+    "creatiedatum",
+    "bestandsomvang",
+    "indicaties",
+    "url",
+  ];
+  selectLabel = "";
+  openInNieuweTab = false;
 
-    fieldType = FieldType.DOCUMENTEN_LIJST;
-    documenten: Observable<EnkelvoudigInformatieobject[]>;
-    documentenChecked: string[];
-    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'indicaties', 'url'];
-    selectLabel = '';
-    openInNieuweTab: boolean = false;
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
-    }
+  hasReadonlyView() {
+    return true;
+  }
 
-    hasReadonlyView() {
-        return true;
-    }
+  updateDocumenten(documenten: Observable<EnkelvoudigInformatieobject[]>) {
+    this.documenten = documenten;
+  }
 
-    updateDocumenten(documenten: Observable<EnkelvoudigInformatieobject[]>) {
-        this.documenten = documenten;
-    }
-
-    removeColumn(id: string) {
-        this.columns.splice(this.columns.indexOf(id), 1);
-    }
+  removeColumn(id: string) {
+    this.columns.splice(this.columns.indexOf(id), 1);
+  }
 }

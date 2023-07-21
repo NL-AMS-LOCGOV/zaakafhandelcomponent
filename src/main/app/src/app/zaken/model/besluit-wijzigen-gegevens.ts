@@ -4,11 +4,11 @@
  */
 
 export class BesluitWijzigenGegevens {
-    besluitUuid: string;
-    resultaattypeUuid: string;
-    toelichting: string;
-    ingangsdatum: boolean;
-    vervaldatum: string;
-    informatieobjecten: string[];
-    reden: string;
+  besluitUuid: string;
+  resultaattypeUuid: string;
+  toelichting: string;
+  ingangsdatum: boolean;
+  vervaldatum: string;
+  informatieobjecten: string[];
+  reden: string;
 }

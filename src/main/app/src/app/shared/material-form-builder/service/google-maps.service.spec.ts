@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {GoogleMapsService} from './google-maps.service';
+import { GoogleMapsService } from "./google-maps.service";
 
-describe('GoogleMapsServiceService', () => {
-    let service: GoogleMapsService;
-    let mockMaterialFormBuilderConfig;
-    let mockHttpClient;
+describe("GoogleMapsServiceService", () => {
+  let service: GoogleMapsService;
+  let mockMaterialFormBuilderConfig;
+  let mockHttpClient;
 
-    beforeEach(() => {
-        mockMaterialFormBuilderConfig = jasmine.createSpyObj(['']);
-        mockHttpClient = jasmine.createSpyObj(['jsonp']);
+  beforeEach(() => {
+    mockMaterialFormBuilderConfig = jasmine.createSpyObj([""]);
+    mockHttpClient = jasmine.createSpyObj(["jsonp"]);
 
-        service = new GoogleMapsService(mockMaterialFormBuilderConfig, mockHttpClient);
-    });
+    service = new GoogleMapsService(
+      mockMaterialFormBuilderConfig,
+      mockHttpClient,
+    );
+  });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
+  it("should be created", () => {
+    expect(service).toBeTruthy();
+  });
 });

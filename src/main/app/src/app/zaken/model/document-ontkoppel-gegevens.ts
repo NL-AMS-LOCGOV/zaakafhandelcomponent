@@ -4,5 +4,9 @@
  */
 
 export class DocumentOntkoppelGegevens {
-    constructor(public zaakUUID: string, public documentUUID: string, public reden: string) {}
+  constructor(
+    public zaakUUID: string,
+    public documentUUID: string,
+    public reden: string,
+  ) {}
 }

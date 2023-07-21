@@ -4,8 +4,8 @@
  */
 
 export class ZaakToekennenGegevens {
-    zaakUUID: string;
-    groepId: string;
-    behandelaarGebruikersnaam: string;
-    reden: string;
+  zaakUUID: string;
+  groepId: string;
+  behandelaarGebruikersnaam: string;
+  reden: string;
 }

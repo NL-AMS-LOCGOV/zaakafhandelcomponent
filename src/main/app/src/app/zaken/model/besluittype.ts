@@ -4,7 +4,7 @@
  */
 
 export class Besluittype {
-    id: string;
-    naam: string;
-    toelichting: string;
+  id: string;
+  naam: string;
+  toelichting: string;
 }

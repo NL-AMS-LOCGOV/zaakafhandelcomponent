@@ -4,7 +4,7 @@
  */
 
 export enum VervalReden {
-    TIJDELIJK = 'tijdelijk',
-    INGETROKKEN_OVERHEID = 'ingetrokken_overheid',
-    INGETROKKEN_BELANGHEBBENDE = 'ingetrokken_belanghebbende'
+  TIJDELIJK = "tijdelijk",
+  INGETROKKEN_OVERHEID = "ingetrokken_overheid",
+  INGETROKKEN_BELANGHEBBENDE = "ingetrokken_belanghebbende",
 }

@@ -4,6 +4,6 @@
  */
 
 export class DocumentCreatieResponse {
-    public redirectURL: string;
-    public message: string;
+  public redirectURL: string;
+  public message: string;
 }

@@ -4,7 +4,7 @@
  */
 
 export class TaakRechten {
-    lezen: boolean = false;
-    wijzigen: boolean = false;
-    toekennen: boolean = false;
+  lezen = false;
+  wijzigen = false;
+  toekennen = false;
 }

@@ -4,7 +4,7 @@
  */
 
 export enum GeometryType {
-    POINT = 'Point',
-    POLYGON = 'Polygon',
-    GEOMETRY_COLLECTION = 'GeometryCollection'
+  POINT = "Point",
+  POLYGON = "Polygon",
+  GEOMETRY_COLLECTION = "GeometryCollection",
 }

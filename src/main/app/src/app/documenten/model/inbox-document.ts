@@ -4,10 +4,10 @@
  */
 
 export class InboxDocument {
-    id: number;
-    enkelvoudiginformatieobjectUUID: string;
-    enkelvoudiginformatieobjectID: string;
-    creatiedatum: string;
-    titel: string;
-    bestandsnaam: string;
+  id: number;
+  enkelvoudiginformatieobjectUUID: string;
+  enkelvoudiginformatieobjectID: string;
+  creatiedatum: string;
+  titel: string;
+  bestandsnaam: string;
 }

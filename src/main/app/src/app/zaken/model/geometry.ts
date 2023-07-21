@@ -3,20 +3,19 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {GeometryCoordinate} from './geometryCoordinate';
-import {GeometryType} from './geometryType';
+import { GeometryCoordinate } from "./geometryCoordinate";
+import { GeometryType } from "./geometryType";
 
 export class Geometry {
+  constructor(type: GeometryType) {
+    this.type = type;
+  }
 
-    constructor(type: GeometryType) {
-        this.type = type;
-    }
+  type: GeometryType;
 
-    type: GeometryType;
+  point: GeometryCoordinate;
 
-    point: GeometryCoordinate;
+  polygon: GeometryCoordinate[][];
 
-    polygon: GeometryCoordinate[][];
-
-    geometrycollection: Geometry[];
+  geometrycollection: Geometry[];
 }

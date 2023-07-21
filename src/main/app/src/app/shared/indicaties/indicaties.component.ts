@@ -1,15 +1,15 @@
-import {Component, Input} from '@angular/core';
-import {Indicatie} from '../model/indicatie';
+import { Component, Input } from "@angular/core";
+import { Indicatie } from "../model/indicatie";
 
 export enum IndicatiesLayout {
-    ZOEKEN = 'ZOEKEN',
-    WERKLIJST = 'WERKLIJST',
-    VIEW = 'VIEW'
+  ZOEKEN = "ZOEKEN",
+  WERKLIJST = "WERKLIJST",
+  VIEW = "VIEW",
 }
 
-@Component({template: ''})
+@Component({ template: "" })
 export abstract class IndicatiesComponent {
-    Layout = IndicatiesLayout;
-    @Input() layout: IndicatiesLayout;
-    indicaties: Indicatie[] = [];
+  Layout = IndicatiesLayout;
+  @Input() layout: IndicatiesLayout;
+  indicaties: Indicatie[] = [];
 }

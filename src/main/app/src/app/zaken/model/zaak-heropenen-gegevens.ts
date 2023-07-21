@@ -4,5 +4,5 @@
  */
 
 export class ZaakHeropenenGegevens {
-    constructor(public reden: string) {}
+  constructor(public reden: string) {}
 }

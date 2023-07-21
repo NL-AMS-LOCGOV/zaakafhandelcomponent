@@ -3,19 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Directive, HostListener} from '@angular/core';
-import {NavigationService} from './navigation.service';
+import { Directive, HostListener } from "@angular/core";
+import { NavigationService } from "./navigation.service";
 
 @Directive({
-    selector: '[zacBackButton]'
+  selector: "[zacBackButton]",
 })
 export class BackButtonDirective {
-    constructor(private navigation: NavigationService) {
-    }
+  constructor(private navigation: NavigationService) {}
 
-    @HostListener('click')
-    onClick(): void {
-        this.navigation.back();
-    }
-
+  @HostListener("click")
+  onClick(): void {
+    this.navigation.back();
+  }
 }

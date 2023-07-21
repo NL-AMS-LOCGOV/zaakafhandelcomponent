@@ -4,6 +4,6 @@
  */
 
 export class ReplyTo {
-    mail: string;
-    speciaal: boolean;
+  mail: string;
+  speciaal: boolean;
 }

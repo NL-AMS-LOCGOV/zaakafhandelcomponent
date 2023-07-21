@@ -4,11 +4,11 @@
  */
 
 export class BesluitVastleggenGegevens {
-    zaakUuid: string;
-    resultaattypeUuid: string;
-    besluittypeUuid: string;
-    toelichting: string;
-    ingangsdatum: boolean;
-    vervaldatum: string;
-    informatieobjecten: string[];
+  zaakUuid: string;
+  resultaattypeUuid: string;
+  besluittypeUuid: string;
+  toelichting: string;
+  ingangsdatum: boolean;
+  vervaldatum: string;
+  informatieobjecten: string[];
 }

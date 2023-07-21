@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import * as moment from 'moment';
+import * as moment from "moment";
 
 /**
  * toJSON aanpassen zodat de huidige tijdzone wordt megeven ipv UTC
@@ -11,7 +11,7 @@ import * as moment from 'moment';
  * na:  2021-06-17T11:43:56.111111+02:00
  */
 export function alterMomentToJSON(): void {
-    moment.fn.toJSON = function () {
-        return this.format();
-    };
+  moment.fn.toJSON = function () {
+    return this.format();
+  };
 }

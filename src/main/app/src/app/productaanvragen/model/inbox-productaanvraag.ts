@@ -4,11 +4,11 @@
  */
 
 export class InboxProductaanvraag {
-    id: number;
-    productaanvraagObjectUUID: string;
-    aanvraagdocumentUUID: string;
-    ontvangstdatum: string;
-    aantalBijlagen: number;
-    type: string;
-    initiatorID: string;
+  id: number;
+  productaanvraagObjectUUID: string;
+  aanvraagdocumentUUID: string;
+  ontvangstdatum: string;
+  aantalBijlagen: number;
+  type: string;
+  initiatorID: string;
 }

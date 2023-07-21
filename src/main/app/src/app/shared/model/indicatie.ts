@@ -4,25 +4,25 @@
  */
 
 export class Indicatie {
-    naam: string;
-    icon: string;
-    outlined: boolean;
-    primary: boolean;
-    toelichting: string;
+  naam: string;
+  icon: string;
+  outlined: boolean;
+  primary: boolean;
+  toelichting: string;
 
-    constructor(naam: string, icon: string, toelichting: string) {
-        this.naam = naam;
-        this.icon = icon;
-        this.toelichting = toelichting;
-    }
+  constructor(naam: string, icon: string, toelichting: string) {
+    this.naam = naam;
+    this.icon = icon;
+    this.toelichting = toelichting;
+  }
 
-    temporary(): Indicatie {
-        this.primary = true;
-        return this;
-    }
+  temporary(): Indicatie {
+    this.primary = true;
+    return this;
+  }
 
-    alternate(): Indicatie {
-        this.outlined = true;
-        return this;
-    }
+  alternate(): Indicatie {
+    this.outlined = true;
+    return this;
+  }
 }

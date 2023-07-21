@@ -4,6 +4,6 @@
  */
 
 export class ZaakKenmerk {
-    kenmerk: string;
-    bron: string;
+  kenmerk: string;
+  bron: string;
 }

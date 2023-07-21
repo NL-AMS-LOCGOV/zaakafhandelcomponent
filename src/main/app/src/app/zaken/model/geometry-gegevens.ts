@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Geometry} from './geometry';
+import { Geometry } from "./geometry";
 
 export class GeometryGegevens {
-    constructor(public geometry: Geometry, public reden: string) {}
+  constructor(
+    public geometry: Geometry,
+    public reden: string,
+  ) {}
 }

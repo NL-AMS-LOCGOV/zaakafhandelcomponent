@@ -4,13 +4,13 @@
  */
 
 export class Resultaattype {
-    id: string;
-    naam: string;
-    naamGeneriek: string;
-    vervaldatumBesluitVerplicht: boolean;
-    besluitVerplicht: boolean;
-    toelichting: string;
-    archiefNominatie: string;
-    archiefTermijn: string;
-    selectielijst: string;
+  id: string;
+  naam: string;
+  naamGeneriek: string;
+  vervaldatumBesluitVerplicht: boolean;
+  besluitVerplicht: boolean;
+  toelichting: string;
+  archiefNominatie: string;
+  archiefTermijn: string;
+  selectielijst: string;
 }

@@ -4,7 +4,7 @@
  */
 
 export enum NotitieType {
-    ZAAK = 'ZAAK',
-    TAAK = 'TAAK',
-    DOCUMENT = 'DOCUMENT'
+  ZAAK = "ZAAK",
+  TAAK = "TAAK",
+  DOCUMENT = "DOCUMENT",
 }

@@ -4,7 +4,7 @@
  */
 
 export class Adres {
-    type: string;
-    afgeschermd: boolean;
-    volledigAdres: string;
+  type: string;
+  afgeschermd: boolean;
+  volledigAdres: string;
 }

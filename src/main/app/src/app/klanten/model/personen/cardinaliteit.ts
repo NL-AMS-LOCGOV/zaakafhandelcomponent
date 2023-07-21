@@ -4,7 +4,7 @@
  */
 
 export enum Cardinaliteit {
-    NON = 'NON', // niet beschikbaar
-    OPT = 'OPT', // optioneel
-    REQ = 'REQ'  // verplicht
+  NON = "NON", // niet beschikbaar
+  OPT = "OPT", // optioneel
+  REQ = "REQ", // verplicht
 }

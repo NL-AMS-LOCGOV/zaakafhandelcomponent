@@ -4,6 +4,6 @@
  */
 
 export interface TableResponse<RESTOBJECT> {
-    data: RESTOBJECT[];
-    totalItems: number;
+  data: RESTOBJECT[];
+  totalItems: number;
 }

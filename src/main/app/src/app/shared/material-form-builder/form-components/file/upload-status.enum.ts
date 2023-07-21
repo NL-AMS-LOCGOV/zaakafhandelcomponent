@@ -4,7 +4,7 @@
  */
 
 export enum UploadStatus {
-    SELECTEER_BESTAND = 'SELECTEER_BESTAND',
-    BEZIG = 'BEZIG',
-    GEREED = 'GEREED'
+  SELECTEER_BESTAND = "SELECTEER_BESTAND",
+  BEZIG = "BEZIG",
+  GEREED = "GEREED",
 }

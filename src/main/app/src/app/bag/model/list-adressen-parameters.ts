@@ -4,5 +4,5 @@
  */
 
 export class ListAdressenParameters {
-    constructor(public trefwoorden) {}
+  constructor(public trefwoorden) {}
 }

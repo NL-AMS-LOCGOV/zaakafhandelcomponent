@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import {LocationService} from './location.service';
+import { LocationService } from "./location.service";
 
-describe('LocationService', () => {
+describe("LocationService", () => {
   let service: LocationService;
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('LocationService', () => {
     service = TestBed.inject(LocationService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

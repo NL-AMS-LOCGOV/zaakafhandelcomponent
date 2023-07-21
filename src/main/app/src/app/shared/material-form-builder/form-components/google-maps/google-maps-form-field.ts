@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FieldType} from '../../model/field-type.enum';
-import {AbstractFormControlField} from '../../model/abstract-form-control-field';
+import { FieldType } from "../../model/field-type.enum";
+import { AbstractFormControlField } from "../../model/abstract-form-control-field";
 
 export class GoogleMapsFormField extends AbstractFormControlField {
-    fieldType: FieldType = FieldType.GOOGLEMAPS;
+  fieldType: FieldType = FieldType.GOOGLEMAPS;
 
-    constructor() {
-        super();
-    }
-
+  constructor() {
+    super();
+  }
 }

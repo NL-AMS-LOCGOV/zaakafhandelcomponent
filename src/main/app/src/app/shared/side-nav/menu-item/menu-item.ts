@@ -4,16 +4,15 @@
  */
 
 export abstract class MenuItem {
-
-    abstract readonly type: MenuItemType;
-    abstract readonly title: string;
-    abstract readonly icon?: string;
-    disabled: boolean;
+  abstract readonly type: MenuItemType;
+  abstract readonly title: string;
+  abstract readonly icon?: string;
+  disabled: boolean;
 }
 
 export enum MenuItemType {
-    HEADER = 'HEADER',
-    LINK = 'LINK',
-    HREF = 'HREF',
-    BUTTON = 'BUTTON'
+  HEADER = "HEADER",
+  LINK = "LINK",
+  HREF = "HREF",
+  BUTTON = "BUTTON",
 }

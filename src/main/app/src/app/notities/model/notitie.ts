@@ -4,11 +4,11 @@
  */
 
 export class Notitie {
-    id: number;
-    zaakUUID: string;
-    tekst: string;
-    tijdstipLaatsteWijziging: string;
-    gebruikersnaamMedewerker: string;
-    voornaamAchternaamMedewerker: string;
-    bewerkenToegestaan: boolean;
+  id: number;
+  zaakUUID: string;
+  tekst: string;
+  tijdstipLaatsteWijziging: string;
+  gebruikersnaamMedewerker: string;
+  voornaamAchternaamMedewerker: string;
+  bewerkenToegestaan: boolean;
 }

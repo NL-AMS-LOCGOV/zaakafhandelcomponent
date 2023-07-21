@@ -9,7 +9,7 @@
  * Note that the CREATED value is not available for subscription (reason: new objectIds will be unknown client side ;-)
  */
 export enum Opcode {
-    UPDATED = 'UPDATED',
-    DELETED = 'DELETED',
-    ANY = 'ANY'
+  UPDATED = "UPDATED",
+  DELETED = "DELETED",
+  ANY = "ANY",
 }

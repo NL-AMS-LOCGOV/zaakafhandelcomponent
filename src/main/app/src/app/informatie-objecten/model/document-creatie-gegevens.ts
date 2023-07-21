@@ -4,8 +4,8 @@
  */
 
 export class DocumentCreatieGegevens {
-    public zaakUUID: string;
-    public taskId: string;
-    public informatieobjecttypeUUID: string;
-    public titel: string;
+  public zaakUUID: string;
+  public taskId: string;
+  public informatieobjecttypeUUID: string;
+  public titel: string;
 }

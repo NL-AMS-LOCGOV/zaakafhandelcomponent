@@ -3,22 +3,20 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form-field-builder';
-import {AutocompleteFormField} from './autocomplete-form-field';
+import { AbstractChoicesFormFieldBuilder } from "../../model/abstract-choices-form-field-builder";
+import { AutocompleteFormField } from "./autocomplete-form-field";
 
 export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
+  readonly formField: AutocompleteFormField;
 
-    readonly formField: AutocompleteFormField;
+  constructor(value?: any) {
+    super();
+    this.formField = new AutocompleteFormField();
+    this.formField.initControl(value);
+  }
 
-    constructor(value?: any) {
-        super();
-        this.formField = new AutocompleteFormField();
-        this.formField.initControl(value);
-    }
-
-    maxlength(maxlength: number): this {
-        this.formField.maxlength = maxlength;
-        return this;
-    }
-
+  maxlength(maxlength: number): this {
+    this.formField.maxlength = maxlength;
+    return this;
+  }
 }

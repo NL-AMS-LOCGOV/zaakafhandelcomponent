@@ -4,8 +4,8 @@
  */
 
 export class DocumentVerzendGegevens {
-    zaakUuid: string;
-    verzenddatum: string;
-    informatieobjecten: string[];
-    toelichting: string;
+  zaakUuid: string;
+  verzenddatum: string;
+  informatieobjecten: string[];
+  toelichting: string;
 }

@@ -4,6 +4,6 @@
  */
 
 export class ZaakEigenschap {
-    naam: string;
-    waarde: string;
+  naam: string;
+  waarde: string;
 }

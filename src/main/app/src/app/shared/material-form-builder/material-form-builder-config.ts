@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {InjectionToken} from '@angular/core';
+import { InjectionToken } from "@angular/core";
 
 export interface MaterialFormBuilderConfig {
-    googleMapsApiKey?: string;
+  googleMapsApiKey?: string;
 }
 
-export const BUILDER_CONFIG = new InjectionToken<MaterialFormBuilderConfig>('BuilderConfig');
+export const BUILDER_CONFIG = new InjectionToken<MaterialFormBuilderConfig>(
+  "BuilderConfig",
+);

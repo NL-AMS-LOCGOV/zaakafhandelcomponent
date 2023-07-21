@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {BAGObject} from './bagobject';
+import { BAGObject } from "./bagobject";
 
 export class Woonplaats extends BAGObject {
-    naam: string;
-    status: 'AANGEWEZEN' | 'INGETROKKEN';
+  naam: string;
+  status: "AANGEWEZEN" | "INGETROKKEN";
 }

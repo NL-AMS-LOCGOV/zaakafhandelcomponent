@@ -1,9 +1,9 @@
-import {Klant} from './klant';
-import {Roltype} from './roltype';
+import { Klant } from "./klant";
+import { Roltype } from "./roltype";
 
 export class KlantGegevens {
-    constructor(public klant: Klant) {}
+  constructor(public klant: Klant) {}
 
-    betrokkeneRoltype: Roltype;
-    betrokkeneToelichting: string;
+  betrokkeneRoltype: Roltype;
+  betrokkeneToelichting: string;
 }

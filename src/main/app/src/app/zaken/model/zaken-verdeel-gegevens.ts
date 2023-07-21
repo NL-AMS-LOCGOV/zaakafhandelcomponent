@@ -4,8 +4,8 @@
  */
 
 export class ZakenVerdeelGegevens {
-    uuids: string[];
-    groepId: string;
-    behandelaarGebruikersnaam: string;
-    reden: string;
+  uuids: string[];
+  groepId: string;
+  behandelaarGebruikersnaam: string;
+  reden: string;
 }

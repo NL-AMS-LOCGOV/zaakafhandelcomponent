@@ -3,41 +3,50 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, DoCheck, OnInit} from '@angular/core';
-import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
-import {TranslateService} from '@ngx-translate/core';
-import {DocumentenLijstComponent} from '../documenten-lijst/documenten-lijst.component';
-import {DocumentenOndertekenenFormField} from './documenten-ondertekenen-form-field';
+import { Component, DoCheck, OnInit } from "@angular/core";
+import { InformatieObjectenService } from "../../../../informatie-objecten/informatie-objecten.service";
+import { TranslateService } from "@ngx-translate/core";
+import { DocumentenLijstComponent } from "../documenten-lijst/documenten-lijst.component";
+import { DocumentenOndertekenenFormField } from "./documenten-ondertekenen-form-field";
 
 @Component({
-    templateUrl: '../documenten-lijst/documenten-lijst.component.html',
-    styleUrls: ['../documenten-lijst/documenten-lijst.component.less']
+  templateUrl: "../documenten-lijst/documenten-lijst.component.html",
+  styleUrls: ["../documenten-lijst/documenten-lijst.component.less"],
 })
-export class DocumentenOndertekenenComponent extends DocumentenLijstComponent implements OnInit, DoCheck {
+export class DocumentenOndertekenenComponent
+  extends DocumentenLijstComponent
+  implements OnInit, DoCheck
+{
+  data: DocumentenOndertekenenFormField;
 
-    data: DocumentenOndertekenenFormField;
+  constructor(
+    public translate: TranslateService,
+    public informatieObjectenService: InformatieObjectenService,
+  ) {
+    super(translate, informatieObjectenService);
+  }
 
-    constructor(public translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
-        super(translate, informatieObjectenService);
-    }
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
 
-    ngOnInit(): void {
-        super.ngOnInit();
-    }
+  ngDoCheck(): void {
+    super.ngDoCheck();
+  }
 
-    ngDoCheck(): void {
-        super.ngDoCheck();
-    }
+  toonFilterVeld(): boolean {
+    return false;
+  }
 
-    toonFilterVeld(): boolean {
-        return false;
-    }
+  selectDisabled(document): boolean {
+    return (
+      this.data.readonly ||
+      !document.rechten.ondertekenen ||
+      document.ondertekening
+    );
+  }
 
-    selectDisabled(document): boolean {
-        return this.data.readonly || !document.rechten.ondertekenen || document.ondertekening;
-    }
-
-    isSelected(document): boolean {
-        return this.selection.isSelected(document) || document.ondertekening;
-    }
+  isSelected(document): boolean {
+    return this.selection.isSelected(document) || document.ondertekening;
+  }
 }

@@ -4,7 +4,7 @@
  */
 
 export enum TaakStatus {
-    NietToegekend = 'NIET_TOEGEKEND',
-    Toegekend = 'TOEGEKEND',
-    Afgerond = 'AFGEROND',
+  NietToegekend = "NIET_TOEGEKEND",
+  Toegekend = "TOEGEKEND",
+  Afgerond = "AFGEROND",
 }

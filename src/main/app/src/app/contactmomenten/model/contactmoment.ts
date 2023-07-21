@@ -4,9 +4,9 @@
  */
 
 export class Contactmoment {
-    registratiedatum: string;
-    kanaal: string;
-    tekst: string;
-    initiatiefnemer: string;
-    medewerker: string;
+  registratiedatum: string;
+  kanaal: string;
+  tekst: string;
+  initiatiefnemer: string;
+  medewerker: string;
 }

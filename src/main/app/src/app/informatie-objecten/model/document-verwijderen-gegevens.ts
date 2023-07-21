@@ -4,5 +4,8 @@
  */
 
 export class DocumentVerwijderenGegevens {
-    constructor(public zaakUuid: string, public reden: string) {}
+  constructor(
+    public zaakUuid: string,
+    public reden: string,
+  ) {}
 }

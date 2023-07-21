@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ReferentieTabelWaarde} from './referentie-tabel-waarde';
+import { ReferentieTabelWaarde } from "./referentie-tabel-waarde";
 
 export class ReferentieTabel {
-    id: number;
-    code: string;
-    naam: string;
-    systeem: boolean;
-    waarden: ReferentieTabelWaarde[];
+  id: number;
+  code: string;
+  naam: string;
+  systeem: boolean;
+  waarden: ReferentieTabelWaarde[];
 }

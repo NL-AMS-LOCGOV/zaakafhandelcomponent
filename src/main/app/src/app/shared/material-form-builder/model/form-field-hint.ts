@@ -4,11 +4,11 @@
  */
 
 export class FormFieldHint {
-    label: string;
-    align: 'start' | 'end';
+  label: string;
+  align: "start" | "end";
 
-    constructor(label: string, align?: 'start' | 'end') {
-        this.label = label;
-        this.align = align ? align : 'end';
-    }
+  constructor(label: string, align?: "start" | "end") {
+    this.label = label;
+    this.align = align ? align : "end";
+  }
 }

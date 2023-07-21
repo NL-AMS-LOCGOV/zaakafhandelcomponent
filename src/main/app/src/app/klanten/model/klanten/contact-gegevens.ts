@@ -4,6 +4,6 @@
  */
 
 export interface ContactGegevens {
-    emailadres: string;
-    telefoonnummer: string;
+  emailadres: string;
+  telefoonnummer: string;
 }

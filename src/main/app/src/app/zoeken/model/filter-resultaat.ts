@@ -4,6 +4,6 @@
  */
 
 export interface FilterResultaat {
-    naam: string;
-    aantal: number;
+  naam: string;
+  aantal: number;
 }

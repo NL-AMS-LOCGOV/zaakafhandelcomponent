@@ -3,24 +3,21 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
-import {FormComponent} from '../../model/form-component';
-import {CheckboxFormField} from './checkbox-form-field';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit } from "@angular/core";
+import { FormComponent } from "../../model/form-component";
+import { CheckboxFormField } from "./checkbox-form-field";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
-    templateUrl: './checkbox.component.html',
-    styleUrls: ['./checkbox.component.less']
+  templateUrl: "./checkbox.component.html",
+  styleUrls: ["./checkbox.component.less"],
 })
 export class CheckboxComponent extends FormComponent implements OnInit {
+  data: CheckboxFormField;
 
-    data: CheckboxFormField;
+  constructor(public translate: TranslateService) {
+    super();
+  }
 
-    constructor(public translate: TranslateService) {
-        super();
-    }
-
-    ngOnInit(): void {
-    }
-
+  ngOnInit(): void {}
 }

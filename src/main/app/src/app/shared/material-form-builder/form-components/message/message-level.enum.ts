@@ -4,7 +4,7 @@
  */
 
 export enum MessageLevel {
-    INFO = 'INFO',
-    WARNING = 'WARNING',
-    ERROR = 'ERROR'
+  INFO = "INFO",
+  WARNING = "WARNING",
+  ERROR = "ERROR",
 }

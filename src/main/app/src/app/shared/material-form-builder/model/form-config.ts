@@ -4,15 +4,13 @@
  */
 
 export class FormConfig {
+  partialButtonText: string;
+  saveButtonText: string;
+  cancelButtonText: string;
 
-    partialButtonText: string;
-    saveButtonText: string;
-    cancelButtonText: string;
+  partialButtonIcon: string;
+  saveButtonIcon: string;
+  cancelButtonIcon: string;
 
-    partialButtonIcon: string;
-    saveButtonIcon: string;
-    cancelButtonIcon: string;
-
-    constructor() {
-    }
+  constructor() {}
 }

@@ -4,9 +4,7 @@
  */
 
 export class Roltype {
-    uuid: string;
-    naam: string;
-    aardvanrol: string;
+  uuid: string;
+  naam: string;
+  aardvanrol: string;
 }
-
-

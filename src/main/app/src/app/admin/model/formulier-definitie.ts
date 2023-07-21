@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormulierVeldDefinitie} from './formulier-veld-definitie';
+import { FormulierVeldDefinitie } from "./formulier-veld-definitie";
 
 export class FormulierDefinitie {
-    id: FormulierDefinitieID;
-    veldDefinities: FormulierVeldDefinitie[];
+  id: FormulierDefinitieID;
+  veldDefinities: FormulierVeldDefinitie[];
 }
 
 export type FormulierDefinitieID =
-    'DEFAULT_TAAKFORMULIER' |
-    'AANVULLENDE_INFORMATIE' |
-    'ADVIES' |
-    'EXTERN_ADVIES_VASTLEGGEN' |
-    'EXTERN_ADVIES_MAIL' |
-    'GOEDKEUREN' |
-    'DOCUMENT_VERZENDEN_POST';
+  | "DEFAULT_TAAKFORMULIER"
+  | "AANVULLENDE_INFORMATIE"
+  | "ADVIES"
+  | "EXTERN_ADVIES_VASTLEGGEN"
+  | "EXTERN_ADVIES_MAIL"
+  | "GOEDKEUREN"
+  | "DOCUMENT_VERZENDEN_POST";

@@ -4,9 +4,9 @@
  */
 
 export class ZaakOpschortGegevens {
-    indicatieOpschorting: boolean;
-    einddatumGepland: string;
-    uiterlijkeEinddatumAfdoening: string;
-    redenOpschorting: string;
-    duurDagen: number;
+  indicatieOpschorting: boolean;
+  einddatumGepland: string;
+  uiterlijkeEinddatumAfdoening: string;
+  redenOpschorting: string;
+  duurDagen: number;
 }

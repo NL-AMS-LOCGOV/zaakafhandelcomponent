@@ -4,9 +4,9 @@
  */
 
 export class TaakToekennenGegevens {
-    taakId: string;
-    zaakUuid: string;
-    groepId: string;
-    behandelaarId: string;
-    reden: string;
+  taakId: string;
+  zaakUuid: string;
+  groepId: string;
+  behandelaarId: string;
+  reden: string;
 }

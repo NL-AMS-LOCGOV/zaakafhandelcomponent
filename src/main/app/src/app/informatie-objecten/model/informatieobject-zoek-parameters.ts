@@ -4,8 +4,8 @@
  */
 
 export class InformatieobjectZoekParameters {
-    informatieobjectUUIDs: string[];
-    zaakUUID: string;
-    besluittypeUUID: string;
-    gekoppeldeZaakDocumenten: boolean;
+  informatieobjectUUIDs: string[];
+  zaakUUID: string;
+  besluittypeUUID: string;
+  gekoppeldeZaakDocumenten: boolean;
 }

@@ -4,10 +4,10 @@
  */
 
 export class DocumentRechten {
-    lezen: boolean = false;
-    wijzigen: boolean = false;
-    verwijderen: boolean = false;
-    vergrendelen: boolean = false;
-    ontgrendelen: boolean = false;
-    ondertekenen: boolean = false;
+  lezen = false;
+  wijzigen = false;
+  verwijderen = false;
+  vergrendelen = false;
+  ontgrendelen = false;
+  ondertekenen = false;
 }

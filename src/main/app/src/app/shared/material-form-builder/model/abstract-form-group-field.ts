@@ -3,18 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormControl, FormGroup} from '@angular/forms';
-import {AbstractFormField} from './abstract-form-field';
+import { FormControl, FormGroup } from "@angular/forms";
+import { AbstractFormField } from "./abstract-form-field";
 
 export abstract class AbstractFormGroupField extends AbstractFormField {
+  formControl: FormGroup;
 
-    formControl: FormGroup;
+  protected constructor() {
+    super();
+  }
 
-    protected constructor() {
-        super();
-    }
-
-    initControl(value: { [key: string]: FormControl<any> }): void {
-        this.formControl = new FormGroup(value);
-    }
+  initControl(value: { [key: string]: FormControl<any> }): void {
+    this.formControl = new FormGroup(value);
+  }
 }

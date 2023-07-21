@@ -4,7 +4,7 @@
  */
 
 export class OverigeRechten {
-    startenZaak: boolean = false;
-    beheren: boolean = false;
-    zoeken: boolean = false;
+  startenZaak = false;
+  beheren = false;
+  zoeken = false;
 }

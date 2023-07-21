@@ -4,6 +4,6 @@
  */
 
 export class EnkelvoudigInformatieobjectOndertekening {
-    soort: string;
-    datum: string;
+  soort: string;
+  datum: string;
 }

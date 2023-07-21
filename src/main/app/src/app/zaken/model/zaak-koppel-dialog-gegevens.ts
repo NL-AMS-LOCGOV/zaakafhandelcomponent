@@ -4,6 +4,6 @@
  */
 
 export class ZaakKoppelDialogGegevens {
-    doelZaakIdentificatie: string;
-    bronZaakUuid: string;
+  doelZaakIdentificatie: string;
+  bronZaakUuid: string;
 }

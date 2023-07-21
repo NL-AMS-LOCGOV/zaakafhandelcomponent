@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Directive, ViewContainerRef} from '@angular/core';
+import { Directive, ViewContainerRef } from "@angular/core";
 
 @Directive({
-    selector: '[mfb-form-field]'
+  selector: "[mfb-form-field]",
 })
 export class FormFieldDirective {
-    constructor(public viewContainerRef: ViewContainerRef) {
-
-    }
+  constructor(public viewContainerRef: ViewContainerRef) {}
 }

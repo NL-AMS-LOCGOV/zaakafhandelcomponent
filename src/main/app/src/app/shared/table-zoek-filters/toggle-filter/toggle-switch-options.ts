@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 export enum ToggleSwitchOptions {
-    CHECKED = 'CHECKED',
-    UNCHECKED = 'UNCHECKED',
-    INDETERMINATE = 'INDETERMINATE'
+  CHECKED = "CHECKED",
+  UNCHECKED = "UNCHECKED",
+  INDETERMINATE = "INDETERMINATE",
 }

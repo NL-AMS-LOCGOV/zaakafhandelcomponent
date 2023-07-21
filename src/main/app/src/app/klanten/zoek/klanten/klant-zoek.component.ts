@@ -3,24 +3,22 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {Klant} from '../../model/klanten/klant';
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Klant } from "../../model/klanten/klant";
 
 @Component({
-    selector: 'zac-klant-zoek',
-    templateUrl: './klant-zoek.component.html',
-    styleUrls: ['./klant-zoek.component.less']
+  selector: "zac-klant-zoek",
+  templateUrl: "./klant-zoek.component.html",
+  styleUrls: ["./klant-zoek.component.less"],
 })
 export class KlantZoekComponent implements OnInit {
-    @Output() klant = new EventEmitter<Klant>();
+  @Output() klant = new EventEmitter<Klant>();
 
-    constructor() {
-    }
+  constructor() {}
 
-    ngOnInit(): void {
-    }
+  ngOnInit(): void {}
 
-    klantGeselecteerd(klant: Klant): void {
-        this.klant.emit(klant);
-    }
+  klantGeselecteerd(klant: Klant): void {
+    this.klant.emit(klant);
+  }
 }

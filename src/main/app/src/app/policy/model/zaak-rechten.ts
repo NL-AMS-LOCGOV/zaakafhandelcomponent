@@ -4,12 +4,12 @@
  */
 
 export class ZaakRechten {
-    lezen: boolean = false;
-    wijzigen: boolean = false;
-    toekennen: boolean = false;
-    behandelen: boolean = false;
-    afbreken: boolean = false;
-    heropenen: boolean = false;
-    wijzigenZaakdata: boolean = false;
-    wijzigenDoorlooptijd: boolean = false;
+  lezen = false;
+  wijzigen = false;
+  toekennen = false;
+  behandelen = false;
+  afbreken = false;
+  heropenen = false;
+  wijzigenZaakdata = false;
+  wijzigenDoorlooptijd = false;
 }

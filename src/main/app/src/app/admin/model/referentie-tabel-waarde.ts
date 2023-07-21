@@ -4,6 +4,6 @@
  */
 
 export class ReferentieTabelWaarde {
-    id: number;
-    naam: string;
+  id: number;
+  naam: string;
 }

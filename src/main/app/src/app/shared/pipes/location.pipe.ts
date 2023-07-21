@@ -3,20 +3,22 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Pipe, PipeTransform} from '@angular/core';
-import {LocationUtil} from '../location/location-util';
-import {Geometry} from '../../zaken/model/geometry';
+import { Pipe, PipeTransform } from "@angular/core";
+import { LocationUtil } from "../location/location-util";
+import { Geometry } from "../../zaken/model/geometry";
 
 @Pipe({
-    name: 'location'
+  name: "location",
 })
 export class LocationPipe implements PipeTransform {
-    constructor() {}
+  constructor() {}
 
-    transform(value: Geometry | string): string {
-        if (value) {
-            return LocationUtil.format(typeof value == 'string' ? LocationUtil.wktToPoint(value) : value);
-        }
-        return null;
+  transform(value: Geometry | string): string {
+    if (value) {
+      return LocationUtil.format(
+        typeof value == "string" ? LocationUtil.wktToPoint(value) : value,
+      );
     }
+    return null;
+  }
 }

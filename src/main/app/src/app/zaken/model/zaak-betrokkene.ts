@@ -4,9 +4,14 @@
  */
 
 export class ZaakBetrokkene {
-    rolid: string;
-    roltype: string;
-    roltoelichting: string;
-    type: 'NATUURLIJK_PERSOON' | 'NIET_NATUURLIJK_PERSOON' | 'VESTIGING' | 'ORGANISATORISCHE_EENHEID' | 'MEDEWERKER';
-    identificatie: string;
+  rolid: string;
+  roltype: string;
+  roltoelichting: string;
+  type:
+    | "NATUURLIJK_PERSOON"
+    | "NIET_NATUURLIJK_PERSOON"
+    | "VESTIGING"
+    | "ORGANISATORISCHE_EENHEID"
+    | "MEDEWERKER";
+  identificatie: string;
 }

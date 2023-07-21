@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZaakRelatietype} from './zaak-relatietype';
+import { ZaakRelatietype } from "./zaak-relatietype";
 
 export class ZaakOntkoppelGegevens {
-    zaakUuid: string;
-    gekoppeldeZaakIdentificatie: string;
-    relatietype: ZaakRelatietype;
-    reden: string;
+  zaakUuid: string;
+  gekoppeldeZaakIdentificatie: string;
+  relatietype: ZaakRelatietype;
+  reden: string;
 }

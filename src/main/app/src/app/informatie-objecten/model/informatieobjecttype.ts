@@ -4,8 +4,8 @@
  */
 
 export class Informatieobjecttype {
-    uuid: string;
-    omschrijving: string;
-    vertrouwelijkheidaanduiding: string;
-    concept: boolean;
+  uuid: string;
+  omschrijving: string;
+  vertrouwelijkheidaanduiding: string;
+  concept: boolean;
 }

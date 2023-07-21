@@ -4,13 +4,13 @@
  */
 
 export class ListBedrijvenParameters {
-    vestigingsnummer: string;
-    kvkNummer: string;
-    rsin: string;
-    handelsnaam: string;
-    straatnaam: string;
-    huisnummer: string;
-    plaats: string;
-    postcode: string;
-    type: string;
+  vestigingsnummer: string;
+  kvkNummer: string;
+  rsin: string;
+  handelsnaam: string;
+  straatnaam: string;
+  huisnummer: string;
+  plaats: string;
+  postcode: string;
+  type: string;
 }

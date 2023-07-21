@@ -4,6 +4,6 @@
  */
 
 export enum UserEventListenerActie {
-    IntakeAfronden = 'INTAKE_AFRONDEN',
-    ZaakAfhandelen = 'ZAAK_AFHANDELEN',
+  IntakeAfronden = "INTAKE_AFRONDEN",
+  ZaakAfhandelen = "ZAAK_AFHANDELEN",
 }

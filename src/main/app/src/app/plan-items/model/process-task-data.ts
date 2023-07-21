@@ -1,4 +1,4 @@
 export class ProcessTaskData {
-    planItemInstanceId: string;
-    data: {};
+  planItemInstanceId: string;
+  data: {};
 }

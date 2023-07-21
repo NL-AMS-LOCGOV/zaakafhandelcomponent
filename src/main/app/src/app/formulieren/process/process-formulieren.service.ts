@@ -1,15 +1,16 @@
-import {Injectable} from '@angular/core';
-import {FormulierDefinitieID} from '../../admin/model/formulier-definitie';
-import {ProcessFormulierenBuilder} from './process-formulieren-builder';
+import { Injectable } from "@angular/core";
+import { FormulierDefinitieID } from "../../admin/model/formulier-definitie";
+import { ProcessFormulierenBuilder } from "./process-formulieren-builder";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: "root",
 })
 export class ProcessFormulierenService {
+  constructor() {}
 
-    constructor() { }
-
-    public getFormulierBuilder(formulierDefinitie: FormulierDefinitieID): ProcessFormulierenBuilder {
-        return null;
-    }
+  public getFormulierBuilder(
+    formulierDefinitie: FormulierDefinitieID,
+  ): ProcessFormulierenBuilder {
+    return null;
+  }
 }

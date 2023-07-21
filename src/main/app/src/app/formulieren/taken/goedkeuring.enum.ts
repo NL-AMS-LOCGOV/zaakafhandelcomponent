@@ -4,7 +4,7 @@
  */
 
 export enum Goedkeuring {
-    'akkoord' = 'AKKOORD',
-    'niet_akkoord' = 'NIET_AKKOORD',
-    'gedeeltelijk_akkoord' = 'GEDEELTELIJK_AKKOORD'
+  "akkoord" = "AKKOORD",
+  "niet_akkoord" = "NIET_AKKOORD",
+  "gedeeltelijk_akkoord" = "GEDEELTELIJK_AKKOORD",
 }

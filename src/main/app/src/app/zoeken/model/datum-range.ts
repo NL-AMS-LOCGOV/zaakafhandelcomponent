@@ -4,15 +4,15 @@
  */
 
 export class DatumRange {
-    van: Date;
-    tot: Date;
+  van: Date;
+  tot: Date;
 
-    constructor(van?: Date, tot?: Date) {
-        this.van = van || null;
-        this.tot = tot || null;
-    }
+  constructor(van?: Date, tot?: Date) {
+    this.van = van || null;
+    this.tot = tot || null;
+  }
 
-    hasValue() {
-        return this.van != null || this.tot != null;
-    }
+  hasValue() {
+    return this.van != null || this.tot != null;
+  }
 }

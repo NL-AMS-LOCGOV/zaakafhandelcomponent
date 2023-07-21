@@ -4,6 +4,6 @@
  */
 
 export class Group {
-    id: string;
-    naam: string;
+  id: string;
+  naam: string;
 }

@@ -4,21 +4,21 @@
  */
 
 export interface TableRequest {
-    pagination: Pagination;
-    search?: Search;
-    sort?: Sort;
+  pagination: Pagination;
+  search?: Search;
+  sort?: Sort;
 }
 
 export interface Pagination {
-    pageNumber: number;
-    pageSize: number;
+  pageNumber: number;
+  pageSize: number;
 }
 
 export interface Search {
-    predicateObject?: {};
+  predicateObject?: {};
 }
 
 export interface Sort {
-    predicate?: string;
-    direction?: string;
+  predicate?: string;
+  direction?: string;
 }

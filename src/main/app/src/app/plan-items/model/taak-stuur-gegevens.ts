@@ -4,6 +4,6 @@
  */
 
 export class TaakStuurGegevens {
-    sendMail: boolean;
-    mail: string;
+  sendMail: boolean;
+  mail: string;
 }

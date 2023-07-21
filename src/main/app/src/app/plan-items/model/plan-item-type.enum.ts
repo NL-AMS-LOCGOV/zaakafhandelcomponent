@@ -4,7 +4,7 @@
  */
 
 export enum PlanItemType {
-    HumanTask = 'HUMAN_TASK',
-    ProcessTask = 'PROCESS_TASK',
-    UserEventListener = 'USER_EVENT_LISTENER',
+  HumanTask = "HUMAN_TASK",
+  ProcessTask = "PROCESS_TASK",
+  UserEventListener = "USER_EVENT_LISTENER",
 }

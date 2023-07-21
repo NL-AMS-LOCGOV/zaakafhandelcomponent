@@ -4,10 +4,10 @@
  */
 
 export class ExpandableTableData<T> {
-    data: T;
-    expanded: boolean;
+  data: T;
+  expanded: boolean;
 
-    constructor(data: T) {
-        this.data = data;
-    }
+  constructor(data: T) {
+    this.data = data;
+  }
 }

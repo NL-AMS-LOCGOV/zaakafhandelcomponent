@@ -4,7 +4,7 @@
  */
 
 export class Taakinformatie {
-    uitkomst: string;
-    bijlagen: string;
-    opmerking: string;
+  uitkomst: string;
+  bijlagen: string;
+  opmerking: string;
 }

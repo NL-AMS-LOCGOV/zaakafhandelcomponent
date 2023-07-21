@@ -7,6 +7,6 @@
  * Maps to SubscriptionType.java
  */
 export enum SubscriptionType {
-    CREATE = 'CREATE',
-    DELETE = 'DELETE'
+  CREATE = "CREATE",
+  DELETE = "DELETE",
 }

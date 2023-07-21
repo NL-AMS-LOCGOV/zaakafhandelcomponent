@@ -4,6 +4,6 @@
  */
 
 export class User {
-    id: string;
-    naam: string;
+  id: string;
+  naam: string;
 }
