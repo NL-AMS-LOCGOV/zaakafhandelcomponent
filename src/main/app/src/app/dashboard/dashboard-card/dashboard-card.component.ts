@@ -60,7 +60,7 @@ export abstract class DashboardCardComponent<T>
         this.reload = this.refreshTimed(this.RELOAD_INTERVAL);
       }
     }
-    this.reloader = this.reload.subscribe(() => {
+    this.reloader = this.reload.subscribe((next) => {
       this.onLoad(this.afterLoad);
     });
   }

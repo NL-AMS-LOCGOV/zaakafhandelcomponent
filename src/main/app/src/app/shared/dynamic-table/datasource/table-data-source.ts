@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import { DataSource } from "@angular/cdk/collections";
+import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { BehaviorSubject, merge, Observable, Subscription } from "rxjs";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
@@ -28,7 +28,9 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
 
   private subscription$: Subscription;
 
-  connect(): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
+  connect(
+    collectionViewer: CollectionViewer,
+  ): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
     // reset pageindex on sort change
     this.subscription$ = this.sort.sortChange.subscribe(
       () => (this.paginator.pageIndex = 0),
@@ -69,7 +71,7 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect(): void {
+  disconnect(collectionViewer: CollectionViewer): void {
     if (this.subscription$) {
       this.subscription$.unsubscribe();
     }

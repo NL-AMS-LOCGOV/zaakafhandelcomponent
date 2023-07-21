@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { ReferentieTabelService } from "./referentie-tabel.service";
 import { ReferentieTabel } from "./model/referentie-tabel";
@@ -15,7 +15,10 @@ import { ReferentieTabel } from "./model/referentie-tabel";
 export class ReferentieTabelResolver {
   constructor(private adminService: ReferentieTabelService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<ReferentieTabel> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<ReferentieTabel> {
     return this.adminService.readReferentieTabel(route.paramMap.get("id"));
   }
 }

@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { Zaak } from "./model/zaak";
 import { ZakenService } from "./zaken.service";
@@ -15,7 +15,10 @@ import { ZakenService } from "./zaken.service";
 export class ZaakIdentificatieResolver {
   constructor(private zakenService: ZakenService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<Zaak> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<Zaak> {
     const zaakID: string = route.paramMap.get("zaakIdentificatie");
     return this.zakenService.readZaakByID(zaakID);
   }

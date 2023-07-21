@@ -9,6 +9,7 @@ import { TextareaFormField } from "../../material-form-builder/form-components/t
 import { MaterialFormBuilderService } from "../../material-form-builder/material-form-builder.service";
 import { UtilService } from "../../../core/service/util.service";
 import { InputFormField } from "../../material-form-builder/form-components/input/input-form-field";
+import { Validators } from "@angular/forms";
 
 @Component({
   selector: "zac-edit-tekst",

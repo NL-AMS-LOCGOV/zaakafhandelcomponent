@@ -4,6 +4,7 @@
  */
 
 import { Validators } from "@angular/forms";
+import { TextareaFormFieldBuilder } from "../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder";
 import { ReadonlyFormFieldBuilder } from "../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder";
 import { DateFormFieldBuilder } from "../../../shared/material-form-builder/form-components/date/date-form-field-builder";
 import { TranslateService } from "@ngx-translate/core";

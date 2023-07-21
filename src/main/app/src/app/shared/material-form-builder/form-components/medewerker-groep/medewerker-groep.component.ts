@@ -42,7 +42,7 @@ export class MedewerkerGroepComponent
     this.initGroepen();
 
     this.subscriptions$.push(
-      this.data.groep.valueChanges.subscribe(() => {
+      this.data.groep.valueChanges.subscribe((value) => {
         if (!this.data.groep.dirty) {
           return;
         }

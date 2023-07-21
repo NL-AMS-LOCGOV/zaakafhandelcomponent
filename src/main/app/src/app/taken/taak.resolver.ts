@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { TakenService } from "./taken.service";
 import { Taak } from "./model/taak";
@@ -15,7 +15,10 @@ import { Taak } from "./model/taak";
 export class TaakResolver {
   constructor(private takenService: TakenService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<Taak> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<Taak> {
     const taakID: string = route.paramMap.get("id");
     return this.takenService.readTaak(taakID);
   }

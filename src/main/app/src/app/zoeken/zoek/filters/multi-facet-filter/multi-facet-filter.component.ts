@@ -41,7 +41,7 @@ export class MultiFacetFilterComponent implements OnInit {
     this.inverse = this.filter?.inverse === "true";
     this.formGroup = this._formBuilder.group({});
     this.selected = this.filter?.waarden ? this.filter.waarden : [];
-    this.opties.forEach((value) => {
+    this.opties.forEach((value, index) => {
       this.formGroup.addControl(
         value.naam,
         new FormControl(!!this.selected.find((s) => s === value.naam)),

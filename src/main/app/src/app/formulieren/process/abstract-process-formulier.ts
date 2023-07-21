@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import { FormGroup } from "@angular/forms";
 import { ProcessTaskData } from "../../plan-items/model/process-task-data";
 
 export abstract class AbstractProcessFormulier {
-  getData(): ProcessTaskData {
+  getData(formGroup: FormGroup): ProcessTaskData {
     return null;
   }
 }

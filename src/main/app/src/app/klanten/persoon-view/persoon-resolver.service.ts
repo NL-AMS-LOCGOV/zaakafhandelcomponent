@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { KlantenService } from "../klanten.service";
 import { Persoon } from "../model/personen/persoon";
@@ -15,7 +15,10 @@ import { Persoon } from "../model/personen/persoon";
 export class PersoonResolverService {
   constructor(private klantenService: KlantenService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<Persoon> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<Persoon> {
     const bsn: string = route.paramMap.get("bsn");
     return this.klantenService.readPersoon(bsn);
   }
