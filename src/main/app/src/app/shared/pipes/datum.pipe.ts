@@ -40,8 +40,6 @@ export class DatumPipe implements PipeTransform {
       return "ll LT";
     } else if (dateFormat === "long") {
       return "LL LT";
-    } else if (dateFormat === "mediumDate") {
-      return "LL";
     } else if (dateFormat === "full") {
       return "LLLL";
     } else if (dateFormat === "fullDate") {
