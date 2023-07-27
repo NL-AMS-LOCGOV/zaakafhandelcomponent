@@ -30,5 +30,35 @@ jobs:
       - name: Maven build
         run: mvn --batch-mode --update-snapshots package -DskipTests
 
+      - name: Cache Build Artefacts
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            target/
+          key: build-${{ github.repository }}-${{ github.ref_name }}-${{ github.run_number }}
+
+  unit-tests:
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Restore Build Artefacts
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            target/
+          key: build-${{ github.repository }}-${{ github.ref_name }}-${{ github.run_number }}
+
+      - name: Run unit tests
+        run: mvn test --batch-mode -Dskip.npm
 
 
