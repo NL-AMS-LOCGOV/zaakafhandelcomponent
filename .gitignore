@@ -4,3 +4,4 @@ target
 wildfly-*
 src/generated
 /.openapi-generator/*
+.vscode/
