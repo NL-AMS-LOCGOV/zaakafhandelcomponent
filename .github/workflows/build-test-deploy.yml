@@ -109,7 +109,7 @@ jobs:
             key: docker-image-${{ github.repository }}-${{ github.ref_name }}-${{ github.run_number }}
 
   push-docker-image:
-    needs: [unit-tests, build-docker-image]
+    needs: [build, unit-tests, build-docker-image]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.ref == 'refs/heads/main'
@@ -134,5 +134,3 @@ jobs:
 
       - name: Push Docker Image
         run: docker push ${DOCKER_IMAGE_TAG}
-
-
