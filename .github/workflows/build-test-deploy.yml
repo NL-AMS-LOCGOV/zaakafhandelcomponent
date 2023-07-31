@@ -10,7 +10,7 @@ on:
 env:
   JAVA_VERSION: '17'
   CONTAINER_REGISTRY_URL: 'ghcr.io/infonl'
-  APPLICATION_NAME: 'zaakafhandelcomponent'
+  APPLICATION_NAME: 'dimpact-zac'
 
 permissions:
   contents: write
